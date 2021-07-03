@@ -13,7 +13,11 @@ export default {
       format: 'cjs',
       globals: {
         'react': 'React',
-        'react-dom': 'ReactDOM'
+        'react-dom': 'ReactDOM',
+        'depay-blockchain-call': 'BlockchainCall',
+        'depay-blockchain-token': 'BlockchainToken',
+        'depay-blockchain-constants': 'BlockchainConstants',
+        'depay-blockchain-transaction': 'BlockchainTransaction'
       },
       file: 'dist/cjs/index.js'
     },
@@ -21,7 +25,11 @@ export default {
       format: 'es',
       globals: {
         'react': 'React',
-        'react-dom': 'ReactDOM'
+        'react-dom': 'ReactDOM',
+        'depay-blockchain-call': 'BlockchainCall',
+        'depay-blockchain-token': 'BlockchainToken',
+        'depay-blockchain-constants': 'BlockchainConstants',
+        'depay-blockchain-transaction': 'BlockchainTransaction'
       },
       file: 'dist/es/index.js'
     },
@@ -29,7 +37,11 @@ export default {
       format: 'umd',
       globals: {
         'react': 'React',
-        'react-dom': 'ReactDOM'
+        'react-dom': 'ReactDOM',
+        'depay-blockchain-call': 'BlockchainCall',
+        'depay-blockchain-token': 'BlockchainToken',
+        'depay-blockchain-constants': 'BlockchainConstants',
+        'depay-blockchain-transaction': 'BlockchainTransaction'
       },
       name: pkg.moduleName,
       file: 'dist/umd/index.js'

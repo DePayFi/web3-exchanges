@@ -1,23 +1,5 @@
-import curve from './exchanges/curve'
-import pancakeswap from './exchanges/pancakeswap'
-import sushiswap from './exchanges/sushiswap'
-import uniswap_v2 from './exchanges/uniswap_v2'
-import uniswap_v3 from './exchanges/uniswap_v3'
+import all from './all.js'
+import findByName from './findByName.js'
+import { route } from './route.js'
 
-let all = [curve, pancakeswap, sushiswap, uniswap_v2, uniswap_v3];
-
-let DEX = {
-
-  all: all,
-
-  findByName: function(name){
-    return all.find((dex)=>{ 
-      return(
-        dex.name == name ||
-          dex.alternativeNames.includes(name)
-      )
-    })
-  }
-}
-
-export { DEX }
+export { all, findByName, route }
