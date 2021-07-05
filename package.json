@@ -21,8 +21,9 @@
   },
   "repository": "git@github.com:DePayFi/depay-decentralized-exchanges.git",
   "keywords": [
-    "react",
-    "dialog"
+    "decentralized exchanges",
+    "swap",
+    "router"
   ],
   "author": "depay.fi",
   "license": "MIT",
