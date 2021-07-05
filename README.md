@@ -79,6 +79,14 @@ A Swap configuration is fed into the `route` function:
 }
 ```
 
+The following combinations of provided amounts are possible:
+
+- Only `amountIn`, `amountOutMin` will be calculated automatically
+- Only `amountOut`, `amountInMax` will be calculated automatically
+- `amountIn` and `amountOutMax` (routing will stick to both)
+- `amountOut` and `amountInMin` (routing will stick to both)
+
+
 ### Route
 
 A Route is provided by `route` in the following structure:
