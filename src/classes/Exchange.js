@@ -1,7 +1,6 @@
 import { fixRouteParams, preflight } from '../route'
 
 class Exchange {
-  
   constructor({ name, blockchain, alternativeNames, label, logo, route }) {
     this.name = name
     this.blockchain = blockchain
@@ -21,11 +20,21 @@ class Exchange {
     amountInMax,
     amountOutMin,
     amountOutMax,
-    amountInMin
+    amountInMin,
   }) {
-    
-    preflight({ from, to, tokenIn, tokenOut, amountIn, amountOut, amountInMax, amountOutMin, amountOutMax, amountInMin })
-    
+    preflight({
+      from,
+      to,
+      tokenIn,
+      tokenOut,
+      amountIn,
+      amountOut,
+      amountInMax,
+      amountOutMin,
+      amountOutMax,
+      amountInMin,
+    })
+
     return await this._route(
       await fixRouteParams({
         blockchain: this.blockchain,
@@ -37,8 +46,8 @@ class Exchange {
         amountIn,
         amountOut,
         amountInMax,
-        amountOutMin
-      })
+        amountOutMin,
+      }),
     )
   }
 }

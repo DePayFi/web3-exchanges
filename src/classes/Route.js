@@ -1,6 +1,17 @@
 class Route {
-  
-  constructor({ tokenIn, tokenOut, path, amountIn, amountInMax, amountOut, amountOutMin, from, to, transaction, exchange }) {
+  constructor({
+    tokenIn,
+    tokenOut,
+    path,
+    amountIn,
+    amountInMax,
+    amountOut,
+    amountOutMin,
+    from,
+    to,
+    transaction,
+    exchange,
+  }) {
     this.tokenIn = tokenIn
     this.tokenOut = tokenOut
     this.path = path

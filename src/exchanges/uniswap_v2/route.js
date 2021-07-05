@@ -4,7 +4,7 @@ import { call } from 'depay-blockchain-call'
 import { Transaction } from 'depay-blockchain-transaction'
 import { UniswapV2Router02, UniswapV2Factory } from './apis'
 
-let getAmountsOut = async ({ path, amountIn, tokenIn, tokenOut })=>{
+let getAmountsOut = async ({ path, amountIn, tokenIn, tokenOut }) => {
   let amountsOut = await call({
     blockchain: 'ethereum',
     address: '0x7a250d5630b4cf539739df2c5dacb4c659f2488d',
@@ -12,13 +12,13 @@ let getAmountsOut = async ({ path, amountIn, tokenIn, tokenOut })=>{
     method: 'getAmountsOut',
     params: {
       amountIn: amountIn,
-      path: fixUniswapPath(path)
-    }
+      path: fixUniswapPath(path),
+    },
   })
-  return amountsOut[amountsOut.length-1]
+  return amountsOut[amountsOut.length - 1]
 }
 
-let getAmountsIn = async ({ path, amountOut, tokenIn, tokenOut })=>{
+let getAmountsIn = async ({ path, amountOut, tokenIn, tokenOut }) => {
   let amountsIn = await call({
     blockchain: 'ethereum',
     address: '0x7a250d5630b4cf539739df2c5dacb4c659f2488d',
@@ -26,8 +26,8 @@ let getAmountsIn = async ({ path, amountOut, tokenIn, tokenOut })=>{
     method: 'getAmountsIn',
     params: {
       amountOut: amountOut,
-      path: fixUniswapPath(path)
-    }
+      path: fixUniswapPath(path),
+    },
   })
   return amountsIn[0]
 }
@@ -37,9 +37,9 @@ let getAmountsIn = async ({ path, amountOut, tokenIn, tokenOut })=>{
 // we keep 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE internally
 // to be able to differentiate between ETH<>Token and WETH<>Token swaps
 // as they are not the same!
-let fixUniswapPath = (path)=> {
-  return path.map((token)=>{
-    if(token === CONSTANTS.ethereum.NATIVE) {
+let fixUniswapPath = (path) => {
+  return path.map((token) => {
+    if (token === CONSTANTS.ethereum.NATIVE) {
       return CONSTANTS.ethereum.WRAPPED
     } else {
       return token
@@ -47,58 +47,61 @@ let fixUniswapPath = (path)=> {
   })
 }
 
-let pathExists = async (path)=> {
+let pathExists = async (path) => {
   let pair = await call({
     blockchain: 'ethereum',
     address: '0x5c69bee701ef814a2b6a3edd4b1652cb9cc5aa6f',
     api: UniswapV2Factory,
     method: 'getPair',
     cache: 3600000,
-    params: fixUniswapPath(path)
-  }) 
+    params: fixUniswapPath(path),
+  })
   return pair != CONSTANTS.ethereum.ZERO
 }
 
-let findPath = async ({ tokenIn, tokenOut })=>{
-  if(await pathExists([tokenIn, tokenOut])) {
+let findPath = async ({ tokenIn, tokenOut }) => {
+  if (await pathExists([tokenIn, tokenOut])) {
     // direct path
     return [tokenIn, tokenOut]
-  } else if(await pathExists([tokenIn, CONSTANTS.ethereum.WRAPPED]) && await pathExists([tokenOut, CONSTANTS.ethereum.WRAPPED])) {
+  } else if (
+    (await pathExists([tokenIn, CONSTANTS.ethereum.WRAPPED])) &&
+    (await pathExists([tokenOut, CONSTANTS.ethereum.WRAPPED]))
+  ) {
     // path via WRAPPED
     return [tokenIn, CONSTANTS.ethereum.WRAPPED, tokenOut]
   }
 }
 
-let getTransaction = ({ path, amountIn, amountInMax, amountOut, amountOutMin, to })=>{
+let getTransaction = ({ path, amountIn, amountInMax, amountOut, amountOutMin, to }) => {
   let transaction = {
     blockchain: 'ethereum',
     address: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D',
-    api: UniswapV2Router02
-  };
+    api: UniswapV2Router02,
+  }
 
-  if(path[0] === CONSTANTS.ethereum.NATIVE) {
-    if(typeof amountOutMin !== 'undefined') {
+  if (path[0] === CONSTANTS.ethereum.NATIVE) {
+    if (typeof amountOutMin !== 'undefined') {
       transaction.method = 'swapExactETHForTokens'
       transaction.value = amountIn
       transaction.params = { amountOutMin: amountOutMin }
-    } else if(typeof amountInMax !== 'undefined') {
+    } else if (typeof amountInMax !== 'undefined') {
       transaction.method = 'swapETHForExactTokens'
       transaction.value = amountInMax
       transaction.params = { amountOut: amountOut }
     }
-  } else if(path[path.length-1] === CONSTANTS.ethereum.NATIVE) {
-    if(typeof amountOutMin !== 'undefined') {
+  } else if (path[path.length - 1] === CONSTANTS.ethereum.NATIVE) {
+    if (typeof amountOutMin !== 'undefined') {
       transaction.method = 'swapExactTokensForETH'
       transaction.params = { amountIn: amountIn, amountOutMin: amountOutMin }
-    } else if(typeof amountInMax !== 'undefined') {
+    } else if (typeof amountInMax !== 'undefined') {
       transaction.method = 'swapTokensForExactETH'
       transaction.params = { amountInMax: amountInMax, amountOut: amountOut }
     }
   } else {
-    if(typeof amountOutMin !== 'undefined') {
+    if (typeof amountOutMin !== 'undefined') {
       transaction.method = 'swapExactTokensForTokens'
       transaction.params = { amountIn: amountIn, amountOutMin: amountOutMin }
-    } else if(typeof amountInMax !== 'undefined') {
+    } else if (typeof amountInMax !== 'undefined') {
       transaction.method = 'swapTokensForExactTokens'
       transaction.params = { amountInMax: amountInMax, amountOut: amountOut }
     }
@@ -107,34 +110,46 @@ let getTransaction = ({ path, amountIn, amountInMax, amountOut, amountOutMin, to
   transaction.params = Object.assign({}, transaction.params, {
     path: fixUniswapPath(path),
     to: to,
-    deadline: Math.round(Date.now() / 1000) + (30 * 60) // 30 minutes
+    deadline: Math.round(Date.now() / 1000) + 30 * 60, // 30 minutes
   })
 
   return new Transaction(transaction)
 }
 
-let route = async ({ exchange, tokenIn, tokenOut, from, to, amountIn=undefined, amountOut=undefined, amountInMax=undefined, amountOutMin=undefined })=> {
+let route = async ({
+  exchange,
+  tokenIn,
+  tokenOut,
+  from,
+  to,
+  amountIn = undefined,
+  amountOut = undefined,
+  amountInMax = undefined,
+  amountOutMin = undefined,
+}) => {
   let path = await findPath({ tokenIn, tokenOut })
-  if(typeof path === 'undefined') { return }
+  if (typeof path === 'undefined') {
+    return
+  }
 
-  if(amountOut) {
+  if (amountOut) {
     amountIn = await getAmountsIn({ path, amountOut, tokenIn, tokenOut })
-    if(amountInMax && amountIn.gt(amountInMax)) {
+    if (amountInMax && amountIn.gt(amountInMax)) {
       return
     } else if (typeof amountInMax === 'undefined') {
       amountInMax = amountIn
     }
   } else {
     amountOut = await getAmountsOut({ path, amountIn, tokenIn, tokenOut })
-    if(amountOutMin && amountOut.lt(amountOutMin)) {
-      return 
+    if (amountOutMin && amountOut.lt(amountOutMin)) {
+      return
     } else if (typeof amountOutMin === 'undefined') {
       amountOutMin = amountOut
     }
   }
 
   let transaction = getTransaction({ path, amountIn, amountInMax, amountOut, amountOutMin, to })
-  
+
   return new Route({
     tokenIn,
     tokenOut,
@@ -146,7 +161,7 @@ let route = async ({ exchange, tokenIn, tokenOut, from, to, amountIn=undefined, 
     from,
     to,
     exchange,
-    transaction
+    transaction,
   })
 }
 
