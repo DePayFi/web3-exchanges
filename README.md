@@ -23,7 +23,7 @@ all
 let exchange = findByName('uniswap_v3')
 // { name: 'uniswap_v3', label: 'Uniswap v3', logo: '...' }
 
-let routes = route({
+let routes = await route({
   from: '0x5Af489c8786A018EC4814194dC8048be1007e390',
   to: '0x5Af489c8786A018EC4814194dC8048be1007e390',
   amountIn: 1,
@@ -159,7 +159,7 @@ import { findByName } from 'depay-decentralized-exchanges'
 
 let exchange = findByName('uniswap_v2')
 
-let route = exchange.route({
+let route = await exchange.route({
   tokenIn: '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb',
   tokenOut: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
   amountIn: 1,
