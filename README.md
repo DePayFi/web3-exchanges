@@ -102,7 +102,7 @@ A Route is provided by `route` in the following structure:
   amountInMax: BigNumber (e.g. '1000000000000000000')
   from: '0x5Af489c8786A018EC4814194dC8048be1007e390'
   to: '0x5Af489c8786A018EC4814194dC8048be1007e390'
-  transaction: Transaction (from the depay-blockchain-token library)
+  transaction: Transaction (from the depay-blockchain-transaction library)
   exchange: Exchange (see Exchange data structure)
 }
 ```
