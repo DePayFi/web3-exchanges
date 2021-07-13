@@ -1,7 +1,7 @@
 {
   "name": "depay-decentralized-exchanges",
   "moduleName": "Exchange",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "JavaScript library simplifying decentralized exchange routing.",
   "main": "dist/cjs/index.js",
   "module": "dist/es/index.js",

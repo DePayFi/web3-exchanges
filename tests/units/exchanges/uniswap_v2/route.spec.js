@@ -190,6 +190,38 @@ describe('uniswap_v2', () => {
       })
     });
 
+    it('routes a token to token swap for given amountOutMin without given amountIn on uniswap_v2', async ()=> {
+
+      let amountOutMin = 1
+      let amountOutMinBN = ethers.utils.parseUnits(amountOutMin.toString(), decimalsOut)
+      let fetchedAmountIn = 43
+      let fetchedAmountInBN = ethers.utils.parseUnits(fetchedAmountIn.toString(), decimalsIn)
+
+      mockPair({ tokenIn, tokenOut, pair })
+      mockAmounts({ method: 'getAmountsIn', params: [amountOutMinBN,path], amounts: [fetchedAmountInBN, amountOutMinBN] })
+
+      await testRouting({
+        tokenIn,
+        decimalsIn,
+        tokenOut,
+        decimalsOut,
+        path,
+        amountOutMin,
+        pair,
+        from,
+        to,
+        transaction: {
+          method: 'swapExactTokensForTokens',
+          params: {
+            amountIn: fetchedAmountInBN,
+            amountOutMin: amountOutMinBN,
+            path: path,
+            to: to
+          }
+        }
+      })
+    });
+
     it('routes a token to token swap for given amountIn without given amountOutMin on uniswap_v2', async ()=> {
 
       let amountIn = 1
@@ -216,6 +248,39 @@ describe('uniswap_v2', () => {
           params: {
             amountIn: amountInBN,
             amountOutMin: fetchedAmountOutBN,
+            path: [tokenIn, tokenOut],
+            to: to
+          }
+        }
+      })
+    });
+
+    it('routes a token to token swap for given amountInMax without given amountOut on uniswap_v2', async ()=> {
+
+      let amountInMax = 1
+      let amountInMaxBN = ethers.utils.parseUnits(amountInMax.toString(), decimalsIn)
+      let fetchedAmountOut = 43
+      let fetchedAmountOutBN = ethers.utils.parseUnits(fetchedAmountOut.toString(), decimalsOut)
+      let path = [tokenIn, tokenOut]
+
+      mockPair({ tokenIn, tokenOut, pair })
+      mockAmounts({ method: 'getAmountsOut', params: [amountInMaxBN, path], amounts: [amountInMaxBN, fetchedAmountOutBN] })
+
+      await testRouting({
+        tokenIn,
+        decimalsIn,
+        tokenOut,
+        decimalsOut,
+        amountInMax,
+        path,
+        pair,
+        from,
+        to,
+        transaction: {
+          method: 'swapTokensForExactTokens',
+          params: {
+            amountInMax: amountInMaxBN,
+            amountOut: fetchedAmountOutBN,
             path: [tokenIn, tokenOut],
             to: to
           }

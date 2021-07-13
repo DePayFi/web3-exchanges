@@ -715,7 +715,19 @@ let findPath = async ({ tokenIn, tokenOut }) => {
   }
 };
 
-let getTransaction = ({ path, amountIn, amountInMax, amountOut, amountOutMin, to }) => {
+let getTransaction = ({
+    path,
+    amountIn,
+    amountInMax,
+    amountOut,
+    amountOutMin,
+    amountInInput,
+    amountOutInput,
+    amountInMaxInput,
+    amountOutMinInput,
+    to 
+  }) => {
+  
   let transaction = {
     blockchain: 'ethereum',
     address: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D',
@@ -723,28 +735,28 @@ let getTransaction = ({ path, amountIn, amountInMax, amountOut, amountOutMin, to
   };
 
   if (path[0] === CONSTANTS__default['default'].ethereum.NATIVE) {
-    if (typeof amountOutMin !== 'undefined') {
+    if (amountInInput || amountOutMinInput) {
       transaction.method = 'swapExactETHForTokens';
       transaction.value = amountIn;
       transaction.params = { amountOutMin: amountOutMin };
-    } else if (typeof amountInMax !== 'undefined') {
+    } else if (amountOutInput || amountInMaxInput) {
       transaction.method = 'swapETHForExactTokens';
       transaction.value = amountInMax;
       transaction.params = { amountOut: amountOut };
     }
   } else if (path[path.length - 1] === CONSTANTS__default['default'].ethereum.NATIVE) {
-    if (typeof amountOutMin !== 'undefined') {
+    if (amountInInput || amountOutMinInput) {
       transaction.method = 'swapExactTokensForETH';
       transaction.params = { amountIn: amountIn, amountOutMin: amountOutMin };
-    } else if (typeof amountInMax !== 'undefined') {
+    } else if (amountOutInput || amountInMaxInput) {
       transaction.method = 'swapTokensForExactETH';
       transaction.params = { amountInMax: amountInMax, amountOut: amountOut };
     }
   } else {
-    if (typeof amountOutMin !== 'undefined') {
+    if (amountInInput || amountOutMinInput) {
       transaction.method = 'swapExactTokensForTokens';
       transaction.params = { amountIn: amountIn, amountOutMin: amountOutMin };
-    } else if (typeof amountInMax !== 'undefined') {
+    } else if (amountOutInput || amountInMaxInput) {
       transaction.method = 'swapTokensForExactTokens';
       transaction.params = { amountInMax: amountInMax, amountOut: amountOut };
     }
@@ -774,6 +786,7 @@ let route$3 = async ({
   if (typeof path === 'undefined' || path.length == 0) {
     return undefined
   }
+  let [amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput] = [amountIn, amountOut, amountInMax, amountOutMin];
 
   if (amountOut) {
     amountIn = await getAmountsIn({ path, amountOut, tokenIn, tokenOut });
@@ -782,8 +795,22 @@ let route$3 = async ({
     } else if (typeof amountInMax === 'undefined') {
       amountInMax = amountIn;
     }
-  } else {
+  } else if (amountIn) {
     amountOut = await getAmountsOut({ path, amountIn, tokenIn, tokenOut });
+    if (amountOutMin && amountOut.lt(amountOutMin)) {
+      return
+    } else if (typeof amountOutMin === 'undefined') {
+      amountOutMin = amountOut;
+    }
+  } else if(amountOutMin) {
+    amountIn = await getAmountsIn({ path, amountOut: amountOutMin, tokenIn, tokenOut });
+    if (amountInMax && amountIn.gt(amountInMax)) {
+      return
+    } else if (typeof amountInMax === 'undefined') {
+      amountInMax = amountIn;
+    }
+  } else if(amountInMax) {
+    amountOut = await getAmountsOut({ path, amountIn: amountInMax, tokenIn, tokenOut });
     if (amountOutMin && amountOut.lt(amountOutMin)) {
       return
     } else if (typeof amountOutMin === 'undefined') {
@@ -791,7 +818,18 @@ let route$3 = async ({
     }
   }
 
-  let transaction = getTransaction({ path, amountIn, amountInMax, amountOut, amountOutMin, to });
+  let transaction = getTransaction({
+    path,
+    amountIn,
+    amountInMax,
+    amountOut,
+    amountOutMin,
+    amountInInput,
+    amountOutInput,
+    amountInMaxInput,
+    amountOutMinInput,
+    to 
+  });
 
   return new Route({
     tokenIn,
