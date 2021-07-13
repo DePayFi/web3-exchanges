@@ -1,5 +1,6 @@
 import CONSTANTS from 'depay-blockchain-constants'
 import Route from '../../../../src/classes/Route'
+import { UniswapV2Router02 } from '../../../../src/exchanges/uniswap_v2/apis'
 import { ethers } from 'ethers'
 import { findByName } from 'dist/cjs/index.js'
 import { mock, resetMocks, anything, normalize } from 'depay-web3mock'

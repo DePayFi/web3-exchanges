@@ -1,4 +1,4 @@
-import { fixRouteParams, preflight } from '../route'
+import { fixRouteParams, preflight } from '../params'
 
 class Exchange {
   constructor({ name, blockchain, alternativeNames, label, logo, route }) {
