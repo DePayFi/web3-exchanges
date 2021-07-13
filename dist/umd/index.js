@@ -92,14 +92,6 @@
     if (typeof amountOut !== 'undefined' && typeof amountOutMin !== 'undefined') {
       throw 'Setting amountOut and amountOutMin at the same time makes no sense. Decide if amountOut needs to be exact or not!'
     }
-
-    if (typeof amountOutMin !== 'undefined' && typeof amountIn === 'undefined') {
-      throw 'You need to set amountIn alongside amountOutMin!'
-    }
-
-    if (typeof amountInMax !== 'undefined' && typeof amountOut === 'undefined') {
-      throw 'You need to set amountOut alongside amountInMax!'
-    }
   };
 
   class Exchange {

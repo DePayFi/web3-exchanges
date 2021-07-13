@@ -60,20 +60,4 @@ describe('Exchange', () => {
       "Setting amountOut and amountOutMin at the same time makes no sense. Decide if amountOut needs to be exact or not!"
     )
   });
-
-  it('fails if you only set amountOutMin', async ()=>{
-    await expect(
-      exchange.route({ amountOutMin: 2 })
-    ).rejects.toEqual(
-      "You need to set amountIn alongside amountOutMin!"
-    )
-  })
-
-  it('fails if you only set amountInMax', async ()=>{
-    await expect(
-      exchange.route({ amountInMax: 2 })
-    ).rejects.toEqual(
-      "You need to set amountOut alongside amountInMax!"
-    )
-  })
 });
