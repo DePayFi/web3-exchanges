@@ -694,6 +694,7 @@ let pathExists = async (path) => {
 };
 
 let findPath = async ({ tokenIn, tokenOut }) => {
+  if(tokenIn === tokenOut){ return [] }
   if (await pathExists([tokenIn, tokenOut])) {
     // direct path
     return [tokenIn, tokenOut]
@@ -762,8 +763,8 @@ let route$3 = async ({
   amountOutMin = undefined,
 }) => {
   let path = await findPath({ tokenIn, tokenOut });
-  if (typeof path === 'undefined') {
-    return
+  if (typeof path === 'undefined' || path.length == 0) {
+    return undefined
   }
 
   if (amountOut) {

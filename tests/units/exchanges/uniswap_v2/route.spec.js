@@ -126,6 +126,30 @@ describe('uniswap_v2', () => {
     expect(transactionMock).toHaveBeenCalled()
   }
 
+  describe('routing', ()=>{
+
+    it('does not try to find a route from and to the same token, as that doesnt make any sense.', async ()=> {
+
+      mock('ethereum')
+
+      let amountOut = 5
+      let amountOutBN = ethers.utils.parseUnits(amountOut.toString(), 18)
+      let amountIn = 5
+      mockDecimals({ address: '0xa0bed124a09ac2bd941b10349d8d224fe3c955eb', value: 18 })
+
+      let route = await exchange.route({
+        from: from,
+        to: to,
+        amountOut,
+        amountInMax: amountIn,
+        tokenIn: '0xa0bed124a09ac2bd941b10349d8d224fe3c955eb',
+        tokenOut: '0xa0bed124a09ac2bd941b10349d8d224fe3c955eb'
+      })
+
+      expect(route).toEqual(undefined)
+    })
+  })
+
   describe('route token to token', ()=>{
 
     let tokenIn = '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb'
