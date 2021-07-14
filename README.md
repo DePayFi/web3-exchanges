@@ -179,7 +179,7 @@ await route.transaction.submit()
 
 ```
 yarn install
-yarn start
+yarn dev
 ```
 
 ### Release

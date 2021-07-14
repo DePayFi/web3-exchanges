@@ -6,7 +6,7 @@ import { findByName } from 'dist/cjs/index.js'
 import { mock, resetMocks, anything, normalize } from 'depay-web3mock'
 import { mockDecimals } from '../../../mocks/token'
 import { mockPair, mockAmounts } from '../../../mocks/uniswap_v2'
-import { resetCache } from 'depay-blockchain-call'
+import { resetCache } from 'depay-blockchain-client'
 
 describe('uniswap_v2', () => {
   

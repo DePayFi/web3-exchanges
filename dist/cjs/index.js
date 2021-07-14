@@ -4,7 +4,7 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 var depayBlockchainToken = require('depay-blockchain-token');
 var CONSTANTS = require('depay-blockchain-constants');
-var depayBlockchainCall = require('depay-blockchain-call');
+var depayBlockchainClient = require('depay-blockchain-client');
 var depayBlockchainTransaction = require('depay-blockchain-transaction');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
@@ -647,11 +647,8 @@ let UniswapV2Factory = [
 ];
 
 let getAmountsOut = async ({ path, amountIn, tokenIn, tokenOut }) => {
-  let amountsOut = await depayBlockchainCall.call({
-    blockchain: 'ethereum',
-    address: '0x7a250d5630b4cf539739df2c5dacb4c659f2488d',
+  let amountsOut = await depayBlockchainClient.request('ethereum://0x7a250d5630b4cf539739df2c5dacb4c659f2488d/getAmountsOut', {
     api: UniswapV2Router02,
-    method: 'getAmountsOut',
     params: {
       amountIn: amountIn,
       path: fixUniswapPath(path),
@@ -661,11 +658,8 @@ let getAmountsOut = async ({ path, amountIn, tokenIn, tokenOut }) => {
 };
 
 let getAmountsIn = async ({ path, amountOut, tokenIn, tokenOut }) => {
-  let amountsIn = await depayBlockchainCall.call({
-    blockchain: 'ethereum',
-    address: '0x7a250d5630b4cf539739df2c5dacb4c659f2488d',
+  let amountsIn = await depayBlockchainClient.request('ethereum://0x7a250d5630b4cf539739df2c5dacb4c659f2488d/getAmountsIn', {
     api: UniswapV2Router02,
-    method: 'getAmountsIn',
     params: {
       amountOut: amountOut,
       path: fixUniswapPath(path),
@@ -690,11 +684,8 @@ let fixUniswapPath = (path) => {
 };
 
 let pathExists = async (path) => {
-  let pair = await depayBlockchainCall.call({
-    blockchain: 'ethereum',
-    address: '0x5c69bee701ef814a2b6a3edd4b1652cb9cc5aa6f',
+  let pair = await depayBlockchainClient.request('ethereum://0x5c69bee701ef814a2b6a3edd4b1652cb9cc5aa6f/getPair', {
     api: UniswapV2Factory,
-    method: 'getPair',
     cache: 3600000,
     params: fixUniswapPath(path),
   });

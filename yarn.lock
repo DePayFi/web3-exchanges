@@ -2963,36 +2963,24 @@ delayed-stream@~1.0.0:
   resolved "https://registry.yarnpkg.com/delayed-stream/-/delayed-stream-1.0.0.tgz#df3ae199acadfb7d440aaae0b29e2272b24ec619"
   integrity sha1-3zrhmayt+31ECqrgsp4icrJOxhk=
 
-depay-blockchain-call@^1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/depay-blockchain-call/-/depay-blockchain-call-1.1.1.tgz#19b379623c7072ec15805e3c14ca4e60eb49d7fe"
-  integrity sha512-AEbbuLjjKouWb7APyt8q+JWyRGvtZdD3TXSWvJJ61aTVPvp4qP5t9RrGLvLg+rMT2rJfu7IEoGTUS2MKSq7IPA==
+depay-blockchain-client@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/depay-blockchain-client/-/depay-blockchain-client-2.0.0.tgz#a4bda112a59f6de9c666380339578aa936e124ab"
+  integrity sha512-h/dnTzE/PsNHzRFxmFNKfGSfohmTBZ5LO3e8Qr9WJg/fQrddeU/0YSqXSiVz7Ov/zjhG6GR7QmOaR+qisnZB3g==
   dependencies:
     ethers "^5.3.1"
-
-depay-blockchain-call@^1.3.0:
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/depay-blockchain-call/-/depay-blockchain-call-1.3.0.tgz#dea85451b970c5f7219a08d466b2a797471c5081"
-  integrity sha512-KqPRDt7+bDlSYYb9lscce7zZgYUtzM7bfSUIxYlL6B7KIRbzithObsFzptU5OvnuE5pnVVPrViLh3T4KREkimg==
-  dependencies:
-    ethers "^5.3.1"
-
-depay-blockchain-constants@^1.3.0:
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/depay-blockchain-constants/-/depay-blockchain-constants-1.3.0.tgz#8e2e2d61a5cd5214a5b53773e64471bcad6826a9"
-  integrity sha512-1qUCuP+fDKHordq9hzy4oedllvk8j7qCFuonv/ol6WenpBLfD+k3qJRItGRGuKvu7YoKHd2DbMBqANqAXap1CQ==
 
 depay-blockchain-constants@^1.4.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/depay-blockchain-constants/-/depay-blockchain-constants-1.4.0.tgz#269ab10ac0a761ca771c5545ceca46d7556cde3b"
   integrity sha512-R8BbF/BF0iB1lt/rdP+mfekhBOTQVpJ88Wi4aLIWPdVfqmaULwaExWwlEhbUdtFabJuVTIWnXSpZffuqsq1bIQ==
 
-depay-blockchain-token@^0.12.0:
-  version "0.12.0"
-  resolved "https://registry.yarnpkg.com/depay-blockchain-token/-/depay-blockchain-token-0.12.0.tgz#27174f5c7a52b650724c0b3b10275b03721e2f22"
-  integrity sha512-FMel5jaEnG0oVL+Gb2GPV2AIOaAa7b1iBwi86U6RBKqSP1htIoD9NB8qXKZAfhqfQO2xAxGxOycCYw5Sgc5qWw==
+depay-blockchain-token@^1.3.0:
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/depay-blockchain-token/-/depay-blockchain-token-1.3.0.tgz#a3d7ec4de0e7b4fef28f0d63759d67327f30378a"
+  integrity sha512-8bNcnl+KsLQKtbMWOGtMvr6tdZn5Wx4v6gzLwwz5zGHzJoI886MMoE5iaLhLbLTf/8WXEzD5X9iJheTwTDVLaQ==
   dependencies:
-    depay-blockchain-call "^1.1.1"
+    depay-blockchain-client "^2.0.0"
     depay-blockchain-constants "^1.4.0"
     ethers "^5.3.1"
 
