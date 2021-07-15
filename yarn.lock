@@ -2986,10 +2986,10 @@ depay-blockchain-token@^1.5.2:
     depay-crypto-wallets "^2.4.0"
     ethers "^5.3.1"
 
-depay-blockchain-transaction@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/depay-blockchain-transaction/-/depay-blockchain-transaction-1.0.0.tgz#43eb91eed798a0a65e65ae5d42c40f016a838ff0"
-  integrity sha512-2whoEsEjPINQI06UBIOacmzpkyrdwSjcBLRpQTMoyqwaI8fQyjkaG+ZG5XYiPrmwIsUG/WE+CPktDYr49IhzOg==
+depay-blockchain-transaction@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/depay-blockchain-transaction/-/depay-blockchain-transaction-1.0.1.tgz#675f56e5198caa7e7463049cb4403bee24e0d0a1"
+  integrity sha512-9sfX4VRuSTITVltC/TYOLXyp0QmxAr+wyVVMlqDIkLOXuXRFlfKbSYkx3EyLcv5WYfh08EtNx++6Pjv2Gjentg==
   dependencies:
     depay-blockchain-constants "^1.4.0"
     ethers "^5.3.1"
