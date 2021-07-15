@@ -2970,6 +2970,14 @@ depay-blockchain-client@^2.0.0:
   dependencies:
     ethers "^5.3.1"
 
+depay-blockchain-client@^2.3.1:
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/depay-blockchain-client/-/depay-blockchain-client-2.3.1.tgz#45a61bf25332aacc8c20d687ceb5c96c4202fedb"
+  integrity sha512-XPtdTDRb50aPiHFK644cj21nLvfeh/t4J0SvAQoxD6bg95FTtKTra6gtkyJKXMFbo9HVEg1yEdNRvAD/ZskRcg==
+  dependencies:
+    depay-crypto-wallets "^2.4.0"
+    ethers "^5.3.1"
+
 depay-blockchain-constants@^1.4.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/depay-blockchain-constants/-/depay-blockchain-constants-1.4.0.tgz#269ab10ac0a761ca771c5545ceca46d7556cde3b"
@@ -2991,6 +2999,18 @@ depay-blockchain-transaction@^1.0.0:
   dependencies:
     depay-blockchain-constants "^1.4.0"
     ethers "^5.3.1"
+
+depay-blockchains@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/depay-blockchains/-/depay-blockchains-1.0.1.tgz#2a53bdf7f9852a7ee2d87528d944d0d83eb72399"
+  integrity sha512-70H27HcsU9kbSKqdS+spzap6mpTZ+CUrj6w24BF66cKNFlqvxhR+CMQ+ijNyO39843a+2Thy0wDonfCNa/tpjQ==
+
+depay-crypto-wallets@^2.4.0:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/depay-crypto-wallets/-/depay-crypto-wallets-2.4.0.tgz#56a33e5640dc941946489264161f775649c18696"
+  integrity sha512-c6b6EvlK41Atrf2fjgh0uuiBBSoWZTObfxWwoCu884x75ai/mZgua4z2HcW1jp+DJpavHcCce0zC0xZ0bA6WVQ==
+  dependencies:
+    depay-blockchains "^1.0.1"
 
 depay-web3mock@^3.3.1:
   version "3.3.1"
