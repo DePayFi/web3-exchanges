@@ -2970,10 +2970,10 @@ depay-blockchain-client@^2.0.0:
   dependencies:
     ethers "^5.3.1"
 
-depay-blockchain-client@^2.3.1:
-  version "2.3.1"
-  resolved "https://registry.yarnpkg.com/depay-blockchain-client/-/depay-blockchain-client-2.3.1.tgz#45a61bf25332aacc8c20d687ceb5c96c4202fedb"
-  integrity sha512-XPtdTDRb50aPiHFK644cj21nLvfeh/t4J0SvAQoxD6bg95FTtKTra6gtkyJKXMFbo9HVEg1yEdNRvAD/ZskRcg==
+depay-blockchain-client@^2.3.2:
+  version "2.3.2"
+  resolved "https://registry.yarnpkg.com/depay-blockchain-client/-/depay-blockchain-client-2.3.2.tgz#57f229e382c1e09553353a7463d4a7cf92719c1b"
+  integrity sha512-KiCyL/IOkI0pJO7Q/ypam/Z5ZKvZP0rmPcNTmwRHsMmBWqQPbVEHOJdzwtWOf4tOd+j2PGRawe0wUF9yTDZIvQ==
   dependencies:
     depay-crypto-wallets "^2.4.0"
     ethers "^5.3.1"
