@@ -6,7 +6,7 @@ function mockDecimals({ address, value }) {
   return mock({
     blockchain: 'ethereum',
     call: {
-      address: address,
+      to: address,
       api: ERC20,
       method: 'decimals',
       return: value

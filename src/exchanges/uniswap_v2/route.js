@@ -4,26 +4,32 @@ import { request } from 'depay-blockchain-client'
 import { Transaction } from 'depay-blockchain-transaction'
 import { UniswapV2Router02, UniswapV2Factory } from './apis'
 
-let getAmountsOut = async ({ path, amountIn, tokenIn, tokenOut }) => {
-  let amountsOut = await request('ethereum://0x7a250d5630b4cf539739df2c5dacb4c659f2488d/getAmountsOut', {
-    api: UniswapV2Router02,
-    params: {
-      amountIn: amountIn,
-      path: fixUniswapPath(path),
-    },
+let getAmountsOut = ({ path, amountIn, tokenIn, tokenOut }) => {
+  return new Promise((resolve) => {
+    request('ethereum://0x7a250d5630b4cf539739df2c5dacb4c659f2488d/getAmountsOut', {
+      api: UniswapV2Router02,
+      params: {
+        amountIn: amountIn,
+        path: fixUniswapPath(path),
+      },
+    })
+    .then((amountsOut)=>resolve(amountsOut[amountsOut.length - 1]))
+    .catch(()=>resolve())
   })
-  return amountsOut[amountsOut.length - 1]
 }
 
-let getAmountsIn = async ({ path, amountOut, tokenIn, tokenOut }) => {
-  let amountsIn = await request('ethereum://0x7a250d5630b4cf539739df2c5dacb4c659f2488d/getAmountsIn', {
-    api: UniswapV2Router02,
-    params: {
-      amountOut: amountOut,
-      path: fixUniswapPath(path),
-    },
+let getAmountsIn = ({ path, amountOut, tokenIn, tokenOut }) => {
+  return new Promise((resolve) => {
+    request('ethereum://0x7a250d5630b4cf539739df2c5dacb4c659f2488d/getAmountsIn', {
+      api: UniswapV2Router02,
+      params: {
+        amountOut: amountOut,
+        path: fixUniswapPath(path),
+      },
+    })
+    .then((amountsIn)=>resolve(amountsIn[0]))
+    .catch(()=>resolve())
   })
-  return amountsIn[0]
 }
 
 // Uniswap replaces 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE with
@@ -120,7 +126,7 @@ let getTransaction = ({
   return new Transaction(transaction)
 }
 
-let route = async ({
+let route = ({
   exchange,
   tokenIn,
   tokenOut,
@@ -131,67 +137,69 @@ let route = async ({
   amountInMax = undefined,
   amountOutMin = undefined,
 }) => {
-  let path = await findPath({ tokenIn, tokenOut })
-  if (typeof path === 'undefined' || path.length == 0) {
-    return undefined
-  }
-  let [amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput] = [amountIn, amountOut, amountInMax, amountOutMin]
+  return new Promise(async (resolve)=> {
+    let path = await findPath({ tokenIn, tokenOut })
+    if (path === undefined || path.length == 0) { return resolve() }
+    let [amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput] = [amountIn, amountOut, amountInMax, amountOutMin]
+    
+    if (amountOut) {
+      amountIn = await getAmountsIn({ path, amountOut, tokenIn, tokenOut })
+      if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
+        return resolve()
+      } else if (amountInMax === undefined) {
+        amountInMax = amountIn
+      }
+    } else if (amountIn) {
+      amountOut = await getAmountsOut({ path, amountIn, tokenIn, tokenOut })
+      if (amountOut == undefined || amountOutMin && amountOut.lt(amountOutMin)) {
+        return resolve()
+      } else if (amountOutMin === undefined) {
+        amountOutMin = amountOut
+      }
+    } else if(amountOutMin) {
+      amountIn = await getAmountsIn({ path, amountOut: amountOutMin, tokenIn, tokenOut })
+      if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
+        return resolve()
+      } else if (amountInMax === undefined) {
+        amountInMax = amountIn
+      }
+    } else if(amountInMax) {
+      amountOut = await getAmountsOut({ path, amountIn: amountInMax, tokenIn, tokenOut })
+      if (amountOut == undefined ||amountOutMin && amountOut.lt(amountOutMin)) {
+        return resolve()
+      } else if (amountOutMin === undefined) {
+        amountOutMin = amountOut
+      }
+    }
 
-  if (amountOut) {
-    amountIn = await getAmountsIn({ path, amountOut, tokenIn, tokenOut })
-    if (amountInMax && amountIn.gt(amountInMax)) {
-      return
-    } else if (typeof amountInMax === 'undefined') {
-      amountInMax = amountIn
-    }
-  } else if (amountIn) {
-    amountOut = await getAmountsOut({ path, amountIn, tokenIn, tokenOut })
-    if (amountOutMin && amountOut.lt(amountOutMin)) {
-      return
-    } else if (typeof amountOutMin === 'undefined') {
-      amountOutMin = amountOut
-    }
-  } else if(amountOutMin) {
-    amountIn = await getAmountsIn({ path, amountOut: amountOutMin, tokenIn, tokenOut })
-    if (amountInMax && amountIn.gt(amountInMax)) {
-      return
-    } else if (typeof amountInMax === 'undefined') {
-      amountInMax = amountIn
-    }
-  } else if(amountInMax) {
-    amountOut = await getAmountsOut({ path, amountIn: amountInMax, tokenIn, tokenOut })
-    if (amountOutMin && amountOut.lt(amountOutMin)) {
-      return
-    } else if (typeof amountOutMin === 'undefined') {
-      amountOutMin = amountOut
-    }
-  }
+    let transaction = getTransaction({
+      path,
+      amountIn,
+      amountInMax,
+      amountOut,
+      amountOutMin,
+      amountInInput,
+      amountOutInput,
+      amountInMaxInput,
+      amountOutMinInput,
+      to 
+    })
 
-  let transaction = getTransaction({
-    path,
-    amountIn,
-    amountInMax,
-    amountOut,
-    amountOutMin,
-    amountInInput,
-    amountOutInput,
-    amountInMaxInput,
-    amountOutMinInput,
-    to 
-  })
-
-  return new Route({
-    tokenIn,
-    tokenOut,
-    path,
-    amountIn,
-    amountInMax,
-    amountOut,
-    amountOutMin,
-    from,
-    to,
-    exchange,
-    transaction,
+    resolve(
+      new Route({
+        tokenIn,
+        tokenOut,
+        path,
+        amountIn,
+        amountInMax,
+        amountOut,
+        amountOutMin,
+        from,
+        to,
+        exchange,
+        transaction,
+      })
+    )
   })
 }
 

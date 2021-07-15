@@ -13,28 +13,23 @@ let route = ({
   amountOutMax,
   amountInMin,
 }) => {
-  return new Promise((resolve, reject) => {
-    Promise.all(
-      all.map((exchange) => {
-        return exchange.route({
-          from,
-          to,
-          tokenIn,
-          tokenOut,
-          amountIn,
-          amountOut,
-          amountInMax,
-          amountOutMin,
-          amountOutMax,
-          amountInMin,
-        })
-      }),
-    )
-      .then((routes) => {
-        resolve(routes.filter(Boolean))
+  return Promise.all(
+    all.map((exchange) => {
+      return exchange.route({
+        from,
+        to,
+        tokenIn,
+        tokenOut,
+        amountIn,
+        amountOut,
+        amountInMax,
+        amountOutMin,
+        amountOutMax,
+        amountInMin,
       })
-      .catch(reject)
-  })
+    }),
+  )
+  .then((routes)=>routes.filter(Boolean))
 }
 
 export { route }

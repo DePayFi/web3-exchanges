@@ -1,7 +1,7 @@
 {
   "name": "depay-decentralized-exchanges",
   "moduleName": "Exchange",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "description": "JavaScript library simplifying decentralized exchange routing.",
   "main": "dist/cjs/index.js",
   "module": "dist/es/index.js",
@@ -54,7 +54,7 @@
     "babel-preset-env": "^1.7.0",
     "babel-preset-react": "^6.24.1",
     "cypress": "^6.2.1",
-    "depay-web3mock": "^3.3.1",
+    "depay-web3mock": "^4.4.0",
     "eslint": "^7.15.0",
     "eslint-config-prettier": "^7.0.0",
     "eslint-loader": "^4.0.2",

@@ -3014,10 +3014,10 @@ depay-crypto-wallets@^2.4.0:
   dependencies:
     depay-blockchains "^1.0.1"
 
-depay-web3mock@^3.3.1:
-  version "3.3.1"
-  resolved "https://registry.yarnpkg.com/depay-web3mock/-/depay-web3mock-3.3.1.tgz#118c82f20e023922cb0f3f49051559cb4f553396"
-  integrity sha512-ZQ6QkRmchmFLhBAFVwwTxATyc8Lz/8mKOJtmNzGDhBCjGBmE0s6caHzzvFyQc+fTbsf0I8aE1dIikzusb1uMGQ==
+depay-web3mock@^4.4.0:
+  version "4.4.0"
+  resolved "https://registry.yarnpkg.com/depay-web3mock/-/depay-web3mock-4.4.0.tgz#80fa77307e3d3be4d5eabaa8325847e2f5335af8"
+  integrity sha512-ExFMpgtSI/w1n+wJxzBqRE8yp/tDRQyMhjwn06K6y3tuuBLTMJCQt+4IOKTCh81AHeIe0+blQg78pT55Wkr2kQ==
   dependencies:
     ethers "^5.4.0"
 

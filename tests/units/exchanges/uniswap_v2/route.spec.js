@@ -126,7 +126,7 @@ describe('uniswap_v2', () => {
     expect(transactionMock).toHaveBeenCalled()
   }
 
-  describe('routing', ()=>{
+  describe('basic routing', ()=>{
 
     it('does not try to find a route from and to the same token, as that doesnt make any sense.', async ()=> {
 
@@ -144,6 +144,46 @@ describe('uniswap_v2', () => {
         amountInMax: amountIn,
         tokenIn: '0xa0bed124a09ac2bd941b10349d8d224fe3c955eb',
         tokenOut: '0xa0bed124a09ac2bd941b10349d8d224fe3c955eb'
+      })
+
+      expect(route).toEqual(undefined)
+    })
+
+    it('returns undefined and does not fail or reject in case an error happens during the routing', async ()=> {
+
+      mock('ethereum')
+
+      let tokenIn = '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb'
+      let decimalsIn = 18
+      let fetchedAmountIn = 43
+      let fetchedAmountInBN = ethers.utils.parseUnits(fetchedAmountIn.toString(), decimalsIn)
+      let tokenOut = '0xdAC17F958D2ee523a2206206994597C13D831ec7'
+      let decimalsOut = 6
+      let amountOut = 1
+      let amountOutBN = ethers.utils.parseUnits(amountOut.toString(), decimalsOut)
+      let path = [tokenIn, tokenOut]
+
+      mockDecimals({ address: tokenIn, value: decimalsIn })
+      mockDecimals({ address: tokenOut, value: decimalsOut })
+      mockPair({ tokenIn, tokenOut, pair })
+      mock({
+        blockchain: 'ethereum',
+        call: {
+          to: '0x7a250d5630b4cf539739df2c5dacb4c659f2488d',
+          api: UniswapV2Router02,
+          method: 'getAmountsIn',
+          params: [amountOutBN, path],
+          return: Error('Routing Error')
+        }
+      })
+
+      let route = await exchange.route({
+        from: from,
+        to: to,
+        amountOut,
+        amountInMax: fetchedAmountIn,
+        tokenIn: tokenIn,
+        tokenOut: tokenOut
       })
 
       expect(route).toEqual(undefined)

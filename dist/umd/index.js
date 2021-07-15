@@ -1,5 +1,3 @@
-
-(function(l, r) { if (l.getElementById('livereloadscript')) return; r = l.createElement('script'); r.async = 1; r.src = '//' + (window.location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1'; r.id = 'livereloadscript'; l.getElementsByTagName('head')[0].appendChild(r) })(window.document);
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('depay-blockchain-token'), require('depay-blockchain-constants'), require('depay-blockchain-client'), require('depay-blockchain-transaction')) :
   typeof define === 'function' && define.amd ? define(['exports', 'depay-blockchain-token', 'depay-blockchain-constants', 'depay-blockchain-client', 'depay-blockchain-transaction'], factory) :
@@ -645,26 +643,32 @@
     },
   ];
 
-  let getAmountsOut = async ({ path, amountIn, tokenIn, tokenOut }) => {
-    let amountsOut = await depayBlockchainClient.request('ethereum://0x7a250d5630b4cf539739df2c5dacb4c659f2488d/getAmountsOut', {
-      api: UniswapV2Router02,
-      params: {
-        amountIn: amountIn,
-        path: fixUniswapPath(path),
-      },
-    });
-    return amountsOut[amountsOut.length - 1]
+  let getAmountsOut = ({ path, amountIn, tokenIn, tokenOut }) => {
+    return new Promise((resolve) => {
+      depayBlockchainClient.request('ethereum://0x7a250d5630b4cf539739df2c5dacb4c659f2488d/getAmountsOut', {
+        api: UniswapV2Router02,
+        params: {
+          amountIn: amountIn,
+          path: fixUniswapPath(path),
+        },
+      })
+      .then((amountsOut)=>resolve(amountsOut[amountsOut.length - 1]))
+      .catch(()=>resolve());
+    })
   };
 
-  let getAmountsIn = async ({ path, amountOut, tokenIn, tokenOut }) => {
-    let amountsIn = await depayBlockchainClient.request('ethereum://0x7a250d5630b4cf539739df2c5dacb4c659f2488d/getAmountsIn', {
-      api: UniswapV2Router02,
-      params: {
-        amountOut: amountOut,
-        path: fixUniswapPath(path),
-      },
-    });
-    return amountsIn[0]
+  let getAmountsIn = ({ path, amountOut, tokenIn, tokenOut }) => {
+    return new Promise((resolve) => {
+      depayBlockchainClient.request('ethereum://0x7a250d5630b4cf539739df2c5dacb4c659f2488d/getAmountsIn', {
+        api: UniswapV2Router02,
+        params: {
+          amountOut: amountOut,
+          path: fixUniswapPath(path),
+        },
+      })
+      .then((amountsIn)=>resolve(amountsIn[0]))
+      .catch(()=>resolve());
+    })
   };
 
   // Uniswap replaces 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE with
@@ -761,7 +765,7 @@
     return new depayBlockchainTransaction.Transaction(transaction)
   };
 
-  let route$3 = async ({
+  let route$3 = ({
     exchange,
     tokenIn,
     tokenOut,
@@ -772,67 +776,69 @@
     amountInMax = undefined,
     amountOutMin = undefined,
   }) => {
-    let path = await findPath({ tokenIn, tokenOut });
-    if (typeof path === 'undefined' || path.length == 0) {
-      return undefined
-    }
-    let [amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput] = [amountIn, amountOut, amountInMax, amountOutMin];
+    return new Promise(async (resolve)=> {
+      let path = await findPath({ tokenIn, tokenOut });
+      if (path === undefined || path.length == 0) { return resolve() }
+      let [amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput] = [amountIn, amountOut, amountInMax, amountOutMin];
+      
+      if (amountOut) {
+        amountIn = await getAmountsIn({ path, amountOut, tokenIn, tokenOut });
+        if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
+          return resolve()
+        } else if (amountInMax === undefined) {
+          amountInMax = amountIn;
+        }
+      } else if (amountIn) {
+        amountOut = await getAmountsOut({ path, amountIn, tokenIn, tokenOut });
+        if (amountOut == undefined || amountOutMin && amountOut.lt(amountOutMin)) {
+          return resolve()
+        } else if (amountOutMin === undefined) {
+          amountOutMin = amountOut;
+        }
+      } else if(amountOutMin) {
+        amountIn = await getAmountsIn({ path, amountOut: amountOutMin, tokenIn, tokenOut });
+        if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
+          return resolve()
+        } else if (amountInMax === undefined) {
+          amountInMax = amountIn;
+        }
+      } else if(amountInMax) {
+        amountOut = await getAmountsOut({ path, amountIn: amountInMax, tokenIn, tokenOut });
+        if (amountOut == undefined ||amountOutMin && amountOut.lt(amountOutMin)) {
+          return resolve()
+        } else if (amountOutMin === undefined) {
+          amountOutMin = amountOut;
+        }
+      }
 
-    if (amountOut) {
-      amountIn = await getAmountsIn({ path, amountOut, tokenIn, tokenOut });
-      if (amountInMax && amountIn.gt(amountInMax)) {
-        return
-      } else if (typeof amountInMax === 'undefined') {
-        amountInMax = amountIn;
-      }
-    } else if (amountIn) {
-      amountOut = await getAmountsOut({ path, amountIn, tokenIn, tokenOut });
-      if (amountOutMin && amountOut.lt(amountOutMin)) {
-        return
-      } else if (typeof amountOutMin === 'undefined') {
-        amountOutMin = amountOut;
-      }
-    } else if(amountOutMin) {
-      amountIn = await getAmountsIn({ path, amountOut: amountOutMin, tokenIn, tokenOut });
-      if (amountInMax && amountIn.gt(amountInMax)) {
-        return
-      } else if (typeof amountInMax === 'undefined') {
-        amountInMax = amountIn;
-      }
-    } else if(amountInMax) {
-      amountOut = await getAmountsOut({ path, amountIn: amountInMax, tokenIn, tokenOut });
-      if (amountOutMin && amountOut.lt(amountOutMin)) {
-        return
-      } else if (typeof amountOutMin === 'undefined') {
-        amountOutMin = amountOut;
-      }
-    }
+      let transaction = getTransaction({
+        path,
+        amountIn,
+        amountInMax,
+        amountOut,
+        amountOutMin,
+        amountInInput,
+        amountOutInput,
+        amountInMaxInput,
+        amountOutMinInput,
+        to 
+      });
 
-    let transaction = getTransaction({
-      path,
-      amountIn,
-      amountInMax,
-      amountOut,
-      amountOutMin,
-      amountInInput,
-      amountOutInput,
-      amountInMaxInput,
-      amountOutMinInput,
-      to 
-    });
-
-    return new Route({
-      tokenIn,
-      tokenOut,
-      path,
-      amountIn,
-      amountInMax,
-      amountOut,
-      amountOutMin,
-      from,
-      to,
-      exchange,
-      transaction,
+      resolve(
+        new Route({
+          tokenIn,
+          tokenOut,
+          path,
+          amountIn,
+          amountInMax,
+          amountOut,
+          amountOutMin,
+          from,
+          to,
+          exchange,
+          transaction,
+        })
+      );
     })
   };
 
@@ -876,28 +882,23 @@
     amountOutMax,
     amountInMin,
   }) => {
-    return new Promise((resolve, reject) => {
-      Promise.all(
-        all.map((exchange) => {
-          return exchange.route({
-            from,
-            to,
-            tokenIn,
-            tokenOut,
-            amountIn,
-            amountOut,
-            amountInMax,
-            amountOutMin,
-            amountOutMax,
-            amountInMin,
-          })
-        }),
-      )
-        .then((routes) => {
-          resolve(routes.filter(Boolean));
+    return Promise.all(
+      all.map((exchange) => {
+        return exchange.route({
+          from,
+          to,
+          tokenIn,
+          tokenOut,
+          amountIn,
+          amountOut,
+          amountInMax,
+          amountOutMin,
+          amountOutMax,
+          amountInMin,
         })
-        .catch(reject);
-    })
+      }),
+    )
+    .then((routes)=>routes.filter(Boolean))
   };
 
   exports.all = all;
