@@ -1,18 +1,19 @@
 import { fixRouteParams, preflight } from '../params'
 
 class Exchange {
-  constructor({ name, blockchain, alternativeNames, label, logo, route }) {
+  constructor({ name, blockchain, alternativeNames, label, logo, contracts, route }) {
     this.name = name
     this.blockchain = blockchain
     this.alternativeNames = alternativeNames
     this.label = label
     this.logo = logo
+    this.contracts = contracts
     this._route = route
   }
 
   async route({
-    from,
-    to,
+    fromAddress,
+    toAddress,
     tokenIn,
     tokenOut,
     amountIn,
@@ -23,8 +24,8 @@ class Exchange {
     amountInMin,
   }) {
     preflight({
-      from,
-      to,
+      fromAddress,
+      toAddress,
       tokenIn,
       tokenOut,
       amountIn,
@@ -39,8 +40,8 @@ class Exchange {
       await fixRouteParams({
         blockchain: this.blockchain,
         exchange: this,
-        from,
-        to,
+        fromAddress,
+        toAddress,
         tokenIn,
         tokenOut,
         amountIn,

@@ -24,11 +24,12 @@ let exchange = findByName('uniswap_v3')
 // { name: 'uniswap_v3', label: 'Uniswap v3', logo: '...' }
 
 let routes = await route({
-  from: '0x5Af489c8786A018EC4814194dC8048be1007e390',
-  to: '0x5Af489c8786A018EC4814194dC8048be1007e390',
-  amountIn: 1,
+  blockchain: 'ethereum',
   tokenIn: '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb',
-  tokenOut: '0xdAC17F958D2ee523a2206206994597C13D831ec7'
+  tokenOut: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
+  amountIn: 1,
+  fromAddress: '0x5Af489c8786A018EC4814194dC8048be1007e390',
+  toAddress: '0x5Af489c8786A018EC4814194dC8048be1007e390'
 }) // returns routes sorted by cost-effectiveness (best first)
 
 await routes[0].transaction.submit()
@@ -37,12 +38,17 @@ await routes[0].transaction.submit()
 
 ## Support
 
+This library supports the following blockchains:
+
+- [Ethereum](https://ethereum.org)
+- [Binance Smart Chain](https://www.binance.org/en/smartChain)
+
 This library supports the following decentralized exchanges:
 
 - [Uniswap v2](https://uniswap.org)
-
-soon:
 - [PancakeSwap v2](https://pancakeswap.info)
+
+Soon:
 - [Uniswap v3](https://uniswap.org)
 - [SushiSwap](https://sushi.com)
 - [Curve](https://curve.fi)
@@ -55,10 +61,12 @@ Decentralized exchange data is provided in the following structure:
 
 ```
 {
+  blockchain: String (e.g. ethereum)
   name: String (e.g. uniswap_v2)
   alternativeNames: Array (e.g. ['pancake'])
   label: String (e.g. Uniswap v2)
-  logo: String (base64 encoded PNG)
+  logo: String (base64 encoded PNG),
+  contracts: Object (contains important contract addresses and apis to interact with the exchange)
 }
 ```
 
@@ -74,8 +82,8 @@ A Swap configuration is fed into the `route` function:
   amountInMax: Number (e.g. 1)
   amountOut: Number (e.g. 32)
   amountOutMin: Number (e.g. 32)
-  from: '0x5Af489c8786A018EC4814194dC8048be1007e390'
-  to: '0x5Af489c8786A018EC4814194dC8048be1007e390'
+  fromAddress: '0x5Af489c8786A018EC4814194dC8048be1007e390'
+  toAddress: '0x5Af489c8786A018EC4814194dC8048be1007e390'
 }
 ```
 
@@ -102,8 +110,8 @@ A Route is provided by `route` in the following structure:
   amountOutMin: BigNumber (e.g. '32000000000000000000')
   amountOut: BigNumber (e.g. '32000000000000000000')
   amountInMax: BigNumber (e.g. '1000000000000000000')
-  from: '0x5Af489c8786A018EC4814194dC8048be1007e390'
-  to: '0x5Af489c8786A018EC4814194dC8048be1007e390'
+  fromAddress: '0x5Af489c8786A018EC4814194dC8048be1007e390'
+  toAddress: '0x5Af489c8786A018EC4814194dC8048be1007e390'
   transaction: Transaction (from the depay-blockchain-transaction library)
   exchange: Exchange (see Exchange data structure)
 }
@@ -147,8 +155,8 @@ let routes = route {
   tokenOut: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
   amountIn: 1,
   amountOutMin: 2,
-  from: '0x5Af489c8786A018EC4814194dC8048be1007e390',
-  to: '0x5Af489c8786A018EC4814194dC8048be1007e390'
+  fromAddress: '0x5Af489c8786A018EC4814194dC8048be1007e390',
+  toAddress: '0x5Af489c8786A018EC4814194dC8048be1007e390'
 } // returns routes sorted by cost-effectiveness (best first)
 
 await routes[0].transaction.submit()
@@ -162,12 +170,13 @@ import { findByName } from 'depay-decentralized-exchanges'
 let exchange = findByName('uniswap_v2')
 
 let route = await exchange.route({
+  blockchain: 'ethereum',
   tokenIn: '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb',
   tokenOut: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
   amountIn: 1,
   amountOutMin: 2,
-  from: '0x5Af489c8786A018EC4814194dC8048be1007e390',
-  to: '0x5Af489c8786A018EC4814194dC8048be1007e390'
+  fromAddress: '0x5Af489c8786A018EC4814194dC8048be1007e390',
+  toAddress: '0x5Af489c8786A018EC4814194dC8048be1007e390'
 })
 
 await route.transaction.submit()

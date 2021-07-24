@@ -1,4 +1,4 @@
-import { ERC20 } from '../apis'
+import { ERC20 } from 'depay-blockchain-token'
 import { mock } from 'depay-web3mock'
 
 function mockDecimals({ address, value }) {

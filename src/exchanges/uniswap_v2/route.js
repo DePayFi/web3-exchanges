@@ -80,7 +80,7 @@ let getTransaction = ({
     amountOutInput,
     amountInMaxInput,
     amountOutMinInput,
-    to 
+    toAddress
   }) => {
   
   let transaction = {
@@ -119,7 +119,7 @@ let getTransaction = ({
 
   transaction.params = Object.assign({}, transaction.params, {
     path: fixUniswapPath(path),
-    to: to,
+    to: toAddress,
     deadline: Math.round(Date.now() / 1000) + 30 * 60, // 30 minutes
   })
 
@@ -130,8 +130,8 @@ let route = ({
   exchange,
   tokenIn,
   tokenOut,
-  from,
-  to,
+  fromAddress,
+  toAddress,
   amountIn = undefined,
   amountOut = undefined,
   amountInMax = undefined,
@@ -182,7 +182,7 @@ let route = ({
       amountOutInput,
       amountInMaxInput,
       amountOutMinInput,
-      to 
+      toAddress
     })
 
     resolve(
@@ -194,8 +194,8 @@ let route = ({
         amountInMax,
         amountOut,
         amountOutMin,
-        from,
-        to,
+        fromAddress,
+        toAddress,
         exchange,
         transaction,
       })

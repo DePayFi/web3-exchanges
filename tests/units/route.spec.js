@@ -8,13 +8,11 @@ import { route, findByName } from 'dist/cjs/index.js'
 
 describe('route', ()=> {
 
-  beforeEach(()=>{
-    resetMocks()
-    resetCache()
-  })
+  beforeEach(resetMocks)
+  beforeEach(resetCache)
   afterEach(resetMocks)
   
-  it('returns routes for all exchanges', async ()=>{
+  it('returns routes for all exchanges on the ethereum blockchain', async ()=>{
 
     let tokenIn = '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb'
     let decimalsIn = 18
@@ -34,6 +32,7 @@ describe('route', ()=> {
     mockAmounts({ method: 'getAmountsOut', params: [amountInBN,path], amounts: [amountInBN, amountOutMinBN] })
 
     let routes = await route({
+      blockchain: 'ethereum',
       tokenIn: tokenIn,
       tokenOut: tokenOut,
       amountIn: amountIn,
@@ -56,13 +55,16 @@ describe('route', ()=> {
     expect(routes[0].transaction.params.path).toEqual(path)
     expect(routes[0].transaction.params.to).toEqual(wallet)
     expect(routes[0].transaction.params.deadline).toBeDefined()
+
+    // sorts the routes by most cost-effective routes first (once support for multiple exchanges)
   });
 
-  // it('sorts the routes by most cost-effective routes first', async()=>{
-  //   throw('PENDING')
-  // })
+  it('returns routes for all exchanges on the bsc blockchain', async ()=>{
 
-  // it('does preflight too', async()=>{
-  //   throw('PENDING')
-  // })
+    throw('TODO')
+
+    // sorts the routes by most cost-effective routes first
+  });
+
+  
 });

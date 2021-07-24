@@ -8,17 +8,17 @@ import { mockPair, mockAmounts } from '../../../mocks/uniswap_v2'
 import { resetCache } from 'depay-blockchain-client'
 import { testRouting } from '../../../helpers/testRouting'
 
-describe('uniswap_v2', () => {
+describe('pancakswap', () => {
   
   beforeEach(resetMocks)
   beforeEach(resetCache)
   afterEach(resetMocks)
 
-  let blockchain = 'ethereum'
-  let exchange = findByName('uniswap_v2')
-  let pair = '0xEF8cD6Cb5c841A4f02986e8A8ab3cC545d1B8B6d'
-  let fromAddress = '0x5Af489c8786A018EC4814194dC8048be1007e390'
-  let toAddress = '0x5Af489c8786A018EC4814194dC8048be1007e390'
+  let blockchain = 'bsc'
+  let exchange = findByName('pancakeswap')
+  let pair = '0x0eD7e52944161450477ee417DE9Cd3a859b14fD0'
+  let from = '0x5Af489c8786A018EC4814194dC8048be1007e390'
+  let to = '0x5Af489c8786A018EC4814194dC8048be1007e390'
 
   describe('basic routing', ()=>{
 
@@ -32,12 +32,12 @@ describe('uniswap_v2', () => {
       mockDecimals({ address: '0xa0bed124a09ac2bd941b10349d8d224fe3c955eb', value: 18 })
 
       let route = await exchange.route({
-        tokenIn: '0xa0bed124a09ac2bd941b10349d8d224fe3c955eb',
-        tokenOut: '0xa0bed124a09ac2bd941b10349d8d224fe3c955eb',
-        amountInMax: amountIn,
+        from: from,
+        to: to,
         amountOut,
-        fromAddress,
-        toAddress,
+        amountInMax: amountIn,
+        tokenIn: '0xa0bed124a09ac2bd941b10349d8d224fe3c955eb',
+        tokenOut: '0xa0bed124a09ac2bd941b10349d8d224fe3c955eb'
       })
 
       expect(route).toEqual(undefined)
@@ -72,12 +72,12 @@ describe('uniswap_v2', () => {
       })
 
       let route = await exchange.route({
-        tokenIn: tokenIn,
-        tokenOut: tokenOut,
+        from: from,
+        to: to,
         amountOut,
         amountInMax: fetchedAmountIn,
-        fromAddress,
-        toAddress
+        tokenIn: tokenIn,
+        tokenOut: tokenOut
       })
 
       expect(route).toEqual(undefined)
@@ -112,8 +112,8 @@ describe('uniswap_v2', () => {
         path,
         amountOut,
         pair,
-        fromAddress,
-        toAddress,
+        from,
+        to,
         transaction: {
           to: exchange.contracts.router.address,
           api: exchange.contracts.router.api,
@@ -122,7 +122,7 @@ describe('uniswap_v2', () => {
             amountInMax: fetchedAmountInBN,
             amountOut: amountOutBN,
             path: path,
-            to: toAddress
+            to: to
           }
         }
       })
@@ -148,8 +148,8 @@ describe('uniswap_v2', () => {
         path,
         amountOutMin,
         pair,
-        fromAddress,
-        toAddress,
+        from,
+        to,
         transaction: {
           to: exchange.contracts.router.address,
           api: exchange.contracts.router.api,
@@ -158,7 +158,7 @@ describe('uniswap_v2', () => {
             amountIn: fetchedAmountInBN,
             amountOutMin: amountOutMinBN,
             path: path,
-            to: toAddress
+            to: to
           }
         }
       })
@@ -185,8 +185,8 @@ describe('uniswap_v2', () => {
         amountIn,
         path,
         pair,
-        fromAddress,
-        toAddress,
+        from,
+        to,
         transaction: {
           to: exchange.contracts.router.address,
           api: exchange.contracts.router.api,
@@ -195,7 +195,7 @@ describe('uniswap_v2', () => {
             amountIn: amountInBN,
             amountOutMin: fetchedAmountOutBN,
             path: [tokenIn, tokenOut],
-            to: toAddress
+            to: to
           }
         }
       })
@@ -222,8 +222,8 @@ describe('uniswap_v2', () => {
         amountInMax,
         path,
         pair,
-        fromAddress,
-        toAddress,
+        from,
+        to,
         transaction: {
           to: exchange.contracts.router.address,
           api: exchange.contracts.router.api,
@@ -232,7 +232,7 @@ describe('uniswap_v2', () => {
             amountInMax: amountInMaxBN,
             amountOut: fetchedAmountOutBN,
             path: [tokenIn, tokenOut],
-            to: toAddress
+            to: to
           }
         }
       })
@@ -260,8 +260,8 @@ describe('uniswap_v2', () => {
         amountOut,
         path,
         pair,
-        fromAddress,
-        toAddress,
+        from,
+        to,
         transaction: {
           to: exchange.contracts.router.address,
           api: exchange.contracts.router.api,
@@ -270,7 +270,7 @@ describe('uniswap_v2', () => {
             amountInMax: amountInMaxBN,
             amountOut:  amountOutBN,
             path: [tokenIn, tokenOut],
-            to: toAddress
+            to: to
           }
         },
       })
@@ -298,8 +298,8 @@ describe('uniswap_v2', () => {
         amountOutMin,
         path,
         pair,
-        fromAddress,
-        toAddress,
+        from,
+        to,
         transaction: {
           to: exchange.contracts.router.address,
           api: exchange.contracts.router.api,
@@ -308,7 +308,7 @@ describe('uniswap_v2', () => {
             amountIn: amountInBN,
             amountOutMin: amountOutMinBN,
             path: path,
-            to: toAddress
+            to
           }
         },
       })
@@ -342,8 +342,8 @@ describe('uniswap_v2', () => {
         amountIn,
         amountOutMin,
         pair,
-        fromAddress,
-        toAddress,
+        from,
+        to,
         transaction: {
           to: exchange.contracts.router.address,
           api: exchange.contracts.router.api,
@@ -352,7 +352,7 @@ describe('uniswap_v2', () => {
             amountIn: amountInBN,
             amountOutMin: amountOutMinBN,
             path: path,
-            to: toAddress
+            to
           }
         }
       })
@@ -371,12 +371,12 @@ describe('uniswap_v2', () => {
       mockPair({ tokenIn, tokenOut: CONSTANTS[blockchain].WRAPPED, pair: CONSTANTS[blockchain].ZERO })
 
       let route = await exchange.route({
-        tokenIn,
-        tokenOut,
+        from,
+        to,
         amountIn,
         amountOutMin,
-        fromAddress,
-        toAddress
+        tokenIn,
+        tokenOut
       })
 
       expect(route).toEqual(undefined)
@@ -411,8 +411,8 @@ describe('uniswap_v2', () => {
         path,
         amountOut,
         pair,
-        fromAddress,
-        toAddress,
+        from,
+        to,
         transaction: {
           to: exchange.contracts.router.address,
           api: exchange.contracts.router.api,
@@ -420,7 +420,7 @@ describe('uniswap_v2', () => {
           params: {
             amountOut: amountOutBN,
             path: [CONSTANTS[blockchain].WRAPPED, tokenOut],
-            to: toAddress
+            to: to
           },
           value: fetchedAmountInBN
         }
@@ -448,8 +448,8 @@ describe('uniswap_v2', () => {
         amountIn,
         path,
         pair,
-        fromAddress,
-        toAddress,
+        from,
+        to,
         transaction: {
           to: exchange.contracts.router.address,
           api: exchange.contracts.router.api,
@@ -457,7 +457,7 @@ describe('uniswap_v2', () => {
           params: {
             amountOutMin: fetchedAmountOutBN,
             path: [CONSTANTS[blockchain].WRAPPED, tokenOut],
-            to: toAddress
+            to: to
           },
           value: amountInBN
         }
@@ -486,8 +486,8 @@ describe('uniswap_v2', () => {
         amountOut,
         path,
         pair,
-        fromAddress,
-        toAddress,
+        from,
+        to,
         transaction: {
           to: exchange.contracts.router.address,
           api: exchange.contracts.router.api,
@@ -495,7 +495,7 @@ describe('uniswap_v2', () => {
           params: {
             amountOut:  amountOutBN,
             path: [CONSTANTS[blockchain].WRAPPED, tokenOut],
-            to: toAddress
+            to: to
           },
           value: amountInMaxBN
         },
@@ -524,8 +524,8 @@ describe('uniswap_v2', () => {
         amountOutMin,
         path,
         pair,
-        fromAddress,
-        toAddress,
+        from,
+        to,
         transaction: {
           to: exchange.contracts.router.address,
           api: exchange.contracts.router.api,
@@ -533,7 +533,7 @@ describe('uniswap_v2', () => {
           params: {
             amountOutMin: amountOutMinBN,
             path: [CONSTANTS[blockchain].WRAPPED,tokenOut],
-            to: toAddress
+            to
           },
           value: amountInBN
         },
@@ -569,8 +569,8 @@ describe('uniswap_v2', () => {
         path,
         amountOut,
         pair,
-        fromAddress,
-        toAddress,
+        from,
+        to,
         transaction: {
           to: exchange.contracts.router.address,
           api: exchange.contracts.router.api,
@@ -579,7 +579,7 @@ describe('uniswap_v2', () => {
             amountInMax: fetchedAmountInBN,
             amountOut: amountOutBN,
             path: [tokenIn, CONSTANTS[blockchain].WRAPPED],
-            to: toAddress
+            to: to
           }
         }
       })
@@ -606,8 +606,8 @@ describe('uniswap_v2', () => {
         amountIn,
         path,
         pair,
-        fromAddress,
-        toAddress,
+        from,
+        to,
         transaction: {
           to: exchange.contracts.router.address,
           api: exchange.contracts.router.api,
@@ -616,7 +616,7 @@ describe('uniswap_v2', () => {
             amountIn: amountInBN,
             amountOutMin: fetchedAmountOutBN,
             path: [tokenIn, CONSTANTS[blockchain].WRAPPED],
-            to: toAddress
+            to: to
           }
         }
       })
@@ -644,8 +644,8 @@ describe('uniswap_v2', () => {
         amountOut,
         path,
         pair,
-        fromAddress,
-        toAddress,
+        from,
+        to,
         transaction: {
           to: exchange.contracts.router.address,
           api: exchange.contracts.router.api,
@@ -654,7 +654,7 @@ describe('uniswap_v2', () => {
             amountInMax: amountInMaxBN,
             amountOut:  amountOutBN,
             path: [tokenIn, CONSTANTS[blockchain].WRAPPED],
-            to: toAddress
+            to: to
           }
         },
       })
@@ -682,8 +682,8 @@ describe('uniswap_v2', () => {
         amountOutMin,
         path,
         pair,
-        fromAddress,
-        toAddress,
+        from,
+        to,
         transaction: {
           to: exchange.contracts.router.address,
           api: exchange.contracts.router.api,
@@ -692,7 +692,7 @@ describe('uniswap_v2', () => {
             amountIn: amountInBN,
             amountOutMin: amountOutMinBN,
             path: [tokenIn, CONSTANTS[blockchain].WRAPPED],
-            to: toAddress
+            to
           }
         },
       })
