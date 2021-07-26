@@ -2,7 +2,7 @@ import CONSTANTS from 'depay-blockchain-constants'
 import Route from '../../classes/Route'
 import { request } from 'depay-blockchain-client'
 import { Transaction } from 'depay-blockchain-transaction'
-
+import { UniswapV2Router02, UniswapV2Factory } from './apis'
 
 let getAmountsOut = ({ path, amountIn, tokenIn, tokenOut }) => {
   return new Promise((resolve) => {
@@ -119,7 +119,7 @@ let getTransaction = ({
 
   transaction.params = Object.assign({}, transaction.params, {
     path: fixUniswapPath(path),
-    to: to,
+    to: toAddress,
     deadline: Math.round(Date.now() / 1000) + 30 * 60, // 30 minutes
   })
 
@@ -130,8 +130,8 @@ let route = ({
   exchange,
   tokenIn,
   tokenOut,
-  from,
-  to,
+  fromAddress,
+  toAddress,
   amountIn = undefined,
   amountOut = undefined,
   amountInMax = undefined,
@@ -194,8 +194,8 @@ let route = ({
         amountInMax,
         amountOut,
         amountOutMin,
-        from,
-        to,
+        fromAddress,
+        toAddress,
         exchange,
         transaction,
       })

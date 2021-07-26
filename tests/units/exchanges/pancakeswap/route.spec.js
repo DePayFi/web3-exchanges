@@ -8,7 +8,7 @@ import { mockPair, mockAmounts } from '../../../mocks/uniswap_v2'
 import { resetCache } from 'depay-blockchain-client'
 import { testRouting } from '../../../helpers/testRouting'
 
-describe('pancakswap', () => {
+describe('pancakeswap', () => {
   
   beforeEach(resetMocks)
   beforeEach(resetCache)
@@ -17,12 +17,12 @@ describe('pancakswap', () => {
   let blockchain = 'bsc'
   let exchange = findByName('pancakeswap')
   let pair = '0x0eD7e52944161450477ee417DE9Cd3a859b14fD0'
-  let from = '0x5Af489c8786A018EC4814194dC8048be1007e390'
-  let to = '0x5Af489c8786A018EC4814194dC8048be1007e390'
+  let fromAddress = '0x5Af489c8786A018EC4814194dC8048be1007e390'
+  let toAddress = '0x5Af489c8786A018EC4814194dC8048be1007e390'
 
   describe('basic routing', ()=>{
 
-    it('does not try to find a route from and to the same token, as that doesnt make any sense.', async ()=> {
+    it('does not try to find a route from and to the same token, as that doesnt make any sense on pancakeswap', async ()=> {
 
       mock(blockchain)
 
@@ -32,18 +32,18 @@ describe('pancakswap', () => {
       mockDecimals({ address: '0xa0bed124a09ac2bd941b10349d8d224fe3c955eb', value: 18 })
 
       let route = await exchange.route({
-        from: from,
-        to: to,
-        amountOut,
-        amountInMax: amountIn,
         tokenIn: '0xa0bed124a09ac2bd941b10349d8d224fe3c955eb',
-        tokenOut: '0xa0bed124a09ac2bd941b10349d8d224fe3c955eb'
+        tokenOut: '0xa0bed124a09ac2bd941b10349d8d224fe3c955eb',
+        amountInMax: amountIn,
+        amountOut,
+        fromAddress,
+        toAddress,
       })
 
       expect(route).toEqual(undefined)
     })
 
-    it('returns undefined and does not fail or reject in case an error happens during the routing', async ()=> {
+    it('returns undefined and does not fail or reject in case an error happens during the routing on pancakeswap', async ()=> {
 
       mock(blockchain)
 
@@ -72,12 +72,12 @@ describe('pancakswap', () => {
       })
 
       let route = await exchange.route({
-        from: from,
-        to: to,
+        tokenIn: tokenIn,
+        tokenOut: tokenOut,
         amountOut,
         amountInMax: fetchedAmountIn,
-        tokenIn: tokenIn,
-        tokenOut: tokenOut
+        fromAddress,
+        toAddress
       })
 
       expect(route).toEqual(undefined)
@@ -112,8 +112,8 @@ describe('pancakswap', () => {
         path,
         amountOut,
         pair,
-        from,
-        to,
+        fromAddress,
+        toAddress,
         transaction: {
           to: exchange.contracts.router.address,
           api: exchange.contracts.router.api,
@@ -122,7 +122,7 @@ describe('pancakswap', () => {
             amountInMax: fetchedAmountInBN,
             amountOut: amountOutBN,
             path: path,
-            to: to
+            to: toAddress
           }
         }
       })
@@ -148,8 +148,8 @@ describe('pancakswap', () => {
         path,
         amountOutMin,
         pair,
-        from,
-        to,
+        fromAddress,
+        toAddress,
         transaction: {
           to: exchange.contracts.router.address,
           api: exchange.contracts.router.api,
@@ -158,7 +158,7 @@ describe('pancakswap', () => {
             amountIn: fetchedAmountInBN,
             amountOutMin: amountOutMinBN,
             path: path,
-            to: to
+            to: toAddress
           }
         }
       })
@@ -185,8 +185,8 @@ describe('pancakswap', () => {
         amountIn,
         path,
         pair,
-        from,
-        to,
+        fromAddress,
+        toAddress,
         transaction: {
           to: exchange.contracts.router.address,
           api: exchange.contracts.router.api,
@@ -195,7 +195,7 @@ describe('pancakswap', () => {
             amountIn: amountInBN,
             amountOutMin: fetchedAmountOutBN,
             path: [tokenIn, tokenOut],
-            to: to
+            to: toAddress
           }
         }
       })
@@ -222,8 +222,8 @@ describe('pancakswap', () => {
         amountInMax,
         path,
         pair,
-        from,
-        to,
+        fromAddress,
+        toAddress,
         transaction: {
           to: exchange.contracts.router.address,
           api: exchange.contracts.router.api,
@@ -232,7 +232,7 @@ describe('pancakswap', () => {
             amountInMax: amountInMaxBN,
             amountOut: fetchedAmountOutBN,
             path: [tokenIn, tokenOut],
-            to: to
+            to: toAddress
           }
         }
       })
@@ -260,8 +260,8 @@ describe('pancakswap', () => {
         amountOut,
         path,
         pair,
-        from,
-        to,
+        fromAddress,
+        toAddress,
         transaction: {
           to: exchange.contracts.router.address,
           api: exchange.contracts.router.api,
@@ -270,7 +270,7 @@ describe('pancakswap', () => {
             amountInMax: amountInMaxBN,
             amountOut:  amountOutBN,
             path: [tokenIn, tokenOut],
-            to: to
+            to: toAddress
           }
         },
       })
@@ -298,8 +298,8 @@ describe('pancakswap', () => {
         amountOutMin,
         path,
         pair,
-        from,
-        to,
+        fromAddress,
+        toAddress,
         transaction: {
           to: exchange.contracts.router.address,
           api: exchange.contracts.router.api,
@@ -308,7 +308,7 @@ describe('pancakswap', () => {
             amountIn: amountInBN,
             amountOutMin: amountOutMinBN,
             path: path,
-            to
+            to: toAddress
           }
         },
       })
@@ -342,8 +342,8 @@ describe('pancakswap', () => {
         amountIn,
         amountOutMin,
         pair,
-        from,
-        to,
+        fromAddress,
+        toAddress,
         transaction: {
           to: exchange.contracts.router.address,
           api: exchange.contracts.router.api,
@@ -352,7 +352,7 @@ describe('pancakswap', () => {
             amountIn: amountInBN,
             amountOutMin: amountOutMinBN,
             path: path,
-            to
+            to: toAddress
           }
         }
       })
@@ -371,12 +371,12 @@ describe('pancakswap', () => {
       mockPair({ tokenIn, tokenOut: CONSTANTS[blockchain].WRAPPED, pair: CONSTANTS[blockchain].ZERO })
 
       let route = await exchange.route({
-        from,
-        to,
+        tokenIn,
+        tokenOut,
         amountIn,
         amountOutMin,
-        tokenIn,
-        tokenOut
+        fromAddress,
+        toAddress
       })
 
       expect(route).toEqual(undefined)
@@ -411,8 +411,8 @@ describe('pancakswap', () => {
         path,
         amountOut,
         pair,
-        from,
-        to,
+        fromAddress,
+        toAddress,
         transaction: {
           to: exchange.contracts.router.address,
           api: exchange.contracts.router.api,
@@ -420,7 +420,7 @@ describe('pancakswap', () => {
           params: {
             amountOut: amountOutBN,
             path: [CONSTANTS[blockchain].WRAPPED, tokenOut],
-            to: to
+            to: toAddress
           },
           value: fetchedAmountInBN
         }
@@ -448,8 +448,8 @@ describe('pancakswap', () => {
         amountIn,
         path,
         pair,
-        from,
-        to,
+        fromAddress,
+        toAddress,
         transaction: {
           to: exchange.contracts.router.address,
           api: exchange.contracts.router.api,
@@ -457,7 +457,7 @@ describe('pancakswap', () => {
           params: {
             amountOutMin: fetchedAmountOutBN,
             path: [CONSTANTS[blockchain].WRAPPED, tokenOut],
-            to: to
+            to: toAddress
           },
           value: amountInBN
         }
@@ -486,8 +486,8 @@ describe('pancakswap', () => {
         amountOut,
         path,
         pair,
-        from,
-        to,
+        fromAddress,
+        toAddress,
         transaction: {
           to: exchange.contracts.router.address,
           api: exchange.contracts.router.api,
@@ -495,7 +495,7 @@ describe('pancakswap', () => {
           params: {
             amountOut:  amountOutBN,
             path: [CONSTANTS[blockchain].WRAPPED, tokenOut],
-            to: to
+            to: toAddress
           },
           value: amountInMaxBN
         },
@@ -524,8 +524,8 @@ describe('pancakswap', () => {
         amountOutMin,
         path,
         pair,
-        from,
-        to,
+        fromAddress,
+        toAddress,
         transaction: {
           to: exchange.contracts.router.address,
           api: exchange.contracts.router.api,
@@ -533,7 +533,7 @@ describe('pancakswap', () => {
           params: {
             amountOutMin: amountOutMinBN,
             path: [CONSTANTS[blockchain].WRAPPED,tokenOut],
-            to
+            to: toAddress
           },
           value: amountInBN
         },
@@ -569,8 +569,8 @@ describe('pancakswap', () => {
         path,
         amountOut,
         pair,
-        from,
-        to,
+        fromAddress,
+        toAddress,
         transaction: {
           to: exchange.contracts.router.address,
           api: exchange.contracts.router.api,
@@ -579,7 +579,7 @@ describe('pancakswap', () => {
             amountInMax: fetchedAmountInBN,
             amountOut: amountOutBN,
             path: [tokenIn, CONSTANTS[blockchain].WRAPPED],
-            to: to
+            to: toAddress
           }
         }
       })
@@ -606,8 +606,8 @@ describe('pancakswap', () => {
         amountIn,
         path,
         pair,
-        from,
-        to,
+        fromAddress,
+        toAddress,
         transaction: {
           to: exchange.contracts.router.address,
           api: exchange.contracts.router.api,
@@ -616,7 +616,7 @@ describe('pancakswap', () => {
             amountIn: amountInBN,
             amountOutMin: fetchedAmountOutBN,
             path: [tokenIn, CONSTANTS[blockchain].WRAPPED],
-            to: to
+            to: toAddress
           }
         }
       })
@@ -644,8 +644,8 @@ describe('pancakswap', () => {
         amountOut,
         path,
         pair,
-        from,
-        to,
+        fromAddress,
+        toAddress,
         transaction: {
           to: exchange.contracts.router.address,
           api: exchange.contracts.router.api,
@@ -654,7 +654,7 @@ describe('pancakswap', () => {
             amountInMax: amountInMaxBN,
             amountOut:  amountOutBN,
             path: [tokenIn, CONSTANTS[blockchain].WRAPPED],
-            to: to
+            to: toAddress
           }
         },
       })
@@ -682,8 +682,8 @@ describe('pancakswap', () => {
         amountOutMin,
         path,
         pair,
-        from,
-        to,
+        fromAddress,
+        toAddress,
         transaction: {
           to: exchange.contracts.router.address,
           api: exchange.contracts.router.api,
@@ -692,7 +692,7 @@ describe('pancakswap', () => {
             amountIn: amountInBN,
             amountOutMin: amountOutMinBN,
             path: [tokenIn, CONSTANTS[blockchain].WRAPPED],
-            to
+            to: toAddress
           }
         },
       })

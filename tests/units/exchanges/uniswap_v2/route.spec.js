@@ -22,7 +22,7 @@ describe('uniswap_v2', () => {
 
   describe('basic routing', ()=>{
 
-    it('does not try to find a route from and to the same token, as that doesnt make any sense.', async ()=> {
+    it('does not try to find a route from and to the same token, as that doesnt make any sense on uniswap_v2', async ()=> {
 
       mock(blockchain)
 
@@ -43,7 +43,7 @@ describe('uniswap_v2', () => {
       expect(route).toEqual(undefined)
     })
 
-    it('returns undefined and does not fail or reject in case an error happens during the routing', async ()=> {
+    it('returns undefined and does not fail or reject in case an error happens during the routing on uniswap_v2', async ()=> {
 
       mock(blockchain)
 
