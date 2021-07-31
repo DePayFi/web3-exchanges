@@ -16,6 +16,7 @@ let route = ({
 }) => {
   return Promise.all(
     all.map((exchange) => {
+      if(exchange.blockchain !== blockchain) { return null }
       return exchange.route({
         fromAddress,
         toAddress,

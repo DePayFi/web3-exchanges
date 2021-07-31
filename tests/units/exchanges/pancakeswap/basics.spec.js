@@ -1,4 +1,4 @@
-import { findByName } from 'dist/cjs/index.js'
+import { findByName } from 'src'
 import { PancakeRouter, PancakeFactory, PancakePair } from '../../../../src/exchanges/pancakeswap/apis'
 
 describe('pancakswap', () => {

@@ -1,4 +1,4 @@
-import { findByName } from 'dist/cjs/index.js';
+import { findByName } from 'src'
 
 describe('findByName', () => {
   

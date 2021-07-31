@@ -23,6 +23,8 @@ class Exchange {
     amountOutMax,
     amountInMin,
   }) {
+    if(tokenIn === tokenOut){ return Promise.resolve() }
+
     preflight({
       fromAddress,
       toAddress,

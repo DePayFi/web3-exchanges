@@ -1,10 +1,10 @@
-import { ERC20, UniswapV2Factory, UniswapV2Router02 } from '../apis'
+import UniswapV2 from 'src/exchanges/uniswap_v2/basics'
 import { ethers } from 'ethers'
-import { mock, resetMocks } from 'depay-web3mock'
-import { mockDecimals } from '../mocks/token'
-import { mockPair, mockAmounts } from '../mocks/uniswap_v2'
-import { resetCache } from 'depay-blockchain-client'
-import { route, findByName } from 'dist/cjs/index.js'
+import { mock, resetMocks } from 'depay-web3-mock'
+import { mockDecimals } from 'tests/mocks/token'
+import { mockPair as mockUniswapV2Pair, mockAmounts as mockUniwapV2Amount } from 'tests/mocks/uniswap_v2'
+import { resetCache } from 'depay-web3-client'
+import { route, findByName } from 'src'
 
 describe('route', ()=> {
 
@@ -26,10 +26,10 @@ describe('route', ()=> {
     let pair = '0xEF8cD6Cb5c841A4f02986e8A8ab3cC545d1B8B6d'
     let wallet = '0x5Af489c8786A018EC4814194dC8048be1007e390'
 
-    mockDecimals({ address: tokenIn, value: decimalsIn })
-    mockDecimals({ address: tokenOut, value: decimalsOut })
-    mockPair({ tokenIn, tokenOut, pair })
-    mockAmounts({ method: 'getAmountsOut', params: [amountInBN,path], amounts: [amountInBN, amountOutMinBN] })
+    mockDecimals({ blockchain: 'ethereum', address: tokenIn, value: decimalsIn })
+    mockDecimals({ blockchain: 'ethereum', address: tokenOut, value: decimalsOut })
+    mockUniswapV2Pair({ tokenIn, tokenOut, pair })
+    mockUniwapV2Amount({ method: 'getAmountsOut', params: [amountInBN,path], amounts: [amountInBN, amountOutMinBN] })
 
     let routes = await route({
       blockchain: 'ethereum',
@@ -37,18 +37,18 @@ describe('route', ()=> {
       tokenOut: tokenOut,
       amountIn: amountIn,
       amountOutMin: amountOutMin,
-      from: wallet,
-      to: wallet
+      fromAddress: wallet,
+      toAddress: wallet
     });
 
     expect(routes.length).toEqual(1)
-    expect(routes[0].from).toEqual(wallet)
-    expect(routes[0].to).toEqual(wallet)
+    expect(routes[0].fromAddress).toEqual(wallet)
+    expect(routes[0].toAddress).toEqual(wallet)
     expect(routes[0].exchange).toEqual(findByName('uniswap_v2'))
     expect(routes[0].path).toEqual(path)
     expect(routes[0].transaction.blockchain).toEqual('ethereum')
-    expect(routes[0].transaction.address).toEqual('0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D')
-    expect(routes[0].transaction.api).toEqual(UniswapV2Router02)
+    expect(routes[0].transaction.address).toEqual(UniswapV2.contracts.router.address)
+    expect(routes[0].transaction.api).toEqual(UniswapV2.contracts.router.api)
     expect(routes[0].transaction.method).toEqual('swapExactTokensForTokens')
     expect(routes[0].transaction.params.amountIn).toEqual(amountInBN)
     expect(routes[0].transaction.params.amountOutMin).toEqual(amountOutMinBN)
@@ -56,15 +56,6 @@ describe('route', ()=> {
     expect(routes[0].transaction.params.to).toEqual(wallet)
     expect(routes[0].transaction.params.deadline).toBeDefined()
 
-    // sorts the routes by most cost-effective routes first (once support for multiple exchanges)
-  });
-
-  it('returns routes for all exchanges on the bsc blockchain', async ()=>{
-
-    throw('TODO')
-
-    // sorts the routes by most cost-effective routes first
-  });
-
-  
-});
+    // TODO: sorts the routes by most cost-effective routes first (once support for multiple exchanges)
+  })
+})

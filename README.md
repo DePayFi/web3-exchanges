@@ -1,17 +1,17 @@
 ## Quickstart
 
 ```
-yarn add depay-decentralized-exchanges
+yarn add depay-web3-exchanges
 ```
 
 or 
 
 ```
-npm install --save depay-decentralized-exchanges
+npm install --save depay-web3-exchanges
 ```
 
 ```javascript
-import { all, findByName, route } from 'depay-decentralized-exchanges'
+import { all, findByName, route } from 'depay-web3-exchanges'
 
 all
 // [
@@ -112,7 +112,7 @@ A Route is provided by `route` in the following structure:
   amountInMax: BigNumber (e.g. '1000000000000000000')
   fromAddress: '0x5Af489c8786A018EC4814194dC8048be1007e390'
   toAddress: '0x5Af489c8786A018EC4814194dC8048be1007e390'
-  transaction: Transaction (from the depay-blockchain-transaction library)
+  transaction: Transaction (from the depay-web3-transaction library)
   exchange: Exchange (see Exchange data structure)
 }
 ```
@@ -122,7 +122,7 @@ A Route is provided by `route` in the following structure:
 ### all: Stores all information for all decentralized exchanges
 
 ```javascript
-import { all } from 'depay-decentralized-exchanges'
+import { all } from 'depay-web3-exchanges'
 
 all
 // [
@@ -136,7 +136,7 @@ all
 ### findByName: Get decentralized exchanged by name (name usually contains version, too)
 
 ```javascript
-import { findByName } from 'depay-decentralized-exchanges'
+import { findByName } from 'depay-web3-exchanges'
 
 findByName('uniswap_v3')
 // { name: 'uniswap_v3', label: 'Uniswap v3', logo: '...' }
@@ -148,7 +148,7 @@ findByName('pancakeswap_v2')
 ### route: Routes a Swap configuration and returns routes to perform the Swap
 
 ```javascript
-import { route } from 'depay-decentralized-exchanges'
+import { route } from 'depay-web3-exchanges'
 
 let routes = route {
   tokenIn: '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb',
@@ -165,7 +165,7 @@ await routes[0].transaction.submit()
 `route` can also be called on concrete exchanges: 
 
 ```javascript
-import { findByName } from 'depay-decentralized-exchanges'
+import { findByName } from 'depay-web3-exchanges'
 
 let exchange = findByName('uniswap_v2')
 

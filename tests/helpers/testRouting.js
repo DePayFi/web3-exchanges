@@ -1,6 +1,6 @@
 import { ethers } from 'ethers'
 import { mockDecimals } from '../mocks/token'
-import { mock, normalize } from 'depay-web3mock'
+import { mock, normalize } from 'depay-web3-mock'
 
 function expectRoute({
   blockchain,
@@ -62,8 +62,8 @@ async function testRouting({
   let amountOutBN = typeof amountOut === 'undefined' ? undefined : ethers.utils.parseUnits(amountOut.toString(), decimalsOut)
   let amountOutMinBN = typeof amountOutMin === 'undefined' ? undefined : ethers.utils.parseUnits(amountOutMin.toString(), decimalsOut)
 
-  mockDecimals({ address: tokenIn, value: decimalsIn })
-  mockDecimals({ address: tokenOut, value: decimalsOut })
+  mockDecimals({ blockchain, address: tokenIn, value: decimalsIn })
+  mockDecimals({ blockchain, address: tokenOut, value: decimalsOut })
 
   let route = await exchange.route({
     fromAddress,

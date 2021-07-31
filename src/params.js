@@ -1,4 +1,4 @@
-import { Token } from 'depay-blockchain-token'
+import { Token } from 'depay-web3-tokens'
 
 let getAmount = async ({ amount, blockchain, address }) => {
   return await Token.BigNumber({ amount, blockchain, address })

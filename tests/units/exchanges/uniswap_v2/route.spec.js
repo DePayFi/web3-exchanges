@@ -1,12 +1,12 @@
-import CONSTANTS from 'depay-blockchain-constants'
-import Route from '../../../../src/classes/Route'
+import Route from 'src/classes/Route'
+import { CONSTANTS } from 'depay-web3-constants'
 import { ethers } from 'ethers'
-import { findByName } from 'dist/cjs/index.js'
-import { mock, resetMocks, anything } from 'depay-web3mock'
-import { mockDecimals } from '../../../mocks/token'
-import { mockPair, mockAmounts } from '../../../mocks/uniswap_v2'
-import { resetCache } from 'depay-blockchain-client'
-import { testRouting } from '../../../helpers/testRouting'
+import { findByName } from 'src'
+import { mock, resetMocks, anything } from 'depay-web3-mock'
+import { mockDecimals } from 'tests/mocks/token'
+import { mockPair, mockAmounts } from 'tests/mocks/uniswap_v2'
+import { resetCache } from 'depay-web3-client'
+import { testRouting } from 'tests/helpers/testRouting'
 
 describe('uniswap_v2', () => {
   
@@ -29,7 +29,6 @@ describe('uniswap_v2', () => {
       let amountOut = 5
       let amountOutBN = ethers.utils.parseUnits(amountOut.toString(), 18)
       let amountIn = 5
-      mockDecimals({ address: '0xa0bed124a09ac2bd941b10349d8d224fe3c955eb', value: 18 })
 
       let route = await exchange.route({
         tokenIn: '0xa0bed124a09ac2bd941b10349d8d224fe3c955eb',
@@ -37,7 +36,7 @@ describe('uniswap_v2', () => {
         amountInMax: amountIn,
         amountOut,
         fromAddress,
-        toAddress,
+        toAddress
       })
 
       expect(route).toEqual(undefined)
@@ -57,8 +56,8 @@ describe('uniswap_v2', () => {
       let amountOutBN = ethers.utils.parseUnits(amountOut.toString(), decimalsOut)
       let path = [tokenIn, tokenOut]
 
-      mockDecimals({ address: tokenIn, value: decimalsIn })
-      mockDecimals({ address: tokenOut, value: decimalsOut })
+      mockDecimals({ blockchain, address: tokenIn, value: decimalsIn })
+      mockDecimals({ blockchain, address: tokenOut, value: decimalsOut })
       mockPair({ tokenIn, tokenOut, pair })
       mock({
         blockchain,
@@ -364,8 +363,8 @@ describe('uniswap_v2', () => {
       let amountIn = 32
       let amountInBN = ethers.utils.parseUnits(amountIn.toString(), decimalsIn)
 
-      mockDecimals({ address: tokenIn, value: decimalsIn })
-      mockDecimals({ address: tokenOut, value: decimalsOut })
+      mockDecimals({ blockchain, address: tokenIn, value: decimalsIn })
+      mockDecimals({ blockchain, address: tokenOut, value: decimalsOut })
       
       mockPair({ tokenIn, tokenOut, pair: CONSTANTS[blockchain].ZERO })
       mockPair({ tokenIn, tokenOut: CONSTANTS[blockchain].WRAPPED, pair: CONSTANTS[blockchain].ZERO })

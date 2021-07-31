@@ -1,4 +1,4 @@
-import { findByName } from 'dist/cjs/index.js'
+import { findByName } from 'src'
 import { UniswapV2Router02, UniswapV2Factory, UniswapV2Pair } from '../../../../src/exchanges/uniswap_v2/apis'
 
 describe('uniswap_v2', () => {
