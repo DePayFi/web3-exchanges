@@ -1,7 +1,6 @@
 import Route from '../../classes/Route'
-import UniswapV2 from './basics'
 import { findPath } from './route/path'
-import { getAmountsOut, getAmountsIn } from './route/amounts'
+import { getAmounts } from './route/amounts'
 import { getTransaction } from './route/transaction'
 
 let route = ({
@@ -18,37 +17,10 @@ let route = ({
   return new Promise(async (resolve)=> {
     let path = await findPath({ tokenIn, tokenOut })
     if (path === undefined || path.length == 0) { return resolve() }
-    let [amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput] = [amountIn, amountOut, amountInMax, amountOutMin]
+    let [amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput] = [amountIn, amountOut, amountInMax, amountOutMin];
     
-    if (amountOut) {
-      amountIn = await getAmountsIn({ path, amountOut, tokenIn, tokenOut })
-      if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
-        return resolve()
-      } else if (amountInMax === undefined) {
-        amountInMax = amountIn
-      }
-    } else if (amountIn) {
-      amountOut = await getAmountsOut({ path, amountIn, tokenIn, tokenOut })
-      if (amountOut == undefined || amountOutMin && amountOut.lt(amountOutMin)) {
-        return resolve()
-      } else if (amountOutMin === undefined) {
-        amountOutMin = amountOut
-      }
-    } else if(amountOutMin) {
-      amountIn = await getAmountsIn({ path, amountOut: amountOutMin, tokenIn, tokenOut })
-      if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
-        return resolve()
-      } else if (amountInMax === undefined) {
-        amountInMax = amountIn
-      }
-    } else if(amountInMax) {
-      amountOut = await getAmountsOut({ path, amountIn: amountInMax, tokenIn, tokenOut })
-      if (amountOut == undefined ||amountOutMin && amountOut.lt(amountOutMin)) {
-        return resolve()
-      } else if (amountOutMin === undefined) {
-        amountOutMin = amountOut
-      }
-    }
+    ({ amountIn, amountInMax, amountOut, amountOutMin } = await getAmounts({ path, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }))
+    if([amountIn, amountInMax, amountOut, amountOutMin].every((amount)=>{ return amount == undefined })) { return resolve() }
 
     let transaction = getTransaction({
       path,

@@ -1,15 +1,15 @@
-import UniswapV2 from '../basics'
+import PancakeSwap from '../basics'
 import { fixUniswapPath } from './path'
 import { request } from 'depay-web3-client'
 
 let getAmountsOut = ({ path, amountIn, tokenIn, tokenOut }) => {
   return new Promise((resolve) => {
     request({
-      blockchain: 'ethereum',
-      address: UniswapV2.contracts.router.address,
+      blockchain: 'bsc',
+      address: PancakeSwap.contracts.router.address,
       method: 'getAmountsOut'
     },{
-      api: UniswapV2.contracts.router.api,
+      api: PancakeSwap.contracts.router.api,
       params: {
         amountIn: amountIn,
         path: fixUniswapPath(path),
@@ -24,11 +24,11 @@ let getAmountsOut = ({ path, amountIn, tokenIn, tokenOut }) => {
 let getAmountsIn = ({ path, amountOut, tokenIn, tokenOut }) => {
   return new Promise((resolve) => {
     request({
-      blockchain: 'ethereum',
-      address: UniswapV2.contracts.router.address,
+      blockchain: 'bsc',
+      address: PancakeSwap.contracts.router.address,
       method: 'getAmountsIn'
     },{
-      api: UniswapV2.contracts.router.api,
+      api: PancakeSwap.contracts.router.api,
       params: {
         amountOut: amountOut,
         path: fixUniswapPath(path),
