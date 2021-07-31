@@ -1,3 +1,5 @@
+
+(function(l, r) { if (l.getElementById('livereloadscript')) return; r = l.createElement('script'); r.async = 1; r.src = '//' + (window.location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1'; r.id = 'livereloadscript'; l.getElementsByTagName('head')[0].appendChild(r) })(window.document);
 'use strict';
 
 Object.defineProperty(exports, '__esModule', { value: true });
@@ -36,7 +38,7 @@ let fixRouteParams = async ({
     amountInMax,
     amountOutMin,
   };
-
+  
   if (amountOut && typeof amountOut === 'number') {
     params.amountOut = await getAmount({ amount: amountOut, blockchain, address: tokenOut });
   }
@@ -52,7 +54,7 @@ let fixRouteParams = async ({
   if (amountInMax && typeof amountInMax === 'number') {
     params.amountInMax = await getAmount({ amount: amountInMax, blockchain, address: tokenIn });
   }
-
+  
   return params
 };
 

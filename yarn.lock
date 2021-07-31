@@ -2517,10 +2517,10 @@ depay-web3-mock@^5.0.0:
     depay-web3-blockchains "^2.1.0"
     ethers "^5.4.0"
 
-depay-web3-tokens@^2.0.1:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/depay-web3-tokens/-/depay-web3-tokens-2.0.1.tgz#de97e62f212c4d9e7969da6cac88b3371569601e"
-  integrity sha512-+wZQai9Q7WsQPgSwCfSo1hkZN5oH33Y/dPlgSXnQz2EDVjrwvzH+Gx5mQ67YJiCtbAINeBD8rNubZYHzZwFqyA==
+depay-web3-tokens@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/depay-web3-tokens/-/depay-web3-tokens-2.0.2.tgz#a007d7f1c19bb0e681784e2669b63df31f913bef"
+  integrity sha512-RUcWK8XHIJ9xI6llXRWWN4p3oeoi0uy8YvMpGN+OZkglUorYVuGBWJEHCK3LWgEvv3NEFvKtX3IkFyHiAOGebA==
   dependencies:
     depay-web3-client "^3.0.0"
     depay-web3-constants "^2.0.0"

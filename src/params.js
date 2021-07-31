@@ -27,7 +27,7 @@ let fixRouteParams = async ({
     amountInMax,
     amountOutMin,
   }
-
+  
   if (amountOut && typeof amountOut === 'number') {
     params.amountOut = await getAmount({ amount: amountOut, blockchain, address: tokenOut })
   }
@@ -43,7 +43,7 @@ let fixRouteParams = async ({
   if (amountInMax && typeof amountInMax === 'number') {
     params.amountInMax = await getAmount({ amount: amountInMax, blockchain, address: tokenIn })
   }
-
+  
   return params
 }
 
