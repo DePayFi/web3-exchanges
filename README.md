@@ -33,7 +33,7 @@ let routes = await route({
 }) // returns routes sorted by cost-effectiveness (best first)
 
 await routes[0].transaction.submit()
-// opens metamask to sign the swap
+// opens wallet to sign the swap
 ```
 
 ## Support

@@ -2496,6 +2496,14 @@ depay-web3-client@^3.0.0:
     depay-web3-wallets "^3.0.0"
     ethers "^5.3.1"
 
+depay-web3-client@^3.0.3:
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/depay-web3-client/-/depay-web3-client-3.0.3.tgz#121a72a6d635ce7f8f74af793cf8de7b38269d9a"
+  integrity sha512-VU/7A84WyfzAt6wv1nn0Hk+7ZTfBkVetKodXc4UCm3MpS5IrVlHiwbz5/EP2QIT4LERpy/HwoN7dV+FXtHJt+g==
+  dependencies:
+    depay-web3-wallets "^3.1.0"
+    ethers "^5.3.1"
+
 depay-web3-constants@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/depay-web3-constants/-/depay-web3-constants-2.0.0.tgz#4688642fa40a7287deeddb360d615ba63188f690"
@@ -2509,10 +2517,10 @@ depay-web3-mock@^5.0.0:
     depay-web3-blockchains "^2.1.0"
     ethers "^5.4.0"
 
-depay-web3-tokens@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/depay-web3-tokens/-/depay-web3-tokens-2.0.0.tgz#795c87aebc2c97c9c8a3a6d7e0f5fc5f8612eb44"
-  integrity sha512-2cfuXjSEFmPf+quxYcLEijB974b5u/G9nEP7+1m4YwQI3N4NOVBEMKj5sAcr1d0IilNSvCmP1c4tPLIjBzGOSQ==
+depay-web3-tokens@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/depay-web3-tokens/-/depay-web3-tokens-2.0.1.tgz#de97e62f212c4d9e7969da6cac88b3371569601e"
+  integrity sha512-+wZQai9Q7WsQPgSwCfSo1hkZN5oH33Y/dPlgSXnQz2EDVjrwvzH+Gx5mQ67YJiCtbAINeBD8rNubZYHzZwFqyA==
   dependencies:
     depay-web3-client "^3.0.0"
     depay-web3-constants "^2.0.0"
@@ -2531,6 +2539,13 @@ depay-web3-wallets@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/depay-web3-wallets/-/depay-web3-wallets-3.0.0.tgz#e3be5daecde67517e13890f2b18c4a89c4b68c4f"
   integrity sha512-1WC+iYNkaenGVW/LrzMm1A52sr9NVSds9qhrIqtyelaOWPUKCv93uDRMwCoY27XkRRktmQkMyCGDyvsNJ8rVhQ==
+  dependencies:
+    depay-web3-blockchains "^2.1.0"
+
+depay-web3-wallets@^3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/depay-web3-wallets/-/depay-web3-wallets-3.1.0.tgz#d4440ddb2230c248758d1f62f99e7a4db5f76d41"
+  integrity sha512-eSHI2NJD7eJQHaENjyrNBVntQokB6zbARJvcUBPqYb35yw9Jv/qk26OKvspSmEvS19zE8ge78frjAW27ntm24w==
   dependencies:
     depay-web3-blockchains "^2.1.0"
 
