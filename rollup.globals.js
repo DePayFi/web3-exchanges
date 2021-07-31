@@ -1,8 +1,6 @@
 export default {
-  'react': 'React',
-  'react-dom': 'ReactDOM',
-  'depay-blockchain-client': 'BlockchainClient',
-  'depay-blockchain-token': 'BlockchainToken',
-  'depay-blockchain-constants': 'BlockchainConstants',
-  'depay-blockchain-transaction': 'BlockchainTransaction'
+  'depay-web3-client': 'Web3Client',
+  'depay-web3-tokens': 'Web3Tokens',
+  'depay-web3-constants': 'Web3Constants',
+  'depay-web3-transaction': 'Web3Transaction'
 }

@@ -1,4 +1,4 @@
-import { all } from 'dist/cjs/index.js';
+import { all } from 'src'
 
 describe('all', () => {
   

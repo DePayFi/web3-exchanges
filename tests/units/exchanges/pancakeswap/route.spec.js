@@ -4,25 +4,25 @@ import { ethers } from 'ethers'
 import { findByName } from 'src'
 import { mock, resetMocks, anything } from 'depay-web3-mock'
 import { mockDecimals } from 'tests/mocks/token'
-import { mockPair, mockAmounts } from 'tests/mocks/uniswap_v2'
+import { mockPair, mockAmounts } from 'tests/mocks/pancakeswap'
 import { resetCache } from 'depay-web3-client'
 import { testRouting } from 'tests/helpers/testRouting'
 
-describe('uniswap_v2', () => {
+describe('pancakeswap', () => {
   
   beforeEach(resetMocks)
   beforeEach(resetCache)
   afterEach(resetMocks)
 
-  let blockchain = 'ethereum'
-  let exchange = findByName('uniswap_v2')
-  let pair = '0xEF8cD6Cb5c841A4f02986e8A8ab3cC545d1B8B6d'
+  let blockchain = 'bsc'
+  let exchange = findByName('pancakeswap')
+  let pair = '0x804678fa97d91B974ec2af3c843270886528a9E6'
   let fromAddress = '0x5Af489c8786A018EC4814194dC8048be1007e390'
   let toAddress = '0x5Af489c8786A018EC4814194dC8048be1007e390'
 
   describe('basic routing', ()=>{
 
-    it('does not try to find a route from and to the same token, as that doesnt make any sense on uniswap_v2', async ()=> {
+    it('does not try to find a route from and to the same token, as that doesnt make any sense on pancakeswap', async ()=> {
 
       mock(blockchain)
 
@@ -31,8 +31,8 @@ describe('uniswap_v2', () => {
       let amountIn = 5
 
       let route = await exchange.route({
-        tokenIn: '0xa0bed124a09ac2bd941b10349d8d224fe3c955eb',
-        tokenOut: '0xa0bed124a09ac2bd941b10349d8d224fe3c955eb',
+        tokenIn: '0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82',
+        tokenOut: '0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82',
         amountInMax: amountIn,
         amountOut,
         fromAddress,
@@ -42,16 +42,16 @@ describe('uniswap_v2', () => {
       expect(route).toEqual(undefined)
     })
 
-    it('returns undefined and does not fail or reject in case an error happens during the routing on uniswap_v2', async ()=> {
+    it('returns undefined and does not fail or reject in case an error happens during the routing on pancakeswap', async ()=> {
 
       mock(blockchain)
 
-      let tokenIn = '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb'
+      let tokenIn = '0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82'
       let decimalsIn = 18
       let fetchedAmountIn = 43
       let fetchedAmountInBN = ethers.utils.parseUnits(fetchedAmountIn.toString(), decimalsIn)
-      let tokenOut = '0xdAC17F958D2ee523a2206206994597C13D831ec7'
-      let decimalsOut = 6
+      let tokenOut = '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56'
+      let decimalsOut = 18
       let amountOut = 1
       let amountOutBN = ethers.utils.parseUnits(amountOut.toString(), decimalsOut)
       let path = [tokenIn, tokenOut]
@@ -85,13 +85,13 @@ describe('uniswap_v2', () => {
 
   describe('route token to token', ()=>{
 
-    let tokenIn = '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb'
+    let tokenIn = '0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82'
     let decimalsIn = 18
-    let tokenOut = '0xdAC17F958D2ee523a2206206994597C13D831ec7'
-    let decimalsOut = 6
+    let tokenOut = '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56'
+    let decimalsOut = 18
     let path = [tokenIn, tokenOut]
 
-    it('routes a token to token swap for given amountOut without given amountInMax on uniswap_v2', async ()=> {
+    it('routes a token to token swap for given amountOut without given amountInMax on pancakeswap', async ()=> {
 
       let amountOut = 1
       let amountOutBN = ethers.utils.parseUnits(amountOut.toString(), decimalsOut)
@@ -127,7 +127,7 @@ describe('uniswap_v2', () => {
       })
     });
 
-    it('routes a token to token swap for given amountOutMin without given amountIn on uniswap_v2', async ()=> {
+    it('routes a token to token swap for given amountOutMin without given amountIn on pancakeswap', async ()=> {
 
       let amountOutMin = 1
       let amountOutMinBN = ethers.utils.parseUnits(amountOutMin.toString(), decimalsOut)
@@ -163,7 +163,7 @@ describe('uniswap_v2', () => {
       })
     });
 
-    it('routes a token to token swap for given amountIn without given amountOutMin on uniswap_v2', async ()=> {
+    it('routes a token to token swap for given amountIn without given amountOutMin on pancakeswap', async ()=> {
 
       let amountIn = 1
       let amountInBN = ethers.utils.parseUnits(amountIn.toString(), decimalsIn)
@@ -200,7 +200,7 @@ describe('uniswap_v2', () => {
       })
     });
 
-    it('routes a token to token swap for given amountInMax without given amountOut on uniswap_v2', async ()=> {
+    it('routes a token to token swap for given amountInMax without given amountOut on pancakeswap', async ()=> {
 
       let amountInMax = 1
       let amountInMaxBN = ethers.utils.parseUnits(amountInMax.toString(), decimalsIn)
@@ -237,7 +237,7 @@ describe('uniswap_v2', () => {
       })
     });
 
-    it('routes a token to token swap for given amountOut and amountInMax on uniswap_v2', async ()=> {
+    it('routes a token to token swap for given amountOut and amountInMax on pancakeswap', async ()=> {
 
       let amountOut = 1
       let amountOutBN = ethers.utils.parseUnits(amountOut.toString(), decimalsOut)
@@ -275,7 +275,7 @@ describe('uniswap_v2', () => {
       })
     });
 
-    it('routes a token to token swap for given amountIn and amountOutMin on uniswap_v2', async ()=> {
+    it('routes a token to token swap for given amountIn and amountOutMin on pancakeswap', async ()=> {
 
       let amountOutMin = 1
       let amountOutMinBN = ethers.utils.parseUnits(amountOutMin.toString(), decimalsOut)
@@ -313,7 +313,7 @@ describe('uniswap_v2', () => {
       })
     });
 
-    it('routes a token to token swap on uniswap_v2 also if the routing path is via another token A->B->C', async ()=> {
+    it('routes a token to token swap on pancakeswap also if the routing path is via another token A->B->C', async ()=> {
       let amountOutMin = 1
       let amountOutMinBN = ethers.utils.parseUnits(amountOutMin.toString(), decimalsOut)
       let amountIn = 32
@@ -386,11 +386,11 @@ describe('uniswap_v2', () => {
 
     let tokenIn = CONSTANTS[blockchain].NATIVE
     let decimalsIn = CONSTANTS[blockchain].DECIMALS
-    let tokenOut = '0xdAC17F958D2ee523a2206206994597C13D831ec7'
-    let decimalsOut = 6
+    let tokenOut = '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56'
+    let decimalsOut = 18
     let path = [tokenIn, tokenOut]
 
-    it('routes a ETH to token swap for given amountOut without given amountInMax on uniswap_v2', async ()=> {
+    it('routes a ETH to token swap for given amountOut without given amountInMax on pancakeswap', async ()=> {
 
       let amountOut = 1
       let amountOutBN = ethers.utils.parseUnits(amountOut.toString(), decimalsOut)
@@ -426,7 +426,7 @@ describe('uniswap_v2', () => {
       })
     });
 
-    it('routes a ETH to token swap for given amountIn without given amountOutMin on uniswap_v2', async ()=> {
+    it('routes a ETH to token swap for given amountIn without given amountOutMin on pancakeswap', async ()=> {
 
       let amountIn = 1
       let amountInBN = ethers.utils.parseUnits(amountIn.toString(), decimalsIn)
@@ -463,7 +463,7 @@ describe('uniswap_v2', () => {
       })
     });
 
-    it('routes a ETH to token swap for given amountOut and amountInMax on uniswap_v2', async ()=> {
+    it('routes a ETH to token swap for given amountOut and amountInMax on pancakeswap', async ()=> {
 
       let amountOut = 1
       let amountOutBN = ethers.utils.parseUnits(amountOut.toString(), decimalsOut)
@@ -501,7 +501,7 @@ describe('uniswap_v2', () => {
       })
     });
 
-    it('routes a ETH to token swap for given amountIn and amountOutMin on uniswap_v2', async ()=> {
+    it('routes a ETH to token swap for given amountIn and amountOutMin on pancakeswap', async ()=> {
 
       let amountOutMin = 1
       let amountOutMinBN = ethers.utils.parseUnits(amountOutMin.toString(), decimalsOut)
@@ -542,13 +542,13 @@ describe('uniswap_v2', () => {
 
   describe('route token to ETH', ()=>{
 
-    let tokenIn = '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb'
+    let tokenIn = '0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82'
     let decimalsIn = 18
     let tokenOut = CONSTANTS[blockchain].NATIVE
     let decimalsOut = CONSTANTS[blockchain].DECIMALS
     let path = [tokenIn, tokenOut]
 
-    it('routes a token to ETH swap for given amountOut without given amountInMax on uniswap_v2', async ()=> {
+    it('routes a token to ETH swap for given amountOut without given amountInMax on pancakeswap', async ()=> {
 
       let amountOut = 1
       let amountOutBN = ethers.utils.parseUnits(amountOut.toString(), decimalsOut)
@@ -584,7 +584,7 @@ describe('uniswap_v2', () => {
       })
     });
 
-    it('routes a token to ETH swap for given amountIn without given amountOutMin on uniswap_v2', async ()=> {
+    it('routes a token to ETH swap for given amountIn without given amountOutMin on pancakeswap', async ()=> {
 
       let amountIn = 1
       let amountInBN = ethers.utils.parseUnits(amountIn.toString(), decimalsIn)
@@ -621,7 +621,7 @@ describe('uniswap_v2', () => {
       })
     });
 
-    it('routes a token to ETH swap for given amountOut and amountInMax on uniswap_v2', async ()=> {
+    it('routes a token to ETH swap for given amountOut and amountInMax on pancakeswap', async ()=> {
 
       let amountOut = 1
       let amountOutBN = ethers.utils.parseUnits(amountOut.toString(), decimalsOut)
@@ -659,7 +659,7 @@ describe('uniswap_v2', () => {
       })
     });
 
-    it('routes a token to ETH swap for given amountIn and amountOutMin on uniswap_v2', async ()=> {
+    it('routes a token to ETH swap for given amountIn and amountOutMin on pancakeswap', async ()=> {
 
       let amountOutMin = 1
       let amountOutMinBN = ethers.utils.parseUnits(amountOutMin.toString(), decimalsOut)

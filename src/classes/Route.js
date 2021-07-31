@@ -7,8 +7,8 @@ class Route {
     amountInMax,
     amountOut,
     amountOutMin,
-    from,
-    to,
+    fromAddress,
+    toAddress,
     transaction,
     exchange,
   }) {
@@ -19,8 +19,8 @@ class Route {
     this.amountOutMin = amountOutMin
     this.amountOut = amountOut
     this.amountInMax = amountInMax
-    this.from = from
-    this.to = to
+    this.fromAddress = fromAddress
+    this.toAddress = toAddress
     this.transaction = transaction
     this.exchange = exchange
   }

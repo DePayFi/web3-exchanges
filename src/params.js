@@ -1,4 +1,4 @@
-import { Token } from 'depay-blockchain-token'
+import { Token } from 'depay-web3-tokens'
 
 let getAmount = async ({ amount, blockchain, address }) => {
   return await Token.BigNumber({ amount, blockchain, address })
@@ -7,8 +7,8 @@ let getAmount = async ({ amount, blockchain, address }) => {
 let fixRouteParams = async ({
   blockchain,
   exchange,
-  from,
-  to,
+  fromAddress,
+  toAddress,
   tokenIn,
   tokenOut,
   amountIn,
@@ -18,8 +18,8 @@ let fixRouteParams = async ({
 }) => {
   let params = {
     exchange,
-    from,
-    to,
+    fromAddress,
+    toAddress,
     tokenIn,
     tokenOut,
     amountIn,
@@ -48,8 +48,8 @@ let fixRouteParams = async ({
 }
 
 let preflight = ({
-  from,
-  to,
+  fromAddress,
+  toAddress,
   tokenIn,
   tokenOut,
   amountIn,

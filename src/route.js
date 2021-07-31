@@ -2,8 +2,9 @@ import all from './all'
 import { fixRouteParams, preflight } from './params'
 
 let route = ({
-  from,
-  to,
+  blockchain,
+  fromAddress,
+  toAddress,
   tokenIn,
   tokenOut,
   amountIn,
@@ -15,9 +16,10 @@ let route = ({
 }) => {
   return Promise.all(
     all.map((exchange) => {
+      if(exchange.blockchain !== blockchain) { return null }
       return exchange.route({
-        from,
-        to,
+        fromAddress,
+        toAddress,
         tokenIn,
         tokenOut,
         amountIn,

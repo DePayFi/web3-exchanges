@@ -1,13 +1,25 @@
-import { ERC20 } from '../apis'
-import { mock } from 'depay-web3mock'
+import { Token } from 'depay-web3-tokens'
+import { mock } from 'depay-web3-mock'
 
-function mockDecimals({ address, value }) {
+function getStandard(blockchain) {
+  switch (blockchain) {
+    case 'ethereum':
+      return Token.ethereum.ERC20
+    break;
+    case 'bsc':
+      return Token.bsc.BEP20
+    break;
+  }
+}
+
+
+function mockDecimals({ blockchain, address, value }) {
 
   return mock({
-    blockchain: 'ethereum',
+    blockchain,
     call: {
       to: address,
-      api: ERC20,
+      api: getStandard(blockchain),
       method: 'decimals',
       return: value
     }
