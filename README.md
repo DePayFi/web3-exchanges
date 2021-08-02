@@ -53,7 +53,7 @@ Soon:
 - [SushiSwap](https://sushi.com)
 - [Curve](https://curve.fi)
 
-## Data Structure
+## Data Structures
 
 ### Exchange
 
