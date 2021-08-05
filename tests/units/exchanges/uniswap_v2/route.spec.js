@@ -388,7 +388,7 @@ describe('uniswap_v2', () => {
     let decimalsIn = CONSTANTS[blockchain].DECIMALS
     let tokenOut = '0xdAC17F958D2ee523a2206206994597C13D831ec7'
     let decimalsOut = 6
-    let path = [tokenIn, tokenOut]
+    let path = [tokenIn, CONSTANTS[blockchain].WRAPPED, tokenOut]
 
     it('routes a ETH to token swap for given amountOut without given amountInMax on uniswap_v2', async ()=> {
 
@@ -432,7 +432,7 @@ describe('uniswap_v2', () => {
       let amountInBN = ethers.utils.parseUnits(amountIn.toString(), decimalsIn)
       let fetchedAmountOut = 43
       let fetchedAmountOutBN = ethers.utils.parseUnits(fetchedAmountOut.toString(), decimalsOut)
-      let path = [tokenIn, tokenOut]
+      let path = [tokenIn, CONSTANTS[blockchain].WRAPPED, tokenOut]
 
       mockPair({ tokenIn: CONSTANTS[blockchain].WRAPPED, tokenOut, pair })
       mockAmounts({ method: 'getAmountsOut', params: [amountInBN,[CONSTANTS[blockchain].WRAPPED,tokenOut]], amounts: [amountInBN, fetchedAmountOutBN] })
@@ -469,7 +469,7 @@ describe('uniswap_v2', () => {
       let amountOutBN = ethers.utils.parseUnits(amountOut.toString(), decimalsOut)
       let amountInMax = 32
       let amountInMaxBN = ethers.utils.parseUnits(amountInMax.toString(), decimalsIn)
-      let path = [tokenIn, tokenOut]
+      let path = [tokenIn, CONSTANTS[blockchain].WRAPPED, tokenOut]
 
       mockPair({ tokenIn: CONSTANTS[blockchain].WRAPPED, tokenOut, pair })
       mockAmounts({ method: 'getAmountsIn', params: [amountOutBN,[CONSTANTS[blockchain].WRAPPED,tokenOut]], amounts: [amountInMaxBN, amountOutBN] })
@@ -507,7 +507,7 @@ describe('uniswap_v2', () => {
       let amountOutMinBN = ethers.utils.parseUnits(amountOutMin.toString(), decimalsOut)
       let amountIn = 32
       let amountInBN = ethers.utils.parseUnits(amountIn.toString(), decimalsIn)
-      let path = [tokenIn, tokenOut]
+      let path = [tokenIn, CONSTANTS[blockchain].WRAPPED, tokenOut]
 
       mockPair({ tokenIn: CONSTANTS[blockchain].WRAPPED, tokenOut, pair })
       mockAmounts({ method: 'getAmountsOut', params: [amountInBN,[CONSTANTS[blockchain].WRAPPED,tokenOut]], amounts: [amountInBN, amountOutMinBN] })

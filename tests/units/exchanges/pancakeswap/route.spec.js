@@ -382,15 +382,15 @@ describe('pancakeswap', () => {
     })
   })
 
-  describe('route ETH to token', ()=>{
+  describe('route BNB to token', ()=>{
 
     let tokenIn = CONSTANTS[blockchain].NATIVE
     let decimalsIn = CONSTANTS[blockchain].DECIMALS
     let tokenOut = '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56'
     let decimalsOut = 18
-    let path = [tokenIn, tokenOut]
+    let path = [tokenIn, CONSTANTS[blockchain].WRAPPED, tokenOut]
 
-    it('routes a ETH to token swap for given amountOut without given amountInMax on pancakeswap', async ()=> {
+    it('routes a BNB to token swap for given amountOut without given amountInMax on pancakeswap', async ()=> {
 
       let amountOut = 1
       let amountOutBN = ethers.utils.parseUnits(amountOut.toString(), decimalsOut)
@@ -426,13 +426,13 @@ describe('pancakeswap', () => {
       })
     });
 
-    it('routes a ETH to token swap for given amountIn without given amountOutMin on pancakeswap', async ()=> {
+    it('routes a BNB to token swap for given amountIn without given amountOutMin on pancakeswap', async ()=> {
 
       let amountIn = 1
       let amountInBN = ethers.utils.parseUnits(amountIn.toString(), decimalsIn)
       let fetchedAmountOut = 43
       let fetchedAmountOutBN = ethers.utils.parseUnits(fetchedAmountOut.toString(), decimalsOut)
-      let path = [tokenIn, tokenOut]
+      let path = [tokenIn, CONSTANTS[blockchain].WRAPPED, tokenOut]
 
       mockPair({ tokenIn: CONSTANTS[blockchain].WRAPPED, tokenOut, pair })
       mockAmounts({ method: 'getAmountsOut', params: [amountInBN,[CONSTANTS[blockchain].WRAPPED,tokenOut]], amounts: [amountInBN, fetchedAmountOutBN] })
@@ -463,13 +463,13 @@ describe('pancakeswap', () => {
       })
     });
 
-    it('routes a ETH to token swap for given amountOut and amountInMax on pancakeswap', async ()=> {
+    it('routes a BNB to token swap for given amountOut and amountInMax on pancakeswap', async ()=> {
 
       let amountOut = 1
       let amountOutBN = ethers.utils.parseUnits(amountOut.toString(), decimalsOut)
       let amountInMax = 32
       let amountInMaxBN = ethers.utils.parseUnits(amountInMax.toString(), decimalsIn)
-      let path = [tokenIn, tokenOut]
+      let path = [tokenIn, CONSTANTS[blockchain].WRAPPED, tokenOut]
 
       mockPair({ tokenIn: CONSTANTS[blockchain].WRAPPED, tokenOut, pair })
       mockAmounts({ method: 'getAmountsIn', params: [amountOutBN,[CONSTANTS[blockchain].WRAPPED,tokenOut]], amounts: [amountInMaxBN, amountOutBN] })
@@ -501,13 +501,13 @@ describe('pancakeswap', () => {
       })
     });
 
-    it('routes a ETH to token swap for given amountIn and amountOutMin on pancakeswap', async ()=> {
+    it('routes a BNB to token swap for given amountIn and amountOutMin on pancakeswap', async ()=> {
 
       let amountOutMin = 1
       let amountOutMinBN = ethers.utils.parseUnits(amountOutMin.toString(), decimalsOut)
       let amountIn = 32
       let amountInBN = ethers.utils.parseUnits(amountIn.toString(), decimalsIn)
-      let path = [tokenIn, tokenOut]
+      let path = [tokenIn, CONSTANTS[blockchain].WRAPPED, tokenOut]
 
       mockPair({ tokenIn: CONSTANTS[blockchain].WRAPPED, tokenOut, pair })
       mockAmounts({ method: 'getAmountsOut', params: [amountInBN,[CONSTANTS[blockchain].WRAPPED,tokenOut]], amounts: [amountInBN, amountOutMinBN] })

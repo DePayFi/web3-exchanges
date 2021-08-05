@@ -207,19 +207,28 @@
     }
   }
 
+  function _optionalChain(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
   // Uniswap replaces 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE with
-  // the wrapped token 0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2
-  // we keep 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE internally
+  // the wrapped token 0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2 and implies wrapping.
+  //
+  // We keep 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE internally
   // to be able to differentiate between ETH<>Token and WETH<>Token swaps
   // as they are not the same!
+  //
   let fixUniswapPath = (path) => {
-    return path.map((token) => {
-      if (token === depayWeb3Constants.CONSTANTS.bsc.NATIVE) {
+    let fixedPath = path.map((token, index) => {
+      if (token === depayWeb3Constants.CONSTANTS.bsc.NATIVE && path[index+1] != depayWeb3Constants.CONSTANTS.bsc.WRAPPED) {
         return depayWeb3Constants.CONSTANTS.bsc.WRAPPED
       } else {
         return token
       }
-    })
+    });
+
+    if(fixedPath[0] == depayWeb3Constants.CONSTANTS.bsc.NATIVE && fixedPath[1] == depayWeb3Constants.CONSTANTS.bsc.WRAPPED) {
+      fixedPath.splice(0, 1);
+    }
+
+    return fixedPath
   };
 
   let pathExists = async (path) => {
@@ -236,16 +245,26 @@
   };
 
   let findPath = async ({ tokenIn, tokenOut }) => {
+    let path;
+    
     if (await pathExists([tokenIn, tokenOut])) {
       // direct path
-      return [tokenIn, tokenOut]
+      path = [tokenIn, tokenOut];
     } else if (
       (await pathExists([tokenIn, depayWeb3Constants.CONSTANTS.bsc.WRAPPED])) &&
       (await pathExists([tokenOut, depayWeb3Constants.CONSTANTS.bsc.WRAPPED]))
     ) {
       // path via WRAPPED
-      return [tokenIn, depayWeb3Constants.CONSTANTS.bsc.WRAPPED, tokenOut]
+      path = [tokenIn, depayWeb3Constants.CONSTANTS.bsc.WRAPPED, tokenOut];
     }
+
+    // Add WRAPPED to route path if things start with NATIVE
+    // because that actually reflects how things are routed in reality:
+    if(_optionalChain([path, 'optionalAccess', _ => _.length]) && path[0] == depayWeb3Constants.CONSTANTS.bsc.NATIVE) {
+      path.splice(1, 0, depayWeb3Constants.CONSTANTS.bsc.WRAPPED);
+    }
+
+    return path
   };
 
   let getAmountsOut = ({ path, amountIn, tokenIn, tokenOut }) => {
@@ -474,19 +493,28 @@
     }
   };
 
+  function _optionalChain$1(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
   // Uniswap replaces 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE with
-  // the wrapped token 0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2
-  // we keep 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE internally
+  // the wrapped token 0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2 and implies wrapping.
+  //
+  // We keep 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE internally
   // to be able to differentiate between ETH<>Token and WETH<>Token swaps
   // as they are not the same!
+  //
   let fixUniswapPath$1 = (path) => {
-    return path.map((token) => {
-      if (token === depayWeb3Constants.CONSTANTS.ethereum.NATIVE) {
+    let fixedPath = path.map((token, index) => {
+      if (token === depayWeb3Constants.CONSTANTS.ethereum.NATIVE && path[index+1] != depayWeb3Constants.CONSTANTS.ethereum.WRAPPED) {
         return depayWeb3Constants.CONSTANTS.ethereum.WRAPPED
       } else {
         return token
       }
-    })
+    });
+
+    if(fixedPath[0] == depayWeb3Constants.CONSTANTS.ethereum.NATIVE && fixedPath[1] == depayWeb3Constants.CONSTANTS.ethereum.WRAPPED) {
+      fixedPath.splice(0, 1);
+    }
+
+    return fixedPath
   };
 
   let pathExists$1 = async (path) => {
@@ -503,16 +531,26 @@
   };
 
   let findPath$1 = async ({ tokenIn, tokenOut }) => {
+    let path;
+
     if (await pathExists$1([tokenIn, tokenOut])) {
       // direct path
-      return [tokenIn, tokenOut]
+      path = [tokenIn, tokenOut];
     } else if (
       (await pathExists$1([tokenIn, depayWeb3Constants.CONSTANTS.ethereum.WRAPPED])) &&
       (await pathExists$1([tokenOut, depayWeb3Constants.CONSTANTS.ethereum.WRAPPED]))
     ) {
       // path via WRAPPED
-      return [tokenIn, depayWeb3Constants.CONSTANTS.ethereum.WRAPPED, tokenOut]
+      path = [tokenIn, depayWeb3Constants.CONSTANTS.ethereum.WRAPPED, tokenOut];
     }
+
+    // Add WRAPPED to route path if things start with NATIVE
+    // because that actually reflects how things are routed in reality:
+    if(_optionalChain$1([path, 'optionalAccess', _ => _.length]) && path[0] == depayWeb3Constants.CONSTANTS.ethereum.NATIVE) {
+      path.splice(1, 0, depayWeb3Constants.CONSTANTS.ethereum.WRAPPED);
+    }
+    
+    return path
   };
 
   let getAmountsOut$1 = ({ path, amountIn, tokenIn, tokenOut }) => {
