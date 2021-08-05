@@ -182,6 +182,13 @@ let route = await exchange.route({
 await route.transaction.submit()
 ```
 
+## Domain Knowledge
+
+### Wrapped native tokens (like WETH)
+
+In case you select to swap the wrapped native token to the native token or vise versa,
+this library will actually suggest to wrap/unwrap instead of going through an exchange.
+
 ## Development
 
 ### Get started

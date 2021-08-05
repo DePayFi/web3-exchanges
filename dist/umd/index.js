@@ -114,7 +114,7 @@
       amountInMin,
     }) {
       if(tokenIn === tokenOut){ return Promise.resolve() }
-
+      
       preflight({
         fromAddress,
         toAddress,
@@ -237,7 +237,6 @@
   };
 
   let pathExists = async (path) => {
-    if(path == [depayWeb3Constants.CONSTANTS.bsc.WRAPPED]) { return Promise.resolve(false) }
     let pair = await depayWeb3Client.request({
       blockchain: 'bsc',
       address: basics.contracts.factory.address,
@@ -251,6 +250,11 @@
   };
 
   let findPath = async ({ tokenIn, tokenOut }) => {
+    if(
+      [tokenIn, tokenOut].includes(depayWeb3Constants.CONSTANTS.bsc.NATIVE) &&
+      [tokenIn, tokenOut].includes(depayWeb3Constants.CONSTANTS.bsc.WRAPPED)
+    ) { return }
+
     let path;
     
     if (await pathExists([tokenIn, tokenOut])) {
@@ -531,7 +535,6 @@
   };
 
   let pathExists$1 = async (path) => {
-    if(path == [depayWeb3Constants.CONSTANTS.ethereum.WRAPPED]) { return Promise.resolve(false) }
     let pair = await depayWeb3Client.request({
       blockchain: 'ethereum',
       address: basics$1.contracts.factory.address,
@@ -545,6 +548,11 @@
   };
 
   let findPath$1 = async ({ tokenIn, tokenOut }) => {
+    if(
+      [tokenIn, tokenOut].includes(depayWeb3Constants.CONSTANTS.ethereum.NATIVE) &&
+      [tokenIn, tokenOut].includes(depayWeb3Constants.CONSTANTS.ethereum.WRAPPED)
+    ) { return }
+
     let path;
 
     if (await pathExists$1([tokenIn, tokenOut])) {
@@ -768,7 +776,191 @@
     route: route$4,
   });
 
-  let all = [curve, pancakeswap, sushiswap, uniswap_v2, uniswap_v3];
+  let WETH = [{"constant":true,"inputs":[],"name":"name","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"guy","type":"address"},{"name":"wad","type":"uint256"}],"name":"approve","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"totalSupply","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"src","type":"address"},{"name":"dst","type":"address"},{"name":"wad","type":"uint256"}],"name":"transferFrom","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"wad","type":"uint256"}],"name":"withdraw","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"decimals","outputs":[{"name":"","type":"uint8"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"balanceOf","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"symbol","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"dst","type":"address"},{"name":"wad","type":"uint256"}],"name":"transfer","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[],"name":"deposit","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"},{"name":"","type":"address"}],"name":"allowance","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"payable":true,"stateMutability":"payable","type":"fallback"},{"anonymous":false,"inputs":[{"indexed":true,"name":"src","type":"address"},{"indexed":true,"name":"guy","type":"address"},{"indexed":false,"name":"wad","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"src","type":"address"},{"indexed":true,"name":"dst","type":"address"},{"indexed":false,"name":"wad","type":"uint256"}],"name":"Transfer","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"dst","type":"address"},{"indexed":false,"name":"wad","type":"uint256"}],"name":"Deposit","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"src","type":"address"},{"indexed":false,"name":"wad","type":"uint256"}],"name":"Withdrawal","type":"event"}];
+
+  var basics$2 = {
+    blockchain: 'ethereum',
+    name: 'weth',
+    alternativeNames: [],
+    label: 'Wrapped Ether',
+    logo: 'data:image/png;base64,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',
+    contracts: {
+      wrapper: {
+        address: depayWeb3Constants.CONSTANTS.ethereum.WRAPPED,
+        api: WETH
+      },
+    }
+  };
+
+  let route$5 = ({
+    exchange,
+    tokenIn,
+    tokenOut,
+    fromAddress,
+    toAddress,
+    amountIn = undefined,
+    amountOut = undefined,
+    amountInMax = undefined,
+    amountOutMin = undefined,
+  }) => {
+    return new Promise(async (resolve)=> {
+
+      if(
+        ![depayWeb3Constants.CONSTANTS.ethereum.NATIVE, depayWeb3Constants.CONSTANTS.ethereum.WRAPPED].includes(tokenIn) &&
+        ![depayWeb3Constants.CONSTANTS.ethereum.NATIVE, depayWeb3Constants.CONSTANTS.ethereum.WRAPPED].includes(tokenOut)
+      ) { return resolve() }
+
+      amountIn = amountInMax = amountOut = amountOutMin = [amountIn, amountInMax, amountOut, amountOutMin].filter(Boolean)[0];
+
+      let route;
+
+      if(tokenIn === depayWeb3Constants.CONSTANTS.ethereum.NATIVE && tokenOut === depayWeb3Constants.CONSTANTS.ethereum.WRAPPED) {
+        route = new Route({
+          tokenIn,
+          tokenOut,
+          path: [depayWeb3Constants.CONSTANTS.ethereum.NATIVE, depayWeb3Constants.CONSTANTS.ethereum.WRAPPED],
+          amountIn,
+          amountInMax,
+          amountOut,
+          amountOutMin,
+          fromAddress,
+          toAddress,
+          exchange,
+          transaction: new depayWeb3Transaction.Transaction({
+            blockchain: 'ethereum',
+            address: depayWeb3Constants.CONSTANTS.ethereum.WRAPPED,
+            api: WETH,
+            method: 'deposit',
+            value: amountOut
+          })
+        });
+      } else if(tokenIn === depayWeb3Constants.CONSTANTS.ethereum.WRAPPED && tokenOut === depayWeb3Constants.CONSTANTS.ethereum.NATIVE) {
+        route = new Route({
+          tokenIn,
+          tokenOut,
+          path: [depayWeb3Constants.CONSTANTS.ethereum.WRAPPED, depayWeb3Constants.CONSTANTS.ethereum.NATIVE],
+          amountIn,
+          amountInMax,
+          amountOut,
+          amountOutMin,
+          fromAddress,
+          toAddress,
+          exchange,
+          transaction: new depayWeb3Transaction.Transaction({
+            blockchain: 'ethereum',
+            address: depayWeb3Constants.CONSTANTS.ethereum.WRAPPED,
+            api: WETH,
+            method: 'withdraw',
+            params: [amountOut]
+          })
+        });
+      }
+
+      return resolve(route)
+    })
+  };
+
+  var weth = new Exchange(
+    Object.assign(basics$2, { route: route$5 })
+  );
+
+  let WBNB = [{"constant":true,"inputs":[],"name":"name","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"guy","type":"address"},{"name":"wad","type":"uint256"}],"name":"approve","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"totalSupply","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"src","type":"address"},{"name":"dst","type":"address"},{"name":"wad","type":"uint256"}],"name":"transferFrom","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"wad","type":"uint256"}],"name":"withdraw","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"decimals","outputs":[{"name":"","type":"uint8"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"balanceOf","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"symbol","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"dst","type":"address"},{"name":"wad","type":"uint256"}],"name":"transfer","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[],"name":"deposit","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"},{"name":"","type":"address"}],"name":"allowance","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"payable":true,"stateMutability":"payable","type":"fallback"},{"anonymous":false,"inputs":[{"indexed":true,"name":"src","type":"address"},{"indexed":true,"name":"guy","type":"address"},{"indexed":false,"name":"wad","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"src","type":"address"},{"indexed":true,"name":"dst","type":"address"},{"indexed":false,"name":"wad","type":"uint256"}],"name":"Transfer","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"dst","type":"address"},{"indexed":false,"name":"wad","type":"uint256"}],"name":"Deposit","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"src","type":"address"},{"indexed":false,"name":"wad","type":"uint256"}],"name":"Withdrawal","type":"event"}];
+
+  var basics$3 = {
+    blockchain: 'bsc',
+    name: 'wbnb',
+    alternativeNames: [],
+    label: 'Wrapped BNB',
+    logo: 'data:image/png;base64,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',
+    contracts: {
+      wrapper: {
+        address: depayWeb3Constants.CONSTANTS.bsc.WRAPPED,
+        api: WBNB
+      },
+    }
+  };
+
+  let route$6 = ({
+    exchange,
+    tokenIn,
+    tokenOut,
+    fromAddress,
+    toAddress,
+    amountIn = undefined,
+    amountOut = undefined,
+    amountInMax = undefined,
+    amountOutMin = undefined,
+  }) => {
+    return new Promise(async (resolve)=> {
+
+      if(
+        ![depayWeb3Constants.CONSTANTS.bsc.NATIVE, depayWeb3Constants.CONSTANTS.bsc.WRAPPED].includes(tokenIn) &&
+        ![depayWeb3Constants.CONSTANTS.bsc.NATIVE, depayWeb3Constants.CONSTANTS.bsc.WRAPPED].includes(tokenOut)
+      ) { return resolve() }
+
+      amountIn = amountInMax = amountOut = amountOutMin = [amountIn, amountInMax, amountOut, amountOutMin].filter(Boolean)[0];
+
+      let route;
+
+      if(tokenIn === depayWeb3Constants.CONSTANTS.bsc.NATIVE && tokenOut === depayWeb3Constants.CONSTANTS.bsc.WRAPPED) {
+        route = new Route({
+          tokenIn,
+          tokenOut,
+          path: [depayWeb3Constants.CONSTANTS.bsc.NATIVE, depayWeb3Constants.CONSTANTS.bsc.WRAPPED],
+          amountIn,
+          amountInMax,
+          amountOut,
+          amountOutMin,
+          fromAddress,
+          toAddress,
+          exchange,
+          transaction: new depayWeb3Transaction.Transaction({
+            blockchain: 'bsc',
+            address: depayWeb3Constants.CONSTANTS.bsc.WRAPPED,
+            api: WBNB,
+            method: 'deposit',
+            value: amountOut
+          })
+        });
+      } else if(tokenIn === depayWeb3Constants.CONSTANTS.bsc.WRAPPED && tokenOut === depayWeb3Constants.CONSTANTS.bsc.NATIVE) {
+        route = new Route({
+          tokenIn,
+          tokenOut,
+          path: [depayWeb3Constants.CONSTANTS.bsc.WRAPPED, depayWeb3Constants.CONSTANTS.bsc.NATIVE],
+          amountIn,
+          amountInMax,
+          amountOut,
+          amountOutMin,
+          fromAddress,
+          toAddress,
+          exchange,
+          transaction: new depayWeb3Transaction.Transaction({
+            blockchain: 'bsc',
+            address: depayWeb3Constants.CONSTANTS.bsc.WRAPPED,
+            api: WBNB,
+            method: 'withdraw',
+            params: [amountOut]
+          })
+        });
+      }
+
+      return resolve(route)
+    })
+  };
+
+  var wbnb = new Exchange(
+    Object.assign(basics$3, { route: route$6 })
+  );
+
+  let all = [
+    curve,
+    pancakeswap,
+    sushiswap,
+    uniswap_v2,
+    uniswap_v3,
+    weth,
+    wbnb
+  ];
 
   var findByName = (name) => {
     return all.find((exchange) => {
@@ -776,7 +968,7 @@
     })
   };
 
-  let route$5 = ({
+  let route$7 = ({
     blockchain,
     fromAddress,
     toAddress,
@@ -811,7 +1003,7 @@
 
   exports.all = all;
   exports.findByName = findByName;
-  exports.route = route$5;
+  exports.route = route$7;
 
   Object.defineProperty(exports, '__esModule', { value: true });
 

@@ -31,7 +31,6 @@ let fixUniswapPath = (path) => {
 }
 
 let pathExists = async (path) => {
-  if(path == [CONSTANTS.bsc.WRAPPED]) { return Promise.resolve(false) }
   let pair = await request({
     blockchain: 'bsc',
     address: PancakeSwap.contracts.factory.address,
@@ -45,6 +44,11 @@ let pathExists = async (path) => {
 }
 
 let findPath = async ({ tokenIn, tokenOut }) => {
+  if(
+    [tokenIn, tokenOut].includes(CONSTANTS.bsc.NATIVE) &&
+    [tokenIn, tokenOut].includes(CONSTANTS.bsc.WRAPPED)
+  ) { return }
+
   let path
   
   if (await pathExists([tokenIn, tokenOut])) {
