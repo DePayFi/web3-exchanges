@@ -11,7 +11,10 @@ import { request } from 'depay-web3-client'
 //
 let fixUniswapPath = (path) => {
   let fixedPath = path.map((token, index) => {
-    if (token === CONSTANTS.ethereum.NATIVE && path[index+1] != CONSTANTS.ethereum.WRAPPED) {
+    if (
+      token === CONSTANTS.ethereum.NATIVE && path[index+1] != CONSTANTS.ethereum.WRAPPED &&
+      path[index-1] != CONSTANTS.ethereum.WRAPPED
+    ) {
       return CONSTANTS.ethereum.WRAPPED
     } else {
       return token
@@ -20,12 +23,15 @@ let fixUniswapPath = (path) => {
 
   if(fixedPath[0] == CONSTANTS.ethereum.NATIVE && fixedPath[1] == CONSTANTS.ethereum.WRAPPED) {
     fixedPath.splice(0, 1)
+  } else if(fixedPath[fixedPath.length-1] == CONSTANTS.ethereum.NATIVE && fixedPath[fixedPath.length-2] == CONSTANTS.ethereum.WRAPPED) {
+    fixedPath.splice(fixedPath.length-1, 1)
   }
 
   return fixedPath
 }
 
 let pathExists = async (path) => {
+  if(path == [CONSTANTS.ethereum.WRAPPED]) { return Promise.resolve(false) }
   let pair = await request({
     blockchain: 'ethereum',
     address: UniswapV2.contracts.factory.address,
@@ -52,10 +58,12 @@ let findPath = async ({ tokenIn, tokenOut }) => {
     path = [tokenIn, CONSTANTS.ethereum.WRAPPED, tokenOut]
   }
 
-  // Add WRAPPED to route path if things start with NATIVE
+  // Add WRAPPED to route path if things start or end with NATIVE
   // because that actually reflects how things are routed in reality:
   if(path?.length && path[0] == CONSTANTS.ethereum.NATIVE) {
     path.splice(1, 0, CONSTANTS.ethereum.WRAPPED)
+  } else if(path?.length && path[path.length-1] == CONSTANTS.ethereum.NATIVE) {
+    path.splice(path.length-1, 0, CONSTANTS.ethereum.WRAPPED)
   }
   
   return path

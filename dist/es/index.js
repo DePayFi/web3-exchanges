@@ -216,7 +216,10 @@ function _optionalChain(ops) { let lastAccessLHS = undefined; let value = ops[0]
 //
 let fixUniswapPath = (path) => {
   let fixedPath = path.map((token, index) => {
-    if (token === CONSTANTS.bsc.NATIVE && path[index+1] != CONSTANTS.bsc.WRAPPED) {
+    if (
+      token === CONSTANTS.bsc.NATIVE && path[index+1] != CONSTANTS.bsc.WRAPPED &&
+      path[index-1] != CONSTANTS.bsc.WRAPPED
+    ) {
       return CONSTANTS.bsc.WRAPPED
     } else {
       return token
@@ -225,12 +228,15 @@ let fixUniswapPath = (path) => {
 
   if(fixedPath[0] == CONSTANTS.bsc.NATIVE && fixedPath[1] == CONSTANTS.bsc.WRAPPED) {
     fixedPath.splice(0, 1);
+  } else if(fixedPath[fixedPath.length-1] == CONSTANTS.bsc.NATIVE && fixedPath[fixedPath.length-2] == CONSTANTS.bsc.WRAPPED) {
+    fixedPath.splice(fixedPath.length-1, 1);
   }
 
   return fixedPath
 };
 
 let pathExists = async (path) => {
+  if(path == [CONSTANTS.bsc.WRAPPED]) { return Promise.resolve(false) }
   let pair = await request({
     blockchain: 'bsc',
     address: basics.contracts.factory.address,
@@ -257,10 +263,12 @@ let findPath = async ({ tokenIn, tokenOut }) => {
     path = [tokenIn, CONSTANTS.bsc.WRAPPED, tokenOut];
   }
 
-  // Add WRAPPED to route path if things start with NATIVE
+  // Add WRAPPED to route path if things start or end with NATIVE
   // because that actually reflects how things are routed in reality:
   if(_optionalChain([path, 'optionalAccess', _ => _.length]) && path[0] == CONSTANTS.bsc.NATIVE) {
     path.splice(1, 0, CONSTANTS.bsc.WRAPPED);
+  } else if(_optionalChain([path, 'optionalAccess', _2 => _2.length]) && path[path.length-1] == CONSTANTS.bsc.NATIVE) {
+    path.splice(path.length-1, 0, CONSTANTS.bsc.WRAPPED);
   }
 
   return path
@@ -502,7 +510,10 @@ function _optionalChain$1(ops) { let lastAccessLHS = undefined; let value = ops[
 //
 let fixUniswapPath$1 = (path) => {
   let fixedPath = path.map((token, index) => {
-    if (token === CONSTANTS.ethereum.NATIVE && path[index+1] != CONSTANTS.ethereum.WRAPPED) {
+    if (
+      token === CONSTANTS.ethereum.NATIVE && path[index+1] != CONSTANTS.ethereum.WRAPPED &&
+      path[index-1] != CONSTANTS.ethereum.WRAPPED
+    ) {
       return CONSTANTS.ethereum.WRAPPED
     } else {
       return token
@@ -511,12 +522,15 @@ let fixUniswapPath$1 = (path) => {
 
   if(fixedPath[0] == CONSTANTS.ethereum.NATIVE && fixedPath[1] == CONSTANTS.ethereum.WRAPPED) {
     fixedPath.splice(0, 1);
+  } else if(fixedPath[fixedPath.length-1] == CONSTANTS.ethereum.NATIVE && fixedPath[fixedPath.length-2] == CONSTANTS.ethereum.WRAPPED) {
+    fixedPath.splice(fixedPath.length-1, 1);
   }
 
   return fixedPath
 };
 
 let pathExists$1 = async (path) => {
+  if(path == [CONSTANTS.ethereum.WRAPPED]) { return Promise.resolve(false) }
   let pair = await request({
     blockchain: 'ethereum',
     address: basics$1.contracts.factory.address,
@@ -543,10 +557,12 @@ let findPath$1 = async ({ tokenIn, tokenOut }) => {
     path = [tokenIn, CONSTANTS.ethereum.WRAPPED, tokenOut];
   }
 
-  // Add WRAPPED to route path if things start with NATIVE
+  // Add WRAPPED to route path if things start or end with NATIVE
   // because that actually reflects how things are routed in reality:
   if(_optionalChain$1([path, 'optionalAccess', _ => _.length]) && path[0] == CONSTANTS.ethereum.NATIVE) {
     path.splice(1, 0, CONSTANTS.ethereum.WRAPPED);
+  } else if(_optionalChain$1([path, 'optionalAccess', _2 => _2.length]) && path[path.length-1] == CONSTANTS.ethereum.NATIVE) {
+    path.splice(path.length-1, 0, CONSTANTS.ethereum.WRAPPED);
   }
   
   return path

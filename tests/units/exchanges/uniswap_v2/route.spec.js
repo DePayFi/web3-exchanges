@@ -546,7 +546,7 @@ describe('uniswap_v2', () => {
     let decimalsIn = 18
     let tokenOut = CONSTANTS[blockchain].NATIVE
     let decimalsOut = CONSTANTS[blockchain].DECIMALS
-    let path = [tokenIn, tokenOut]
+    let path = [tokenIn, CONSTANTS[blockchain].WRAPPED, tokenOut]
 
     it('routes a token to ETH swap for given amountOut without given amountInMax on uniswap_v2', async ()=> {
 
@@ -590,7 +590,7 @@ describe('uniswap_v2', () => {
       let amountInBN = ethers.utils.parseUnits(amountIn.toString(), decimalsIn)
       let fetchedAmountOut = 43
       let fetchedAmountOutBN = ethers.utils.parseUnits(fetchedAmountOut.toString(), decimalsOut)
-      let path = [tokenIn, tokenOut]
+      let path = [tokenIn, CONSTANTS[blockchain].WRAPPED, tokenOut]
 
       mockPair({ tokenIn, tokenOut: CONSTANTS[blockchain].WRAPPED, pair })
       mockAmounts({ method: 'getAmountsOut', params: [amountInBN,[tokenIn, CONSTANTS[blockchain].WRAPPED]], amounts: [amountInBN, fetchedAmountOutBN] })
@@ -627,7 +627,7 @@ describe('uniswap_v2', () => {
       let amountOutBN = ethers.utils.parseUnits(amountOut.toString(), decimalsOut)
       let amountInMax = 32
       let amountInMaxBN = ethers.utils.parseUnits(amountInMax.toString(), decimalsIn)
-      let path = [tokenIn, tokenOut]
+      let path = [tokenIn, CONSTANTS[blockchain].WRAPPED, tokenOut]
 
       mockPair({ tokenIn, tokenOut: CONSTANTS[blockchain].WRAPPED, pair })
       mockAmounts({ method: 'getAmountsIn', params: [amountOutBN,[tokenIn, CONSTANTS[blockchain].WRAPPED]], amounts: [amountInMaxBN, amountOutBN] })
@@ -665,7 +665,7 @@ describe('uniswap_v2', () => {
       let amountOutMinBN = ethers.utils.parseUnits(amountOutMin.toString(), decimalsOut)
       let amountIn = 32
       let amountInBN = ethers.utils.parseUnits(amountIn.toString(), decimalsIn)
-      let path = [tokenIn, tokenOut]
+      let path = [tokenIn, CONSTANTS[blockchain].WRAPPED, tokenOut]
 
       mockPair({ tokenIn, tokenOut: CONSTANTS[blockchain].WRAPPED, pair })
       mockAmounts({ method: 'getAmountsOut', params: [amountInBN,[tokenIn, CONSTANTS[blockchain].WRAPPED]], amounts: [amountInBN, amountOutMinBN] })
