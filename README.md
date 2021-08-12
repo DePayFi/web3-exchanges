@@ -99,7 +99,7 @@ The following combinations of provided amounts are possible:
 
 ### Route
 
-A Route is provided by `route` in the following structure:
+Routes are returned by calling `route`. A single Route has the following structure:
 
 ```
 {
@@ -113,7 +113,7 @@ A Route is provided by `route` in the following structure:
   fromAddress: '0x5Af489c8786A018EC4814194dC8048be1007e390'
   toAddress: '0x5Af489c8786A018EC4814194dC8048be1007e390'
   transaction: Transaction (from the depay-web3-transaction library)
-  exchange: Exchange (see Exchange data structure)
+  exchange: Exchange (see [Exchange data structure](#exchange))
 }
 ```
 
