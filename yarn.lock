@@ -2532,10 +2532,10 @@ depay-web3-tokens@^2.2.1:
     depay-web3-wallets "^3.0.0"
     ethers "^5.3.1"
 
-depay-web3-transaction@^2.2.3:
-  version "2.2.3"
-  resolved "https://registry.yarnpkg.com/depay-web3-transaction/-/depay-web3-transaction-2.2.3.tgz#d7f7d24e9ff19ae78eb1bdafba14e36f8ff4fb95"
-  integrity sha512-htwu9AyVGxQ+Y1pEoTSMI40d7J60Wqpr4taVjTV3NmxTcFVfnpuriHZ1dejjhi5tcMuZgNgmpPunIXmv+RKpCw==
+depay-web3-transaction@^2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/depay-web3-transaction/-/depay-web3-transaction-2.3.0.tgz#71c4f4a0fccd879590e69f608ef14ce6cbf94a20"
+  integrity sha512-yS85FI/3HJY2d8k0NoFTNjPzEhm4nrbNSFf3wuzRQJMeLwVnHrMTm/TJUHbnpfwpctg5ldCbruC0nD9yTqWJIQ==
   dependencies:
     depay-web3-constants "^2.0.0"
     ethers "^5.3.1"
