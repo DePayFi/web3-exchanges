@@ -1,5 +1,5 @@
 import { CONSTANTS } from 'depay-web3-constants'
-import Exchange from '../../src/classes/Exchange'
+import Exchange from 'src/classes/Exchange'
 
 describe('Exchange', () => {
 

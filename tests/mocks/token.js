@@ -13,9 +13,10 @@ function getStandard(blockchain) {
 }
 
 
-function mockDecimals({ blockchain, address, value }) {
+function mockDecimals({ provider, blockchain, address, value }) {
 
   return mock({
+    provider,
     blockchain,
     call: {
       to: address,

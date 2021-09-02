@@ -5,7 +5,7 @@ import { findByName } from 'src'
 import { mock, resetMocks, anything } from 'depay-web3-mock'
 import { mockDecimals } from 'tests/mocks/token'
 import { mockPair, mockAmounts } from 'tests/mocks/pancakeswap'
-import { resetCache } from 'depay-web3-client'
+import { resetCache, provider as getProvider } from 'depay-web3-client'
 import { testRouting } from 'tests/helpers/testRouting'
 
 describe('pancakeswap', () => {
@@ -15,6 +15,8 @@ describe('pancakeswap', () => {
   afterEach(resetMocks)
 
   let blockchain = 'bsc'
+  let provider
+  beforeEach(async ()=> { provider = await getProvider(blockchain) })
   let exchange = findByName('pancakeswap')
   let pair = '0x804678fa97d91B974ec2af3c843270886528a9E6'
   let fromAddress = '0x5Af489c8786A018EC4814194dC8048be1007e390'
@@ -56,10 +58,11 @@ describe('pancakeswap', () => {
       let amountOutBN = ethers.utils.parseUnits(amountOut.toString(), decimalsOut)
       let path = [tokenIn, tokenOut]
 
-      mockDecimals({ blockchain, address: tokenIn, value: decimalsIn })
-      mockDecimals({ blockchain, address: tokenOut, value: decimalsOut })
-      mockPair({ tokenIn, tokenOut, pair })
+      mockDecimals({ provider, blockchain, address: tokenIn, value: decimalsIn })
+      mockDecimals({ provider, blockchain, address: tokenOut, value: decimalsOut })
+      mockPair({ provider, tokenIn, tokenOut, pair })
       mock({
+        provider,
         blockchain,
         call: {
           to: exchange.contracts.router.address,
@@ -98,7 +101,7 @@ describe('pancakeswap', () => {
       let fetchedAmountIn = 43
       let fetchedAmountInBN = ethers.utils.parseUnits(fetchedAmountIn.toString(), decimalsIn)
 
-      mockPair({ tokenIn, tokenOut, pair })
+      mockPair({ provider, tokenIn, tokenOut, pair })
       mockAmounts({ method: 'getAmountsIn', params: [amountOutBN,path], amounts: [fetchedAmountInBN, amountOutBN] })
 
       await testRouting({
@@ -134,7 +137,7 @@ describe('pancakeswap', () => {
       let fetchedAmountIn = 43
       let fetchedAmountInBN = ethers.utils.parseUnits(fetchedAmountIn.toString(), decimalsIn)
 
-      mockPair({ tokenIn, tokenOut, pair })
+      mockPair({ provider, tokenIn, tokenOut, pair })
       mockAmounts({ method: 'getAmountsIn', params: [amountOutMinBN,path], amounts: [fetchedAmountInBN, amountOutMinBN] })
 
       await testRouting({
@@ -171,7 +174,7 @@ describe('pancakeswap', () => {
       let fetchedAmountOutBN = ethers.utils.parseUnits(fetchedAmountOut.toString(), decimalsOut)
       let path = [tokenIn, tokenOut]
 
-      mockPair({ tokenIn, tokenOut, pair })
+      mockPair({ provider, tokenIn, tokenOut, pair })
       mockAmounts({ method: 'getAmountsOut', params: [amountInBN,path], amounts: [amountInBN, fetchedAmountOutBN] })
 
       await testRouting({
@@ -208,7 +211,7 @@ describe('pancakeswap', () => {
       let fetchedAmountOutBN = ethers.utils.parseUnits(fetchedAmountOut.toString(), decimalsOut)
       let path = [tokenIn, tokenOut]
 
-      mockPair({ tokenIn, tokenOut, pair })
+      mockPair({ provider, tokenIn, tokenOut, pair })
       mockAmounts({ method: 'getAmountsOut', params: [amountInMaxBN, path], amounts: [amountInMaxBN, fetchedAmountOutBN] })
 
       await testRouting({
@@ -245,7 +248,7 @@ describe('pancakeswap', () => {
       let amountInMaxBN = ethers.utils.parseUnits(amountInMax.toString(), decimalsIn)
       let path = [tokenIn, tokenOut]
 
-      mockPair({ tokenIn, tokenOut, pair })
+      mockPair({ provider, tokenIn, tokenOut, pair })
       mockAmounts({ method: 'getAmountsIn', params: [amountOutBN,path], amounts: [amountInMaxBN, amountOutBN] })
 
       await testRouting({
@@ -283,7 +286,7 @@ describe('pancakeswap', () => {
       let amountInBN = ethers.utils.parseUnits(amountIn.toString(), decimalsIn)
       let path = [tokenIn, tokenOut]
 
-      mockPair({ tokenIn, tokenOut, pair })
+      mockPair({ provider, tokenIn, tokenOut, pair })
       mockAmounts({ method: 'getAmountsOut', params: [amountInBN,path], amounts: [amountInBN, amountOutMinBN] })
 
       await testRouting({
@@ -325,9 +328,9 @@ describe('pancakeswap', () => {
 
       path = [tokenIn, tokenVia, tokenOut]
 
-      mockPair({ tokenIn, tokenOut, pair: CONSTANTS[blockchain].ZERO })
-      mockPair({ tokenIn, tokenOut: tokenVia, pair: '0xef8cd6cb5c841a4f02986e8a8ab3cc545d1b8b6d' })
-      mockPair({ tokenIn: tokenOut, tokenOut: tokenVia, pair: '0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852' })
+      mockPair({ provider, tokenIn, tokenOut, pair: CONSTANTS[blockchain].ZERO })
+      mockPair({ provider, tokenIn, tokenOut: tokenVia, pair: '0xef8cd6cb5c841a4f02986e8a8ab3cc545d1b8b6d' })
+      mockPair({ provider, tokenIn: tokenOut, tokenOut: tokenVia, pair: '0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852' })
       mockAmounts({ method: 'getAmountsOut', params: [amountInBN, path], amounts: [amountInBN, amountViaBN, amountOutMinBN] })
 
       await testRouting({
@@ -363,11 +366,11 @@ describe('pancakeswap', () => {
       let amountIn = 32
       let amountInBN = ethers.utils.parseUnits(amountIn.toString(), decimalsIn)
 
-      mockDecimals({ blockchain, address: tokenIn, value: decimalsIn })
-      mockDecimals({ blockchain, address: tokenOut, value: decimalsOut })
+      mockDecimals({ provider, blockchain, address: tokenIn, value: decimalsIn })
+      mockDecimals({ provider, blockchain, address: tokenOut, value: decimalsOut })
       
-      mockPair({ tokenIn, tokenOut, pair: CONSTANTS[blockchain].ZERO })
-      mockPair({ tokenIn, tokenOut: CONSTANTS[blockchain].WRAPPED, pair: CONSTANTS[blockchain].ZERO })
+      mockPair({ provider, tokenIn, tokenOut, pair: CONSTANTS[blockchain].ZERO })
+      mockPair({ provider, tokenIn, tokenOut: CONSTANTS[blockchain].WRAPPED, pair: CONSTANTS[blockchain].ZERO })
 
       let route = await exchange.route({
         tokenIn,
@@ -397,7 +400,7 @@ describe('pancakeswap', () => {
       let fetchedAmountIn = 43
       let fetchedAmountInBN = ethers.utils.parseUnits(fetchedAmountIn.toString(), decimalsIn)
 
-      mockPair({ tokenIn: CONSTANTS[blockchain].WRAPPED, tokenOut, pair })
+      mockPair({ provider, tokenIn: CONSTANTS[blockchain].WRAPPED, tokenOut, pair })
       mockAmounts({ method: 'getAmountsIn', params: [amountOutBN,[CONSTANTS[blockchain].WRAPPED,tokenOut]], amounts: [fetchedAmountInBN, amountOutBN] })
 
       await testRouting({
@@ -434,7 +437,7 @@ describe('pancakeswap', () => {
       let fetchedAmountOutBN = ethers.utils.parseUnits(fetchedAmountOut.toString(), decimalsOut)
       let path = [tokenIn, CONSTANTS[blockchain].WRAPPED, tokenOut]
 
-      mockPair({ tokenIn: CONSTANTS[blockchain].WRAPPED, tokenOut, pair })
+      mockPair({ provider, tokenIn: CONSTANTS[blockchain].WRAPPED, tokenOut, pair })
       mockAmounts({ method: 'getAmountsOut', params: [amountInBN,[CONSTANTS[blockchain].WRAPPED,tokenOut]], amounts: [amountInBN, fetchedAmountOutBN] })
 
       await testRouting({
@@ -471,7 +474,7 @@ describe('pancakeswap', () => {
       let amountInMaxBN = ethers.utils.parseUnits(amountInMax.toString(), decimalsIn)
       let path = [tokenIn, CONSTANTS[blockchain].WRAPPED, tokenOut]
 
-      mockPair({ tokenIn: CONSTANTS[blockchain].WRAPPED, tokenOut, pair })
+      mockPair({ provider, tokenIn: CONSTANTS[blockchain].WRAPPED, tokenOut, pair })
       mockAmounts({ method: 'getAmountsIn', params: [amountOutBN,[CONSTANTS[blockchain].WRAPPED,tokenOut]], amounts: [amountInMaxBN, amountOutBN] })
 
       await testRouting({
@@ -509,7 +512,7 @@ describe('pancakeswap', () => {
       let amountInBN = ethers.utils.parseUnits(amountIn.toString(), decimalsIn)
       let path = [tokenIn, CONSTANTS[blockchain].WRAPPED, tokenOut]
 
-      mockPair({ tokenIn: CONSTANTS[blockchain].WRAPPED, tokenOut, pair })
+      mockPair({ provider, tokenIn: CONSTANTS[blockchain].WRAPPED, tokenOut, pair })
       mockAmounts({ method: 'getAmountsOut', params: [amountInBN,[CONSTANTS[blockchain].WRAPPED,tokenOut]], amounts: [amountInBN, amountOutMinBN] })
 
       await testRouting({
@@ -555,7 +558,7 @@ describe('pancakeswap', () => {
       let fetchedAmountIn = 43
       let fetchedAmountInBN = ethers.utils.parseUnits(fetchedAmountIn.toString(), decimalsIn)
 
-      mockPair({ tokenIn, tokenOut: CONSTANTS[blockchain].WRAPPED, pair })
+      mockPair({ provider, tokenIn, tokenOut: CONSTANTS[blockchain].WRAPPED, pair })
       mockAmounts({ method: 'getAmountsIn', params: [amountOutBN,[tokenIn, CONSTANTS[blockchain].WRAPPED]], amounts: [fetchedAmountInBN, amountOutBN] })
 
       await testRouting({
@@ -592,7 +595,7 @@ describe('pancakeswap', () => {
       let fetchedAmountOutBN = ethers.utils.parseUnits(fetchedAmountOut.toString(), decimalsOut)
       let path = [tokenIn, CONSTANTS[blockchain].WRAPPED, tokenOut]
 
-      mockPair({ tokenIn, tokenOut: CONSTANTS[blockchain].WRAPPED, pair })
+      mockPair({ provider, tokenIn, tokenOut: CONSTANTS[blockchain].WRAPPED, pair })
       mockAmounts({ method: 'getAmountsOut', params: [amountInBN,[tokenIn, CONSTANTS[blockchain].WRAPPED]], amounts: [amountInBN, fetchedAmountOutBN] })
 
       await testRouting({
@@ -629,7 +632,7 @@ describe('pancakeswap', () => {
       let amountInMaxBN = ethers.utils.parseUnits(amountInMax.toString(), decimalsIn)
       let path = [tokenIn, CONSTANTS[blockchain].WRAPPED, tokenOut]
 
-      mockPair({ tokenIn, tokenOut: CONSTANTS[blockchain].WRAPPED, pair })
+      mockPair({ provider, tokenIn, tokenOut: CONSTANTS[blockchain].WRAPPED, pair })
       mockAmounts({ method: 'getAmountsIn', params: [amountOutBN,[tokenIn, CONSTANTS[blockchain].WRAPPED]], amounts: [amountInMaxBN, amountOutBN] })
 
       await testRouting({
@@ -667,7 +670,7 @@ describe('pancakeswap', () => {
       let amountInBN = ethers.utils.parseUnits(amountIn.toString(), decimalsIn)
       let path = [tokenIn, CONSTANTS[blockchain].WRAPPED, tokenOut]
 
-      mockPair({ tokenIn, tokenOut: CONSTANTS[blockchain].WRAPPED, pair })
+      mockPair({ provider, tokenIn, tokenOut: CONSTANTS[blockchain].WRAPPED, pair })
       mockAmounts({ method: 'getAmountsOut', params: [amountInBN,[tokenIn, CONSTANTS[blockchain].WRAPPED]], amounts: [amountInBN, amountOutMinBN] })
 
       await testRouting({

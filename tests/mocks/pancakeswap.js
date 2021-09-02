@@ -1,8 +1,9 @@
 import { mock } from 'depay-web3-mock'
-import PancakeSwap from '../../src/exchanges/pancakeswap'
+import PancakeSwap from 'src/exchanges/pancakeswap'
 
-function mockPair({ tokenIn, tokenOut, pair }) {
+function mockPair({ provider, tokenIn, tokenOut, pair }) {
   return mock({
+    provider: provider,
     blockchain: 'bsc',
     call: {
       to: PancakeSwap.contracts.factory.address,
@@ -14,8 +15,9 @@ function mockPair({ tokenIn, tokenOut, pair }) {
   })
 }
 
-function mockAmounts({ method, params, amounts }){
+function mockAmounts({ provider, method, params, amounts }){
   return mock({
+    provider,
     blockchain: 'bsc',
     call: {
       to: PancakeSwap.contracts.router.address,

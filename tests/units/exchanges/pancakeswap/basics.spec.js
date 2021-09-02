@@ -1,5 +1,5 @@
 import { findByName } from 'src'
-import { PancakeRouter, PancakeFactory, PancakePair } from '../../../../src/exchanges/pancakeswap/apis'
+import { PancakeRouter, PancakeFactory, PancakePair } from 'src/exchanges/pancakeswap/apis'
 
 describe('pancakswap', () => {
 
