@@ -4,7 +4,7 @@ import { ethers } from 'ethers'
 import { mock, resetMocks } from 'depay-web3-mock'
 import { mockDecimals } from 'tests/mocks/token'
 import { mockPair, mockAmounts } from 'tests/mocks/uniswap_v2'
-import { resetCache, provider as getProvider } from 'depay-web3-client'
+import { resetCache, provider } from 'depay-web3-client'
 import { route, findByName } from 'src'
 import { WETH } from 'src/exchanges/weth/apis'
 
@@ -12,11 +12,8 @@ describe('route', ()=> {
 
   beforeEach(resetMocks)
   beforeEach(resetCache)
-  afterEach(resetMocks)
     
   let blockchain = 'ethereum'
-  let provider
-  beforeEach(async ()=> { provider = await getProvider(blockchain) })
   
   it('returns routes for all exchanges on the ethereum blockchain', async ()=>{
 
@@ -32,10 +29,10 @@ describe('route', ()=> {
     let pair = '0xEF8cD6Cb5c841A4f02986e8A8ab3cC545d1B8B6d'
     let wallet = '0x5Af489c8786A018EC4814194dC8048be1007e390'
 
-    mockDecimals({ provider, blockchain, address: tokenIn, value: decimalsIn })
-    mockDecimals({ provider, blockchain, address: tokenOut, value: decimalsOut })
-    mockPair({ provider, tokenIn, tokenOut, pair })
-    mockAmounts({ provider, method: 'getAmountsOut', params: [amountInBN,path], amounts: [amountInBN, amountOutMinBN] })
+    mockDecimals({ provider: provider(blockchain), blockchain, address: tokenIn, value: decimalsIn })
+    mockDecimals({ provider: provider(blockchain), blockchain, address: tokenOut, value: decimalsOut })
+    mockPair({ provider: provider(blockchain), tokenIn, tokenOut, pair })
+    mockAmounts({ provider: provider(blockchain), method: 'getAmountsOut', params: [amountInBN,path], amounts: [amountInBN, amountOutMinBN] })
 
     let routes = await route({
       blockchain,
@@ -71,7 +68,7 @@ describe('route', ()=> {
     let amount = 1
     let amountBN = ethers.utils.parseUnits(amount.toString(), 18)
 
-    mockDecimals({ provider, blockchain, address: CONSTANTS.ethereum.WRAPPED, value: 18 })
+    mockDecimals({ provider: provider(blockchain), blockchain, address: CONSTANTS.ethereum.WRAPPED, value: 18 })
 
     let routes = await route({
       blockchain,
@@ -106,7 +103,7 @@ describe('route', ()=> {
     let amount = 1
     let amountBN = ethers.utils.parseUnits(amount.toString(), 18)
 
-    mockDecimals({ provider, blockchain, address: CONSTANTS.ethereum.WRAPPED, value: 18 })
+    mockDecimals({ provider: provider(blockchain), blockchain, address: CONSTANTS.ethereum.WRAPPED, value: 18 })
 
     let routes = await route({
       blockchain,
