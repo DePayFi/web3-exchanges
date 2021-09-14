@@ -10,10 +10,12 @@ import { testRouting } from 'tests/helpers/testRouting'
 
 describe('pancakeswap', () => {
   
+  let blockchain = 'bsc'
+  const accounts = ['0xd8da6bf26964af9d7eed9e03e53415d37aa96045']
   beforeEach(resetMocks)
   beforeEach(resetCache)
+  beforeEach(()=>mock({ blockchain, accounts: { return: accounts } }))
 
-  let blockchain = 'bsc'
   let exchange = findByName('pancakeswap')
   let pair = '0x804678fa97d91B974ec2af3c843270886528a9E6'
   let fromAddress = '0x5Af489c8786A018EC4814194dC8048be1007e390'

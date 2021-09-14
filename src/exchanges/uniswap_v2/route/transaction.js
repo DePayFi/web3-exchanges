@@ -13,12 +13,14 @@ let getTransaction = ({
   amountOutInput,
   amountInMaxInput,
   amountOutMinInput,
-  toAddress
+  toAddress,
+  fromAddress
 }) => {
   
   let transaction = {
     blockchain: 'ethereum',
-    address: UniswapV2.contracts.router.address,
+    from: fromAddress,
+    to: UniswapV2.contracts.router.address,
     api: UniswapV2.contracts.router.api,
   }
 

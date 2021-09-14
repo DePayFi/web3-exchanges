@@ -10,10 +10,12 @@ import { testRouting } from 'tests/helpers/testRouting'
 
 describe('uniswap_v2', () => {
   
+  let blockchain = 'ethereum'
+  const accounts = ['0xd8da6bf26964af9d7eed9e03e53415d37aa96045']
   beforeEach(resetMocks)
   beforeEach(resetCache)
+  beforeEach(()=>mock({ blockchain, accounts: { return: accounts } }))
 
-  let blockchain = 'ethereum'
   let exchange = findByName('uniswap_v2')
   let pair = '0xEF8cD6Cb5c841A4f02986e8A8ab3cC545d1B8B6d'
   let fromAddress = '0x5Af489c8786A018EC4814194dC8048be1007e390'

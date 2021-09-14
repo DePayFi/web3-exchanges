@@ -10,11 +10,12 @@ import { WBNB } from 'src/exchanges/wbnb/apis'
 
 describe('route', ()=> {
 
+  const blockchain = 'bsc'
+  const accounts = ['0xd8da6bf26964af9d7eed9e03e53415d37aa96045']
   beforeEach(resetMocks)
   beforeEach(resetCache)
+  beforeEach(()=>mock({ blockchain, accounts: { return: accounts } }))
 
-  let blockchain = 'bsc'
-  
   it('returns routes for all exchanges on the bsc blockchain', async ()=>{
 
     let tokenIn = '0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82' // CAKE
@@ -27,7 +28,7 @@ describe('route', ()=> {
     let amountOutMin = 2
     let amountOutMinBN = ethers.utils.parseUnits(amountOutMin.toString(), decimalsOut)
     let pair = '0x804678fa97d91B974ec2af3c843270886528a9E6'
-    let wallet = '0x5Af489c8786A018EC4814194dC8048be1007e390'
+    let wallet = accounts[0]
 
     mockDecimals({ provider: provider(blockchain), blockchain, address: tokenIn, value: decimalsIn })
     mockDecimals({ provider: provider(blockchain), blockchain, address: tokenOut, value: decimalsOut })
@@ -50,7 +51,8 @@ describe('route', ()=> {
     expect(routes[0].exchange).toEqual(findByName('pancakeswap'))
     expect(routes[0].path).toEqual(path)
     expect(routes[0].transaction.blockchain).toEqual('bsc')
-    expect(routes[0].transaction.address).toEqual(PancakeSwap.contracts.router.address)
+    expect(routes[0].transaction.to).toEqual(PancakeSwap.contracts.router.address)
+    expect(routes[0].transaction.from).toEqual(accounts[0])
     expect(routes[0].transaction.api).toEqual(PancakeSwap.contracts.router.api)
     expect(routes[0].transaction.method).toEqual('swapExactTokensForTokens')
     expect(routes[0].transaction.params.amountIn).toEqual(amountInBN)
@@ -64,7 +66,7 @@ describe('route', ()=> {
 
   it('offers to unwrap WBNB to BNB if trying to find exchanges for that pair', async ()=>{
 
-    let wallet = '0x5Af489c8786A018EC4814194dC8048be1007e390'
+    let wallet = accounts[0]
     let amount = 1
     let amountBN = ethers.utils.parseUnits(amount.toString(), 18)
 
@@ -92,14 +94,15 @@ describe('route', ()=> {
     expect(routes[0].toAddress).toEqual(wallet)
     expect(routes[0].exchange.name).toEqual('wbnb')
     expect(routes[0].transaction.blockchain).toEqual('bsc')
-    expect(routes[0].transaction.address).toEqual(CONSTANTS.bsc.WRAPPED)
+    expect(routes[0].transaction.to).toEqual(CONSTANTS.bsc.WRAPPED)
+    expect(routes[0].transaction.from).toEqual(accounts[0])
     expect(routes[0].transaction.api).toEqual(WBNB)
     expect(routes[0].transaction.method).toEqual('withdraw')
     expect(routes[0].transaction.params).toEqual([amountBN])
   })
 
   it('offers to wrap BNB to WBNB if trying to find exchanges for that pair', async ()=>{
-    let wallet = '0x5Af489c8786A018EC4814194dC8048be1007e390'
+    let wallet = accounts[0]
     let amount = 1
     let amountBN = ethers.utils.parseUnits(amount.toString(), 18)
 
@@ -127,7 +130,8 @@ describe('route', ()=> {
     expect(routes[0].toAddress).toEqual(wallet)
     expect(routes[0].exchange.name).toEqual('wbnb')
     expect(routes[0].transaction.blockchain).toEqual('bsc')
-    expect(routes[0].transaction.address).toEqual(CONSTANTS.bsc.WRAPPED)
+    expect(routes[0].transaction.to).toEqual(CONSTANTS.bsc.WRAPPED)
+    expect(routes[0].transaction.from).toEqual(accounts[0])
     expect(routes[0].transaction.api).toEqual(WBNB)
     expect(routes[0].transaction.method).toEqual('deposit')
     expect(routes[0].transaction.value).toEqual(amountBN)

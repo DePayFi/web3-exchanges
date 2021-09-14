@@ -367,14 +367,16 @@
     amountOutInput,
     amountInMaxInput,
     amountOutMinInput,
-    toAddress
+    toAddress,
+    fromAddress
   }) => {
 
     let blockchain = 'bsc';
     
     let transaction = {
       blockchain,
-      address: basics$3.contracts.router.address,
+      from: fromAddress,
+      to: basics$3.contracts.router.address,
       api: basics$3.contracts.router.api,
     };
 
@@ -444,7 +446,8 @@
         amountOutInput,
         amountInMaxInput,
         amountOutMinInput,
-        toAddress
+        toAddress,
+        fromAddress
       });
 
       resolve(
@@ -665,12 +668,14 @@
     amountOutInput,
     amountInMaxInput,
     amountOutMinInput,
-    toAddress
+    toAddress,
+    fromAddress
   }) => {
     
     let transaction = {
       blockchain: 'ethereum',
-      address: basics$2.contracts.router.address,
+      from: fromAddress,
+      to: basics$2.contracts.router.address,
       api: basics$2.contracts.router.api,
     };
 
@@ -740,7 +745,8 @@
         amountOutInput,
         amountInMaxInput,
         amountOutMinInput,
-        toAddress
+        toAddress,
+        fromAddress
       });
 
       resolve(
@@ -828,7 +834,8 @@
           exchange,
           transaction: new depayWeb3Transaction.Transaction({
             blockchain: 'ethereum',
-            address: depayWeb3Constants.CONSTANTS.ethereum.WRAPPED,
+            from: fromAddress,
+            to: depayWeb3Constants.CONSTANTS.ethereum.WRAPPED,
             api: WETH,
             method: 'deposit',
             value: amountOut
@@ -848,7 +855,8 @@
           exchange,
           transaction: new depayWeb3Transaction.Transaction({
             blockchain: 'ethereum',
-            address: depayWeb3Constants.CONSTANTS.ethereum.WRAPPED,
+            from: fromAddress,
+            to: depayWeb3Constants.CONSTANTS.ethereum.WRAPPED,
             api: WETH,
             method: 'withdraw',
             params: [amountOut]
@@ -916,7 +924,8 @@
           exchange,
           transaction: new depayWeb3Transaction.Transaction({
             blockchain: 'bsc',
-            address: depayWeb3Constants.CONSTANTS.bsc.WRAPPED,
+            from: fromAddress,
+            to: depayWeb3Constants.CONSTANTS.bsc.WRAPPED,
             api: WBNB,
             method: 'deposit',
             value: amountOut
@@ -936,7 +945,8 @@
           exchange,
           transaction: new depayWeb3Transaction.Transaction({
             blockchain: 'bsc',
-            address: depayWeb3Constants.CONSTANTS.bsc.WRAPPED,
+            from: fromAddress,
+            to: depayWeb3Constants.CONSTANTS.bsc.WRAPPED,
             api: WBNB,
             method: 'withdraw',
             params: [amountOut]

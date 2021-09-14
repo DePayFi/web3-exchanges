@@ -28,7 +28,7 @@ function expectRoute({
   expect(route.toAddress).toEqual(toAddress)
   expect(route.exchange).toEqual(exchange)
   expect(route.transaction.blockchain).toEqual(blockchain)
-  expect(route.transaction.address).toEqual(transaction.to)
+  expect(route.transaction.to).toEqual(transaction.to)
   expect(route.transaction.api).toEqual(transaction.api)
   expect(route.transaction.method).toEqual(transaction.method)
   expect(route.transaction.params.deadline).toBeDefined()

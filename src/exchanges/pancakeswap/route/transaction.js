@@ -13,14 +13,16 @@ let getTransaction = ({
   amountOutInput,
   amountInMaxInput,
   amountOutMinInput,
-  toAddress
+  toAddress,
+  fromAddress
 }) => {
 
   let blockchain = 'bsc'
   
   let transaction = {
     blockchain,
-    address: PancakeSwap.contracts.router.address,
+    from: fromAddress,
+    to: PancakeSwap.contracts.router.address,
     api: PancakeSwap.contracts.router.api,
   }
 

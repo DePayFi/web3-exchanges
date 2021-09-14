@@ -10,10 +10,11 @@ import { WETH } from 'src/exchanges/weth/apis'
 
 describe('route', ()=> {
 
+  let blockchain = 'ethereum'
+  const accounts = ['0xd8da6bf26964af9d7eed9e03e53415d37aa96045']
   beforeEach(resetMocks)
   beforeEach(resetCache)
-    
-  let blockchain = 'ethereum'
+  beforeEach(()=>mock({ blockchain, accounts: { return: accounts } }))
   
   it('returns routes for all exchanges on the ethereum blockchain', async ()=>{
 
@@ -27,7 +28,7 @@ describe('route', ()=> {
     let amountOutMin = 2
     let amountOutMinBN = ethers.utils.parseUnits(amountOutMin.toString(), decimalsOut)
     let pair = '0xEF8cD6Cb5c841A4f02986e8A8ab3cC545d1B8B6d'
-    let wallet = '0x5Af489c8786A018EC4814194dC8048be1007e390'
+    let wallet = accounts[0]
 
     mockDecimals({ provider: provider(blockchain), blockchain, address: tokenIn, value: decimalsIn })
     mockDecimals({ provider: provider(blockchain), blockchain, address: tokenOut, value: decimalsOut })
@@ -50,7 +51,8 @@ describe('route', ()=> {
     expect(routes[0].exchange).toEqual(findByName('uniswap_v2'))
     expect(routes[0].path).toEqual(path)
     expect(routes[0].transaction.blockchain).toEqual('ethereum')
-    expect(routes[0].transaction.address).toEqual(UniswapV2.contracts.router.address)
+    expect(routes[0].transaction.from).toEqual(accounts[0])
+    expect(routes[0].transaction.to).toEqual(UniswapV2.contracts.router.address)
     expect(routes[0].transaction.api).toEqual(UniswapV2.contracts.router.api)
     expect(routes[0].transaction.method).toEqual('swapExactTokensForTokens')
     expect(routes[0].transaction.params.amountIn).toEqual(amountInBN)
@@ -64,7 +66,7 @@ describe('route', ()=> {
 
   it('offers to unwrap WETH to ETH if trying to find exchanges for that pair', async ()=>{
 
-    let wallet = '0x5Af489c8786A018EC4814194dC8048be1007e390'
+    let wallet = accounts[0]
     let amount = 1
     let amountBN = ethers.utils.parseUnits(amount.toString(), 18)
 
@@ -92,14 +94,15 @@ describe('route', ()=> {
     expect(routes[0].toAddress).toEqual(wallet)
     expect(routes[0].exchange.name).toEqual('weth')
     expect(routes[0].transaction.blockchain).toEqual('ethereum')
-    expect(routes[0].transaction.address).toEqual(CONSTANTS.ethereum.WRAPPED)
+    expect(routes[0].transaction.from).toEqual(accounts[0])
+    expect(routes[0].transaction.to).toEqual(CONSTANTS.ethereum.WRAPPED)
     expect(routes[0].transaction.api).toEqual(WETH)
     expect(routes[0].transaction.method).toEqual('withdraw')
     expect(routes[0].transaction.params).toEqual([amountBN])
   })
 
   it('offers to wrap ETH to WETH if trying to find exchanges for that pair', async ()=>{
-    let wallet = '0x5Af489c8786A018EC4814194dC8048be1007e390'
+    let wallet = accounts[0]
     let amount = 1
     let amountBN = ethers.utils.parseUnits(amount.toString(), 18)
 
@@ -127,7 +130,8 @@ describe('route', ()=> {
     expect(routes[0].toAddress).toEqual(wallet)
     expect(routes[0].exchange.name).toEqual('weth')
     expect(routes[0].transaction.blockchain).toEqual('ethereum')
-    expect(routes[0].transaction.address).toEqual(CONSTANTS.ethereum.WRAPPED)
+    expect(routes[0].transaction.from).toEqual(accounts[0])
+    expect(routes[0].transaction.to).toEqual(CONSTANTS.ethereum.WRAPPED)
     expect(routes[0].transaction.api).toEqual(WETH)
     expect(routes[0].transaction.method).toEqual('deposit')
     expect(routes[0].transaction.value).toEqual(amountBN)

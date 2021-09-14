@@ -39,7 +39,8 @@ let route = ({
         exchange,
         transaction: new Transaction({
           blockchain: 'bsc',
-          address: CONSTANTS.bsc.WRAPPED,
+          from: fromAddress,
+          to: CONSTANTS.bsc.WRAPPED,
           api: WBNB,
           method: 'deposit',
           value: amountOut
@@ -59,7 +60,8 @@ let route = ({
         exchange,
         transaction: new Transaction({
           blockchain: 'bsc',
-          address: CONSTANTS.bsc.WRAPPED,
+          from: fromAddress,
+          to: CONSTANTS.bsc.WRAPPED,
           api: WBNB,
           method: 'withdraw',
           params: [amountOut]

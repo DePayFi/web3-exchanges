@@ -39,7 +39,8 @@ let route = ({
         exchange,
         transaction: new Transaction({
           blockchain: 'ethereum',
-          address: CONSTANTS.ethereum.WRAPPED,
+          from: fromAddress,
+          to: CONSTANTS.ethereum.WRAPPED,
           api: WETH,
           method: 'deposit',
           value: amountOut
@@ -59,7 +60,8 @@ let route = ({
         exchange,
         transaction: new Transaction({
           blockchain: 'ethereum',
-          address: CONSTANTS.ethereum.WRAPPED,
+          from: fromAddress,
+          to: CONSTANTS.ethereum.WRAPPED,
           api: WETH,
           method: 'withdraw',
           params: [amountOut]
