@@ -1,6 +1,5 @@
 import Route from '../../classes/Route'
 import { CONSTANTS } from 'depay-web3-constants'
-import { Transaction } from 'depay-web3-transaction'
 import { WBNB } from './apis'
 
 let route = ({
@@ -37,14 +36,14 @@ let route = ({
         fromAddress,
         toAddress,
         exchange,
-        transaction: new Transaction({
+        transaction: {
           blockchain: 'bsc',
           from: fromAddress,
           to: CONSTANTS.bsc.WRAPPED,
           api: WBNB,
           method: 'deposit',
           value: amountOut
-        })
+        }
       })
     } else if(tokenIn === CONSTANTS.bsc.WRAPPED && tokenOut === CONSTANTS.bsc.NATIVE) {
       route = new Route({
@@ -58,14 +57,14 @@ let route = ({
         fromAddress,
         toAddress,
         exchange,
-        transaction: new Transaction({
+        transaction: {
           blockchain: 'bsc',
           from: fromAddress,
           to: CONSTANTS.bsc.WRAPPED,
           api: WBNB,
           method: 'withdraw',
           params: [amountOut]
-        })
+        }
       })
     }
 

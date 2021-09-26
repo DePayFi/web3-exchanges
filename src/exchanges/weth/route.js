@@ -1,6 +1,5 @@
 import Route from '../../classes/Route'
 import { CONSTANTS } from 'depay-web3-constants'
-import { Transaction } from 'depay-web3-transaction'
 import { WETH } from './apis'
 
 let route = ({
@@ -37,14 +36,14 @@ let route = ({
         fromAddress,
         toAddress,
         exchange,
-        transaction: new Transaction({
+        transaction: {
           blockchain: 'ethereum',
           from: fromAddress,
           to: CONSTANTS.ethereum.WRAPPED,
           api: WETH,
           method: 'deposit',
           value: amountOut
-        })
+        }
       })
     } else if(tokenIn === CONSTANTS.ethereum.WRAPPED && tokenOut === CONSTANTS.ethereum.NATIVE) {
       route = new Route({
@@ -58,14 +57,14 @@ let route = ({
         fromAddress,
         toAddress,
         exchange,
-        transaction: new Transaction({
+        transaction: {
           blockchain: 'ethereum',
           from: fromAddress,
           to: CONSTANTS.ethereum.WRAPPED,
           api: WETH,
           method: 'withdraw',
           params: [amountOut]
-        })
+        }
       })
     }
 

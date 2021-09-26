@@ -1,8 +1,8 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('depay-web3-tokens'), require('depay-web3-constants'), require('depay-web3-client'), require('depay-web3-transaction')) :
-  typeof define === 'function' && define.amd ? define(['exports', 'depay-web3-tokens', 'depay-web3-constants', 'depay-web3-client', 'depay-web3-transaction'], factory) :
-  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.Web3Exchanges = {}, global.Web3Tokens, global.Web3Constants, global.Web3Client, global.Web3Transaction));
-}(this, (function (exports, depayWeb3Tokens, depayWeb3Constants, depayWeb3Client, depayWeb3Transaction) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('depay-web3-tokens'), require('depay-web3-constants'), require('depay-web3-client')) :
+  typeof define === 'function' && define.amd ? define(['exports', 'depay-web3-tokens', 'depay-web3-constants', 'depay-web3-client'], factory) :
+  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.Web3Exchanges = {}, global.Web3Tokens, global.Web3Constants, global.Web3Client));
+}(this, (function (exports, depayWeb3Tokens, depayWeb3Constants, depayWeb3Client) { 'use strict';
 
   var route$7 = () => {};
 
@@ -414,7 +414,7 @@
       deadline: Math.round(Date.now() / 1000) + 30 * 60, // 30 minutes
     });
 
-    return new depayWeb3Transaction.Transaction(transaction)
+    return transaction
   };
 
   let route$6 = ({
@@ -713,7 +713,7 @@
       deadline: Math.round(Date.now() / 1000) + 30 * 60, // 30 minutes
     });
 
-    return new depayWeb3Transaction.Transaction(transaction)
+    return transaction
   };
 
   let route$4 = ({
@@ -832,14 +832,14 @@
           fromAddress,
           toAddress,
           exchange,
-          transaction: new depayWeb3Transaction.Transaction({
+          transaction: {
             blockchain: 'ethereum',
             from: fromAddress,
             to: depayWeb3Constants.CONSTANTS.ethereum.WRAPPED,
             api: WETH,
             method: 'deposit',
             value: amountOut
-          })
+          }
         });
       } else if(tokenIn === depayWeb3Constants.CONSTANTS.ethereum.WRAPPED && tokenOut === depayWeb3Constants.CONSTANTS.ethereum.NATIVE) {
         route = new Route({
@@ -853,14 +853,14 @@
           fromAddress,
           toAddress,
           exchange,
-          transaction: new depayWeb3Transaction.Transaction({
+          transaction: {
             blockchain: 'ethereum',
             from: fromAddress,
             to: depayWeb3Constants.CONSTANTS.ethereum.WRAPPED,
             api: WETH,
             method: 'withdraw',
             params: [amountOut]
-          })
+          }
         });
       }
 
@@ -922,14 +922,14 @@
           fromAddress,
           toAddress,
           exchange,
-          transaction: new depayWeb3Transaction.Transaction({
+          transaction: {
             blockchain: 'bsc',
             from: fromAddress,
             to: depayWeb3Constants.CONSTANTS.bsc.WRAPPED,
             api: WBNB,
             method: 'deposit',
             value: amountOut
-          })
+          }
         });
       } else if(tokenIn === depayWeb3Constants.CONSTANTS.bsc.WRAPPED && tokenOut === depayWeb3Constants.CONSTANTS.bsc.NATIVE) {
         route = new Route({
@@ -943,14 +943,14 @@
           fromAddress,
           toAddress,
           exchange,
-          transaction: new depayWeb3Transaction.Transaction({
+          transaction: {
             blockchain: 'bsc',
             from: fromAddress,
             to: depayWeb3Constants.CONSTANTS.bsc.WRAPPED,
             api: WBNB,
             method: 'withdraw',
             params: [amountOut]
-          })
+          }
         });
       }
 

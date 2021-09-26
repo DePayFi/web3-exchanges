@@ -32,8 +32,13 @@ let routes = await route({
   toAddress: '0x5Af489c8786A018EC4814194dC8048be1007e390'
 }) // returns routes sorted by cost-effectiveness (best first)
 
-await routes[0].transaction.submit()
-// opens wallet to sign the swap
+// use connected wallet to sign and send the swap transaction
+import { getWallet } from 'depay-web3-wallets'
+
+let wallet = getWallet()
+
+wallet.sendTransaction(route.transaction)
+
 ```
 
 ## Support
@@ -112,10 +117,12 @@ Routes are returned by calling `route`. A single Route has the following structu
   amountInMax: BigNumber (e.g. '1000000000000000000')
   fromAddress: '0x5Af489c8786A018EC4814194dC8048be1007e390'
   toAddress: '0x5Af489c8786A018EC4814194dC8048be1007e390'
-  transaction: Transaction (from the depay-web3-transaction library)
+  transaction: Transaction (see depay-web3-wallets for details)
   exchange: Exchange (see [Exchange data structure](#exchange))
 }
 ```
+
+See [depay-web3-wallets](https://github.com/DePayFi/depay-web3-wallets#sendtransaction) for details about the transaction format.
 
 ## Functionalities
 
@@ -159,7 +166,12 @@ let routes = route {
   toAddress: '0x5Af489c8786A018EC4814194dC8048be1007e390'
 } // returns routes sorted by cost-effectiveness (best first)
 
-await routes[0].transaction.submit()
+// use connected wallet to sign and send the swap transaction
+import { getWallet } from 'depay-web3-wallets'
+
+let wallet = getWallet()
+
+wallet.sendTransaction(routes[0].transaction)
 ```
 
 `route` can also be called on concrete exchanges: 
@@ -179,7 +191,12 @@ let route = await exchange.route({
   toAddress: '0x5Af489c8786A018EC4814194dC8048be1007e390'
 })
 
-await route.transaction.submit()
+// use connected wallet to sign and send the swap transaction
+import { getWallet } from 'depay-web3-wallets'
+
+let wallet = getWallet()
+
+wallet.sendTransaction(route.transaction)
 ```
 
 ## Domain Knowledge

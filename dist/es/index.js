@@ -1,7 +1,6 @@
 import { Token } from 'depay-web3-tokens';
 import { CONSTANTS } from 'depay-web3-constants';
 import { request } from 'depay-web3-client';
-import { Transaction } from 'depay-web3-transaction';
 
 var route$7 = () => {};
 
@@ -413,7 +412,7 @@ let getTransaction$1 = ({
     deadline: Math.round(Date.now() / 1000) + 30 * 60, // 30 minutes
   });
 
-  return new Transaction(transaction)
+  return transaction
 };
 
 let route$6 = ({
@@ -712,7 +711,7 @@ let getTransaction = ({
     deadline: Math.round(Date.now() / 1000) + 30 * 60, // 30 minutes
   });
 
-  return new Transaction(transaction)
+  return transaction
 };
 
 let route$4 = ({
@@ -831,14 +830,14 @@ let route$2 = ({
         fromAddress,
         toAddress,
         exchange,
-        transaction: new Transaction({
+        transaction: {
           blockchain: 'ethereum',
           from: fromAddress,
           to: CONSTANTS.ethereum.WRAPPED,
           api: WETH,
           method: 'deposit',
           value: amountOut
-        })
+        }
       });
     } else if(tokenIn === CONSTANTS.ethereum.WRAPPED && tokenOut === CONSTANTS.ethereum.NATIVE) {
       route = new Route({
@@ -852,14 +851,14 @@ let route$2 = ({
         fromAddress,
         toAddress,
         exchange,
-        transaction: new Transaction({
+        transaction: {
           blockchain: 'ethereum',
           from: fromAddress,
           to: CONSTANTS.ethereum.WRAPPED,
           api: WETH,
           method: 'withdraw',
           params: [amountOut]
-        })
+        }
       });
     }
 
@@ -921,14 +920,14 @@ let route$1 = ({
         fromAddress,
         toAddress,
         exchange,
-        transaction: new Transaction({
+        transaction: {
           blockchain: 'bsc',
           from: fromAddress,
           to: CONSTANTS.bsc.WRAPPED,
           api: WBNB,
           method: 'deposit',
           value: amountOut
-        })
+        }
       });
     } else if(tokenIn === CONSTANTS.bsc.WRAPPED && tokenOut === CONSTANTS.bsc.NATIVE) {
       route = new Route({
@@ -942,14 +941,14 @@ let route$1 = ({
         fromAddress,
         toAddress,
         exchange,
-        transaction: new Transaction({
+        transaction: {
           blockchain: 'bsc',
           from: fromAddress,
           to: CONSTANTS.bsc.WRAPPED,
           api: WBNB,
           method: 'withdraw',
           params: [amountOut]
-        })
+        }
       });
     }
 

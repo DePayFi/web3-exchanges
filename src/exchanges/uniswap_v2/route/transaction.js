@@ -1,7 +1,6 @@
 import UniswapV2 from '../basics'
 import { CONSTANTS } from 'depay-web3-constants'
 import { fixUniswapPath } from './path'
-import { Transaction } from 'depay-web3-transaction'
 
 let getTransaction = ({
   path,
@@ -58,7 +57,7 @@ let getTransaction = ({
     deadline: Math.round(Date.now() / 1000) + 30 * 60, // 30 minutes
   })
 
-  return new Transaction(transaction)
+  return transaction
 }
 
 export {

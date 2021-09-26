@@ -1,6 +1,7 @@
 import { ethers } from 'ethers'
-import { mockDecimals } from '../mocks/token'
+import { getWallet } from 'depay-web3-wallets'
 import { mock, normalize } from 'depay-web3-mock'
+import { mockDecimals } from '../mocks/token'
 
 function expectRoute({
   blockchain,
@@ -94,8 +95,8 @@ async function testRouting({
   
   let transactionMock = mock({ blockchain, transaction })
 
-  await route.transaction.submit()
-
+  let wallet = getWallet()
+  await wallet.sendTransaction(route.transaction)
   expect(transactionMock).toHaveBeenCalled()
 }
 

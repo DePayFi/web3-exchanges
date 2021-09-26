@@ -5,7 +5,6 @@ Object.defineProperty(exports, '__esModule', { value: true });
 var depayWeb3Tokens = require('depay-web3-tokens');
 var depayWeb3Constants = require('depay-web3-constants');
 var depayWeb3Client = require('depay-web3-client');
-var depayWeb3Transaction = require('depay-web3-transaction');
 
 var route$7 = () => {};
 
@@ -417,7 +416,7 @@ let getTransaction$1 = ({
     deadline: Math.round(Date.now() / 1000) + 30 * 60, // 30 minutes
   });
 
-  return new depayWeb3Transaction.Transaction(transaction)
+  return transaction
 };
 
 let route$6 = ({
@@ -716,7 +715,7 @@ let getTransaction = ({
     deadline: Math.round(Date.now() / 1000) + 30 * 60, // 30 minutes
   });
 
-  return new depayWeb3Transaction.Transaction(transaction)
+  return transaction
 };
 
 let route$4 = ({
@@ -835,14 +834,14 @@ let route$2 = ({
         fromAddress,
         toAddress,
         exchange,
-        transaction: new depayWeb3Transaction.Transaction({
+        transaction: {
           blockchain: 'ethereum',
           from: fromAddress,
           to: depayWeb3Constants.CONSTANTS.ethereum.WRAPPED,
           api: WETH,
           method: 'deposit',
           value: amountOut
-        })
+        }
       });
     } else if(tokenIn === depayWeb3Constants.CONSTANTS.ethereum.WRAPPED && tokenOut === depayWeb3Constants.CONSTANTS.ethereum.NATIVE) {
       route = new Route({
@@ -856,14 +855,14 @@ let route$2 = ({
         fromAddress,
         toAddress,
         exchange,
-        transaction: new depayWeb3Transaction.Transaction({
+        transaction: {
           blockchain: 'ethereum',
           from: fromAddress,
           to: depayWeb3Constants.CONSTANTS.ethereum.WRAPPED,
           api: WETH,
           method: 'withdraw',
           params: [amountOut]
-        })
+        }
       });
     }
 
@@ -925,14 +924,14 @@ let route$1 = ({
         fromAddress,
         toAddress,
         exchange,
-        transaction: new depayWeb3Transaction.Transaction({
+        transaction: {
           blockchain: 'bsc',
           from: fromAddress,
           to: depayWeb3Constants.CONSTANTS.bsc.WRAPPED,
           api: WBNB,
           method: 'deposit',
           value: amountOut
-        })
+        }
       });
     } else if(tokenIn === depayWeb3Constants.CONSTANTS.bsc.WRAPPED && tokenOut === depayWeb3Constants.CONSTANTS.bsc.NATIVE) {
       route = new Route({
@@ -946,14 +945,14 @@ let route$1 = ({
         fromAddress,
         toAddress,
         exchange,
-        transaction: new depayWeb3Transaction.Transaction({
+        transaction: {
           blockchain: 'bsc',
           from: fromAddress,
           to: depayWeb3Constants.CONSTANTS.bsc.WRAPPED,
           api: WBNB,
           method: 'withdraw',
           params: [amountOut]
-        })
+        }
       });
     }
 
