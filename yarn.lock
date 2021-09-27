@@ -2478,10 +2478,10 @@ depay-web3-blockchains@^2.6.0:
   resolved "https://registry.yarnpkg.com/depay-web3-blockchains/-/depay-web3-blockchains-2.6.0.tgz#384081d0df8d4835703ee4faafab10dce8540959"
   integrity sha512-aKRAgfNmrsqCHEjF7rCdfEBc865nzi82pz7BPG3ga4nO9GwIQLtLM1xcmLYMJITuDM0e9SPrJma9QcFvmTQz+A==
 
-depay-web3-client@^5.1.0:
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/depay-web3-client/-/depay-web3-client-5.1.0.tgz#095c89ff619bfb033a1460b9741c24676a6f4876"
-  integrity sha512-K6eZuYBqT4ZzV5T1xY9W6pntM+dhq0yEhIf4C434okJqVRh+4XkJianGvjxtecPmThHYJze2uSgt4J9lK3cInw==
+depay-web3-client@^6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/depay-web3-client/-/depay-web3-client-6.0.0.tgz#2f9af2a5604e0ad64dfcf982ebb17a0f91fa4615"
+  integrity sha512-K524PumbIu8ufmgWw0guHTn8hmidLQT3O7HuNgdV4fZPaT77s1ldvf0kHJM7zG5f5I9CAuoR9QZvDAUD4AI44A==
 
 depay-web3-constants@^3.0.1:
   version "3.0.1"
@@ -2493,19 +2493,15 @@ depay-web3-mock@^8.2.5:
   resolved "https://registry.yarnpkg.com/depay-web3-mock/-/depay-web3-mock-8.2.5.tgz#4dc34e7a74982e53e94caeec1aa7b8a7148fe303"
   integrity sha512-miu8Kh1ptAoyjdULGy7BVGCaW3/ZN67l05WK/Gin0ymJTkma9Ef4xWliaTViQyie4c6PfKUQdnAFTRn9FBranQ==
 
-depay-web3-tokens@^4.1.0:
-  version "4.1.0"
-  resolved "https://registry.yarnpkg.com/depay-web3-tokens/-/depay-web3-tokens-4.1.0.tgz#16e85f43b006dde59a33bb82d08e3cd59461625c"
-  integrity sha512-wsZTnDkBgdKOcSoxzy2Kzdw9sePY/6fmbOtKy3DfbRfRpVocb8B9cSZPX6nE0bzoGVjszA1bKtxxuuhquB4xhQ==
+depay-web3-tokens@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/depay-web3-tokens/-/depay-web3-tokens-5.0.0.tgz#5e387b13495d335072582b7d86ad75cf64777441"
+  integrity sha512-XWko4fFzl+Zrasl17mA66wInYmkXoV4FasM51fY81/1u/zIRCunhk8HX2Kw8jAoXSf8p1kJgWswQ+k9/td0Sew==
 
-depay-web3-wallets@^5.5.4:
-  version "5.5.4"
-  resolved "https://registry.yarnpkg.com/depay-web3-wallets/-/depay-web3-wallets-5.5.4.tgz#513367798fc723a878ffdc8f41d7d99f1753e081"
-  integrity sha512-pyE3oj5DtL02hl2RCFNX0yCUzoILLi1lhgFHF+i2svIPC9uASbWqQNmR2e5cCSqUvqYtwvMH2QaUq0UyvdkkvA==
-  dependencies:
-    "@walletconnect/client" "^1.6.5"
-    "@walletconnect/qrcode-modal" "^1.6.5"
-    tslib "^2.3.1"
+depay-web3-wallets@^5.6.0:
+  version "5.6.0"
+  resolved "https://registry.yarnpkg.com/depay-web3-wallets/-/depay-web3-wallets-5.6.0.tgz#f1eb83fa80a1bc1ee78acf9833f59e7cdb2dc509"
+  integrity sha512-KNDNz93TOzD9xarmaLAKoUQ8b54rTsivGr/lzvkslCrWJZl2ejhg/44BLzuboTIaXEe2Ft7ZGkL6n8ypDH+YOA==
 
 detect-browser@5.2.0:
   version "5.2.0"
