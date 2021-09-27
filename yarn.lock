@@ -2493,10 +2493,10 @@ depay-web3-mock@^8.2.5:
   resolved "https://registry.yarnpkg.com/depay-web3-mock/-/depay-web3-mock-8.2.5.tgz#4dc34e7a74982e53e94caeec1aa7b8a7148fe303"
   integrity sha512-miu8Kh1ptAoyjdULGy7BVGCaW3/ZN67l05WK/Gin0ymJTkma9Ef4xWliaTViQyie4c6PfKUQdnAFTRn9FBranQ==
 
-depay-web3-tokens@^5.0.0:
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/depay-web3-tokens/-/depay-web3-tokens-5.0.0.tgz#5e387b13495d335072582b7d86ad75cf64777441"
-  integrity sha512-XWko4fFzl+Zrasl17mA66wInYmkXoV4FasM51fY81/1u/zIRCunhk8HX2Kw8jAoXSf8p1kJgWswQ+k9/td0Sew==
+depay-web3-tokens@^6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/depay-web3-tokens/-/depay-web3-tokens-6.0.0.tgz#995cf9faeb1ca26e0d899d72fcef9f38e1c3740d"
+  integrity sha512-+ynGBo1y3SpAZjJxkKmatGAh74C3b68qQFMDfM/N4eVDhpaUVbdllO/wGa/kMzFahPQXaA9DTFlVGwssFki0vg==
 
 depay-web3-wallets@^5.6.0:
   version "5.6.0"
