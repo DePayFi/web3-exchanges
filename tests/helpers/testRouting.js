@@ -21,10 +21,10 @@ function expectRoute({
   expect(route.tokenIn).toEqual(tokenIn)
   expect(route.tokenOut).toEqual(tokenOut)
   expect(route.path).toEqual(path)
-  if(typeof amountOutBN !== 'undefined') { expect(route.amountOut).toEqual(amountOutBN) }
-  if(typeof amountInBN !== 'undefined') { expect(route.amountIn).toEqual(amountInBN) }
-  if(typeof amountOutMinBN !== 'undefined') { expect(route.amountOutMin).toEqual(amountOutMinBN) }
-  if(typeof amountInMaxBN !== 'undefined') { expect(route.amountInMax).toEqual(amountInMaxBN) }
+  if(typeof amountOutBN !== 'undefined') { expect(route.amountOut).toEqual(amountOutBN.toString()) }
+  if(typeof amountInBN !== 'undefined') { expect(route.amountIn).toEqual(amountInBN.toString()) }
+  if(typeof amountOutMinBN !== 'undefined') { expect(route.amountOutMin).toEqual(amountOutMinBN.toString()) }
+  if(typeof amountInMaxBN !== 'undefined') { expect(route.amountInMax).toEqual(amountInMaxBN.toString()) }
   expect(route.fromAddress).toEqual(fromAddress)
   expect(route.toAddress).toEqual(toAddress)
   expect(route.exchange).toEqual(exchange)

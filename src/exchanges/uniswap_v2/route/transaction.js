@@ -27,27 +27,27 @@ let getTransaction = ({
     if (amountInInput || amountOutMinInput) {
       transaction.method = 'swapExactETHForTokens'
       transaction.value = amountIn
-      transaction.params = { amountOutMin: amountOutMin }
+      transaction.params = { amountOutMin: amountOutMin.toString() }
     } else if (amountOutInput || amountInMaxInput) {
       transaction.method = 'swapETHForExactTokens'
       transaction.value = amountInMax
-      transaction.params = { amountOut: amountOut }
+      transaction.params = { amountOut: amountOut.toString() }
     }
   } else if (path[path.length - 1] === CONSTANTS.ethereum.NATIVE) {
     if (amountInInput || amountOutMinInput) {
       transaction.method = 'swapExactTokensForETH'
-      transaction.params = { amountIn: amountIn, amountOutMin: amountOutMin }
+      transaction.params = { amountIn: amountIn.toString(), amountOutMin: amountOutMin.toString() }
     } else if (amountOutInput || amountInMaxInput) {
       transaction.method = 'swapTokensForExactETH'
-      transaction.params = { amountInMax: amountInMax, amountOut: amountOut }
+      transaction.params = { amountInMax: amountInMax.toString(), amountOut: amountOut.toString() }
     }
   } else {
     if (amountInInput || amountOutMinInput) {
       transaction.method = 'swapExactTokensForTokens'
-      transaction.params = { amountIn: amountIn, amountOutMin: amountOutMin }
+      transaction.params = { amountIn: amountIn.toString(), amountOutMin: amountOutMin.toString() }
     } else if (amountOutInput || amountInMaxInput) {
       transaction.method = 'swapTokensForExactTokens'
-      transaction.params = { amountInMax: amountInMax, amountOut: amountOut }
+      transaction.params = { amountInMax: amountInMax.toString(), amountOut: amountOut.toString() }
     }
   }
 

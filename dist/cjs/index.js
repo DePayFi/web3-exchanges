@@ -181,7 +181,7 @@ var basics$3 = {
   }
 };
 
-class Route {
+function _optionalChain$2(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }class Route {
   constructor({
     tokenIn,
     tokenOut,
@@ -198,10 +198,10 @@ class Route {
     this.tokenIn = tokenIn;
     this.tokenOut = tokenOut;
     this.path = path;
-    this.amountIn = amountIn;
-    this.amountOutMin = amountOutMin;
-    this.amountOut = amountOut;
-    this.amountInMax = amountInMax;
+    this.amountIn = _optionalChain$2([amountIn, 'optionalAccess', _ => _.toString, 'call', _2 => _2()]);
+    this.amountOutMin = _optionalChain$2([amountOutMin, 'optionalAccess', _3 => _3.toString, 'call', _4 => _4()]);
+    this.amountOut = _optionalChain$2([amountOut, 'optionalAccess', _5 => _5.toString, 'call', _6 => _6()]);
+    this.amountInMax = _optionalChain$2([amountInMax, 'optionalAccess', _7 => _7.toString, 'call', _8 => _8()]);
     this.fromAddress = fromAddress;
     this.toAddress = toAddress;
     this.transaction = transaction;
@@ -386,27 +386,27 @@ let getTransaction$1 = ({
     if (amountInInput || amountOutMinInput) {
       transaction.method = 'swapExactETHForTokens';
       transaction.value = amountIn;
-      transaction.params = { amountOutMin: amountOutMin };
+      transaction.params = { amountOutMin: amountOutMin.toString() };
     } else if (amountOutInput || amountInMaxInput) {
       transaction.method = 'swapETHForExactTokens';
       transaction.value = amountInMax;
-      transaction.params = { amountOut: amountOut };
+      transaction.params = { amountOut: amountOut.toString() };
     }
   } else if (path[path.length - 1] === depayWeb3Constants.CONSTANTS[blockchain].NATIVE) {
     if (amountInInput || amountOutMinInput) {
       transaction.method = 'swapExactTokensForETH';
-      transaction.params = { amountIn: amountIn, amountOutMin: amountOutMin };
+      transaction.params = { amountIn: amountIn.toString(), amountOutMin: amountOutMin.toString() };
     } else if (amountOutInput || amountInMaxInput) {
       transaction.method = 'swapTokensForExactETH';
-      transaction.params = { amountInMax: amountInMax, amountOut: amountOut };
+      transaction.params = { amountInMax: amountInMax.toString(), amountOut: amountOut.toString() };
     }
   } else {
     if (amountInInput || amountOutMinInput) {
       transaction.method = 'swapExactTokensForTokens';
-      transaction.params = { amountIn: amountIn, amountOutMin: amountOutMin };
+      transaction.params = { amountIn: amountIn.toString(), amountOutMin: amountOutMin.toString() };
     } else if (amountOutInput || amountInMaxInput) {
       transaction.method = 'swapTokensForExactTokens';
-      transaction.params = { amountInMax: amountInMax, amountOut: amountOut };
+      transaction.params = { amountInMax: amountInMax.toString(), amountOut: amountOut.toString() };
     }
   }
 
@@ -685,27 +685,27 @@ let getTransaction = ({
     if (amountInInput || amountOutMinInput) {
       transaction.method = 'swapExactETHForTokens';
       transaction.value = amountIn;
-      transaction.params = { amountOutMin: amountOutMin };
+      transaction.params = { amountOutMin: amountOutMin.toString() };
     } else if (amountOutInput || amountInMaxInput) {
       transaction.method = 'swapETHForExactTokens';
       transaction.value = amountInMax;
-      transaction.params = { amountOut: amountOut };
+      transaction.params = { amountOut: amountOut.toString() };
     }
   } else if (path[path.length - 1] === depayWeb3Constants.CONSTANTS.ethereum.NATIVE) {
     if (amountInInput || amountOutMinInput) {
       transaction.method = 'swapExactTokensForETH';
-      transaction.params = { amountIn: amountIn, amountOutMin: amountOutMin };
+      transaction.params = { amountIn: amountIn.toString(), amountOutMin: amountOutMin.toString() };
     } else if (amountOutInput || amountInMaxInput) {
       transaction.method = 'swapTokensForExactETH';
-      transaction.params = { amountInMax: amountInMax, amountOut: amountOut };
+      transaction.params = { amountInMax: amountInMax.toString(), amountOut: amountOut.toString() };
     }
   } else {
     if (amountInInput || amountOutMinInput) {
       transaction.method = 'swapExactTokensForTokens';
-      transaction.params = { amountIn: amountIn, amountOutMin: amountOutMin };
+      transaction.params = { amountIn: amountIn.toString(), amountOutMin: amountOutMin.toString() };
     } else if (amountOutInput || amountInMaxInput) {
       transaction.method = 'swapTokensForExactTokens';
-      transaction.params = { amountInMax: amountInMax, amountOut: amountOut };
+      transaction.params = { amountInMax: amountInMax.toString(), amountOut: amountOut.toString() };
     }
   }
 

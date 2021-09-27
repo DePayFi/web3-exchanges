@@ -15,10 +15,10 @@ class Route {
     this.tokenIn = tokenIn
     this.tokenOut = tokenOut
     this.path = path
-    this.amountIn = amountIn
-    this.amountOutMin = amountOutMin
-    this.amountOut = amountOut
-    this.amountInMax = amountInMax
+    this.amountIn = amountIn?.toString()
+    this.amountOutMin = amountOutMin?.toString()
+    this.amountOut = amountOut?.toString()
+    this.amountInMax = amountInMax?.toString()
     this.fromAddress = fromAddress
     this.toAddress = toAddress
     this.transaction = transaction
