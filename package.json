@@ -1,7 +1,7 @@
 {
   "name": "depay-web3-exchanges",
   "moduleName": "Web3Exchanges",
-  "version": "6.0.1",
+  "version": "6.0.2",
   "description": "JavaScript library simplifying decentralized web3 exchange routing for multiple blockchains and exchanges.",
   "main": "dist/cjs/index.js",
   "module": "dist/es/index.js",

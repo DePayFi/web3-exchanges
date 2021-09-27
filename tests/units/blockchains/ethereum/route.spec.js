@@ -134,6 +134,6 @@ describe('route', ()=> {
     expect(routes[0].transaction.to).toEqual(CONSTANTS.ethereum.WRAPPED)
     expect(routes[0].transaction.api).toEqual(WETH)
     expect(routes[0].transaction.method).toEqual('deposit')
-    expect(routes[0].transaction.value).toEqual(amountBN)
+    expect(routes[0].transaction.value).toEqual(amountBN.toString())
   })  
 })

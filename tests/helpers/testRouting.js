@@ -33,7 +33,7 @@ function expectRoute({
   expect(route.transaction.api).toEqual(transaction.api)
   expect(route.transaction.method).toEqual(transaction.method)
   expect(route.transaction.params.deadline).toBeDefined()
-  expect(route.transaction.value).toEqual(transaction.value)
+  expect(route.transaction.value).toEqual(transaction.value?.toString())
   expect(
     Object.keys(transaction.params).every((key)=>{
       return JSON.stringify(normalize(route.transaction.params[key])) == JSON.stringify(normalize(transaction.params[key]))

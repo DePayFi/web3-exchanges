@@ -381,11 +381,11 @@ let getTransaction$1 = ({
   if (path[0] === CONSTANTS[blockchain].NATIVE) {
     if (amountInInput || amountOutMinInput) {
       transaction.method = 'swapExactETHForTokens';
-      transaction.value = amountIn;
+      transaction.value = amountIn.toString();
       transaction.params = { amountOutMin: amountOutMin.toString() };
     } else if (amountOutInput || amountInMaxInput) {
       transaction.method = 'swapETHForExactTokens';
-      transaction.value = amountInMax;
+      transaction.value = amountInMax.toString();
       transaction.params = { amountOut: amountOut.toString() };
     }
   } else if (path[path.length - 1] === CONSTANTS[blockchain].NATIVE) {
@@ -680,11 +680,11 @@ let getTransaction = ({
   if (path[0] === CONSTANTS.ethereum.NATIVE) {
     if (amountInInput || amountOutMinInput) {
       transaction.method = 'swapExactETHForTokens';
-      transaction.value = amountIn;
+      transaction.value = amountIn.toString();
       transaction.params = { amountOutMin: amountOutMin.toString() };
     } else if (amountOutInput || amountInMaxInput) {
       transaction.method = 'swapETHForExactTokens';
-      transaction.value = amountInMax;
+      transaction.value = amountInMax.toString();
       transaction.params = { amountOut: amountOut.toString() };
     }
   } else if (path[path.length - 1] === CONSTANTS.ethereum.NATIVE) {
@@ -836,7 +836,7 @@ let route$2 = ({
           to: CONSTANTS.ethereum.WRAPPED,
           api: WETH,
           method: 'deposit',
-          value: amountOut
+          value: amountOut.toString()
         }
       });
     } else if(tokenIn === CONSTANTS.ethereum.WRAPPED && tokenOut === CONSTANTS.ethereum.NATIVE) {
@@ -926,7 +926,7 @@ let route$1 = ({
           to: CONSTANTS.bsc.WRAPPED,
           api: WBNB,
           method: 'deposit',
-          value: amountOut
+          value: amountOut.toString()
         }
       });
     } else if(tokenIn === CONSTANTS.bsc.WRAPPED && tokenOut === CONSTANTS.bsc.NATIVE) {

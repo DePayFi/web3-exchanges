@@ -134,6 +134,6 @@ describe('route', ()=> {
     expect(routes[0].transaction.from).toEqual(accounts[0])
     expect(routes[0].transaction.api).toEqual(WBNB)
     expect(routes[0].transaction.method).toEqual('deposit')
-    expect(routes[0].transaction.value).toEqual(amountBN)
+    expect(routes[0].transaction.value).toEqual(amountBN.toString())
   }) 
 })

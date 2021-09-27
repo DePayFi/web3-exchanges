@@ -383,11 +383,11 @@
     if (path[0] === depayWeb3Constants.CONSTANTS[blockchain].NATIVE) {
       if (amountInInput || amountOutMinInput) {
         transaction.method = 'swapExactETHForTokens';
-        transaction.value = amountIn;
+        transaction.value = amountIn.toString();
         transaction.params = { amountOutMin: amountOutMin.toString() };
       } else if (amountOutInput || amountInMaxInput) {
         transaction.method = 'swapETHForExactTokens';
-        transaction.value = amountInMax;
+        transaction.value = amountInMax.toString();
         transaction.params = { amountOut: amountOut.toString() };
       }
     } else if (path[path.length - 1] === depayWeb3Constants.CONSTANTS[blockchain].NATIVE) {
@@ -682,11 +682,11 @@
     if (path[0] === depayWeb3Constants.CONSTANTS.ethereum.NATIVE) {
       if (amountInInput || amountOutMinInput) {
         transaction.method = 'swapExactETHForTokens';
-        transaction.value = amountIn;
+        transaction.value = amountIn.toString();
         transaction.params = { amountOutMin: amountOutMin.toString() };
       } else if (amountOutInput || amountInMaxInput) {
         transaction.method = 'swapETHForExactTokens';
-        transaction.value = amountInMax;
+        transaction.value = amountInMax.toString();
         transaction.params = { amountOut: amountOut.toString() };
       }
     } else if (path[path.length - 1] === depayWeb3Constants.CONSTANTS.ethereum.NATIVE) {
@@ -838,7 +838,7 @@
             to: depayWeb3Constants.CONSTANTS.ethereum.WRAPPED,
             api: WETH,
             method: 'deposit',
-            value: amountOut
+            value: amountOut.toString()
           }
         });
       } else if(tokenIn === depayWeb3Constants.CONSTANTS.ethereum.WRAPPED && tokenOut === depayWeb3Constants.CONSTANTS.ethereum.NATIVE) {
@@ -928,7 +928,7 @@
             to: depayWeb3Constants.CONSTANTS.bsc.WRAPPED,
             api: WBNB,
             method: 'deposit',
-            value: amountOut
+            value: amountOut.toString()
           }
         });
       } else if(tokenIn === depayWeb3Constants.CONSTANTS.bsc.WRAPPED && tokenOut === depayWeb3Constants.CONSTANTS.bsc.NATIVE) {

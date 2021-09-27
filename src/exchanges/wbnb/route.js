@@ -42,7 +42,7 @@ let route = ({
           to: CONSTANTS.bsc.WRAPPED,
           api: WBNB,
           method: 'deposit',
-          value: amountOut
+          value: amountOut.toString()
         }
       })
     } else if(tokenIn === CONSTANTS.bsc.WRAPPED && tokenOut === CONSTANTS.bsc.NATIVE) {

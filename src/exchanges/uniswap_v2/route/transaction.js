@@ -26,11 +26,11 @@ let getTransaction = ({
   if (path[0] === CONSTANTS.ethereum.NATIVE) {
     if (amountInInput || amountOutMinInput) {
       transaction.method = 'swapExactETHForTokens'
-      transaction.value = amountIn
+      transaction.value = amountIn.toString()
       transaction.params = { amountOutMin: amountOutMin.toString() }
     } else if (amountOutInput || amountInMaxInput) {
       transaction.method = 'swapETHForExactTokens'
-      transaction.value = amountInMax
+      transaction.value = amountInMax.toString()
       transaction.params = { amountOut: amountOut.toString() }
     }
   } else if (path[path.length - 1] === CONSTANTS.ethereum.NATIVE) {

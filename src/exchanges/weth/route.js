@@ -42,7 +42,7 @@ let route = ({
           to: CONSTANTS.ethereum.WRAPPED,
           api: WETH,
           method: 'deposit',
-          value: amountOut
+          value: amountOut.toString()
         }
       })
     } else if(tokenIn === CONSTANTS.ethereum.WRAPPED && tokenOut === CONSTANTS.ethereum.NATIVE) {
