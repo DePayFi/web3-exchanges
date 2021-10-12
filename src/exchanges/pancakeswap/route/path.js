@@ -1,6 +1,8 @@
 import PancakeSwap from '../basics'
 import { CONSTANTS } from 'depay-web3-constants'
+import { ethers } from 'ethers'
 import { request } from 'depay-web3-client'
+import { Token } from 'depay-web3-tokens'
 
 // Uniswap replaces 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE with
 // the wrapped token 0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2 and implies wrapping.
@@ -30,6 +32,16 @@ let fixUniswapPath = (path) => {
   return fixedPath
 }
 
+let minReserveRequirements = ({ reserves, min, token, token0, token1, decimals }) => {
+  if(token0.toLowerCase() == token.toLowerCase()) {
+    return reserves[0].gte(ethers.utils.parseUnits(min.toString(), decimals))
+  } else if (token1.toLowerCase() == token.toLowerCase()) {
+    return reserves[1].gte(ethers.utils.parseUnits(min.toString(), decimals))
+  } else {
+    return false
+  }
+}
+
 let pathExists = async (path) => {
   let pair = await request({
     blockchain: 'bsc',
@@ -40,7 +52,21 @@ let pathExists = async (path) => {
     cache: 3600000,
     params: fixUniswapPath(path),
   })
-  return pair != CONSTANTS.bsc.ZERO
+  if(pair == CONSTANTS.bsc.ZERO) { return false }
+  let [reserves, token0, token1] = await Promise.all([
+    request({ blockchain: 'bsc', address: pair, method: 'getReserves' }, { api: PancakeSwap.contracts.pair.api, cache: 3600000 }),
+    request({ blockchain: 'bsc', address: pair, method: 'token0' }, { api: PancakeSwap.contracts.pair.api, cache: 3600000 }),
+    request({ blockchain: 'bsc', address: pair, method: 'token1' }, { api: PancakeSwap.contracts.pair.api, cache: 3600000 })
+  ])
+  if(path.includes(CONSTANTS.bsc.WRAPPED)) {
+    return minReserveRequirements({ min: 1, token: CONSTANTS.bsc.WRAPPED, decimals: CONSTANTS.bsc.DECIMALS, reserves, token0, token1 })
+  } else if (path.includes(CONSTANTS.bsc.USD)) {
+    let token = new Token({ blockchain: 'bsc', address: CONSTANTS.bsc.USD })
+    let decimals = await token.decimals()
+    return minReserveRequirements({ min: 1000, token: CONSTANTS.bsc.USD, decimals, reserves, token0, token1 })
+  } else {
+    return true 
+  }
 }
 
 let findPath = async ({ tokenIn, tokenOut }) => {

@@ -1,7 +1,38 @@
-import { mock } from 'depay-web3-mock'
 import PancakeSwap from 'src/exchanges/pancakeswap'
+import { ethers } from 'ethers'
+import { mock } from 'depay-web3-mock'
 
 function mockPair({ provider, tokenIn, tokenOut, pair }) {
+  mock({
+    provider: provider,
+    blockchain: 'bsc',
+    call: {
+      to: pair,
+      api: PancakeSwap.contracts.pair.api,
+      method: 'getReserves',
+      return: [ethers.utils.parseUnits('1000', 18), ethers.utils.parseUnits('1000', 18), '1629804922']
+    }
+  })
+  mock({
+    provider: provider,
+    blockchain: 'bsc',
+    call: {
+      to: pair,
+      api: PancakeSwap.contracts.pair.api,
+      method: 'token0',
+      return: tokenIn
+    }
+  })
+  mock({
+    provider: provider,
+    blockchain: 'bsc',
+    call: {
+      to: pair,
+      api: PancakeSwap.contracts.pair.api,
+      method: 'token1',
+      return: tokenOut
+    }
+  })
   return mock({
     provider: provider,
     blockchain: 'bsc',
