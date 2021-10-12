@@ -875,6 +875,14 @@
     "@babel/helper-validator-identifier" "^7.14.9"
     to-fast-properties "^2.0.0"
 
+"@depay/walletconnect@^1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@depay/walletconnect/-/walletconnect-1.0.2.tgz#64faf6987fc266f96a143108c0a7c44b62c425e9"
+  integrity sha512-F+/qEJ/JXMD9rs8RzLO/uJzYNopsjNk7ei64ufhjpk1z7/RyME+wGVTdOdn+nipeOq6t+R7OEMhcN0IcWOhzpQ==
+  dependencies:
+    "@walletconnect/client" "^1.6.5"
+    "@walletconnect/qrcode-modal" "^1.6.5"
+
 "@eslint/eslintrc@^0.4.3":
   version "0.4.3"
   resolved "https://registry.yarnpkg.com/@eslint/eslintrc/-/eslintrc-0.4.3.tgz#9e42981ef035beb3dd49add17acb96e8ff6f394c"
@@ -2498,10 +2506,10 @@ depay-web3-tokens@^6.0.0:
   resolved "https://registry.yarnpkg.com/depay-web3-tokens/-/depay-web3-tokens-6.0.0.tgz#995cf9faeb1ca26e0d899d72fcef9f38e1c3740d"
   integrity sha512-+ynGBo1y3SpAZjJxkKmatGAh74C3b68qQFMDfM/N4eVDhpaUVbdllO/wGa/kMzFahPQXaA9DTFlVGwssFki0vg==
 
-depay-web3-wallets@^5.6.0:
-  version "5.6.0"
-  resolved "https://registry.yarnpkg.com/depay-web3-wallets/-/depay-web3-wallets-5.6.0.tgz#f1eb83fa80a1bc1ee78acf9833f59e7cdb2dc509"
-  integrity sha512-KNDNz93TOzD9xarmaLAKoUQ8b54rTsivGr/lzvkslCrWJZl2ejhg/44BLzuboTIaXEe2Ft7ZGkL6n8ypDH+YOA==
+depay-web3-wallets@^5.7.3:
+  version "5.7.3"
+  resolved "https://registry.yarnpkg.com/depay-web3-wallets/-/depay-web3-wallets-5.7.3.tgz#884b51efc4fc572b4669b6334191929cf0dcc293"
+  integrity sha512-isTlCv35ZZUphof8QDDmLfH1PlFunR//m+scA5Sr3ou/9yqayFmW+ZoT72C88TIIYw9EFrZk+dDgaWYI2NqfYg==
 
 detect-browser@5.2.0:
   version "5.2.0"
