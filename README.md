@@ -83,10 +83,10 @@ A Swap configuration is fed into the `route` function:
 {
   tokenIn: String (e.g. '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb')
   tokenOut: String (e.g. '0xdAC17F958D2ee523a2206206994597C13D831ec7')
-  amountIn: Number (e.g. 1)
-  amountInMax: Number (e.g. 1)
-  amountOut: Number (e.g. 32)
-  amountOutMin: Number (e.g. 32)
+  amountIn: Human Readable Number (e.g. 1.2)
+  amountInMax: Human Readable Number (e.g. 1.2)
+  amountOut: Human Readable Number (e.g. 1.2)
+  amountOutMin: Human Readable Number (e.g. 1.2)
   fromAddress: '0x5Af489c8786A018EC4814194dC8048be1007e390'
   toAddress: '0x5Af489c8786A018EC4814194dC8048be1007e390'
 }
