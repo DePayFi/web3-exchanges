@@ -89,7 +89,7 @@ describe('pancakeswap', () => {
 
     let tokenIn = '0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82'
     let decimalsIn = 18
-    let tokenOut = '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56'
+    let tokenOut = '0xE02dF9e3e622DeBdD69fb838bB799E3F168902c5'
     let decimalsOut = 18
     let path = [tokenIn, tokenOut]
 
@@ -368,6 +368,7 @@ describe('pancakeswap', () => {
       mockDecimals({ provider: provider(blockchain), blockchain, address: tokenIn, value: decimalsIn })
       mockDecimals({ provider: provider(blockchain), blockchain, address: tokenOut, value: decimalsOut })
       
+      mockPair({ provider: provider(blockchain), tokenIn, tokenOut: CONSTANTS[blockchain].USD, pair: CONSTANTS[blockchain].ZERO })
       mockPair({ provider: provider(blockchain), tokenIn, tokenOut, pair: CONSTANTS[blockchain].ZERO })
       mockPair({ provider: provider(blockchain), tokenIn, tokenOut: CONSTANTS[blockchain].WRAPPED, pair: CONSTANTS[blockchain].ZERO })
 
@@ -381,6 +382,99 @@ describe('pancakeswap', () => {
       })
 
       expect(route).toEqual(undefined)
+    })
+
+    it('routes a token to token swap on PancakeSwap also if the routing path is via TOKEN_A->USD->WRAPPED->TOKEN_B', async ()=> {
+      let amountOutMin = 1
+      let amountOutMinBN = ethers.utils.parseUnits(amountOutMin.toString(), decimalsOut)
+      let amountIn = 32
+      let amountInBN = ethers.utils.parseUnits(amountIn.toString(), decimalsIn)
+      let amountWRAPPED = 0.1
+      let amountWRAPPEDBN = ethers.utils.parseUnits(amountWRAPPED.toString(), CONSTANTS[blockchain].DECIMALS)
+      let amountUSD = 420
+      let amountUSDBN = ethers.utils.parseUnits(amountUSD.toString(), CONSTANTS[blockchain].DECIMALS)
+
+      path = [tokenIn, CONSTANTS[blockchain].USD, CONSTANTS[blockchain].WRAPPED, tokenOut]
+
+      mockDecimals({ provider: provider(blockchain), blockchain, address: CONSTANTS[blockchain].USD, value: CONSTANTS[blockchain].DECIMALS })
+      mockPair({ provider: provider(blockchain), tokenIn, tokenOut, pair: CONSTANTS[blockchain].ZERO })
+      mockPair({ provider: provider(blockchain), tokenIn, tokenOut: CONSTANTS[blockchain].WRAPPED, pair: CONSTANTS[blockchain].ZERO })
+      mockPair({ provider: provider(blockchain), tokenIn, tokenOut: CONSTANTS[blockchain].USD, pair: '0xef8cd6cb5c841a4f02986e8a8ab3cc545d1b8b6d' })
+      mockPair({ provider: provider(blockchain), tokenIn: tokenOut, tokenOut: CONSTANTS[blockchain].WRAPPED, pair: '0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852' })
+      mockAmounts({ provider: provider(blockchain), method: 'getAmountsOut', params: [amountInBN, path], amounts: [amountInBN, amountUSDBN, amountWRAPPEDBN, amountOutMinBN] })
+
+      await testRouting({
+        blockchain,
+        exchange,
+        tokenIn,
+        decimalsIn,
+        tokenOut,
+        decimalsOut,
+        path,
+        amountIn,
+        amountOutMin,
+        pair,
+        fromAddress,
+        toAddress,
+        transaction: {
+          to: exchange.contracts.router.address,
+          api: exchange.contracts.router.api,
+          method: 'swapExactTokensForTokens',
+          params: {
+            amountIn: amountInBN,
+            amountOutMin: amountOutMinBN,
+            path: path,
+            to: toAddress
+          }
+        }
+      })
+    })
+
+    it('routes a token to token swap on PancakeSwap also if the routing path is via TOKEN_A->WRAPPED->USD->TOKEN_B', async ()=> {
+      let amountOutMin = 1
+      let amountOutMinBN = ethers.utils.parseUnits(amountOutMin.toString(), decimalsOut)
+      let amountIn = 32
+      let amountInBN = ethers.utils.parseUnits(amountIn.toString(), decimalsIn)
+      let amountWRAPPED = 0.1
+      let amountWRAPPEDBN = ethers.utils.parseUnits(amountWRAPPED.toString(), CONSTANTS[blockchain].DECIMALS)
+      let amountUSD = 420
+      let amountUSDBN = ethers.utils.parseUnits(amountUSD.toString(), CONSTANTS[blockchain].DECIMALS)
+
+      path = [tokenIn, CONSTANTS[blockchain].WRAPPED, CONSTANTS[blockchain].USD, tokenOut]
+
+      mockDecimals({ provider: provider(blockchain), blockchain, address: CONSTANTS[blockchain].USD, value: CONSTANTS[blockchain].DECIMALS })
+      mockPair({ provider: provider(blockchain), tokenIn, tokenOut, pair: CONSTANTS[blockchain].ZERO })
+      mockPair({ provider: provider(blockchain), tokenIn, tokenOut: CONSTANTS[blockchain].USD, pair: CONSTANTS[blockchain].ZERO })
+      mockPair({ provider: provider(blockchain), tokenIn, tokenOut: CONSTANTS[blockchain].WRAPPED, pair: '0xef8cd6cb5c841a4f02986e8a8ab3cc545d1b8b6d' })
+      mockPair({ provider: provider(blockchain), tokenIn: tokenOut, tokenOut: CONSTANTS[blockchain].WRAPPED, pair: CONSTANTS[blockchain].ZERO })
+      mockPair({ provider: provider(blockchain), tokenIn: tokenOut, tokenOut: CONSTANTS[blockchain].USD, pair: '0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852' })
+      mockAmounts({ provider: provider(blockchain), method: 'getAmountsOut', params: [amountInBN, path], amounts: [amountInBN, amountWRAPPEDBN, amountUSDBN, amountOutMinBN] })
+
+      await testRouting({
+        blockchain,
+        exchange,
+        tokenIn,
+        decimalsIn,
+        tokenOut,
+        decimalsOut,
+        path,
+        amountIn,
+        amountOutMin,
+        pair,
+        fromAddress,
+        toAddress,
+        transaction: {
+          to: exchange.contracts.router.address,
+          api: exchange.contracts.router.api,
+          method: 'swapExactTokensForTokens',
+          params: {
+            amountIn: amountInBN,
+            amountOutMin: amountOutMinBN,
+            path: path,
+            to: toAddress
+          }
+        }
+      })
     })
   })
 

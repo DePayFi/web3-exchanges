@@ -4888,6 +4888,18 @@
     ) {
       // path via WRAPPED
       path = [tokenIn, depayWeb3Constants.CONSTANTS.bsc.WRAPPED, tokenOut];
+    } else if (
+      (await pathExists$1([tokenIn, depayWeb3Constants.CONSTANTS.bsc.USD])) &&
+      (await pathExists$1([tokenOut, depayWeb3Constants.CONSTANTS.bsc.WRAPPED]))
+    ) {
+      // path via tokenIn -> USD -> WRAPPED -> tokenOut
+      path = [tokenIn, depayWeb3Constants.CONSTANTS.bsc.USD, depayWeb3Constants.CONSTANTS.bsc.WRAPPED, tokenOut];
+    } else if (
+      (await pathExists$1([tokenIn, depayWeb3Constants.CONSTANTS.bsc.WRAPPED])) &&
+      (await pathExists$1([tokenOut, depayWeb3Constants.CONSTANTS.bsc.USD]))
+    ) {
+      // path via tokenIn -> WRAPPED -> USD -> tokenOut
+      path = [tokenIn, depayWeb3Constants.CONSTANTS.bsc.WRAPPED, depayWeb3Constants.CONSTANTS.bsc.USD, tokenOut];
     }
 
     // Add WRAPPED to route path if things start or end with NATIVE
@@ -5209,6 +5221,18 @@
     ) {
       // path via WRAPPED
       path = [tokenIn, depayWeb3Constants.CONSTANTS.ethereum.WRAPPED, tokenOut];
+    } else if (
+      (await pathExists([tokenIn, depayWeb3Constants.CONSTANTS.ethereum.USD])) &&
+      (await pathExists([tokenOut, depayWeb3Constants.CONSTANTS.ethereum.WRAPPED]))
+    ) {
+      // path via tokenIn -> USD -> WRAPPED -> tokenOut
+      path = [tokenIn, depayWeb3Constants.CONSTANTS.ethereum.USD, depayWeb3Constants.CONSTANTS.ethereum.WRAPPED, tokenOut];
+    } else if (
+      (await pathExists([tokenIn, depayWeb3Constants.CONSTANTS.ethereum.WRAPPED])) &&
+      (await pathExists([tokenOut, depayWeb3Constants.CONSTANTS.ethereum.USD]))
+    ) {
+      // path via tokenIn -> WRAPPED -> USD -> tokenOut
+      path = [tokenIn, depayWeb3Constants.CONSTANTS.ethereum.WRAPPED, depayWeb3Constants.CONSTANTS.ethereum.USD, tokenOut];
     }
 
     // Add WRAPPED to route path if things start or end with NATIVE

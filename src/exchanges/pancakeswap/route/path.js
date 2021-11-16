@@ -86,6 +86,18 @@ let findPath = async ({ tokenIn, tokenOut }) => {
   ) {
     // path via WRAPPED
     path = [tokenIn, CONSTANTS.bsc.WRAPPED, tokenOut]
+  } else if (
+    (await pathExists([tokenIn, CONSTANTS.bsc.USD])) &&
+    (await pathExists([tokenOut, CONSTANTS.bsc.WRAPPED]))
+  ) {
+    // path via tokenIn -> USD -> WRAPPED -> tokenOut
+    path = [tokenIn, CONSTANTS.bsc.USD, CONSTANTS.bsc.WRAPPED, tokenOut]
+  } else if (
+    (await pathExists([tokenIn, CONSTANTS.bsc.WRAPPED])) &&
+    (await pathExists([tokenOut, CONSTANTS.bsc.USD]))
+  ) {
+    // path via tokenIn -> WRAPPED -> USD -> tokenOut
+    path = [tokenIn, CONSTANTS.bsc.WRAPPED, CONSTANTS.bsc.USD, tokenOut]
   }
 
   // Add WRAPPED to route path if things start or end with NATIVE
