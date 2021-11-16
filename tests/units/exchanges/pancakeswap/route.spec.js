@@ -400,7 +400,7 @@ describe('pancakeswap', () => {
       mockPair({ provider: provider(blockchain), tokenIn, tokenOut, pair: CONSTANTS[blockchain].ZERO })
       mockPair({ provider: provider(blockchain), tokenIn, tokenOut: CONSTANTS[blockchain].WRAPPED, pair: CONSTANTS[blockchain].ZERO })
       mockPair({ provider: provider(blockchain), tokenIn, tokenOut: CONSTANTS[blockchain].USD, pair: '0xef8cd6cb5c841a4f02986e8a8ab3cc545d1b8b6d' })
-      mockPair({ provider: provider(blockchain), tokenIn: tokenOut, tokenOut: CONSTANTS[blockchain].WRAPPED, pair: '0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852' })
+      mockPair({ provider: provider(blockchain), tokenIn: CONSTANTS[blockchain].WRAPPED, tokenOut , pair: '0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852' })
       mockAmounts({ provider: provider(blockchain), method: 'getAmountsOut', params: [amountInBN, path], amounts: [amountInBN, amountUSDBN, amountWRAPPEDBN, amountOutMinBN] })
 
       await testRouting({
@@ -447,7 +447,7 @@ describe('pancakeswap', () => {
       mockPair({ provider: provider(blockchain), tokenIn, tokenOut: CONSTANTS[blockchain].USD, pair: CONSTANTS[blockchain].ZERO })
       mockPair({ provider: provider(blockchain), tokenIn, tokenOut: CONSTANTS[blockchain].WRAPPED, pair: '0xef8cd6cb5c841a4f02986e8a8ab3cc545d1b8b6d' })
       mockPair({ provider: provider(blockchain), tokenIn: tokenOut, tokenOut: CONSTANTS[blockchain].WRAPPED, pair: CONSTANTS[blockchain].ZERO })
-      mockPair({ provider: provider(blockchain), tokenIn: tokenOut, tokenOut: CONSTANTS[blockchain].USD, pair: '0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852' })
+      mockPair({ provider: provider(blockchain), tokenIn: CONSTANTS[blockchain].USD, tokenOut, pair: '0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852' })
       mockAmounts({ provider: provider(blockchain), method: 'getAmountsOut', params: [amountInBN, path], amounts: [amountInBN, amountWRAPPEDBN, amountUSDBN, amountOutMinBN] })
 
       await testRouting({

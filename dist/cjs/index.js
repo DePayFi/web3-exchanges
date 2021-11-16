@@ -4881,25 +4881,30 @@ let findPath$1 = async ({ tokenIn, tokenOut }) => {
   ) { return }
 
   let path;
-  
   if (await pathExists$1([tokenIn, tokenOut])) {
     // direct path
     path = [tokenIn, tokenOut];
   } else if (
-    (await pathExists$1([tokenIn, depayWeb3Constants.CONSTANTS.bsc.WRAPPED])) &&
-    (await pathExists$1([tokenOut, depayWeb3Constants.CONSTANTS.bsc.WRAPPED]))
+    tokenIn != depayWeb3Constants.CONSTANTS.bsc.WRAPPED &&
+    await pathExists$1([tokenIn, depayWeb3Constants.CONSTANTS.bsc.WRAPPED]) &&
+    tokenOut != depayWeb3Constants.CONSTANTS.bsc.WRAPPED &&
+    await pathExists$1([tokenOut, depayWeb3Constants.CONSTANTS.bsc.WRAPPED])
   ) {
     // path via WRAPPED
     path = [tokenIn, depayWeb3Constants.CONSTANTS.bsc.WRAPPED, tokenOut];
   } else if (
-    (await pathExists$1([tokenIn, depayWeb3Constants.CONSTANTS.bsc.USD])) &&
-    (await pathExists$1([tokenOut, depayWeb3Constants.CONSTANTS.bsc.WRAPPED]))
+    tokenIn != depayWeb3Constants.CONSTANTS.bsc.USD &&
+    await pathExists$1([tokenIn, depayWeb3Constants.CONSTANTS.bsc.USD]) &&
+    tokenOut != depayWeb3Constants.CONSTANTS.bsc.WRAPPED &&
+    await pathExists$1([depayWeb3Constants.CONSTANTS.bsc.WRAPPED, tokenOut])
   ) {
     // path via tokenIn -> USD -> WRAPPED -> tokenOut
     path = [tokenIn, depayWeb3Constants.CONSTANTS.bsc.USD, depayWeb3Constants.CONSTANTS.bsc.WRAPPED, tokenOut];
   } else if (
-    (await pathExists$1([tokenIn, depayWeb3Constants.CONSTANTS.bsc.WRAPPED])) &&
-    (await pathExists$1([tokenOut, depayWeb3Constants.CONSTANTS.bsc.USD]))
+    tokenIn != depayWeb3Constants.CONSTANTS.bsc.WRAPPED &&
+    await pathExists$1([tokenIn, depayWeb3Constants.CONSTANTS.bsc.WRAPPED]) &&
+    tokenOut != depayWeb3Constants.CONSTANTS.bsc.USD &&
+    await pathExists$1([depayWeb3Constants.CONSTANTS.bsc.USD, tokenOut])
   ) {
     // path via tokenIn -> WRAPPED -> USD -> tokenOut
     path = [tokenIn, depayWeb3Constants.CONSTANTS.bsc.WRAPPED, depayWeb3Constants.CONSTANTS.bsc.USD, tokenOut];
@@ -5214,25 +5219,30 @@ let findPath = async ({ tokenIn, tokenOut }) => {
   ) { return }
 
   let path;
-
   if (await pathExists([tokenIn, tokenOut])) {
     // direct path
     path = [tokenIn, tokenOut];
   } else if (
-    (await pathExists([tokenIn, depayWeb3Constants.CONSTANTS.ethereum.WRAPPED])) &&
-    (await pathExists([tokenOut, depayWeb3Constants.CONSTANTS.ethereum.WRAPPED]))
+    tokenIn != depayWeb3Constants.CONSTANTS.ethereum.WRAPPED &&
+    await pathExists([tokenIn, depayWeb3Constants.CONSTANTS.ethereum.WRAPPED]) &&
+    tokenOut != depayWeb3Constants.CONSTANTS.ethereum.WRAPPED &&
+    await pathExists([tokenOut, depayWeb3Constants.CONSTANTS.ethereum.WRAPPED])
   ) {
     // path via WRAPPED
     path = [tokenIn, depayWeb3Constants.CONSTANTS.ethereum.WRAPPED, tokenOut];
   } else if (
-    (await pathExists([tokenIn, depayWeb3Constants.CONSTANTS.ethereum.USD])) &&
-    (await pathExists([tokenOut, depayWeb3Constants.CONSTANTS.ethereum.WRAPPED]))
+    tokenIn != depayWeb3Constants.CONSTANTS.ethereum.USD &&
+    await pathExists([tokenIn, depayWeb3Constants.CONSTANTS.ethereum.USD]) &&
+    tokenOut != depayWeb3Constants.CONSTANTS.ethereum.WRAPPED &&
+    await pathExists([depayWeb3Constants.CONSTANTS.ethereum.WRAPPED, tokenOut])
   ) {
     // path via tokenIn -> USD -> WRAPPED -> tokenOut
     path = [tokenIn, depayWeb3Constants.CONSTANTS.ethereum.USD, depayWeb3Constants.CONSTANTS.ethereum.WRAPPED, tokenOut];
   } else if (
-    (await pathExists([tokenIn, depayWeb3Constants.CONSTANTS.ethereum.WRAPPED])) &&
-    (await pathExists([tokenOut, depayWeb3Constants.CONSTANTS.ethereum.USD]))
+    tokenIn != depayWeb3Constants.CONSTANTS.ethereum.WRAPPED &&
+    await pathExists([tokenIn, depayWeb3Constants.CONSTANTS.ethereum.WRAPPED]) &&
+    tokenOut != depayWeb3Constants.CONSTANTS.ethereum.USD &&
+    await pathExists([depayWeb3Constants.CONSTANTS.ethereum.USD, tokenOut])
   ) {
     // path via tokenIn -> WRAPPED -> USD -> tokenOut
     path = [tokenIn, depayWeb3Constants.CONSTANTS.ethereum.WRAPPED, depayWeb3Constants.CONSTANTS.ethereum.USD, tokenOut];
@@ -5245,7 +5255,7 @@ let findPath = async ({ tokenIn, tokenOut }) => {
   } else if(_optionalChain([path, 'optionalAccess', _2 => _2.length]) && path[path.length-1] == depayWeb3Constants.CONSTANTS.ethereum.NATIVE) {
     path.splice(path.length-1, 0, depayWeb3Constants.CONSTANTS.ethereum.WRAPPED);
   }
-  
+
   return path
 };
 

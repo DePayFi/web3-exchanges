@@ -72,25 +72,30 @@ let findPath = async ({ tokenIn, tokenOut }) => {
   ) { return }
 
   let path
-
   if (await pathExists([tokenIn, tokenOut])) {
     // direct path
     path = [tokenIn, tokenOut]
   } else if (
-    (await pathExists([tokenIn, CONSTANTS.ethereum.WRAPPED])) &&
-    (await pathExists([tokenOut, CONSTANTS.ethereum.WRAPPED]))
+    tokenIn != CONSTANTS.ethereum.WRAPPED &&
+    await pathExists([tokenIn, CONSTANTS.ethereum.WRAPPED]) &&
+    tokenOut != CONSTANTS.ethereum.WRAPPED &&
+    await pathExists([tokenOut, CONSTANTS.ethereum.WRAPPED])
   ) {
     // path via WRAPPED
     path = [tokenIn, CONSTANTS.ethereum.WRAPPED, tokenOut]
   } else if (
-    (await pathExists([tokenIn, CONSTANTS.ethereum.USD])) &&
-    (await pathExists([tokenOut, CONSTANTS.ethereum.WRAPPED]))
+    tokenIn != CONSTANTS.ethereum.USD &&
+    await pathExists([tokenIn, CONSTANTS.ethereum.USD]) &&
+    tokenOut != CONSTANTS.ethereum.WRAPPED &&
+    await pathExists([CONSTANTS.ethereum.WRAPPED, tokenOut])
   ) {
     // path via tokenIn -> USD -> WRAPPED -> tokenOut
     path = [tokenIn, CONSTANTS.ethereum.USD, CONSTANTS.ethereum.WRAPPED, tokenOut]
   } else if (
-    (await pathExists([tokenIn, CONSTANTS.ethereum.WRAPPED])) &&
-    (await pathExists([tokenOut, CONSTANTS.ethereum.USD]))
+    tokenIn != CONSTANTS.ethereum.WRAPPED &&
+    await pathExists([tokenIn, CONSTANTS.ethereum.WRAPPED]) &&
+    tokenOut != CONSTANTS.ethereum.USD &&
+    await pathExists([CONSTANTS.ethereum.USD, tokenOut])
   ) {
     // path via tokenIn -> WRAPPED -> USD -> tokenOut
     path = [tokenIn, CONSTANTS.ethereum.WRAPPED, CONSTANTS.ethereum.USD, tokenOut]
@@ -103,7 +108,7 @@ let findPath = async ({ tokenIn, tokenOut }) => {
   } else if(path?.length && path[path.length-1] == CONSTANTS.ethereum.NATIVE) {
     path.splice(path.length-1, 0, CONSTANTS.ethereum.WRAPPED)
   }
-  
+
   return path
 }
 

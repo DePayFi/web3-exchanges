@@ -76,25 +76,30 @@ let findPath = async ({ tokenIn, tokenOut }) => {
   ) { return }
 
   let path
-  
   if (await pathExists([tokenIn, tokenOut])) {
     // direct path
     path = [tokenIn, tokenOut]
   } else if (
-    (await pathExists([tokenIn, CONSTANTS.bsc.WRAPPED])) &&
-    (await pathExists([tokenOut, CONSTANTS.bsc.WRAPPED]))
+    tokenIn != CONSTANTS.bsc.WRAPPED &&
+    await pathExists([tokenIn, CONSTANTS.bsc.WRAPPED]) &&
+    tokenOut != CONSTANTS.bsc.WRAPPED &&
+    await pathExists([tokenOut, CONSTANTS.bsc.WRAPPED])
   ) {
     // path via WRAPPED
     path = [tokenIn, CONSTANTS.bsc.WRAPPED, tokenOut]
   } else if (
-    (await pathExists([tokenIn, CONSTANTS.bsc.USD])) &&
-    (await pathExists([tokenOut, CONSTANTS.bsc.WRAPPED]))
+    tokenIn != CONSTANTS.bsc.USD &&
+    await pathExists([tokenIn, CONSTANTS.bsc.USD]) &&
+    tokenOut != CONSTANTS.bsc.WRAPPED &&
+    await pathExists([CONSTANTS.bsc.WRAPPED, tokenOut])
   ) {
     // path via tokenIn -> USD -> WRAPPED -> tokenOut
     path = [tokenIn, CONSTANTS.bsc.USD, CONSTANTS.bsc.WRAPPED, tokenOut]
   } else if (
-    (await pathExists([tokenIn, CONSTANTS.bsc.WRAPPED])) &&
-    (await pathExists([tokenOut, CONSTANTS.bsc.USD]))
+    tokenIn != CONSTANTS.bsc.WRAPPED &&
+    await pathExists([tokenIn, CONSTANTS.bsc.WRAPPED]) &&
+    tokenOut != CONSTANTS.bsc.USD &&
+    await pathExists([CONSTANTS.bsc.USD, tokenOut])
   ) {
     // path via tokenIn -> WRAPPED -> USD -> tokenOut
     path = [tokenIn, CONSTANTS.bsc.WRAPPED, CONSTANTS.bsc.USD, tokenOut]
