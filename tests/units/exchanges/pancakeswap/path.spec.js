@@ -17,6 +17,13 @@ describe('pancakeswap', () => {
   beforeEach(resetCache)
   beforeEach(()=>mock({ blockchain, accounts: { return: accounts } }))
 
+  describe('path exists', ()=>{
+
+    it('returns false immediatelly if path length == 1', async()=>{
+      expect(await pathExists([CONSTANTS[blockchain].NATIVE])).toEqual(false)
+    })
+  })
+
   describe('find path', ()=>{
 
     it('does not route through USD->USD->WRAPPED->TOKENB', async()=>{

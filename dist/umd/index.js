@@ -4845,6 +4845,7 @@
   };
 
   let pathExists$1 = async (path) => {
+    if(fixUniswapPath$1(path).length == 1) { return false }
     let pair = await depayWeb3Client.request({
       blockchain: 'bsc',
       address: basics$3.contracts.factory.address,
@@ -5187,6 +5188,7 @@
   };
 
   let pathExists = async (path) => {
+    if(fixUniswapPath(path).length == 1) { return false }
     let pair = await depayWeb3Client.request({
       blockchain: 'ethereum',
       address: basics$2.contracts.factory.address,
