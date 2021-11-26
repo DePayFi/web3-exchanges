@@ -6,7 +6,7 @@ import { mockPair } from 'tests/mocks/uniswap_v2'
 import { pathExists, findPath } from 'src/exchanges/uniswap_v2/route/path'
 import { provider } from 'depay-web3-client'
 import { resetCache } from 'depay-web3-client'
-import { Token } from 'depay-web3-tokens'
+import { Token } from '@depay/web3-tokens'
 
 describe('uniswap_v2', () => {
   

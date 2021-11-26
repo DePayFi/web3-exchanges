@@ -2,7 +2,7 @@ import PancakeSwap from '../basics'
 import { CONSTANTS } from 'depay-web3-constants'
 import { ethers } from 'ethers'
 import { request } from 'depay-web3-client'
-import { Token } from 'depay-web3-tokens'
+import { Token } from '@depay/web3-tokens'
 
 // Uniswap replaces 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE with
 // the wrapped token 0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2 and implies wrapping.

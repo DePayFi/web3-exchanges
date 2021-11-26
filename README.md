@@ -1,17 +1,17 @@
 ## Quickstart
 
 ```
-yarn add depay-web3-exchanges
+yarn add @depay/web3-exchanges
 ```
 
 or 
 
 ```
-npm install --save depay-web3-exchanges
+npm install --save @depay/web3-exchanges
 ```
 
 ```javascript
-import { all, findByName, route } from 'depay-web3-exchanges'
+import { all, findByName, route } from '@depay/web3-exchanges'
 
 all
 // [
@@ -129,7 +129,7 @@ See [depay-web3-wallets](https://github.com/DePayFi/depay-web3-wallets#sendtrans
 ### all: Stores all information for all decentralized exchanges
 
 ```javascript
-import { all } from 'depay-web3-exchanges'
+import { all } from '@depay/web3-exchanges'
 
 all
 // [
@@ -143,7 +143,7 @@ all
 ### findByName: Get decentralized exchanged by name (name usually contains version, too)
 
 ```javascript
-import { findByName } from 'depay-web3-exchanges'
+import { findByName } from '@depay/web3-exchanges'
 
 findByName('uniswap_v3')
 // { name: 'uniswap_v3', label: 'Uniswap v3', logo: '...' }
@@ -155,7 +155,7 @@ findByName('pancakeswap_v2')
 ### route: Routes a Swap configuration and returns routes to perform the Swap
 
 ```javascript
-import { route } from 'depay-web3-exchanges'
+import { route } from '@depay/web3-exchanges'
 
 let routes = route {
   tokenIn: '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb',
@@ -177,7 +177,7 @@ wallet.sendTransaction(routes[0].transaction)
 `route` can also be called on concrete exchanges: 
 
 ```javascript
-import { findByName } from 'depay-web3-exchanges'
+import { findByName } from '@depay/web3-exchanges'
 
 let exchange = findByName('uniswap_v2')
 
