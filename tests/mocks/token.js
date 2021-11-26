@@ -1,5 +1,5 @@
 import { Token } from '@depay/web3-tokens'
-import { mock } from 'depay-web3-mock'
+import { mock } from '@depay/web3-mock'
 
 function getStandard(blockchain) {
   switch (blockchain) {

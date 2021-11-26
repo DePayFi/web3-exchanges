@@ -33,7 +33,7 @@ let routes = await route({
 }) // returns routes sorted by cost-effectiveness (best first)
 
 // use connected wallet to sign and send the swap transaction
-import { getWallet } from 'depay-web3-wallets'
+import { getWallet } from '@depay/web3-wallets'
 
 let wallet = getWallet()
 
@@ -117,12 +117,12 @@ Routes are returned by calling `route`. A single Route has the following structu
   amountInMax: BigNumber (e.g. '1000000000000000000')
   fromAddress: '0x5Af489c8786A018EC4814194dC8048be1007e390'
   toAddress: '0x5Af489c8786A018EC4814194dC8048be1007e390'
-  transaction: Transaction (see depay-web3-wallets for details)
+  transaction: Transaction (see @depay/web3-wallets for details)
   exchange: Exchange (see [Exchange data structure](#exchange))
 }
 ```
 
-See [depay-web3-wallets](https://github.com/DePayFi/depay-web3-wallets#sendtransaction) for details about the transaction format.
+See [@depay/web3-wallets](https://github.com/DePayFi/@depay/web3-wallets#sendtransaction) for details about the transaction format.
 
 ## Functionalities
 
@@ -167,7 +167,7 @@ let routes = route {
 } // returns routes sorted by cost-effectiveness (best first)
 
 // use connected wallet to sign and send the swap transaction
-import { getWallet } from 'depay-web3-wallets'
+import { getWallet } from '@depay/web3-wallets'
 
 let wallet = getWallet()
 
@@ -192,7 +192,7 @@ let route = await exchange.route({
 })
 
 // use connected wallet to sign and send the swap transaction
-import { getWallet } from 'depay-web3-wallets'
+import { getWallet } from '@depay/web3-wallets'
 
 let wallet = getWallet()
 

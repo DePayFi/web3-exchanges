@@ -1,11 +1,11 @@
 import Route from 'src/classes/Route'
-import { CONSTANTS } from 'depay-web3-constants'
+import { CONSTANTS } from '@depay/web3-constants'
 import { ethers } from 'ethers'
 import { findByName } from 'src'
-import { mock, resetMocks, anything } from 'depay-web3-mock'
+import { mock, resetMocks, anything } from '@depay/web3-mock'
 import { mockDecimals } from 'tests/mocks/token'
 import { mockPair, mockAmounts } from 'tests/mocks/pancakeswap'
-import { resetCache, provider } from 'depay-web3-client'
+import { resetCache, provider } from '@depay/web3-client'
 import { testRouting } from 'tests/helpers/testRouting'
 
 describe('pancakeswap', () => {

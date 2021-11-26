@@ -1,6 +1,6 @@
 import UniswapV2 from 'src/exchanges/uniswap_v2'
 import { ethers } from 'ethers'
-import { mock } from 'depay-web3-mock'
+import { mock } from '@depay/web3-mock'
 
 function mockPair({ provider, tokenIn, tokenOut, pair }) {
   mock({

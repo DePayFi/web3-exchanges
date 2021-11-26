@@ -1,7 +1,7 @@
 {
   "name": "@depay/web3-exchanges",
   "moduleName": "Web3Exchanges",
-  "version": "7.0.0",
+  "version": "7.1.0",
   "description": "JavaScript library simplifying decentralized web3 exchange routing for multiple blockchains and exchanges.",
   "main": "dist/cjs/index.js",
   "module": "dist/es/index.js",
@@ -18,7 +18,7 @@
     "test:units": "yarn build && npx jest --no-cache",
     "test": "yarn test:units"
   },
-  "repository": "git@github.com:DePayFi/depay-web3-exchanges.git",
+  "repository": "git@github.com:DePayFi/web3-exchanges.git",
   "keywords": [
     "web3",
     "decentralized exchanges",
@@ -29,35 +29,35 @@
   "author": "depay.fi",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/DePayFi/depay-web3-exchanges/issues"
+    "url": "https://github.com/DePayFi/web3-exchanges/issues"
   },
-  "homepage": "https://github.com/DePayFi/depay-web3-exchanges#readme",
+  "homepage": "https://github.com/DePayFi/web3-exchanges#readme",
   "private": false,
   "dependencies": {},
   "peerDependencies": {
-    "depay-web3-client": "^6.0.0",
-    "depay-web3-constants": "^3.0.1",
-    "@depay/web3-tokens": "^7.0.0"
+    "@depay/web3-client": "^7.1.0",
+    "@depay/web3-constants": "^4.0.0",
+    "@depay/web3-tokens": "^7.2.0"
   },
   "engines": {
     "node": ">=10"
   },
   "devDependencies": {
-    "@depay/walletconnect": "^1.0.2",
     "@babel/core": "^7.12.9",
     "@babel/preset-env": "^7.12.7",
+    "@depay/walletconnect": "^1.0.2",
+    "@depay/web3-blockchains": "^3.0.0",
+    "@depay/web3-client": "^7.1.0",
+    "@depay/web3-constants": "^4.0.0",
+    "@depay/web3-mock": "^9.1.1",
+    "@depay/web3-tokens": "^7.2.0",
+    "@depay/web3-wallets": "^6.0.0",
     "@rollup/plugin-commonjs": "^18.0.0",
     "@rollup/plugin-node-resolve": "^11.2.1",
     "@rollup/plugin-replace": "^2.4.2",
     "@rollup/plugin-sucrase": "^3.1.0",
     "babel-loader": "^8.2.2",
     "babel-preset-env": "^1.7.0",
-    "depay-web3-blockchains": "^2.6.0",
-    "depay-web3-client": "^6.0.0",
-    "depay-web3-constants": "^3.0.1",
-    "depay-web3-mock": "^8.2.7",
-    "@depay/web3-tokens": "^7.0.0",
-    "depay-web3-wallets": "^5.7.3",
     "eslint": "^7.15.0",
     "eslint-loader": "^4.0.2",
     "eslint-plugin-import": "^2.22.1",

@@ -1,4 +1,4 @@
-import { CONSTANTS } from 'depay-web3-constants'
+import { CONSTANTS } from '@depay/web3-constants'
 import { WBNB } from './apis'
 
 export default {

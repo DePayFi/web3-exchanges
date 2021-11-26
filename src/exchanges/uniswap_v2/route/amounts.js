@@ -1,6 +1,6 @@
 import UniswapV2 from '../basics'
 import { fixUniswapPath } from './path'
-import { request } from 'depay-web3-client'
+import { request } from '@depay/web3-client'
 
 let getAmountsOut = ({ path, amountIn, tokenIn, tokenOut }) => {
   return new Promise((resolve) => {

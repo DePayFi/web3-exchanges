@@ -1,4 +1,4 @@
-import { CONSTANTS } from 'depay-web3-constants'
+import { CONSTANTS } from '@depay/web3-constants'
 import { WETH } from './apis'
 
 export default {

@@ -1,5 +1,5 @@
 import Route from '../../classes/Route'
-import { CONSTANTS } from 'depay-web3-constants'
+import { CONSTANTS } from '@depay/web3-constants'
 import { WETH } from './apis'
 
 let route = ({

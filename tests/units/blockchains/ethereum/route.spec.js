@@ -1,10 +1,10 @@
 import UniswapV2 from 'src/exchanges/uniswap_v2/basics'
-import { CONSTANTS } from 'depay-web3-constants'
+import { CONSTANTS } from '@depay/web3-constants'
 import { ethers } from 'ethers'
-import { mock, resetMocks } from 'depay-web3-mock'
+import { mock, resetMocks } from '@depay/web3-mock'
 import { mockDecimals } from 'tests/mocks/token'
 import { mockPair, mockAmounts } from 'tests/mocks/uniswap_v2'
-import { resetCache, provider } from 'depay-web3-client'
+import { resetCache, provider } from '@depay/web3-client'
 import { route, findByName } from 'src'
 import { WETH } from 'src/exchanges/weth/apis'
 

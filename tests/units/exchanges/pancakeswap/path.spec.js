@@ -1,11 +1,10 @@
-import { CONSTANTS } from 'depay-web3-constants'
+import { CONSTANTS } from '@depay/web3-constants'
 import { findByName } from 'src'
-import { mock, resetMocks } from 'depay-web3-mock'
+import { mock, resetMocks } from '@depay/web3-mock'
 import { mockDecimals } from 'tests/mocks/token'
 import { mockPair } from 'tests/mocks/pancakeswap'
 import { pathExists, findPath } from 'src/exchanges/pancakeswap/route/path'
-import { provider } from 'depay-web3-client'
-import { resetCache } from 'depay-web3-client'
+import { provider, resetCache } from '@depay/web3-client'
 import { Token } from '@depay/web3-tokens'
 
 describe('pancakeswap', () => {

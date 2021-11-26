@@ -1,7 +1,7 @@
 import UniswapV2 from '../basics'
-import { CONSTANTS } from 'depay-web3-constants'
+import { CONSTANTS } from '@depay/web3-constants'
 import { ethers } from 'ethers'
-import { request } from 'depay-web3-client'
+import { request } from '@depay/web3-client'
 import { Token } from '@depay/web3-tokens'
 
 // Uniswap replaces 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE with

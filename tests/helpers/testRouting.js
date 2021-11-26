@@ -1,6 +1,6 @@
 import { ethers } from 'ethers'
-import { getWallet } from 'depay-web3-wallets'
-import { mock, normalize } from 'depay-web3-mock'
+import { getWallet } from '@depay/web3-wallets'
+import { mock, normalize } from '@depay/web3-mock'
 import { mockDecimals } from '../mocks/token'
 
 function expectRoute({

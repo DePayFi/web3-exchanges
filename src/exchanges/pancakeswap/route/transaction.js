@@ -1,5 +1,5 @@
 import PancakeSwap from '../basics'
-import { CONSTANTS } from 'depay-web3-constants'
+import { CONSTANTS } from '@depay/web3-constants'
 import { fixUniswapPath } from './path'
 
 let getTransaction = ({
