@@ -1,8 +1,8 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('depay-web3-tokens'), require('depay-web3-constants'), require('depay-web3-client'), require('buffer')) :
-  typeof define === 'function' && define.amd ? define(['exports', 'depay-web3-tokens', 'depay-web3-constants', 'depay-web3-client', 'buffer'], factory) :
-  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.Web3Exchanges = {}, global.Web3Tokens, global.Web3Constants, global.Web3Client, global.require$$0));
-}(this, (function (exports, depayWeb3Tokens, depayWeb3Constants, depayWeb3Client, require$$0) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@depay/web3-tokens'), require('depay-web3-constants'), require('depay-web3-client'), require('buffer')) :
+  typeof define === 'function' && define.amd ? define(['exports', '@depay/web3-tokens', 'depay-web3-constants', 'depay-web3-client', 'buffer'], factory) :
+  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.Web3Exchanges = {}, global.web3Tokens, global.Web3Constants, global.Web3Client, global.require$$0));
+}(this, (function (exports, web3Tokens, depayWeb3Constants, depayWeb3Client, require$$0) { 'use strict';
 
   function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
@@ -11,7 +11,7 @@
   var route$7 = () => {};
 
   let getAmount = async ({ amount, blockchain, address }) => {
-    return await depayWeb3Tokens.Token.BigNumber({ amount, blockchain, address })
+    return await web3Tokens.Token.BigNumber({ amount, blockchain, address })
   };
 
   let fixRouteParams = async ({
@@ -4864,7 +4864,7 @@
     if(path.includes(depayWeb3Constants.CONSTANTS.bsc.WRAPPED)) {
       return minReserveRequirements$1({ min: 1, token: depayWeb3Constants.CONSTANTS.bsc.WRAPPED, decimals: depayWeb3Constants.CONSTANTS.bsc.DECIMALS, reserves, token0, token1 })
     } else if (path.includes(depayWeb3Constants.CONSTANTS.bsc.USD)) {
-      let token = new depayWeb3Tokens.Token({ blockchain: 'bsc', address: depayWeb3Constants.CONSTANTS.bsc.USD });
+      let token = new web3Tokens.Token({ blockchain: 'bsc', address: depayWeb3Constants.CONSTANTS.bsc.USD });
       let decimals = await token.decimals();
       return minReserveRequirements$1({ min: 1000, token: depayWeb3Constants.CONSTANTS.bsc.USD, decimals, reserves, token0, token1 })
     } else {
@@ -5203,7 +5203,7 @@
     if(path.includes(depayWeb3Constants.CONSTANTS.ethereum.WRAPPED)) {
       return minReserveRequirements({ min: 1, token: depayWeb3Constants.CONSTANTS.ethereum.WRAPPED, decimals: depayWeb3Constants.CONSTANTS.ethereum.DECIMALS, reserves, token0, token1 })
     } else if (path.includes(depayWeb3Constants.CONSTANTS.ethereum.USD)) {
-      let token = new depayWeb3Tokens.Token({ blockchain: 'ethereum', address: depayWeb3Constants.CONSTANTS.ethereum.USD });
+      let token = new web3Tokens.Token({ blockchain: 'ethereum', address: depayWeb3Constants.CONSTANTS.ethereum.USD });
       let decimals = await token.decimals();
       return minReserveRequirements({ min: 1000, token: depayWeb3Constants.CONSTANTS.ethereum.USD, decimals, reserves, token0, token1 })
     } else {

@@ -1,4 +1,4 @@
-import { Token } from 'depay-web3-tokens';
+import { Token } from '@depay/web3-tokens';
 import { CONSTANTS } from 'depay-web3-constants';
 import { request } from 'depay-web3-client';
 import require$$0 from 'buffer';

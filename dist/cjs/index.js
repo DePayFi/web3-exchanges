@@ -2,7 +2,7 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
-var depayWeb3Tokens = require('depay-web3-tokens');
+var web3Tokens = require('@depay/web3-tokens');
 var depayWeb3Constants = require('depay-web3-constants');
 var depayWeb3Client = require('depay-web3-client');
 var require$$0 = require('buffer');
@@ -14,7 +14,7 @@ var require$$0__default = /*#__PURE__*/_interopDefaultLegacy(require$$0);
 var route$7 = () => {};
 
 let getAmount = async ({ amount, blockchain, address }) => {
-  return await depayWeb3Tokens.Token.BigNumber({ amount, blockchain, address })
+  return await web3Tokens.Token.BigNumber({ amount, blockchain, address })
 };
 
 let fixRouteParams = async ({
@@ -4867,7 +4867,7 @@ let pathExists$1 = async (path) => {
   if(path.includes(depayWeb3Constants.CONSTANTS.bsc.WRAPPED)) {
     return minReserveRequirements$1({ min: 1, token: depayWeb3Constants.CONSTANTS.bsc.WRAPPED, decimals: depayWeb3Constants.CONSTANTS.bsc.DECIMALS, reserves, token0, token1 })
   } else if (path.includes(depayWeb3Constants.CONSTANTS.bsc.USD)) {
-    let token = new depayWeb3Tokens.Token({ blockchain: 'bsc', address: depayWeb3Constants.CONSTANTS.bsc.USD });
+    let token = new web3Tokens.Token({ blockchain: 'bsc', address: depayWeb3Constants.CONSTANTS.bsc.USD });
     let decimals = await token.decimals();
     return minReserveRequirements$1({ min: 1000, token: depayWeb3Constants.CONSTANTS.bsc.USD, decimals, reserves, token0, token1 })
   } else {
@@ -5206,7 +5206,7 @@ let pathExists = async (path) => {
   if(path.includes(depayWeb3Constants.CONSTANTS.ethereum.WRAPPED)) {
     return minReserveRequirements({ min: 1, token: depayWeb3Constants.CONSTANTS.ethereum.WRAPPED, decimals: depayWeb3Constants.CONSTANTS.ethereum.DECIMALS, reserves, token0, token1 })
   } else if (path.includes(depayWeb3Constants.CONSTANTS.ethereum.USD)) {
-    let token = new depayWeb3Tokens.Token({ blockchain: 'ethereum', address: depayWeb3Constants.CONSTANTS.ethereum.USD });
+    let token = new web3Tokens.Token({ blockchain: 'ethereum', address: depayWeb3Constants.CONSTANTS.ethereum.USD });
     let decimals = await token.decimals();
     return minReserveRequirements({ min: 1000, token: depayWeb3Constants.CONSTANTS.ethereum.USD, decimals, reserves, token0, token1 })
   } else {
