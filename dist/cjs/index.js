@@ -3667,7 +3667,7 @@ var bn = createCommonjsModule(function (module) {
 })(module, commonjsGlobal);
 });
 
-const version$3 = "logger/5.4.1";
+const version$4 = "logger/5.4.1";
 
 let _permanentCensorErrors = false;
 let _censorErrors = false;
@@ -3943,7 +3943,7 @@ class Logger {
     }
     static globalLogger() {
         if (!_globalLogger) {
-            _globalLogger = new Logger(version$3);
+            _globalLogger = new Logger(version$4);
         }
         return _globalLogger;
     }
@@ -3979,9 +3979,9 @@ class Logger {
 Logger.errors = ErrorCode;
 Logger.levels = LogLevel;
 
-const version$2 = "bytes/5.4.0";
+const version$3 = "bytes/5.4.0";
 
-const logger$3 = new Logger(version$2);
+const logger$4 = new Logger(version$3);
 ///////////////////////////////
 function isHexable(value) {
     return !!(value.toHexString);
@@ -4022,7 +4022,7 @@ function arrayify(value, options) {
         options = {};
     }
     if (typeof (value) === "number") {
-        logger$3.checkSafeUint53(value, "invalid arrayify value");
+        logger$4.checkSafeUint53(value, "invalid arrayify value");
         const result = [];
         while (value) {
             result.unshift(value & 0xff);
@@ -4049,7 +4049,7 @@ function arrayify(value, options) {
                 hex += "0";
             }
             else {
-                logger$3.throwArgumentError("hex data is odd-length", "value", value);
+                logger$4.throwArgumentError("hex data is odd-length", "value", value);
             }
         }
         const result = [];
@@ -4061,7 +4061,7 @@ function arrayify(value, options) {
     if (isBytes(value)) {
         return addSlice(new Uint8Array(value));
     }
-    return logger$3.throwArgumentError("invalid arrayify value", "value", value);
+    return logger$4.throwArgumentError("invalid arrayify value", "value", value);
 }
 function isHexString(value, length) {
     if (typeof (value) !== "string" || !value.match(/^0x[0-9A-Fa-f]*$/)) {
@@ -4078,7 +4078,7 @@ function hexlify(value, options) {
         options = {};
     }
     if (typeof (value) === "number") {
-        logger$3.checkSafeUint53(value, "invalid hexlify value");
+        logger$4.checkSafeUint53(value, "invalid hexlify value");
         let hex = "";
         while (value) {
             hex = HexCharacters[value & 0xf] + hex;
@@ -4114,7 +4114,7 @@ function hexlify(value, options) {
                 value += "0";
             }
             else {
-                logger$3.throwArgumentError("hex data is odd-length", "value", value);
+                logger$4.throwArgumentError("hex data is odd-length", "value", value);
             }
         }
         return value.toLowerCase();
@@ -4127,17 +4127,17 @@ function hexlify(value, options) {
         }
         return result;
     }
-    return logger$3.throwArgumentError("invalid hexlify value", "value", value);
+    return logger$4.throwArgumentError("invalid hexlify value", "value", value);
 }
 function hexZeroPad(value, length) {
     if (typeof (value) !== "string") {
         value = hexlify(value);
     }
     else if (!isHexString(value)) {
-        logger$3.throwArgumentError("invalid hex string", "value", value);
+        logger$4.throwArgumentError("invalid hex string", "value", value);
     }
     if (value.length > 2 * length + 2) {
-        logger$3.throwArgumentError("value out of range", "value", arguments[1]);
+        logger$4.throwArgumentError("value out of range", "value", arguments[1]);
     }
     while (value.length < 2 * length + 2) {
         value = "0x0" + value.substring(2);
@@ -4145,10 +4145,10 @@ function hexZeroPad(value, length) {
     return value;
 }
 
-const version$1 = "bignumber/5.4.1";
+const version$2 = "bignumber/5.4.1";
 
 var BN = bn.BN;
-const logger$2 = new Logger(version$1);
+const logger$3 = new Logger(version$2);
 const _constructorGuard$1 = {};
 const MAX_SAFE = 0x1fffffffffffff;
 function isBigNumberish(value) {
@@ -4163,9 +4163,9 @@ function isBigNumberish(value) {
 let _warnedToStringRadix = false;
 class BigNumber {
     constructor(constructorGuard, hex) {
-        logger$2.checkNew(new.target, BigNumber);
+        logger$3.checkNew(new.target, BigNumber);
         if (constructorGuard !== _constructorGuard$1) {
-            logger$2.throwError("cannot call constructor directly; use BigNumber.from", Logger.errors.UNSUPPORTED_OPERATION, {
+            logger$3.throwError("cannot call constructor directly; use BigNumber.from", Logger.errors.UNSUPPORTED_OPERATION, {
                 operation: "new (BigNumber)"
             });
         }
@@ -4289,7 +4289,7 @@ class BigNumber {
             return BigInt(this.toString());
         }
         catch (e) { }
-        return logger$2.throwError("this platform does not support BigInt", Logger.errors.UNSUPPORTED_OPERATION, {
+        return logger$3.throwError("this platform does not support BigInt", Logger.errors.UNSUPPORTED_OPERATION, {
             value: this.toString()
         });
     }
@@ -4299,14 +4299,14 @@ class BigNumber {
             if (arguments[0] === 10) {
                 if (!_warnedToStringRadix) {
                     _warnedToStringRadix = true;
-                    logger$2.warn("BigNumber.toString does not accept any parameters; base-10 is assumed");
+                    logger$3.warn("BigNumber.toString does not accept any parameters; base-10 is assumed");
                 }
             }
             else if (arguments[0] === 16) {
-                logger$2.throwError("BigNumber.toString does not accept any parameters; use bigNumber.toHexString()", Logger.errors.UNEXPECTED_ARGUMENT, {});
+                logger$3.throwError("BigNumber.toString does not accept any parameters; use bigNumber.toHexString()", Logger.errors.UNEXPECTED_ARGUMENT, {});
             }
             else {
-                logger$2.throwError("BigNumber.toString does not accept parameters", Logger.errors.UNEXPECTED_ARGUMENT, {});
+                logger$3.throwError("BigNumber.toString does not accept parameters", Logger.errors.UNEXPECTED_ARGUMENT, {});
             }
         }
         return toBN(this).toString(10);
@@ -4328,7 +4328,7 @@ class BigNumber {
             if (value.match(/^-?[0-9]+$/)) {
                 return new BigNumber(_constructorGuard$1, toHex(new BN(value)));
             }
-            return logger$2.throwArgumentError("invalid BigNumber string", "value", value);
+            return logger$3.throwArgumentError("invalid BigNumber string", "value", value);
         }
         if (typeof (value) === "number") {
             if (value % 1) {
@@ -4368,7 +4368,7 @@ class BigNumber {
                 }
             }
         }
-        return logger$2.throwArgumentError("invalid BigNumber value", "value", value);
+        return logger$3.throwArgumentError("invalid BigNumber value", "value", value);
     }
     static isBigNumber(value) {
         return !!(value && value._isBigNumber);
@@ -4386,7 +4386,7 @@ function toHex(value) {
         value = value.substring(1);
         // Cannot have mulitple negative signs (e.g. "--0x04")
         if (value[0] === "-") {
-            logger$2.throwArgumentError("invalid hex", "value", value);
+            logger$3.throwArgumentError("invalid hex", "value", value);
         }
         // Call toHex on the positive component
         value = toHex(value);
@@ -4430,10 +4430,14 @@ function throwFault$1(fault, operation, value) {
     if (value != null) {
         params.value = value;
     }
-    return logger$2.throwError(fault, Logger.errors.NUMERIC_FAULT, params);
+    return logger$3.throwError(fault, Logger.errors.NUMERIC_FAULT, params);
+}
+// value should have no prefix
+function _base36To16(value) {
+    return (new BN(value, 36)).toString(16);
 }
 
-const logger$1 = new Logger(version$1);
+const logger$2 = new Logger(version$2);
 const _constructorGuard = {};
 const Zero = BigNumber.from(0);
 const NegativeOne = BigNumber.from(-1);
@@ -4442,7 +4446,7 @@ function throwFault(message, fault, operation, value) {
     if (value !== undefined) {
         params.value = value;
     }
-    return logger$1.throwError(message, Logger.errors.NUMERIC_FAULT, params);
+    return logger$2.throwError(message, Logger.errors.NUMERIC_FAULT, params);
 }
 // Constant to pull zeros from for multipliers
 let zeros = "0";
@@ -4460,7 +4464,7 @@ function getMultiplier(decimals) {
     if (typeof (decimals) === "number" && decimals >= 0 && decimals <= 256 && !(decimals % 1)) {
         return ("1" + zeros.substring(0, decimals));
     }
-    return logger$1.throwArgumentError("invalid decimal size", "decimals", decimals);
+    return logger$2.throwArgumentError("invalid decimal size", "decimals", decimals);
 }
 function formatFixed(value, decimals) {
     if (decimals == null) {
@@ -4497,7 +4501,7 @@ function parseFixed(value, decimals) {
     }
     const multiplier = getMultiplier(decimals);
     if (typeof (value) !== "string" || !value.match(/^-?[0-9.,]+$/)) {
-        logger$1.throwArgumentError("invalid decimal value", "value", value);
+        logger$2.throwArgumentError("invalid decimal value", "value", value);
     }
     // Is it negative?
     const negative = (value.substring(0, 1) === "-");
@@ -4505,12 +4509,12 @@ function parseFixed(value, decimals) {
         value = value.substring(1);
     }
     if (value === ".") {
-        logger$1.throwArgumentError("missing value", "value", value);
+        logger$2.throwArgumentError("missing value", "value", value);
     }
     // Split it into a whole and fractional part
     const comps = value.split(".");
     if (comps.length > 2) {
-        logger$1.throwArgumentError("too many decimal points", "value", value);
+        logger$2.throwArgumentError("too many decimal points", "value", value);
     }
     let whole = comps[0], fraction = comps[1];
     if (!whole) {
@@ -4541,7 +4545,7 @@ function parseFixed(value, decimals) {
 class FixedFormat {
     constructor(constructorGuard, signed, width, decimals) {
         if (constructorGuard !== _constructorGuard) {
-            logger$1.throwError("cannot use FixedFormat constructor; use FixedFormat.from", Logger.errors.UNSUPPORTED_OPERATION, {
+            logger$2.throwError("cannot use FixedFormat constructor; use FixedFormat.from", Logger.errors.UNSUPPORTED_OPERATION, {
                 operation: "new FixedFormat"
             });
         }
@@ -4570,7 +4574,7 @@ class FixedFormat {
             else {
                 const match = value.match(/^(u?)fixed([0-9]+)x([0-9]+)$/);
                 if (!match) {
-                    logger$1.throwArgumentError("invalid fixed format", "format", value);
+                    logger$2.throwArgumentError("invalid fixed format", "format", value);
                 }
                 signed = (match[1] !== "u");
                 width = parseInt(match[2]);
@@ -4583,7 +4587,7 @@ class FixedFormat {
                     return defaultValue;
                 }
                 if (typeof (value[key]) !== type) {
-                    logger$1.throwArgumentError("invalid fixed format (" + key + " not " + type + ")", "format." + key, value[key]);
+                    logger$2.throwArgumentError("invalid fixed format (" + key + " not " + type + ")", "format." + key, value[key]);
                 }
                 return value[key];
             };
@@ -4592,19 +4596,19 @@ class FixedFormat {
             decimals = check("decimals", "number", decimals);
         }
         if (width % 8) {
-            logger$1.throwArgumentError("invalid fixed format width (not byte aligned)", "format.width", width);
+            logger$2.throwArgumentError("invalid fixed format width (not byte aligned)", "format.width", width);
         }
         if (decimals > 80) {
-            logger$1.throwArgumentError("invalid fixed format (decimals too large)", "format.decimals", decimals);
+            logger$2.throwArgumentError("invalid fixed format (decimals too large)", "format.decimals", decimals);
         }
         return new FixedFormat(_constructorGuard, signed, width, decimals);
     }
 }
 class FixedNumber {
     constructor(constructorGuard, hex, value, format) {
-        logger$1.checkNew(new.target, FixedNumber);
+        logger$2.checkNew(new.target, FixedNumber);
         if (constructorGuard !== _constructorGuard) {
-            logger$1.throwError("cannot use FixedNumber constructor; use FixedNumber.from", Logger.errors.UNSUPPORTED_OPERATION, {
+            logger$2.throwError("cannot use FixedNumber constructor; use FixedNumber.from", Logger.errors.UNSUPPORTED_OPERATION, {
                 operation: "new FixedFormat"
             });
         }
@@ -4616,7 +4620,7 @@ class FixedNumber {
     }
     _checkFormat(other) {
         if (this.format.name !== other.format.name) {
-            logger$1.throwArgumentError("incompatible format; use fixedNumber.toFormat", "other", other);
+            logger$2.throwArgumentError("incompatible format; use fixedNumber.toFormat", "other", other);
         }
     }
     addUnsafe(other) {
@@ -4678,7 +4682,7 @@ class FixedNumber {
             comps.push("0");
         }
         if (decimals < 0 || decimals > 80 || (decimals % 1)) {
-            logger$1.throwArgumentError("invalid decimal count", "decimals", decimals);
+            logger$2.throwArgumentError("invalid decimal count", "decimals", decimals);
         }
         if (comps[1].length <= decimals) {
             return this;
@@ -4699,7 +4703,7 @@ class FixedNumber {
             return this._hex;
         }
         if (width % 8) {
-            logger$1.throwArgumentError("invalid byte width", "width", width);
+            logger$2.throwArgumentError("invalid byte width", "width", width);
         }
         const hex = BigNumber.from(this._hex).fromTwos(this.format.width).toTwos(width).toHexString();
         return hexZeroPad(hex, width / 8);
@@ -4774,7 +4778,7 @@ class FixedNumber {
                 throw error;
             }
         }
-        return logger$1.throwArgumentError("invalid FixedNumber value", "value", value);
+        return logger$2.throwArgumentError("invalid FixedNumber value", "value", value);
     }
     static isFixedNumber(value) {
         return !!(value && value._isFixedNumber);
@@ -4782,6 +4786,582 @@ class FixedNumber {
 }
 const ONE = FixedNumber.from(1);
 const BUMP = FixedNumber.from("0.5");
+
+/**
+ * [js-sha3]{@link https://github.com/emn178/js-sha3}
+ *
+ * @version 0.5.7
+ * @author Chen, Yi-Cyuan [emn178@gmail.com]
+ * @copyright Chen, Yi-Cyuan 2015-2016
+ * @license MIT
+ */
+
+var sha3 = createCommonjsModule(function (module) {
+/*jslint bitwise: true */
+(function () {
+
+  var root = typeof window === 'object' ? window : {};
+  var NODE_JS = !root.JS_SHA3_NO_NODE_JS && typeof process === 'object' && process.versions && process.versions.node;
+  if (NODE_JS) {
+    root = commonjsGlobal;
+  }
+  var COMMON_JS = !root.JS_SHA3_NO_COMMON_JS && 'object' === 'object' && module.exports;
+  var HEX_CHARS = '0123456789abcdef'.split('');
+  var SHAKE_PADDING = [31, 7936, 2031616, 520093696];
+  var KECCAK_PADDING = [1, 256, 65536, 16777216];
+  var PADDING = [6, 1536, 393216, 100663296];
+  var SHIFT = [0, 8, 16, 24];
+  var RC = [1, 0, 32898, 0, 32906, 2147483648, 2147516416, 2147483648, 32907, 0, 2147483649,
+            0, 2147516545, 2147483648, 32777, 2147483648, 138, 0, 136, 0, 2147516425, 0,
+            2147483658, 0, 2147516555, 0, 139, 2147483648, 32905, 2147483648, 32771,
+            2147483648, 32770, 2147483648, 128, 2147483648, 32778, 0, 2147483658, 2147483648,
+            2147516545, 2147483648, 32896, 2147483648, 2147483649, 0, 2147516424, 2147483648];
+  var BITS = [224, 256, 384, 512];
+  var SHAKE_BITS = [128, 256];
+  var OUTPUT_TYPES = ['hex', 'buffer', 'arrayBuffer', 'array'];
+
+  var createOutputMethod = function (bits, padding, outputType) {
+    return function (message) {
+      return new Keccak(bits, padding, bits).update(message)[outputType]();
+    };
+  };
+
+  var createShakeOutputMethod = function (bits, padding, outputType) {
+    return function (message, outputBits) {
+      return new Keccak(bits, padding, outputBits).update(message)[outputType]();
+    };
+  };
+
+  var createMethod = function (bits, padding) {
+    var method = createOutputMethod(bits, padding, 'hex');
+    method.create = function () {
+      return new Keccak(bits, padding, bits);
+    };
+    method.update = function (message) {
+      return method.create().update(message);
+    };
+    for (var i = 0; i < OUTPUT_TYPES.length; ++i) {
+      var type = OUTPUT_TYPES[i];
+      method[type] = createOutputMethod(bits, padding, type);
+    }
+    return method;
+  };
+
+  var createShakeMethod = function (bits, padding) {
+    var method = createShakeOutputMethod(bits, padding, 'hex');
+    method.create = function (outputBits) {
+      return new Keccak(bits, padding, outputBits);
+    };
+    method.update = function (message, outputBits) {
+      return method.create(outputBits).update(message);
+    };
+    for (var i = 0; i < OUTPUT_TYPES.length; ++i) {
+      var type = OUTPUT_TYPES[i];
+      method[type] = createShakeOutputMethod(bits, padding, type);
+    }
+    return method;
+  };
+
+  var algorithms = [
+    {name: 'keccak', padding: KECCAK_PADDING, bits: BITS, createMethod: createMethod},
+    {name: 'sha3', padding: PADDING, bits: BITS, createMethod: createMethod},
+    {name: 'shake', padding: SHAKE_PADDING, bits: SHAKE_BITS, createMethod: createShakeMethod}
+  ];
+
+  var methods = {}, methodNames = [];
+
+  for (var i = 0; i < algorithms.length; ++i) {
+    var algorithm = algorithms[i];
+    var bits  = algorithm.bits;
+    for (var j = 0; j < bits.length; ++j) {
+      var methodName = algorithm.name +'_' + bits[j];
+      methodNames.push(methodName);
+      methods[methodName] = algorithm.createMethod(bits[j], algorithm.padding);
+    }
+  }
+
+  function Keccak(bits, padding, outputBits) {
+    this.blocks = [];
+    this.s = [];
+    this.padding = padding;
+    this.outputBits = outputBits;
+    this.reset = true;
+    this.block = 0;
+    this.start = 0;
+    this.blockCount = (1600 - (bits << 1)) >> 5;
+    this.byteCount = this.blockCount << 2;
+    this.outputBlocks = outputBits >> 5;
+    this.extraBytes = (outputBits & 31) >> 3;
+
+    for (var i = 0; i < 50; ++i) {
+      this.s[i] = 0;
+    }
+  }
+
+  Keccak.prototype.update = function (message) {
+    var notString = typeof message !== 'string';
+    if (notString && message.constructor === ArrayBuffer) {
+      message = new Uint8Array(message);
+    }
+    var length = message.length, blocks = this.blocks, byteCount = this.byteCount,
+      blockCount = this.blockCount, index = 0, s = this.s, i, code;
+
+    while (index < length) {
+      if (this.reset) {
+        this.reset = false;
+        blocks[0] = this.block;
+        for (i = 1; i < blockCount + 1; ++i) {
+          blocks[i] = 0;
+        }
+      }
+      if (notString) {
+        for (i = this.start; index < length && i < byteCount; ++index) {
+          blocks[i >> 2] |= message[index] << SHIFT[i++ & 3];
+        }
+      } else {
+        for (i = this.start; index < length && i < byteCount; ++index) {
+          code = message.charCodeAt(index);
+          if (code < 0x80) {
+            blocks[i >> 2] |= code << SHIFT[i++ & 3];
+          } else if (code < 0x800) {
+            blocks[i >> 2] |= (0xc0 | (code >> 6)) << SHIFT[i++ & 3];
+            blocks[i >> 2] |= (0x80 | (code & 0x3f)) << SHIFT[i++ & 3];
+          } else if (code < 0xd800 || code >= 0xe000) {
+            blocks[i >> 2] |= (0xe0 | (code >> 12)) << SHIFT[i++ & 3];
+            blocks[i >> 2] |= (0x80 | ((code >> 6) & 0x3f)) << SHIFT[i++ & 3];
+            blocks[i >> 2] |= (0x80 | (code & 0x3f)) << SHIFT[i++ & 3];
+          } else {
+            code = 0x10000 + (((code & 0x3ff) << 10) | (message.charCodeAt(++index) & 0x3ff));
+            blocks[i >> 2] |= (0xf0 | (code >> 18)) << SHIFT[i++ & 3];
+            blocks[i >> 2] |= (0x80 | ((code >> 12) & 0x3f)) << SHIFT[i++ & 3];
+            blocks[i >> 2] |= (0x80 | ((code >> 6) & 0x3f)) << SHIFT[i++ & 3];
+            blocks[i >> 2] |= (0x80 | (code & 0x3f)) << SHIFT[i++ & 3];
+          }
+        }
+      }
+      this.lastByteIndex = i;
+      if (i >= byteCount) {
+        this.start = i - byteCount;
+        this.block = blocks[blockCount];
+        for (i = 0; i < blockCount; ++i) {
+          s[i] ^= blocks[i];
+        }
+        f(s);
+        this.reset = true;
+      } else {
+        this.start = i;
+      }
+    }
+    return this;
+  };
+
+  Keccak.prototype.finalize = function () {
+    var blocks = this.blocks, i = this.lastByteIndex, blockCount = this.blockCount, s = this.s;
+    blocks[i >> 2] |= this.padding[i & 3];
+    if (this.lastByteIndex === this.byteCount) {
+      blocks[0] = blocks[blockCount];
+      for (i = 1; i < blockCount + 1; ++i) {
+        blocks[i] = 0;
+      }
+    }
+    blocks[blockCount - 1] |= 0x80000000;
+    for (i = 0; i < blockCount; ++i) {
+      s[i] ^= blocks[i];
+    }
+    f(s);
+  };
+
+  Keccak.prototype.toString = Keccak.prototype.hex = function () {
+    this.finalize();
+
+    var blockCount = this.blockCount, s = this.s, outputBlocks = this.outputBlocks,
+        extraBytes = this.extraBytes, i = 0, j = 0;
+    var hex = '', block;
+    while (j < outputBlocks) {
+      for (i = 0; i < blockCount && j < outputBlocks; ++i, ++j) {
+        block = s[i];
+        hex += HEX_CHARS[(block >> 4) & 0x0F] + HEX_CHARS[block & 0x0F] +
+               HEX_CHARS[(block >> 12) & 0x0F] + HEX_CHARS[(block >> 8) & 0x0F] +
+               HEX_CHARS[(block >> 20) & 0x0F] + HEX_CHARS[(block >> 16) & 0x0F] +
+               HEX_CHARS[(block >> 28) & 0x0F] + HEX_CHARS[(block >> 24) & 0x0F];
+      }
+      if (j % blockCount === 0) {
+        f(s);
+        i = 0;
+      }
+    }
+    if (extraBytes) {
+      block = s[i];
+      if (extraBytes > 0) {
+        hex += HEX_CHARS[(block >> 4) & 0x0F] + HEX_CHARS[block & 0x0F];
+      }
+      if (extraBytes > 1) {
+        hex += HEX_CHARS[(block >> 12) & 0x0F] + HEX_CHARS[(block >> 8) & 0x0F];
+      }
+      if (extraBytes > 2) {
+        hex += HEX_CHARS[(block >> 20) & 0x0F] + HEX_CHARS[(block >> 16) & 0x0F];
+      }
+    }
+    return hex;
+  };
+
+  Keccak.prototype.arrayBuffer = function () {
+    this.finalize();
+
+    var blockCount = this.blockCount, s = this.s, outputBlocks = this.outputBlocks,
+        extraBytes = this.extraBytes, i = 0, j = 0;
+    var bytes = this.outputBits >> 3;
+    var buffer;
+    if (extraBytes) {
+      buffer = new ArrayBuffer((outputBlocks + 1) << 2);
+    } else {
+      buffer = new ArrayBuffer(bytes);
+    }
+    var array = new Uint32Array(buffer);
+    while (j < outputBlocks) {
+      for (i = 0; i < blockCount && j < outputBlocks; ++i, ++j) {
+        array[j] = s[i];
+      }
+      if (j % blockCount === 0) {
+        f(s);
+      }
+    }
+    if (extraBytes) {
+      array[i] = s[i];
+      buffer = buffer.slice(0, bytes);
+    }
+    return buffer;
+  };
+
+  Keccak.prototype.buffer = Keccak.prototype.arrayBuffer;
+
+  Keccak.prototype.digest = Keccak.prototype.array = function () {
+    this.finalize();
+
+    var blockCount = this.blockCount, s = this.s, outputBlocks = this.outputBlocks,
+        extraBytes = this.extraBytes, i = 0, j = 0;
+    var array = [], offset, block;
+    while (j < outputBlocks) {
+      for (i = 0; i < blockCount && j < outputBlocks; ++i, ++j) {
+        offset = j << 2;
+        block = s[i];
+        array[offset] = block & 0xFF;
+        array[offset + 1] = (block >> 8) & 0xFF;
+        array[offset + 2] = (block >> 16) & 0xFF;
+        array[offset + 3] = (block >> 24) & 0xFF;
+      }
+      if (j % blockCount === 0) {
+        f(s);
+      }
+    }
+    if (extraBytes) {
+      offset = j << 2;
+      block = s[i];
+      if (extraBytes > 0) {
+        array[offset] = block & 0xFF;
+      }
+      if (extraBytes > 1) {
+        array[offset + 1] = (block >> 8) & 0xFF;
+      }
+      if (extraBytes > 2) {
+        array[offset + 2] = (block >> 16) & 0xFF;
+      }
+    }
+    return array;
+  };
+
+  var f = function (s) {
+    var h, l, n, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9,
+        b0, b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11, b12, b13, b14, b15, b16, b17,
+        b18, b19, b20, b21, b22, b23, b24, b25, b26, b27, b28, b29, b30, b31, b32, b33,
+        b34, b35, b36, b37, b38, b39, b40, b41, b42, b43, b44, b45, b46, b47, b48, b49;
+    for (n = 0; n < 48; n += 2) {
+      c0 = s[0] ^ s[10] ^ s[20] ^ s[30] ^ s[40];
+      c1 = s[1] ^ s[11] ^ s[21] ^ s[31] ^ s[41];
+      c2 = s[2] ^ s[12] ^ s[22] ^ s[32] ^ s[42];
+      c3 = s[3] ^ s[13] ^ s[23] ^ s[33] ^ s[43];
+      c4 = s[4] ^ s[14] ^ s[24] ^ s[34] ^ s[44];
+      c5 = s[5] ^ s[15] ^ s[25] ^ s[35] ^ s[45];
+      c6 = s[6] ^ s[16] ^ s[26] ^ s[36] ^ s[46];
+      c7 = s[7] ^ s[17] ^ s[27] ^ s[37] ^ s[47];
+      c8 = s[8] ^ s[18] ^ s[28] ^ s[38] ^ s[48];
+      c9 = s[9] ^ s[19] ^ s[29] ^ s[39] ^ s[49];
+
+      h = c8 ^ ((c2 << 1) | (c3 >>> 31));
+      l = c9 ^ ((c3 << 1) | (c2 >>> 31));
+      s[0] ^= h;
+      s[1] ^= l;
+      s[10] ^= h;
+      s[11] ^= l;
+      s[20] ^= h;
+      s[21] ^= l;
+      s[30] ^= h;
+      s[31] ^= l;
+      s[40] ^= h;
+      s[41] ^= l;
+      h = c0 ^ ((c4 << 1) | (c5 >>> 31));
+      l = c1 ^ ((c5 << 1) | (c4 >>> 31));
+      s[2] ^= h;
+      s[3] ^= l;
+      s[12] ^= h;
+      s[13] ^= l;
+      s[22] ^= h;
+      s[23] ^= l;
+      s[32] ^= h;
+      s[33] ^= l;
+      s[42] ^= h;
+      s[43] ^= l;
+      h = c2 ^ ((c6 << 1) | (c7 >>> 31));
+      l = c3 ^ ((c7 << 1) | (c6 >>> 31));
+      s[4] ^= h;
+      s[5] ^= l;
+      s[14] ^= h;
+      s[15] ^= l;
+      s[24] ^= h;
+      s[25] ^= l;
+      s[34] ^= h;
+      s[35] ^= l;
+      s[44] ^= h;
+      s[45] ^= l;
+      h = c4 ^ ((c8 << 1) | (c9 >>> 31));
+      l = c5 ^ ((c9 << 1) | (c8 >>> 31));
+      s[6] ^= h;
+      s[7] ^= l;
+      s[16] ^= h;
+      s[17] ^= l;
+      s[26] ^= h;
+      s[27] ^= l;
+      s[36] ^= h;
+      s[37] ^= l;
+      s[46] ^= h;
+      s[47] ^= l;
+      h = c6 ^ ((c0 << 1) | (c1 >>> 31));
+      l = c7 ^ ((c1 << 1) | (c0 >>> 31));
+      s[8] ^= h;
+      s[9] ^= l;
+      s[18] ^= h;
+      s[19] ^= l;
+      s[28] ^= h;
+      s[29] ^= l;
+      s[38] ^= h;
+      s[39] ^= l;
+      s[48] ^= h;
+      s[49] ^= l;
+
+      b0 = s[0];
+      b1 = s[1];
+      b32 = (s[11] << 4) | (s[10] >>> 28);
+      b33 = (s[10] << 4) | (s[11] >>> 28);
+      b14 = (s[20] << 3) | (s[21] >>> 29);
+      b15 = (s[21] << 3) | (s[20] >>> 29);
+      b46 = (s[31] << 9) | (s[30] >>> 23);
+      b47 = (s[30] << 9) | (s[31] >>> 23);
+      b28 = (s[40] << 18) | (s[41] >>> 14);
+      b29 = (s[41] << 18) | (s[40] >>> 14);
+      b20 = (s[2] << 1) | (s[3] >>> 31);
+      b21 = (s[3] << 1) | (s[2] >>> 31);
+      b2 = (s[13] << 12) | (s[12] >>> 20);
+      b3 = (s[12] << 12) | (s[13] >>> 20);
+      b34 = (s[22] << 10) | (s[23] >>> 22);
+      b35 = (s[23] << 10) | (s[22] >>> 22);
+      b16 = (s[33] << 13) | (s[32] >>> 19);
+      b17 = (s[32] << 13) | (s[33] >>> 19);
+      b48 = (s[42] << 2) | (s[43] >>> 30);
+      b49 = (s[43] << 2) | (s[42] >>> 30);
+      b40 = (s[5] << 30) | (s[4] >>> 2);
+      b41 = (s[4] << 30) | (s[5] >>> 2);
+      b22 = (s[14] << 6) | (s[15] >>> 26);
+      b23 = (s[15] << 6) | (s[14] >>> 26);
+      b4 = (s[25] << 11) | (s[24] >>> 21);
+      b5 = (s[24] << 11) | (s[25] >>> 21);
+      b36 = (s[34] << 15) | (s[35] >>> 17);
+      b37 = (s[35] << 15) | (s[34] >>> 17);
+      b18 = (s[45] << 29) | (s[44] >>> 3);
+      b19 = (s[44] << 29) | (s[45] >>> 3);
+      b10 = (s[6] << 28) | (s[7] >>> 4);
+      b11 = (s[7] << 28) | (s[6] >>> 4);
+      b42 = (s[17] << 23) | (s[16] >>> 9);
+      b43 = (s[16] << 23) | (s[17] >>> 9);
+      b24 = (s[26] << 25) | (s[27] >>> 7);
+      b25 = (s[27] << 25) | (s[26] >>> 7);
+      b6 = (s[36] << 21) | (s[37] >>> 11);
+      b7 = (s[37] << 21) | (s[36] >>> 11);
+      b38 = (s[47] << 24) | (s[46] >>> 8);
+      b39 = (s[46] << 24) | (s[47] >>> 8);
+      b30 = (s[8] << 27) | (s[9] >>> 5);
+      b31 = (s[9] << 27) | (s[8] >>> 5);
+      b12 = (s[18] << 20) | (s[19] >>> 12);
+      b13 = (s[19] << 20) | (s[18] >>> 12);
+      b44 = (s[29] << 7) | (s[28] >>> 25);
+      b45 = (s[28] << 7) | (s[29] >>> 25);
+      b26 = (s[38] << 8) | (s[39] >>> 24);
+      b27 = (s[39] << 8) | (s[38] >>> 24);
+      b8 = (s[48] << 14) | (s[49] >>> 18);
+      b9 = (s[49] << 14) | (s[48] >>> 18);
+
+      s[0] = b0 ^ (~b2 & b4);
+      s[1] = b1 ^ (~b3 & b5);
+      s[10] = b10 ^ (~b12 & b14);
+      s[11] = b11 ^ (~b13 & b15);
+      s[20] = b20 ^ (~b22 & b24);
+      s[21] = b21 ^ (~b23 & b25);
+      s[30] = b30 ^ (~b32 & b34);
+      s[31] = b31 ^ (~b33 & b35);
+      s[40] = b40 ^ (~b42 & b44);
+      s[41] = b41 ^ (~b43 & b45);
+      s[2] = b2 ^ (~b4 & b6);
+      s[3] = b3 ^ (~b5 & b7);
+      s[12] = b12 ^ (~b14 & b16);
+      s[13] = b13 ^ (~b15 & b17);
+      s[22] = b22 ^ (~b24 & b26);
+      s[23] = b23 ^ (~b25 & b27);
+      s[32] = b32 ^ (~b34 & b36);
+      s[33] = b33 ^ (~b35 & b37);
+      s[42] = b42 ^ (~b44 & b46);
+      s[43] = b43 ^ (~b45 & b47);
+      s[4] = b4 ^ (~b6 & b8);
+      s[5] = b5 ^ (~b7 & b9);
+      s[14] = b14 ^ (~b16 & b18);
+      s[15] = b15 ^ (~b17 & b19);
+      s[24] = b24 ^ (~b26 & b28);
+      s[25] = b25 ^ (~b27 & b29);
+      s[34] = b34 ^ (~b36 & b38);
+      s[35] = b35 ^ (~b37 & b39);
+      s[44] = b44 ^ (~b46 & b48);
+      s[45] = b45 ^ (~b47 & b49);
+      s[6] = b6 ^ (~b8 & b0);
+      s[7] = b7 ^ (~b9 & b1);
+      s[16] = b16 ^ (~b18 & b10);
+      s[17] = b17 ^ (~b19 & b11);
+      s[26] = b26 ^ (~b28 & b20);
+      s[27] = b27 ^ (~b29 & b21);
+      s[36] = b36 ^ (~b38 & b30);
+      s[37] = b37 ^ (~b39 & b31);
+      s[46] = b46 ^ (~b48 & b40);
+      s[47] = b47 ^ (~b49 & b41);
+      s[8] = b8 ^ (~b0 & b2);
+      s[9] = b9 ^ (~b1 & b3);
+      s[18] = b18 ^ (~b10 & b12);
+      s[19] = b19 ^ (~b11 & b13);
+      s[28] = b28 ^ (~b20 & b22);
+      s[29] = b29 ^ (~b21 & b23);
+      s[38] = b38 ^ (~b30 & b32);
+      s[39] = b39 ^ (~b31 & b33);
+      s[48] = b48 ^ (~b40 & b42);
+      s[49] = b49 ^ (~b41 & b43);
+
+      s[0] ^= RC[n];
+      s[1] ^= RC[n + 1];
+    }
+  };
+
+  if (COMMON_JS) {
+    module.exports = methods;
+  } else {
+    for (var i = 0; i < methodNames.length; ++i) {
+      root[methodNames[i]] = methods[methodNames[i]];
+    }
+  }
+})();
+});
+
+var sha3$1 = sha3;
+
+function keccak256(data) {
+    return '0x' + sha3$1.keccak_256(arrayify(data));
+}
+
+const version$1 = "address/5.4.0";
+
+const logger$1 = new Logger(version$1);
+function getChecksumAddress(address) {
+    if (!isHexString(address, 20)) {
+        logger$1.throwArgumentError("invalid address", "address", address);
+    }
+    address = address.toLowerCase();
+    const chars = address.substring(2).split("");
+    const expanded = new Uint8Array(40);
+    for (let i = 0; i < 40; i++) {
+        expanded[i] = chars[i].charCodeAt(0);
+    }
+    const hashed = arrayify(keccak256(expanded));
+    for (let i = 0; i < 40; i += 2) {
+        if ((hashed[i >> 1] >> 4) >= 8) {
+            chars[i] = chars[i].toUpperCase();
+        }
+        if ((hashed[i >> 1] & 0x0f) >= 8) {
+            chars[i + 1] = chars[i + 1].toUpperCase();
+        }
+    }
+    return "0x" + chars.join("");
+}
+// Shims for environments that are missing some required constants and functions
+const MAX_SAFE_INTEGER = 0x1fffffffffffff;
+function log10(x) {
+    if (Math.log10) {
+        return Math.log10(x);
+    }
+    return Math.log(x) / Math.LN10;
+}
+// See: https://en.wikipedia.org/wiki/International_Bank_Account_Number
+// Create lookup table
+const ibanLookup = {};
+for (let i = 0; i < 10; i++) {
+    ibanLookup[String(i)] = String(i);
+}
+for (let i = 0; i < 26; i++) {
+    ibanLookup[String.fromCharCode(65 + i)] = String(10 + i);
+}
+// How many decimal digits can we process? (for 64-bit float, this is 15)
+const safeDigits = Math.floor(log10(MAX_SAFE_INTEGER));
+function ibanChecksum(address) {
+    address = address.toUpperCase();
+    address = address.substring(4) + address.substring(0, 2) + "00";
+    let expanded = address.split("").map((c) => { return ibanLookup[c]; }).join("");
+    // Javascript can handle integers safely up to 15 (decimal) digits
+    while (expanded.length >= safeDigits) {
+        let block = expanded.substring(0, safeDigits);
+        expanded = parseInt(block, 10) % 97 + expanded.substring(block.length);
+    }
+    let checksum = String(98 - (parseInt(expanded, 10) % 97));
+    while (checksum.length < 2) {
+        checksum = "0" + checksum;
+    }
+    return checksum;
+}
+function getAddress(address) {
+    let result = null;
+    if (typeof (address) !== "string") {
+        logger$1.throwArgumentError("invalid address", "address", address);
+    }
+    if (address.match(/^(0x)?[0-9a-fA-F]{40}$/)) {
+        // Missing the 0x prefix
+        if (address.substring(0, 2) !== "0x") {
+            address = "0x" + address;
+        }
+        result = getChecksumAddress(address);
+        // It is a checksummed address with a bad checksum
+        if (address.match(/([A-F].*[a-f])|([a-f].*[A-F])/) && result !== address) {
+            logger$1.throwArgumentError("bad address checksum", "address", address);
+        }
+        // Maybe ICAP? (we only support direct mode)
+    }
+    else if (address.match(/^XE[0-9]{2}[0-9A-Za-z]{30,31}$/)) {
+        // It is an ICAP address with a bad checksum
+        if (address.substring(2, 4) !== ibanChecksum(address)) {
+            logger$1.throwArgumentError("bad icap checksum", "address", address);
+        }
+        result = _base36To16(address.substring(4));
+        while (result.length < 40) {
+            result = "0" + result;
+        }
+        result = getChecksumAddress("0x" + result);
+    }
+    else {
+        logger$1.throwArgumentError("invalid address", "address", address);
+    }
+    return result;
+}
 
 const version = "units/5.4.0";
 
@@ -5060,6 +5640,10 @@ let getTransaction$1 = ({
   return transaction
 };
 
+const fixCheckSum = (address)=>{
+  return getAddress(address)
+};
+
 let route$6 = ({
   exchange,
   tokenIn,
@@ -5071,6 +5655,8 @@ let route$6 = ({
   amountInMax = undefined,
   amountOutMin = undefined,
 }) => {
+  tokenIn = fixCheckSum(tokenIn);
+  tokenOut = fixCheckSum(tokenOut);
   return new Promise(async (resolve)=> {
     let path = await findPath$1({ tokenIn, tokenOut });
     if (path === undefined || path.length == 0) { return resolve() }
@@ -5408,6 +5994,8 @@ let route$4 = ({
   amountInMax = undefined,
   amountOutMin = undefined,
 }) => {
+  tokenIn = fixCheckSum(tokenIn);
+  tokenOut = fixCheckSum(tokenOut);
   return new Promise(async (resolve)=> {
     let path = await findPath({ tokenIn, tokenOut });
     if (path === undefined || path.length == 0) { return resolve() }

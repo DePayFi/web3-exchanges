@@ -49,7 +49,7 @@ describe('route', ()=> {
     expect(routes[0].fromAddress).toEqual(wallet)
     expect(routes[0].toAddress).toEqual(wallet)
     expect(routes[0].exchange).toEqual(findByName('uniswap_v2'))
-    expect(routes[0].path).toEqual(path)
+    expect(routes[0].path).toEqual(path.map((address)=>ethers.utils.getAddress(address)))
     expect(routes[0].transaction.blockchain).toEqual('ethereum')
     expect(routes[0].transaction.from).toEqual(accounts[0])
     expect(routes[0].transaction.to).toEqual(UniswapV2.contracts.router.address)
@@ -57,7 +57,7 @@ describe('route', ()=> {
     expect(routes[0].transaction.method).toEqual('swapExactTokensForTokens')
     expect(routes[0].transaction.params.amountIn).toEqual(amountInBN.toString())
     expect(routes[0].transaction.params.amountOutMin).toEqual(amountOutMinBN.toString())
-    expect(routes[0].transaction.params.path).toEqual(path)
+    expect(routes[0].transaction.params.path).toEqual(path.map((address)=>ethers.utils.getAddress(address)))
     expect(routes[0].transaction.params.to).toEqual(wallet)
     expect(routes[0].transaction.params.deadline).toBeDefined()
 

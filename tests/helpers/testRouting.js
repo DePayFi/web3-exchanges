@@ -18,9 +18,9 @@ function expectRoute({
   exchange,
   transaction
 }) {
-  expect(route.tokenIn).toEqual(tokenIn)
-  expect(route.tokenOut).toEqual(tokenOut)
-  expect(route.path).toEqual(path)
+  expect(route.tokenIn).toEqual(ethers.utils.getAddress(tokenIn))
+  expect(route.tokenOut).toEqual(ethers.utils.getAddress(tokenOut))
+  expect(route.path).toEqual(path.map((address)=>ethers.utils.getAddress(address)))
   if(typeof amountOutBN !== 'undefined') { expect(route.amountOut).toEqual(amountOutBN.toString()) }
   if(typeof amountInBN !== 'undefined') { expect(route.amountIn).toEqual(amountInBN.toString()) }
   if(typeof amountOutMinBN !== 'undefined') { expect(route.amountOutMin).toEqual(amountOutMinBN.toString()) }

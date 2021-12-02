@@ -129,6 +129,42 @@ describe('uniswap_v2', () => {
       })
     });
 
+    it('fixes lowercase token addresses given either as tokenIn or tokenOut', async ()=> {
+
+      let amountOut = 1
+      let amountOutBN = ethers.utils.parseUnits(amountOut.toString(), decimalsOut)
+      let fetchedAmountIn = 43
+      let fetchedAmountInBN = ethers.utils.parseUnits(fetchedAmountIn.toString(), decimalsIn)
+
+      mockPair({ provider: provider(blockchain), tokenIn, tokenOut, pair })
+      mockAmounts({ provider: provider(blockchain), method: 'getAmountsIn', params: [amountOutBN,path], amounts: [fetchedAmountInBN, amountOutBN] })
+
+      await testRouting({
+        blockchain,
+        exchange,
+        tokenIn: tokenIn.toLowerCase(),
+        decimalsIn,
+        tokenOut: tokenOut.toLowerCase(),
+        decimalsOut,
+        path,
+        amountOut,
+        pair,
+        fromAddress,
+        toAddress,
+        transaction: {
+          to: exchange.contracts.router.address,
+          api: exchange.contracts.router.api,
+          method: 'swapTokensForExactTokens',
+          params: {
+            amountInMax: fetchedAmountInBN,
+            amountOut: amountOutBN,
+            path: path,
+            to: toAddress
+          }
+        }
+      })
+    });
+
     it('routes a token to token swap for given amountOutMin without given amountIn on uniswap_v2', async ()=> {
 
       let amountOutMin = 1

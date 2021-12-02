@@ -893,10 +893,10 @@
   resolved "https://registry.yarnpkg.com/@depay/web3-client/-/web3-client-7.1.0.tgz#a9357eeaeb48c8c48df077b071de1cb213b24526"
   integrity sha512-/YDIk9csI9q09nXyMziaD+U6D8QByei/TnhDgvAgoZZg7vqi4arCN0B2DK9PJotcvqeiBXarLU+mNHTcSEvU1A==
 
-"@depay/web3-constants@^4.0.0":
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/@depay/web3-constants/-/web3-constants-4.0.0.tgz#255ac4ee15ac62620db822bb1871d1a560fa772c"
-  integrity sha512-O5qKAh3xPVgTyw+oVdAH+q/W/YDBigtGWSacPekCAKiTit7TMrqUfb+ZORjAmXXV3dIXSlUS1QrN1d0guWlWjw==
+"@depay/web3-constants@^4.0.1":
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/@depay/web3-constants/-/web3-constants-4.0.1.tgz#07f5c0e48f86bb9c0d54bcf8a47c95f683200bf4"
+  integrity sha512-vTHEa2ieHFyypQ5JaQSozIn1Wk8/fvExyxGBQP6REldoRxgH/nglX3H6TDCoquNn0UjU/LvV89XUgr0q6nNXPw==
 
 "@depay/web3-mock@^9.1.1":
   version "9.1.1"

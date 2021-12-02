@@ -2,6 +2,7 @@ import Route from '../../classes/Route'
 import { findPath } from './route/path'
 import { getAmounts } from './route/amounts'
 import { getTransaction } from './route/transaction'
+import { fixCheckSum } from '../../address'
 
 let route = ({
   exchange,
@@ -14,6 +15,8 @@ let route = ({
   amountInMax = undefined,
   amountOutMin = undefined,
 }) => {
+  tokenIn = fixCheckSum(tokenIn)
+  tokenOut = fixCheckSum(tokenOut)
   return new Promise(async (resolve)=> {
     let path = await findPath({ tokenIn, tokenOut })
     if (path === undefined || path.length == 0) { return resolve() }
