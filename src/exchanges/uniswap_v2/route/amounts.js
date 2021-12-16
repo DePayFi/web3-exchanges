@@ -17,7 +17,8 @@ let getAmountsOut = ({ path, amountIn, tokenIn, tokenOut }) => {
     })
     .then((amountsOut)=>{
       resolve(amountsOut[amountsOut.length - 1])
-    }).catch(resolve)
+    })
+    .catch(()=>resolve())
   })
 }
 
