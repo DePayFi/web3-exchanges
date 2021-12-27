@@ -875,10 +875,10 @@
     "@babel/helper-validator-identifier" "^7.14.9"
     to-fast-properties "^2.0.0"
 
-"@depay/walletconnect@^1.0.2":
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/@depay/walletconnect/-/walletconnect-1.0.2.tgz#64faf6987fc266f96a143108c0a7c44b62c425e9"
-  integrity sha512-F+/qEJ/JXMD9rs8RzLO/uJzYNopsjNk7ei64ufhjpk1z7/RyME+wGVTdOdn+nipeOq6t+R7OEMhcN0IcWOhzpQ==
+"@depay/walletconnect-v1@^1.0.5":
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/@depay/walletconnect-v1/-/walletconnect-v1-1.0.5.tgz#5c094a7791d7b06013c36a2ef1ee841784f74faa"
+  integrity sha512-oHp0alXy5xoprL+LSHs+BlXXWBVYaeuWX7pt71+oeBwp6k0z6eq1KA3lFh7zFJrCeqS7eE57KU74Y7bPiSwxaA==
   dependencies:
     "@walletconnect/client" "^1.6.5"
     "@walletconnect/qrcode-modal" "^1.6.5"
@@ -888,10 +888,10 @@
   resolved "https://registry.yarnpkg.com/@depay/web3-blockchains/-/web3-blockchains-3.0.0.tgz#e393d547b88bc4d7bf65ec7f7b98ba8ad9f76ac5"
   integrity sha512-Mnc3fCCwD+B9YMBGcAB6DJC5cVNn5AcddGcpXbX9cvVY1iJ8IDe0sVKYEBJmHPr1punumU1H1nrhs5ctPZkosQ==
 
-"@depay/web3-client@^7.1.0":
-  version "7.1.0"
-  resolved "https://registry.yarnpkg.com/@depay/web3-client/-/web3-client-7.1.0.tgz#a9357eeaeb48c8c48df077b071de1cb213b24526"
-  integrity sha512-/YDIk9csI9q09nXyMziaD+U6D8QByei/TnhDgvAgoZZg7vqi4arCN0B2DK9PJotcvqeiBXarLU+mNHTcSEvU1A==
+"@depay/web3-client@^7.2.0":
+  version "7.2.0"
+  resolved "https://registry.yarnpkg.com/@depay/web3-client/-/web3-client-7.2.0.tgz#4b09fe88bbb750fa246b66013fe0644b6423fb69"
+  integrity sha512-AONOg+HzLAYhXy2hu4d697bk0o+7nC3v1ys64DUcSn1tN1GxkoSfDvIWNABoPbMpkGjb2HUx9/Nox4Oz2ADv7g==
 
 "@depay/web3-constants@^4.0.1":
   version "4.0.1"
@@ -908,10 +908,10 @@
   resolved "https://registry.yarnpkg.com/@depay/web3-tokens/-/web3-tokens-7.2.0.tgz#a2658849ae2ed6fdd49c75677d3515cdbef62072"
   integrity sha512-o8bSEZkIEMOcnEPeRbViG8rk6ySEcI1QIxapBXxRvfapn+0zFVKiH8a9T89mNIKXO7PGOfaXniotk9VU3BWMlQ==
 
-"@depay/web3-wallets@^6.0.0":
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/@depay/web3-wallets/-/web3-wallets-6.0.0.tgz#b8c1922824ff583977e874d024d2b229db6ec1cd"
-  integrity sha512-i+eCxAepSdQICBBoEsHH8PJR61RtVAnRApFhslWdVl4Vs5uwjpFUXGmv9SCTTXioFeVngCDJfKblY1Nuiq/qSA==
+"@depay/web3-wallets@^6.1.5":
+  version "6.1.5"
+  resolved "https://registry.yarnpkg.com/@depay/web3-wallets/-/web3-wallets-6.1.5.tgz#5139c4771f49cf45cd71bab0df1e68390682e724"
+  integrity sha512-AhbB8DfFYEEEqeSPNj4A5JdxfB3wxI8K9H+0Bf1ffH885oMTCdP4ppsvNwQZ30hz7AcLtfWvpT7Zy8miD946Cg==
 
 "@eslint/eslintrc@^0.4.3":
   version "0.4.3"
