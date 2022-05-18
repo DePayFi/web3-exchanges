@@ -3659,7 +3659,7 @@ var bn = createCommonjsModule(function (module) {
 })(module, commonjsGlobal);
 });
 
-const version$4 = "logger/5.4.1";
+const version$4 = "logger/5.6.0";
 
 let _permanentCensorErrors = false;
 let _censorErrors = false;
@@ -3756,7 +3756,7 @@ var ErrorCode;
     //  - errorArgs?: The EIP848 error parameters
     //  - reason: The reason (only for EIP848 "Error(string)")
     ErrorCode["CALL_EXCEPTION"] = "CALL_EXCEPTION";
-    // Insufficien funds (< value + gasLimit * gasPrice)
+    // Insufficient funds (< value + gasLimit * gasPrice)
     //   - transaction: the transaction attempted
     ErrorCode["INSUFFICIENT_FUNDS"] = "INSUFFICIENT_FUNDS";
     // Nonce has already been used
@@ -3838,6 +3838,40 @@ class Logger {
         messageDetails.push(`code=${code}`);
         messageDetails.push(`version=${this.version}`);
         const reason = message;
+        let url = "";
+        switch (code) {
+            case ErrorCode.NUMERIC_FAULT: {
+                url = "NUMERIC_FAULT";
+                const fault = message;
+                switch (fault) {
+                    case "overflow":
+                    case "underflow":
+                    case "division-by-zero":
+                        url += "-" + fault;
+                        break;
+                    case "negative-power":
+                    case "negative-width":
+                        url += "-unsupported";
+                        break;
+                    case "unbound-bitwise-result":
+                        url += "-unbound-result";
+                        break;
+                }
+                break;
+            }
+            case ErrorCode.CALL_EXCEPTION:
+            case ErrorCode.INSUFFICIENT_FUNDS:
+            case ErrorCode.MISSING_NEW:
+            case ErrorCode.NONCE_EXPIRED:
+            case ErrorCode.REPLACEMENT_UNDERPRICED:
+            case ErrorCode.TRANSACTION_REPLACED:
+            case ErrorCode.UNPREDICTABLE_GAS_LIMIT:
+                url = code;
+                break;
+        }
+        if (url) {
+            message += " [ See: https:/\/links.ethers.org/v5-errors-" + url + " ]";
+        }
         if (messageDetails.length) {
             message += " (" + messageDetails.join(", ") + ")";
         }
@@ -3971,7 +4005,7 @@ class Logger {
 Logger.errors = ErrorCode;
 Logger.levels = LogLevel;
 
-const version$3 = "bytes/5.4.0";
+const version$3 = "bytes/5.6.1";
 
 const logger$4 = new Logger(version$3);
 ///////////////////////////////
@@ -3988,6 +4022,9 @@ function addSlice(array) {
     };
     return array;
 }
+function isInteger(value) {
+    return (typeof (value) === "number" && value == value && (value % 1) === 0);
+}
 function isBytes(value) {
     if (value == null) {
         return false;
@@ -3998,12 +4035,12 @@ function isBytes(value) {
     if (typeof (value) === "string") {
         return false;
     }
-    if (value.length == null) {
+    if (!isInteger(value.length) || value.length < 0) {
         return false;
     }
     for (let i = 0; i < value.length; i++) {
         const v = value[i];
-        if (typeof (v) !== "number" || v < 0 || v >= 256 || (v % 1)) {
+        if (!isInteger(v) || v < 0 || v >= 256) {
             return false;
         }
     }
@@ -4035,7 +4072,7 @@ function arrayify(value, options) {
         let hex = value.substring(2);
         if (hex.length % 2) {
             if (options.hexPad === "left") {
-                hex = "0x0" + hex.substring(2);
+                hex = "0" + hex;
             }
             else if (options.hexPad === "right") {
                 hex += "0";
@@ -4137,7 +4174,7 @@ function hexZeroPad(value, length) {
     return value;
 }
 
-const version$2 = "bignumber/5.4.1";
+const version$2 = "bignumber/5.6.1";
 
 var BN = bn.BN;
 const logger$3 = new Logger(version$2);
@@ -4155,7 +4192,6 @@ function isBigNumberish(value) {
 let _warnedToStringRadix = false;
 class BigNumber {
     constructor(constructorGuard, hex) {
-        logger$3.checkNew(new.target, BigNumber);
         if (constructorGuard !== _constructorGuard$1) {
             logger$3.throwError("cannot call constructor directly; use BigNumber.from", Logger.errors.UNSUPPORTED_OPERATION, {
                 operation: "new (BigNumber)"
@@ -4186,7 +4222,7 @@ class BigNumber {
     div(other) {
         const o = BigNumber.from(other);
         if (o.isZero()) {
-            throwFault$1("division by zero", "div");
+            throwFault$1("division-by-zero", "div");
         }
         return toBigNumber(toBN(this).div(toBN(other)));
     }
@@ -4196,53 +4232,53 @@ class BigNumber {
     mod(other) {
         const value = toBN(other);
         if (value.isNeg()) {
-            throwFault$1("cannot modulo negative values", "mod");
+            throwFault$1("division-by-zero", "mod");
         }
         return toBigNumber(toBN(this).umod(value));
     }
     pow(other) {
         const value = toBN(other);
         if (value.isNeg()) {
-            throwFault$1("cannot raise to negative values", "pow");
+            throwFault$1("negative-power", "pow");
         }
         return toBigNumber(toBN(this).pow(value));
     }
     and(other) {
         const value = toBN(other);
         if (this.isNegative() || value.isNeg()) {
-            throwFault$1("cannot 'and' negative values", "and");
+            throwFault$1("unbound-bitwise-result", "and");
         }
         return toBigNumber(toBN(this).and(value));
     }
     or(other) {
         const value = toBN(other);
         if (this.isNegative() || value.isNeg()) {
-            throwFault$1("cannot 'or' negative values", "or");
+            throwFault$1("unbound-bitwise-result", "or");
         }
         return toBigNumber(toBN(this).or(value));
     }
     xor(other) {
         const value = toBN(other);
         if (this.isNegative() || value.isNeg()) {
-            throwFault$1("cannot 'xor' negative values", "xor");
+            throwFault$1("unbound-bitwise-result", "xor");
         }
         return toBigNumber(toBN(this).xor(value));
     }
     mask(value) {
         if (this.isNegative() || value < 0) {
-            throwFault$1("cannot mask negative values", "mask");
+            throwFault$1("negative-width", "mask");
         }
         return toBigNumber(toBN(this).maskn(value));
     }
     shl(value) {
         if (this.isNegative() || value < 0) {
-            throwFault$1("cannot shift negative values", "shl");
+            throwFault$1("negative-width", "shl");
         }
         return toBigNumber(toBN(this).shln(value));
     }
     shr(value) {
         if (this.isNegative() || value < 0) {
-            throwFault$1("cannot shift negative values", "shr");
+            throwFault$1("negative-width", "shr");
         }
         return toBigNumber(toBN(this).shrn(value));
     }
@@ -4339,7 +4375,7 @@ class BigNumber {
             return BigNumber.from(hexlify(anyValue));
         }
         if (anyValue) {
-            // Hexable interface (takes piority)
+            // Hexable interface (takes priority)
             if (anyValue.toHexString) {
                 const hex = anyValue.toHexString();
                 if (typeof (hex) === "string") {
@@ -4376,7 +4412,7 @@ function toHex(value) {
     if (value[0] === "-") {
         // Strip off the negative sign
         value = value.substring(1);
-        // Cannot have mulitple negative signs (e.g. "--0x04")
+        // Cannot have multiple negative signs (e.g. "--0x04")
         if (value[0] === "-") {
             logger$3.throwArgumentError("invalid hex", "value", value);
         }
@@ -4492,7 +4528,7 @@ function parseFixed(value, decimals) {
         decimals = 0;
     }
     const multiplier = getMultiplier(decimals);
-    if (typeof (value) !== "string" || !value.match(/^-?[0-9.,]+$/)) {
+    if (typeof (value) !== "string" || !value.match(/^-?[0-9.]+$/)) {
         logger$2.throwArgumentError("invalid decimal value", "value", value);
     }
     // Is it negative?
@@ -4515,12 +4551,17 @@ function parseFixed(value, decimals) {
     if (!fraction) {
         fraction = "0";
     }
-    // Get significant digits to check truncation for underflow
-    {
-        const sigFraction = fraction.replace(/^([0-9]*?)(0*)$/, (all, sig, zeros) => (sig));
-        if (sigFraction.length > multiplier.length - 1) {
-            throwFault("fractional component exceeds decimals", "underflow", "parseFixed");
-        }
+    // Trim trailing zeros
+    while (fraction[fraction.length - 1] === "0") {
+        fraction = fraction.substring(0, fraction.length - 1);
+    }
+    // Check the fraction doesn't exceed our decimals size
+    if (fraction.length > multiplier.length - 1) {
+        throwFault("fractional component exceeds decimals", "underflow", "parseFixed");
+    }
+    // If decimals is 0, we have an empty string for fraction
+    if (fraction === "") {
+        fraction = "0";
     }
     // Fully pad the string with zeros to get to wei
     while (fraction.length < multiplier.length - 1) {
@@ -4598,7 +4639,6 @@ class FixedFormat {
 }
 class FixedNumber {
     constructor(constructorGuard, hex, value, format) {
-        logger$2.checkNew(new.target, FixedNumber);
         if (constructorGuard !== _constructorGuard) {
             logger$2.throwError("cannot use FixedNumber constructor; use FixedNumber.from", Logger.errors.UNSUPPORTED_OPERATION, {
                 operation: "new FixedFormat"
@@ -4782,9 +4822,9 @@ const BUMP = FixedNumber.from("0.5");
 /**
  * [js-sha3]{@link https://github.com/emn178/js-sha3}
  *
- * @version 0.5.7
+ * @version 0.8.0
  * @author Chen, Yi-Cyuan [emn178@gmail.com]
- * @copyright Chen, Yi-Cyuan 2015-2016
+ * @copyright Chen, Yi-Cyuan 2015-2018
  * @license MIT
  */
 
@@ -4792,25 +4832,52 @@ var sha3 = createCommonjsModule(function (module) {
 /*jslint bitwise: true */
 (function () {
 
-  var root = typeof window === 'object' ? window : {};
+  var INPUT_ERROR = 'input is invalid type';
+  var FINALIZE_ERROR = 'finalize already called';
+  var WINDOW = typeof window === 'object';
+  var root = WINDOW ? window : {};
+  if (root.JS_SHA3_NO_WINDOW) {
+    WINDOW = false;
+  }
+  var WEB_WORKER = !WINDOW && typeof self === 'object';
   var NODE_JS = !root.JS_SHA3_NO_NODE_JS && typeof process === 'object' && process.versions && process.versions.node;
   if (NODE_JS) {
     root = commonjsGlobal;
+  } else if (WEB_WORKER) {
+    root = self;
   }
   var COMMON_JS = !root.JS_SHA3_NO_COMMON_JS && 'object' === 'object' && module.exports;
+  var ARRAY_BUFFER = !root.JS_SHA3_NO_ARRAY_BUFFER && typeof ArrayBuffer !== 'undefined';
   var HEX_CHARS = '0123456789abcdef'.split('');
   var SHAKE_PADDING = [31, 7936, 2031616, 520093696];
+  var CSHAKE_PADDING = [4, 1024, 262144, 67108864];
   var KECCAK_PADDING = [1, 256, 65536, 16777216];
   var PADDING = [6, 1536, 393216, 100663296];
   var SHIFT = [0, 8, 16, 24];
   var RC = [1, 0, 32898, 0, 32906, 2147483648, 2147516416, 2147483648, 32907, 0, 2147483649,
-            0, 2147516545, 2147483648, 32777, 2147483648, 138, 0, 136, 0, 2147516425, 0,
-            2147483658, 0, 2147516555, 0, 139, 2147483648, 32905, 2147483648, 32771,
-            2147483648, 32770, 2147483648, 128, 2147483648, 32778, 0, 2147483658, 2147483648,
-            2147516545, 2147483648, 32896, 2147483648, 2147483649, 0, 2147516424, 2147483648];
+    0, 2147516545, 2147483648, 32777, 2147483648, 138, 0, 136, 0, 2147516425, 0,
+    2147483658, 0, 2147516555, 0, 139, 2147483648, 32905, 2147483648, 32771,
+    2147483648, 32770, 2147483648, 128, 2147483648, 32778, 0, 2147483658, 2147483648,
+    2147516545, 2147483648, 32896, 2147483648, 2147483649, 0, 2147516424, 2147483648];
   var BITS = [224, 256, 384, 512];
   var SHAKE_BITS = [128, 256];
-  var OUTPUT_TYPES = ['hex', 'buffer', 'arrayBuffer', 'array'];
+  var OUTPUT_TYPES = ['hex', 'buffer', 'arrayBuffer', 'array', 'digest'];
+  var CSHAKE_BYTEPAD = {
+    '128': 168,
+    '256': 136
+  };
+
+  if (root.JS_SHA3_NO_NODE_JS || !Array.isArray) {
+    Array.isArray = function (obj) {
+      return Object.prototype.toString.call(obj) === '[object Array]';
+    };
+  }
+
+  if (ARRAY_BUFFER && (root.JS_SHA3_NO_ARRAY_BUFFER_IS_VIEW || !ArrayBuffer.isView)) {
+    ArrayBuffer.isView = function (obj) {
+      return typeof obj === 'object' && obj.buffer && obj.buffer.constructor === ArrayBuffer;
+    };
+  }
 
   var createOutputMethod = function (bits, padding, outputType) {
     return function (message) {
@@ -4824,6 +4891,26 @@ var sha3 = createCommonjsModule(function (module) {
     };
   };
 
+  var createCshakeOutputMethod = function (bits, padding, outputType) {
+    return function (message, outputBits, n, s) {
+      return methods['cshake' + bits].update(message, outputBits, n, s)[outputType]();
+    };
+  };
+
+  var createKmacOutputMethod = function (bits, padding, outputType) {
+    return function (key, message, outputBits, s) {
+      return methods['kmac' + bits].update(key, message, outputBits, s)[outputType]();
+    };
+  };
+
+  var createOutputMethods = function (method, createMethod, bits, padding) {
+    for (var i = 0; i < OUTPUT_TYPES.length; ++i) {
+      var type = OUTPUT_TYPES[i];
+      method[type] = createMethod(bits, padding, type);
+    }
+    return method;
+  };
+
   var createMethod = function (bits, padding) {
     var method = createOutputMethod(bits, padding, 'hex');
     method.create = function () {
@@ -4832,11 +4919,7 @@ var sha3 = createCommonjsModule(function (module) {
     method.update = function (message) {
       return method.create().update(message);
     };
-    for (var i = 0; i < OUTPUT_TYPES.length; ++i) {
-      var type = OUTPUT_TYPES[i];
-      method[type] = createOutputMethod(bits, padding, type);
-    }
-    return method;
+    return createOutputMethods(method, createOutputMethod, bits, padding);
   };
 
   var createShakeMethod = function (bits, padding) {
@@ -4847,28 +4930,59 @@ var sha3 = createCommonjsModule(function (module) {
     method.update = function (message, outputBits) {
       return method.create(outputBits).update(message);
     };
-    for (var i = 0; i < OUTPUT_TYPES.length; ++i) {
-      var type = OUTPUT_TYPES[i];
-      method[type] = createShakeOutputMethod(bits, padding, type);
-    }
-    return method;
+    return createOutputMethods(method, createShakeOutputMethod, bits, padding);
+  };
+
+  var createCshakeMethod = function (bits, padding) {
+    var w = CSHAKE_BYTEPAD[bits];
+    var method = createCshakeOutputMethod(bits, padding, 'hex');
+    method.create = function (outputBits, n, s) {
+      if (!n && !s) {
+        return methods['shake' + bits].create(outputBits);
+      } else {
+        return new Keccak(bits, padding, outputBits).bytepad([n, s], w);
+      }
+    };
+    method.update = function (message, outputBits, n, s) {
+      return method.create(outputBits, n, s).update(message);
+    };
+    return createOutputMethods(method, createCshakeOutputMethod, bits, padding);
+  };
+
+  var createKmacMethod = function (bits, padding) {
+    var w = CSHAKE_BYTEPAD[bits];
+    var method = createKmacOutputMethod(bits, padding, 'hex');
+    method.create = function (key, outputBits, s) {
+      return new Kmac(bits, padding, outputBits).bytepad(['KMAC', s], w).bytepad([key], w);
+    };
+    method.update = function (key, message, outputBits, s) {
+      return method.create(key, outputBits, s).update(message);
+    };
+    return createOutputMethods(method, createKmacOutputMethod, bits, padding);
   };
 
   var algorithms = [
-    {name: 'keccak', padding: KECCAK_PADDING, bits: BITS, createMethod: createMethod},
-    {name: 'sha3', padding: PADDING, bits: BITS, createMethod: createMethod},
-    {name: 'shake', padding: SHAKE_PADDING, bits: SHAKE_BITS, createMethod: createShakeMethod}
+    { name: 'keccak', padding: KECCAK_PADDING, bits: BITS, createMethod: createMethod },
+    { name: 'sha3', padding: PADDING, bits: BITS, createMethod: createMethod },
+    { name: 'shake', padding: SHAKE_PADDING, bits: SHAKE_BITS, createMethod: createShakeMethod },
+    { name: 'cshake', padding: CSHAKE_PADDING, bits: SHAKE_BITS, createMethod: createCshakeMethod },
+    { name: 'kmac', padding: CSHAKE_PADDING, bits: SHAKE_BITS, createMethod: createKmacMethod }
   ];
 
   var methods = {}, methodNames = [];
 
   for (var i = 0; i < algorithms.length; ++i) {
     var algorithm = algorithms[i];
-    var bits  = algorithm.bits;
+    var bits = algorithm.bits;
     for (var j = 0; j < bits.length; ++j) {
-      var methodName = algorithm.name +'_' + bits[j];
+      var methodName = algorithm.name + '_' + bits[j];
       methodNames.push(methodName);
       methods[methodName] = algorithm.createMethod(bits[j], algorithm.padding);
+      if (algorithm.name !== 'sha3') {
+        var newMethodName = algorithm.name + bits[j];
+        methodNames.push(newMethodName);
+        methods[newMethodName] = methods[methodName];
+      }
     }
   }
 
@@ -4878,6 +4992,7 @@ var sha3 = createCommonjsModule(function (module) {
     this.padding = padding;
     this.outputBits = outputBits;
     this.reset = true;
+    this.finalized = false;
     this.block = 0;
     this.start = 0;
     this.blockCount = (1600 - (bits << 1)) >> 5;
@@ -4891,11 +5006,27 @@ var sha3 = createCommonjsModule(function (module) {
   }
 
   Keccak.prototype.update = function (message) {
-    var notString = typeof message !== 'string';
-    if (notString && message.constructor === ArrayBuffer) {
-      message = new Uint8Array(message);
+    if (this.finalized) {
+      throw new Error(FINALIZE_ERROR);
     }
-    var length = message.length, blocks = this.blocks, byteCount = this.byteCount,
+    var notString, type = typeof message;
+    if (type !== 'string') {
+      if (type === 'object') {
+        if (message === null) {
+          throw new Error(INPUT_ERROR);
+        } else if (ARRAY_BUFFER && message.constructor === ArrayBuffer) {
+          message = new Uint8Array(message);
+        } else if (!Array.isArray(message)) {
+          if (!ARRAY_BUFFER || !ArrayBuffer.isView(message)) {
+            throw new Error(INPUT_ERROR);
+          }
+        }
+      } else {
+        throw new Error(INPUT_ERROR);
+      }
+      notString = true;
+    }
+    var blocks = this.blocks, byteCount = this.byteCount, length = message.length,
       blockCount = this.blockCount, index = 0, s = this.s, i, code;
 
     while (index < length) {
@@ -4947,7 +5078,84 @@ var sha3 = createCommonjsModule(function (module) {
     return this;
   };
 
+  Keccak.prototype.encode = function (x, right) {
+    var o = x & 255, n = 1;
+    var bytes = [o];
+    x = x >> 8;
+    o = x & 255;
+    while (o > 0) {
+      bytes.unshift(o);
+      x = x >> 8;
+      o = x & 255;
+      ++n;
+    }
+    if (right) {
+      bytes.push(n);
+    } else {
+      bytes.unshift(n);
+    }
+    this.update(bytes);
+    return bytes.length;
+  };
+
+  Keccak.prototype.encodeString = function (str) {
+    var notString, type = typeof str;
+    if (type !== 'string') {
+      if (type === 'object') {
+        if (str === null) {
+          throw new Error(INPUT_ERROR);
+        } else if (ARRAY_BUFFER && str.constructor === ArrayBuffer) {
+          str = new Uint8Array(str);
+        } else if (!Array.isArray(str)) {
+          if (!ARRAY_BUFFER || !ArrayBuffer.isView(str)) {
+            throw new Error(INPUT_ERROR);
+          }
+        }
+      } else {
+        throw new Error(INPUT_ERROR);
+      }
+      notString = true;
+    }
+    var bytes = 0, length = str.length;
+    if (notString) {
+      bytes = length;
+    } else {
+      for (var i = 0; i < str.length; ++i) {
+        var code = str.charCodeAt(i);
+        if (code < 0x80) {
+          bytes += 1;
+        } else if (code < 0x800) {
+          bytes += 2;
+        } else if (code < 0xd800 || code >= 0xe000) {
+          bytes += 3;
+        } else {
+          code = 0x10000 + (((code & 0x3ff) << 10) | (str.charCodeAt(++i) & 0x3ff));
+          bytes += 4;
+        }
+      }
+    }
+    bytes += this.encode(bytes * 8);
+    this.update(str);
+    return bytes;
+  };
+
+  Keccak.prototype.bytepad = function (strs, w) {
+    var bytes = this.encode(w);
+    for (var i = 0; i < strs.length; ++i) {
+      bytes += this.encodeString(strs[i]);
+    }
+    var paddingBytes = w - bytes % w;
+    var zeros = [];
+    zeros.length = paddingBytes;
+    this.update(zeros);
+    return this;
+  };
+
   Keccak.prototype.finalize = function () {
+    if (this.finalized) {
+      return;
+    }
+    this.finalized = true;
     var blocks = this.blocks, i = this.lastByteIndex, blockCount = this.blockCount, s = this.s;
     blocks[i >> 2] |= this.padding[i & 3];
     if (this.lastByteIndex === this.byteCount) {
@@ -4967,15 +5175,15 @@ var sha3 = createCommonjsModule(function (module) {
     this.finalize();
 
     var blockCount = this.blockCount, s = this.s, outputBlocks = this.outputBlocks,
-        extraBytes = this.extraBytes, i = 0, j = 0;
+      extraBytes = this.extraBytes, i = 0, j = 0;
     var hex = '', block;
     while (j < outputBlocks) {
       for (i = 0; i < blockCount && j < outputBlocks; ++i, ++j) {
         block = s[i];
         hex += HEX_CHARS[(block >> 4) & 0x0F] + HEX_CHARS[block & 0x0F] +
-               HEX_CHARS[(block >> 12) & 0x0F] + HEX_CHARS[(block >> 8) & 0x0F] +
-               HEX_CHARS[(block >> 20) & 0x0F] + HEX_CHARS[(block >> 16) & 0x0F] +
-               HEX_CHARS[(block >> 28) & 0x0F] + HEX_CHARS[(block >> 24) & 0x0F];
+          HEX_CHARS[(block >> 12) & 0x0F] + HEX_CHARS[(block >> 8) & 0x0F] +
+          HEX_CHARS[(block >> 20) & 0x0F] + HEX_CHARS[(block >> 16) & 0x0F] +
+          HEX_CHARS[(block >> 28) & 0x0F] + HEX_CHARS[(block >> 24) & 0x0F];
       }
       if (j % blockCount === 0) {
         f(s);
@@ -4984,9 +5192,7 @@ var sha3 = createCommonjsModule(function (module) {
     }
     if (extraBytes) {
       block = s[i];
-      if (extraBytes > 0) {
-        hex += HEX_CHARS[(block >> 4) & 0x0F] + HEX_CHARS[block & 0x0F];
-      }
+      hex += HEX_CHARS[(block >> 4) & 0x0F] + HEX_CHARS[block & 0x0F];
       if (extraBytes > 1) {
         hex += HEX_CHARS[(block >> 12) & 0x0F] + HEX_CHARS[(block >> 8) & 0x0F];
       }
@@ -5001,7 +5207,7 @@ var sha3 = createCommonjsModule(function (module) {
     this.finalize();
 
     var blockCount = this.blockCount, s = this.s, outputBlocks = this.outputBlocks,
-        extraBytes = this.extraBytes, i = 0, j = 0;
+      extraBytes = this.extraBytes, i = 0, j = 0;
     var bytes = this.outputBits >> 3;
     var buffer;
     if (extraBytes) {
@@ -5031,7 +5237,7 @@ var sha3 = createCommonjsModule(function (module) {
     this.finalize();
 
     var blockCount = this.blockCount, s = this.s, outputBlocks = this.outputBlocks,
-        extraBytes = this.extraBytes, i = 0, j = 0;
+      extraBytes = this.extraBytes, i = 0, j = 0;
     var array = [], offset, block;
     while (j < outputBlocks) {
       for (i = 0; i < blockCount && j < outputBlocks; ++i, ++j) {
@@ -5049,9 +5255,7 @@ var sha3 = createCommonjsModule(function (module) {
     if (extraBytes) {
       offset = j << 2;
       block = s[i];
-      if (extraBytes > 0) {
-        array[offset] = block & 0xFF;
-      }
+      array[offset] = block & 0xFF;
       if (extraBytes > 1) {
         array[offset + 1] = (block >> 8) & 0xFF;
       }
@@ -5062,11 +5266,22 @@ var sha3 = createCommonjsModule(function (module) {
     return array;
   };
 
+  function Kmac(bits, padding, outputBits) {
+    Keccak.call(this, bits, padding, outputBits);
+  }
+
+  Kmac.prototype = new Keccak();
+
+  Kmac.prototype.finalize = function () {
+    this.encode(this.outputBits, true);
+    return Keccak.prototype.finalize.call(this);
+  };
+
   var f = function (s) {
     var h, l, n, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9,
-        b0, b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11, b12, b13, b14, b15, b16, b17,
-        b18, b19, b20, b21, b22, b23, b24, b25, b26, b27, b28, b29, b30, b31, b32, b33,
-        b34, b35, b36, b37, b38, b39, b40, b41, b42, b43, b44, b45, b46, b47, b48, b49;
+      b0, b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11, b12, b13, b14, b15, b16, b17,
+      b18, b19, b20, b21, b22, b23, b24, b25, b26, b27, b28, b29, b30, b31, b32, b33,
+      b34, b35, b36, b37, b38, b39, b40, b41, b42, b43, b44, b45, b46, b47, b48, b49;
     for (n = 0; n < 48; n += 2) {
       c0 = s[0] ^ s[10] ^ s[20] ^ s[30] ^ s[40];
       c1 = s[1] ^ s[11] ^ s[21] ^ s[31] ^ s[41];
@@ -5250,7 +5465,7 @@ var sha3 = createCommonjsModule(function (module) {
   if (COMMON_JS) {
     module.exports = methods;
   } else {
-    for (var i = 0; i < methodNames.length; ++i) {
+    for (i = 0; i < methodNames.length; ++i) {
       root[methodNames[i]] = methods[methodNames[i]];
     }
   }
@@ -5263,7 +5478,7 @@ function keccak256(data) {
     return '0x' + sha3$1.keccak_256(arrayify(data));
 }
 
-const version$1 = "address/5.4.0";
+const version$1 = "address/5.6.0";
 
 const logger$1 = new Logger(version$1);
 function getChecksumAddress(address) {
@@ -5355,7 +5570,7 @@ function getAddress(address) {
     return result;
 }
 
-const version = "units/5.4.0";
+const version = "units/5.6.0";
 
 const logger = new Logger(version);
 const names = [
