@@ -15,13 +15,13 @@ import { all, findByName, route } from '@depay/web3-exchanges'
 
 all
 // [
-//   { name: 'uniswap_v3', label: 'Uniswap v3', logo: '...' }
+//   { name: 'uniswap_v2', label: 'Uniswap v2', logo: '...' }
 //   { name: 'pancakeswap_v2', label: 'PancakeSwap v2', logo: '...' }
 //   ...
 // ]
 
-let exchange = findByName('uniswap_v3')
-// { name: 'uniswap_v3', label: 'Uniswap v3', logo: '...' }
+let exchange = findByName('uniswap_v2')
+// { name: 'uniswap_v2', label: 'Uniswap v2', logo: '...' }
 
 let routes = await route({
   blockchain: 'ethereum',
@@ -46,17 +46,14 @@ wallet.sendTransaction(route.transaction)
 This library supports the following blockchains:
 
 - [Ethereum](https://ethereum.org)
-- [Binance Smart Chain](https://www.binance.org/en/smartChain)
+- [BNB Smart Chain](https://www.binance.org/smartChain)
+- [Polygon](https://polygon.technology)
 
 This library supports the following decentralized exchanges:
 
 - [Uniswap v2](https://uniswap.org)
 - [PancakeSwap v2](https://pancakeswap.info)
-
-Soon:
-- [Uniswap v3](https://uniswap.org)
-- [SushiSwap](https://sushi.com)
-- [Curve](https://curve.fi)
+- [Quickswap](https://quickswap.exchange)
 
 ## Data Structures
 
@@ -145,8 +142,8 @@ all
 ```javascript
 import { findByName } from '@depay/web3-exchanges'
 
-findByName('uniswap_v3')
-// { name: 'uniswap_v3', label: 'Uniswap v3', logo: '...' }
+findByName('uniswap_v2')
+// { name: 'uniswap_v2', label: 'Uniswap v2', logo: '...' }
 
 findByName('pancakeswap_v2')
 // { name: 'pancakeswap_v2', label: 'PancakeSwap v2', logo: '...' }
@@ -198,13 +195,6 @@ let wallet = getWallet()
 
 wallet.sendTransaction(route.transaction)
 ```
-
-## Domain Knowledge
-
-### Wrapped native tokens (like WETH)
-
-In case you select to swap the wrapped native token to the native token or vise versa,
-this library will actually suggest to wrap/unwrap instead of going through an exchange.
 
 ## Development
 
