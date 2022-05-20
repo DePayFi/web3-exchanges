@@ -6,7 +6,6 @@ import { mockDecimals } from 'tests/mocks/token'
 import { mockPair, mockAmounts } from 'tests/mocks/uniswap_v2'
 import { resetCache, provider } from '@depay/web3-client'
 import { route, findByName } from 'src'
-import { WETH } from 'src/exchanges/weth/apis'
 
 describe('route', ()=> {
 
@@ -63,77 +62,4 @@ describe('route', ()=> {
 
     // TODO: sorts the routes by most cost-effective routes first (once support for multiple exchanges)
   })
-
-  it('offers to unwrap WETH to ETH if trying to find exchanges for that pair', async ()=>{
-
-    let wallet = accounts[0]
-    let amount = 1
-    let amountBN = ethers.utils.parseUnits(amount.toString(), 18)
-
-    mockDecimals({ provider: provider(blockchain), blockchain, address: CONSTANTS.ethereum.WRAPPED, value: 18 })
-
-    let routes = await route({
-      blockchain,
-      tokenIn: CONSTANTS.ethereum.WRAPPED,
-      tokenOut: CONSTANTS.ethereum.NATIVE,
-      amountIn: amount,
-      fromAddress: wallet,
-      toAddress: wallet
-    });
-
-    expect(routes.length).toEqual(1)
-
-    expect(routes[0].tokenIn).toEqual(CONSTANTS.ethereum.WRAPPED)
-    expect(routes[0].tokenOut).toEqual(CONSTANTS.ethereum.NATIVE)
-    expect(routes[0].path).toEqual([CONSTANTS.ethereum.WRAPPED, CONSTANTS.ethereum.NATIVE])
-    expect(routes[0].amountIn).toEqual(amountBN.toString())
-    expect(routes[0].amountOutMin).toEqual(amountBN.toString())
-    expect(routes[0].amountOut).toEqual(amountBN.toString())
-    expect(routes[0].amountInMax).toEqual(amountBN.toString())
-    expect(routes[0].fromAddress).toEqual(wallet)
-    expect(routes[0].toAddress).toEqual(wallet)
-    expect(routes[0].exchange.name).toEqual('weth')
-    expect(routes[0].transaction.blockchain).toEqual('ethereum')
-    expect(routes[0].transaction.from).toEqual(accounts[0])
-    expect(routes[0].transaction.to).toEqual(CONSTANTS.ethereum.WRAPPED)
-    expect(routes[0].transaction.api).toEqual(WETH)
-    expect(routes[0].transaction.method).toEqual('withdraw')
-    expect(routes[0].transaction.params).toEqual([amountBN])
-  })
-
-  it('offers to wrap ETH to WETH if trying to find exchanges for that pair', async ()=>{
-    let wallet = accounts[0]
-    let amount = 1
-    let amountBN = ethers.utils.parseUnits(amount.toString(), 18)
-
-    mockDecimals({ provider: provider(blockchain), blockchain, address: CONSTANTS.ethereum.WRAPPED, value: 18 })
-
-    let routes = await route({
-      blockchain,
-      tokenIn: CONSTANTS.ethereum.NATIVE,
-      tokenOut: CONSTANTS.ethereum.WRAPPED,
-      amountIn: amount,
-      fromAddress: wallet,
-      toAddress: wallet
-    });
-
-    expect(routes.length).toEqual(1)
-
-    expect(routes[0].tokenIn).toEqual(CONSTANTS.ethereum.NATIVE)
-    expect(routes[0].tokenOut).toEqual(CONSTANTS.ethereum.WRAPPED)
-    expect(routes[0].path).toEqual([CONSTANTS.ethereum.NATIVE, CONSTANTS.ethereum.WRAPPED])
-    expect(routes[0].amountIn).toEqual(amountBN.toString())
-    expect(routes[0].amountOutMin).toEqual(amountBN.toString())
-    expect(routes[0].amountOut).toEqual(amountBN.toString())
-    expect(routes[0].amountInMax).toEqual(amountBN.toString())
-    expect(routes[0].fromAddress).toEqual(wallet)
-    expect(routes[0].toAddress).toEqual(wallet)
-    expect(routes[0].exchange.name).toEqual('weth')
-    expect(routes[0].transaction.blockchain).toEqual('ethereum')
-    expect(routes[0].transaction.from).toEqual(accounts[0])
-    expect(routes[0].transaction.to).toEqual(CONSTANTS.ethereum.WRAPPED)
-    expect(routes[0].transaction.api).toEqual(WETH)
-    expect(routes[0].transaction.method).toEqual('deposit')
-    expect(routes[0].transaction.value).toEqual(amountBN.toString())
-  })  
 })

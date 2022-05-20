@@ -1,9 +1,32 @@
 import { Token } from '@depay/web3-tokens';
 import { CONSTANTS } from '@depay/web3-constants';
+import { ethers } from 'ethers';
 import { request } from '@depay/web3-client';
-import require$$0 from 'buffer';
 
-var route$7 = () => {};
+let UniswapV2Router02$1 = [{"inputs":[{"internalType":"address","name":"_factory","type":"address"},{"internalType":"address","name":"_WETH","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[],"name":"WETH","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"tokenA","type":"address"},{"internalType":"address","name":"tokenB","type":"address"},{"internalType":"uint256","name":"amountADesired","type":"uint256"},{"internalType":"uint256","name":"amountBDesired","type":"uint256"},{"internalType":"uint256","name":"amountAMin","type":"uint256"},{"internalType":"uint256","name":"amountBMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"addLiquidity","outputs":[{"internalType":"uint256","name":"amountA","type":"uint256"},{"internalType":"uint256","name":"amountB","type":"uint256"},{"internalType":"uint256","name":"liquidity","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"uint256","name":"amountTokenDesired","type":"uint256"},{"internalType":"uint256","name":"amountTokenMin","type":"uint256"},{"internalType":"uint256","name":"amountETHMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"addLiquidityETH","outputs":[{"internalType":"uint256","name":"amountToken","type":"uint256"},{"internalType":"uint256","name":"amountETH","type":"uint256"},{"internalType":"uint256","name":"liquidity","type":"uint256"}],"stateMutability":"payable","type":"function"},{"inputs":[],"name":"factory","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountOut","type":"uint256"},{"internalType":"uint256","name":"reserveIn","type":"uint256"},{"internalType":"uint256","name":"reserveOut","type":"uint256"}],"name":"getAmountIn","outputs":[{"internalType":"uint256","name":"amountIn","type":"uint256"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountIn","type":"uint256"},{"internalType":"uint256","name":"reserveIn","type":"uint256"},{"internalType":"uint256","name":"reserveOut","type":"uint256"}],"name":"getAmountOut","outputs":[{"internalType":"uint256","name":"amountOut","type":"uint256"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountOut","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"}],"name":"getAmountsIn","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountIn","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"}],"name":"getAmountsOut","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountA","type":"uint256"},{"internalType":"uint256","name":"reserveA","type":"uint256"},{"internalType":"uint256","name":"reserveB","type":"uint256"}],"name":"quote","outputs":[{"internalType":"uint256","name":"amountB","type":"uint256"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"address","name":"tokenA","type":"address"},{"internalType":"address","name":"tokenB","type":"address"},{"internalType":"uint256","name":"liquidity","type":"uint256"},{"internalType":"uint256","name":"amountAMin","type":"uint256"},{"internalType":"uint256","name":"amountBMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"removeLiquidity","outputs":[{"internalType":"uint256","name":"amountA","type":"uint256"},{"internalType":"uint256","name":"amountB","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"uint256","name":"liquidity","type":"uint256"},{"internalType":"uint256","name":"amountTokenMin","type":"uint256"},{"internalType":"uint256","name":"amountETHMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"removeLiquidityETH","outputs":[{"internalType":"uint256","name":"amountToken","type":"uint256"},{"internalType":"uint256","name":"amountETH","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"uint256","name":"liquidity","type":"uint256"},{"internalType":"uint256","name":"amountTokenMin","type":"uint256"},{"internalType":"uint256","name":"amountETHMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"removeLiquidityETHSupportingFeeOnTransferTokens","outputs":[{"internalType":"uint256","name":"amountETH","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"uint256","name":"liquidity","type":"uint256"},{"internalType":"uint256","name":"amountTokenMin","type":"uint256"},{"internalType":"uint256","name":"amountETHMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"},{"internalType":"bool","name":"approveMax","type":"bool"},{"internalType":"uint8","name":"v","type":"uint8"},{"internalType":"bytes32","name":"r","type":"bytes32"},{"internalType":"bytes32","name":"s","type":"bytes32"}],"name":"removeLiquidityETHWithPermit","outputs":[{"internalType":"uint256","name":"amountToken","type":"uint256"},{"internalType":"uint256","name":"amountETH","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"uint256","name":"liquidity","type":"uint256"},{"internalType":"uint256","name":"amountTokenMin","type":"uint256"},{"internalType":"uint256","name":"amountETHMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"},{"internalType":"bool","name":"approveMax","type":"bool"},{"internalType":"uint8","name":"v","type":"uint8"},{"internalType":"bytes32","name":"r","type":"bytes32"},{"internalType":"bytes32","name":"s","type":"bytes32"}],"name":"removeLiquidityETHWithPermitSupportingFeeOnTransferTokens","outputs":[{"internalType":"uint256","name":"amountETH","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"tokenA","type":"address"},{"internalType":"address","name":"tokenB","type":"address"},{"internalType":"uint256","name":"liquidity","type":"uint256"},{"internalType":"uint256","name":"amountAMin","type":"uint256"},{"internalType":"uint256","name":"amountBMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"},{"internalType":"bool","name":"approveMax","type":"bool"},{"internalType":"uint8","name":"v","type":"uint8"},{"internalType":"bytes32","name":"r","type":"bytes32"},{"internalType":"bytes32","name":"s","type":"bytes32"}],"name":"removeLiquidityWithPermit","outputs":[{"internalType":"uint256","name":"amountA","type":"uint256"},{"internalType":"uint256","name":"amountB","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountOut","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapETHForExactTokens","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountOutMin","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapExactETHForTokens","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountOutMin","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapExactETHForTokensSupportingFeeOnTransferTokens","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountIn","type":"uint256"},{"internalType":"uint256","name":"amountOutMin","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapExactTokensForETH","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountIn","type":"uint256"},{"internalType":"uint256","name":"amountOutMin","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapExactTokensForETHSupportingFeeOnTransferTokens","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountIn","type":"uint256"},{"internalType":"uint256","name":"amountOutMin","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapExactTokensForTokens","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountIn","type":"uint256"},{"internalType":"uint256","name":"amountOutMin","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapExactTokensForTokensSupportingFeeOnTransferTokens","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountOut","type":"uint256"},{"internalType":"uint256","name":"amountInMax","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapTokensForExactETH","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountOut","type":"uint256"},{"internalType":"uint256","name":"amountInMax","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapTokensForExactTokens","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"nonpayable","type":"function"},{"stateMutability":"payable","type":"receive"}];
+let UniswapV2Factory$1 = [{"inputs":[{"internalType":"address","name":"_feeToSetter","type":"address"}],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"token0","type":"address"},{"indexed":true,"internalType":"address","name":"token1","type":"address"},{"indexed":false,"internalType":"address","name":"pair","type":"address"},{"indexed":false,"internalType":"uint256","name":"","type":"uint256"}],"name":"PairCreated","type":"event"},{"constant":true,"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"allPairs","outputs":[{"internalType":"address","name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"allPairsLength","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"tokenA","type":"address"},{"internalType":"address","name":"tokenB","type":"address"}],"name":"createPair","outputs":[{"internalType":"address","name":"pair","type":"address"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"feeTo","outputs":[{"internalType":"address","name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"feeToSetter","outputs":[{"internalType":"address","name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"address","name":"","type":"address"}],"name":"getPair","outputs":[{"internalType":"address","name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"_feeTo","type":"address"}],"name":"setFeeTo","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"_feeToSetter","type":"address"}],"name":"setFeeToSetter","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"}];
+let UniswapV2Pair$1 = [{"inputs":[],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"spender","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"sender","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount0","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount1","type":"uint256"},{"indexed":true,"internalType":"address","name":"to","type":"address"}],"name":"Burn","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"sender","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount0","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount1","type":"uint256"}],"name":"Mint","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"sender","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount0In","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount1In","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount0Out","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount1Out","type":"uint256"},{"indexed":true,"internalType":"address","name":"to","type":"address"}],"name":"Swap","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint112","name":"reserve0","type":"uint112"},{"indexed":false,"internalType":"uint112","name":"reserve1","type":"uint112"}],"name":"Sync","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Transfer","type":"event"},{"constant":true,"inputs":[],"name":"DOMAIN_SEPARATOR","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"MINIMUM_LIQUIDITY","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"PERMIT_TYPEHASH","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"address","name":"","type":"address"}],"name":"allowance","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"}],"name":"approve","outputs":[{"internalType":"bool","name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"to","type":"address"}],"name":"burn","outputs":[{"internalType":"uint256","name":"amount0","type":"uint256"},{"internalType":"uint256","name":"amount1","type":"uint256"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"decimals","outputs":[{"internalType":"uint8","name":"","type":"uint8"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"factory","outputs":[{"internalType":"address","name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"getReserves","outputs":[{"internalType":"uint112","name":"_reserve0","type":"uint112"},{"internalType":"uint112","name":"_reserve1","type":"uint112"},{"internalType":"uint32","name":"_blockTimestampLast","type":"uint32"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"_token0","type":"address"},{"internalType":"address","name":"_token1","type":"address"}],"name":"initialize","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"kLast","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"to","type":"address"}],"name":"mint","outputs":[{"internalType":"uint256","name":"liquidity","type":"uint256"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"nonces","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"},{"internalType":"uint256","name":"deadline","type":"uint256"},{"internalType":"uint8","name":"v","type":"uint8"},{"internalType":"bytes32","name":"r","type":"bytes32"},{"internalType":"bytes32","name":"s","type":"bytes32"}],"name":"permit","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"price0CumulativeLast","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"price1CumulativeLast","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"to","type":"address"}],"name":"skim","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"internalType":"uint256","name":"amount0Out","type":"uint256"},{"internalType":"uint256","name":"amount1Out","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"swap","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"sync","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"token0","outputs":[{"internalType":"address","name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"token1","outputs":[{"internalType":"address","name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"totalSupply","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"}],"name":"transfer","outputs":[{"internalType":"bool","name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"}],"name":"transferFrom","outputs":[{"internalType":"bool","name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"}];
+
+var basics$2 = {
+  blockchain: 'ethereum',
+  name: 'uniswap_v2',
+  alternativeNames: [],
+  label: 'Uniswap v2',
+  logo: 'data:image/png;base64,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',
+  contracts: {
+    router: {
+      address: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D',
+      api: UniswapV2Router02$1
+    },
+    factory: {
+      address: '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f',
+      api: UniswapV2Factory$1
+    },
+    pair: {
+      api: UniswapV2Pair$1
+    }
+  }
+};
 
 let getAmount = async ({ amount, blockchain, address }) => {
   return await Token.BigNumber({ amount, blockchain, address })
@@ -144,20 +167,347 @@ class Exchange {
   }
 }
 
-var curve = new Exchange({
-  blockchain: 'ethereum',
-  name: 'curve',
-  alternativeNames: [],
-  label: 'Curve',
-  logo: 'data:image/png;base64,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',
-  route: route$7,
-});
+function _optionalChain$3(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }class Route {
+  constructor({
+    tokenIn,
+    tokenOut,
+    path,
+    amountIn,
+    amountInMax,
+    amountOut,
+    amountOutMin,
+    fromAddress,
+    toAddress,
+    transaction,
+    exchange,
+  }) {
+    this.tokenIn = tokenIn;
+    this.tokenOut = tokenOut;
+    this.path = path;
+    this.amountIn = _optionalChain$3([amountIn, 'optionalAccess', _ => _.toString, 'call', _2 => _2()]);
+    this.amountOutMin = _optionalChain$3([amountOutMin, 'optionalAccess', _3 => _3.toString, 'call', _4 => _4()]);
+    this.amountOut = _optionalChain$3([amountOut, 'optionalAccess', _5 => _5.toString, 'call', _6 => _6()]);
+    this.amountInMax = _optionalChain$3([amountInMax, 'optionalAccess', _7 => _7.toString, 'call', _8 => _8()]);
+    this.fromAddress = fromAddress;
+    this.toAddress = toAddress;
+    this.transaction = transaction;
+    this.exchange = exchange;
+  }
+}
+
+function _optionalChain$2(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
+// Uniswap replaces 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE with
+// the wrapped token 0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2 and implies wrapping.
+//
+// We keep 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE internally
+// to be able to differentiate between ETH<>Token and WETH<>Token swaps
+// as they are not the same!
+//
+let fixUniswapPath$1 = (path) => {
+  let fixedPath = path.map((token, index) => {
+    if (
+      token === CONSTANTS.ethereum.NATIVE && path[index+1] != CONSTANTS.ethereum.WRAPPED &&
+      path[index-1] != CONSTANTS.ethereum.WRAPPED
+    ) {
+      return CONSTANTS.ethereum.WRAPPED
+    } else {
+      return token
+    }
+  });
+
+  if(fixedPath[0] == CONSTANTS.ethereum.NATIVE && fixedPath[1] == CONSTANTS.ethereum.WRAPPED) {
+    fixedPath.splice(0, 1);
+  } else if(fixedPath[fixedPath.length-1] == CONSTANTS.ethereum.NATIVE && fixedPath[fixedPath.length-2] == CONSTANTS.ethereum.WRAPPED) {
+    fixedPath.splice(fixedPath.length-1, 1);
+  }
+
+  return fixedPath
+};
+
+let minReserveRequirements$2 = ({ reserves, min, token, token0, token1, decimals }) => {
+  if(token0.toLowerCase() == token.toLowerCase()) {
+    return reserves[0].gte(ethers.utils.parseUnits(min.toString(), decimals))
+  } else if (token1.toLowerCase() == token.toLowerCase()) {
+    return reserves[1].gte(ethers.utils.parseUnits(min.toString(), decimals))
+  } else {
+    return false
+  }
+};
+
+let pathExists$2 = async (path) => {
+  if(fixUniswapPath$1(path).length == 1) { return false }
+  let pair = await request({
+    blockchain: 'ethereum',
+    address: basics$2.contracts.factory.address,
+    method: 'getPair'
+  }, { api: basics$2.contracts.factory.api, cache: 3600000, params: fixUniswapPath$1(path) });
+  if(pair == CONSTANTS.ethereum.ZERO) { return false }
+  let [reserves, token0, token1] = await Promise.all([
+    request({ blockchain: 'ethereum', address: pair, method: 'getReserves' }, { api: basics$2.contracts.pair.api, cache: 3600000 }),
+    request({ blockchain: 'ethereum', address: pair, method: 'token0' }, { api: basics$2.contracts.pair.api, cache: 3600000 }),
+    request({ blockchain: 'ethereum', address: pair, method: 'token1' }, { api: basics$2.contracts.pair.api, cache: 3600000 })
+  ]);
+  if(path.includes(CONSTANTS.ethereum.WRAPPED)) {
+    return minReserveRequirements$2({ min: 1, token: CONSTANTS.ethereum.WRAPPED, decimals: CONSTANTS.ethereum.DECIMALS, reserves, token0, token1 })
+  } else if (path.includes(CONSTANTS.ethereum.USD)) {
+    let token = new Token({ blockchain: 'ethereum', address: CONSTANTS.ethereum.USD });
+    let decimals = await token.decimals();
+    return minReserveRequirements$2({ min: 1000, token: CONSTANTS.ethereum.USD, decimals, reserves, token0, token1 })
+  } else {
+    return true 
+  }
+};
+
+let findPath$2 = async ({ tokenIn, tokenOut }) => {
+  if(
+    [tokenIn, tokenOut].includes(CONSTANTS.ethereum.NATIVE) &&
+    [tokenIn, tokenOut].includes(CONSTANTS.ethereum.WRAPPED)
+  ) { return }
+
+  let path;
+  if (await pathExists$2([tokenIn, tokenOut])) {
+    // direct path
+    path = [tokenIn, tokenOut];
+  } else if (
+    tokenIn != CONSTANTS.ethereum.WRAPPED &&
+    await pathExists$2([tokenIn, CONSTANTS.ethereum.WRAPPED]) &&
+    tokenOut != CONSTANTS.ethereum.WRAPPED &&
+    await pathExists$2([tokenOut, CONSTANTS.ethereum.WRAPPED])
+  ) {
+    // path via WRAPPED
+    path = [tokenIn, CONSTANTS.ethereum.WRAPPED, tokenOut];
+  } else if (
+    tokenIn != CONSTANTS.ethereum.USD &&
+    await pathExists$2([tokenIn, CONSTANTS.ethereum.USD]) &&
+    tokenOut != CONSTANTS.ethereum.WRAPPED &&
+    await pathExists$2([CONSTANTS.ethereum.WRAPPED, tokenOut])
+  ) {
+    // path via tokenIn -> USD -> WRAPPED -> tokenOut
+    path = [tokenIn, CONSTANTS.ethereum.USD, CONSTANTS.ethereum.WRAPPED, tokenOut];
+  } else if (
+    tokenIn != CONSTANTS.ethereum.WRAPPED &&
+    await pathExists$2([tokenIn, CONSTANTS.ethereum.WRAPPED]) &&
+    tokenOut != CONSTANTS.ethereum.USD &&
+    await pathExists$2([CONSTANTS.ethereum.USD, tokenOut])
+  ) {
+    // path via tokenIn -> WRAPPED -> USD -> tokenOut
+    path = [tokenIn, CONSTANTS.ethereum.WRAPPED, CONSTANTS.ethereum.USD, tokenOut];
+  }
+
+  // Add WRAPPED to route path if things start or end with NATIVE
+  // because that actually reflects how things are routed in reality:
+  if(_optionalChain$2([path, 'optionalAccess', _ => _.length]) && path[0] == CONSTANTS.ethereum.NATIVE) {
+    path.splice(1, 0, CONSTANTS.ethereum.WRAPPED);
+  } else if(_optionalChain$2([path, 'optionalAccess', _2 => _2.length]) && path[path.length-1] == CONSTANTS.ethereum.NATIVE) {
+    path.splice(path.length-1, 0, CONSTANTS.ethereum.WRAPPED);
+  }
+
+  return path
+};
+
+let getAmountsOut$2 = ({ path, amountIn, tokenIn, tokenOut }) => {
+  return new Promise((resolve) => {
+    request({
+      blockchain: 'ethereum',
+      address: basics$2.contracts.router.address,
+      method: 'getAmountsOut'
+    },{
+      api: basics$2.contracts.router.api,
+      params: {
+        amountIn: amountIn,
+        path: fixUniswapPath$1(path),
+      },
+    })
+    .then((amountsOut)=>{
+      resolve(amountsOut[amountsOut.length - 1]);
+    })
+    .catch(()=>resolve());
+  })
+};
+
+let getAmountsIn$2 = ({ path, amountOut, tokenIn, tokenOut }) => {
+  return new Promise((resolve) => {
+    request({
+      blockchain: 'ethereum',
+      address: basics$2.contracts.router.address,
+      method: 'getAmountsIn'
+    },{
+      api: basics$2.contracts.router.api,
+      params: {
+        amountOut: amountOut,
+        path: fixUniswapPath$1(path),
+      },
+    })
+    .then((amountsIn)=>resolve(amountsIn[0]))
+    .catch(()=>resolve());
+  })
+};
+
+let getAmounts$2 = async ({
+  path,
+  tokenIn,
+  tokenOut,
+  amountOut,
+  amountIn,
+  amountInMax,
+  amountOutMin
+}) => {
+  if (amountOut) {
+    amountIn = await getAmountsIn$2({ path, amountOut, tokenIn, tokenOut });
+    if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
+      return {}
+    } else if (amountInMax === undefined) {
+      amountInMax = amountIn;
+    }
+  } else if (amountIn) {
+    amountOut = await getAmountsOut$2({ path, amountIn, tokenIn, tokenOut });
+    if (amountOut == undefined || amountOutMin && amountOut.lt(amountOutMin)) {
+      return {}
+    } else if (amountOutMin === undefined) {
+      amountOutMin = amountOut;
+    }
+  } else if(amountOutMin) {
+    amountIn = await getAmountsIn$2({ path, amountOut: amountOutMin, tokenIn, tokenOut });
+    if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
+      return {}
+    } else if (amountInMax === undefined) {
+      amountInMax = amountIn;
+    }
+  } else if(amountInMax) {
+    amountOut = await getAmountsOut$2({ path, amountIn: amountInMax, tokenIn, tokenOut });
+    if (amountOut == undefined ||amountOutMin && amountOut.lt(amountOutMin)) {
+      return {}
+    } else if (amountOutMin === undefined) {
+      amountOutMin = amountOut;
+    }
+  }
+  return { amountOut, amountIn, amountInMax, amountOutMin }
+};
+
+let getTransaction$2 = ({
+  path,
+  amountIn,
+  amountInMax,
+  amountOut,
+  amountOutMin,
+  amountInInput,
+  amountOutInput,
+  amountInMaxInput,
+  amountOutMinInput,
+  toAddress,
+  fromAddress
+}) => {
+  
+  let transaction = {
+    blockchain: 'ethereum',
+    from: fromAddress,
+    to: basics$2.contracts.router.address,
+    api: basics$2.contracts.router.api,
+  };
+
+  if (path[0] === CONSTANTS.ethereum.NATIVE) {
+    if (amountInInput || amountOutMinInput) {
+      transaction.method = 'swapExactETHForTokens';
+      transaction.value = amountIn.toString();
+      transaction.params = { amountOutMin: amountOutMin.toString() };
+    } else if (amountOutInput || amountInMaxInput) {
+      transaction.method = 'swapETHForExactTokens';
+      transaction.value = amountInMax.toString();
+      transaction.params = { amountOut: amountOut.toString() };
+    }
+  } else if (path[path.length - 1] === CONSTANTS.ethereum.NATIVE) {
+    if (amountInInput || amountOutMinInput) {
+      transaction.method = 'swapExactTokensForETH';
+      transaction.params = { amountIn: amountIn.toString(), amountOutMin: amountOutMin.toString() };
+    } else if (amountOutInput || amountInMaxInput) {
+      transaction.method = 'swapTokensForExactETH';
+      transaction.params = { amountInMax: amountInMax.toString(), amountOut: amountOut.toString() };
+    }
+  } else {
+    if (amountInInput || amountOutMinInput) {
+      transaction.method = 'swapExactTokensForTokens';
+      transaction.params = { amountIn: amountIn.toString(), amountOutMin: amountOutMin.toString() };
+    } else if (amountOutInput || amountInMaxInput) {
+      transaction.method = 'swapTokensForExactTokens';
+      transaction.params = { amountInMax: amountInMax.toString(), amountOut: amountOut.toString() };
+    }
+  }
+
+  transaction.params = Object.assign({}, transaction.params, {
+    path: fixUniswapPath$1(path),
+    to: toAddress,
+    deadline: Math.round(Date.now() / 1000) + 30 * 60, // 30 minutes
+  });
+
+  return transaction
+};
+
+const fixCheckSum = (address)=>{
+  return ethers.utils.getAddress(address)
+};
+
+let route$3 = ({
+  exchange,
+  tokenIn,
+  tokenOut,
+  fromAddress,
+  toAddress,
+  amountIn = undefined,
+  amountOut = undefined,
+  amountInMax = undefined,
+  amountOutMin = undefined,
+}) => {
+  tokenIn = fixCheckSum(tokenIn);
+  tokenOut = fixCheckSum(tokenOut);
+  return new Promise(async (resolve)=> {
+    let path = await findPath$2({ tokenIn, tokenOut });
+    if (path === undefined || path.length == 0) { return resolve() }
+    let [amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput] = [amountIn, amountOut, amountInMax, amountOutMin];
+    
+    ({ amountIn, amountInMax, amountOut, amountOutMin } = await getAmounts$2({ path, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }));
+    if([amountIn, amountInMax, amountOut, amountOutMin].every((amount)=>{ return amount == undefined })) { return resolve() }
+
+    let transaction = getTransaction$2({
+      path,
+      amountIn,
+      amountInMax,
+      amountOut,
+      amountOutMin,
+      amountInInput,
+      amountOutInput,
+      amountInMaxInput,
+      amountOutMinInput,
+      toAddress,
+      fromAddress
+    });
+
+    resolve(
+      new Route({
+        tokenIn,
+        tokenOut,
+        path,
+        amountIn,
+        amountInMax,
+        amountOut,
+        amountOutMin,
+        fromAddress,
+        toAddress,
+        exchange,
+        transaction,
+      })
+    );
+  })
+};
+
+var uniswap_v2 = new Exchange(
+  Object.assign(basics$2, { route: route$3 })
+);
 
 let PancakeRouter = [{"inputs":[{"internalType":"address","name":"_factory","type":"address"},{"internalType":"address","name":"_WETH","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[],"name":"WETH","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"tokenA","type":"address"},{"internalType":"address","name":"tokenB","type":"address"},{"internalType":"uint256","name":"amountADesired","type":"uint256"},{"internalType":"uint256","name":"amountBDesired","type":"uint256"},{"internalType":"uint256","name":"amountAMin","type":"uint256"},{"internalType":"uint256","name":"amountBMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"addLiquidity","outputs":[{"internalType":"uint256","name":"amountA","type":"uint256"},{"internalType":"uint256","name":"amountB","type":"uint256"},{"internalType":"uint256","name":"liquidity","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"uint256","name":"amountTokenDesired","type":"uint256"},{"internalType":"uint256","name":"amountTokenMin","type":"uint256"},{"internalType":"uint256","name":"amountETHMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"addLiquidityETH","outputs":[{"internalType":"uint256","name":"amountToken","type":"uint256"},{"internalType":"uint256","name":"amountETH","type":"uint256"},{"internalType":"uint256","name":"liquidity","type":"uint256"}],"stateMutability":"payable","type":"function"},{"inputs":[],"name":"factory","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountOut","type":"uint256"},{"internalType":"uint256","name":"reserveIn","type":"uint256"},{"internalType":"uint256","name":"reserveOut","type":"uint256"}],"name":"getAmountIn","outputs":[{"internalType":"uint256","name":"amountIn","type":"uint256"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountIn","type":"uint256"},{"internalType":"uint256","name":"reserveIn","type":"uint256"},{"internalType":"uint256","name":"reserveOut","type":"uint256"}],"name":"getAmountOut","outputs":[{"internalType":"uint256","name":"amountOut","type":"uint256"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountOut","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"}],"name":"getAmountsIn","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountIn","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"}],"name":"getAmountsOut","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountA","type":"uint256"},{"internalType":"uint256","name":"reserveA","type":"uint256"},{"internalType":"uint256","name":"reserveB","type":"uint256"}],"name":"quote","outputs":[{"internalType":"uint256","name":"amountB","type":"uint256"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"address","name":"tokenA","type":"address"},{"internalType":"address","name":"tokenB","type":"address"},{"internalType":"uint256","name":"liquidity","type":"uint256"},{"internalType":"uint256","name":"amountAMin","type":"uint256"},{"internalType":"uint256","name":"amountBMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"removeLiquidity","outputs":[{"internalType":"uint256","name":"amountA","type":"uint256"},{"internalType":"uint256","name":"amountB","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"uint256","name":"liquidity","type":"uint256"},{"internalType":"uint256","name":"amountTokenMin","type":"uint256"},{"internalType":"uint256","name":"amountETHMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"removeLiquidityETH","outputs":[{"internalType":"uint256","name":"amountToken","type":"uint256"},{"internalType":"uint256","name":"amountETH","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"uint256","name":"liquidity","type":"uint256"},{"internalType":"uint256","name":"amountTokenMin","type":"uint256"},{"internalType":"uint256","name":"amountETHMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"removeLiquidityETHSupportingFeeOnTransferTokens","outputs":[{"internalType":"uint256","name":"amountETH","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"uint256","name":"liquidity","type":"uint256"},{"internalType":"uint256","name":"amountTokenMin","type":"uint256"},{"internalType":"uint256","name":"amountETHMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"},{"internalType":"bool","name":"approveMax","type":"bool"},{"internalType":"uint8","name":"v","type":"uint8"},{"internalType":"bytes32","name":"r","type":"bytes32"},{"internalType":"bytes32","name":"s","type":"bytes32"}],"name":"removeLiquidityETHWithPermit","outputs":[{"internalType":"uint256","name":"amountToken","type":"uint256"},{"internalType":"uint256","name":"amountETH","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"uint256","name":"liquidity","type":"uint256"},{"internalType":"uint256","name":"amountTokenMin","type":"uint256"},{"internalType":"uint256","name":"amountETHMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"},{"internalType":"bool","name":"approveMax","type":"bool"},{"internalType":"uint8","name":"v","type":"uint8"},{"internalType":"bytes32","name":"r","type":"bytes32"},{"internalType":"bytes32","name":"s","type":"bytes32"}],"name":"removeLiquidityETHWithPermitSupportingFeeOnTransferTokens","outputs":[{"internalType":"uint256","name":"amountETH","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"tokenA","type":"address"},{"internalType":"address","name":"tokenB","type":"address"},{"internalType":"uint256","name":"liquidity","type":"uint256"},{"internalType":"uint256","name":"amountAMin","type":"uint256"},{"internalType":"uint256","name":"amountBMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"},{"internalType":"bool","name":"approveMax","type":"bool"},{"internalType":"uint8","name":"v","type":"uint8"},{"internalType":"bytes32","name":"r","type":"bytes32"},{"internalType":"bytes32","name":"s","type":"bytes32"}],"name":"removeLiquidityWithPermit","outputs":[{"internalType":"uint256","name":"amountA","type":"uint256"},{"internalType":"uint256","name":"amountB","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountOut","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapETHForExactTokens","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountOutMin","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapExactETHForTokens","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountOutMin","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapExactETHForTokensSupportingFeeOnTransferTokens","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountIn","type":"uint256"},{"internalType":"uint256","name":"amountOutMin","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapExactTokensForETH","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountIn","type":"uint256"},{"internalType":"uint256","name":"amountOutMin","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapExactTokensForETHSupportingFeeOnTransferTokens","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountIn","type":"uint256"},{"internalType":"uint256","name":"amountOutMin","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapExactTokensForTokens","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountIn","type":"uint256"},{"internalType":"uint256","name":"amountOutMin","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapExactTokensForTokensSupportingFeeOnTransferTokens","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountOut","type":"uint256"},{"internalType":"uint256","name":"amountInMax","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapTokensForExactETH","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountOut","type":"uint256"},{"internalType":"uint256","name":"amountInMax","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapTokensForExactTokens","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"nonpayable","type":"function"},{"stateMutability":"payable","type":"receive"}];
 let PancakeFactory = [{"inputs":[{"internalType":"address","name":"_feeToSetter","type":"address"}],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"token0","type":"address"},{"indexed":true,"internalType":"address","name":"token1","type":"address"},{"indexed":false,"internalType":"address","name":"pair","type":"address"},{"indexed":false,"internalType":"uint256","name":"","type":"uint256"}],"name":"PairCreated","type":"event"},{"constant":true,"inputs":[],"name":"INIT_CODE_PAIR_HASH","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"allPairs","outputs":[{"internalType":"address","name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"allPairsLength","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"tokenA","type":"address"},{"internalType":"address","name":"tokenB","type":"address"}],"name":"createPair","outputs":[{"internalType":"address","name":"pair","type":"address"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"feeTo","outputs":[{"internalType":"address","name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"feeToSetter","outputs":[{"internalType":"address","name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"address","name":"","type":"address"}],"name":"getPair","outputs":[{"internalType":"address","name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"_feeTo","type":"address"}],"name":"setFeeTo","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"_feeToSetter","type":"address"}],"name":"setFeeToSetter","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"}];
 let PancakePair = [{"inputs":[],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"spender","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"sender","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount0","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount1","type":"uint256"},{"indexed":true,"internalType":"address","name":"to","type":"address"}],"name":"Burn","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"sender","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount0","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount1","type":"uint256"}],"name":"Mint","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"sender","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount0In","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount1In","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount0Out","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount1Out","type":"uint256"},{"indexed":true,"internalType":"address","name":"to","type":"address"}],"name":"Swap","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint112","name":"reserve0","type":"uint112"},{"indexed":false,"internalType":"uint112","name":"reserve1","type":"uint112"}],"name":"Sync","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Transfer","type":"event"},{"constant":true,"inputs":[],"name":"DOMAIN_SEPARATOR","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"MINIMUM_LIQUIDITY","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"PERMIT_TYPEHASH","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"address","name":"","type":"address"}],"name":"allowance","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"}],"name":"approve","outputs":[{"internalType":"bool","name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"to","type":"address"}],"name":"burn","outputs":[{"internalType":"uint256","name":"amount0","type":"uint256"},{"internalType":"uint256","name":"amount1","type":"uint256"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"decimals","outputs":[{"internalType":"uint8","name":"","type":"uint8"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"factory","outputs":[{"internalType":"address","name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"getReserves","outputs":[{"internalType":"uint112","name":"_reserve0","type":"uint112"},{"internalType":"uint112","name":"_reserve1","type":"uint112"},{"internalType":"uint32","name":"_blockTimestampLast","type":"uint32"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"_token0","type":"address"},{"internalType":"address","name":"_token1","type":"address"}],"name":"initialize","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"kLast","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"to","type":"address"}],"name":"mint","outputs":[{"internalType":"uint256","name":"liquidity","type":"uint256"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"nonces","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"},{"internalType":"uint256","name":"deadline","type":"uint256"},{"internalType":"uint8","name":"v","type":"uint8"},{"internalType":"bytes32","name":"r","type":"bytes32"},{"internalType":"bytes32","name":"s","type":"bytes32"}],"name":"permit","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"price0CumulativeLast","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"price1CumulativeLast","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"to","type":"address"}],"name":"skim","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"internalType":"uint256","name":"amount0Out","type":"uint256"},{"internalType":"uint256","name":"amount1Out","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"swap","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"sync","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"token0","outputs":[{"internalType":"address","name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"token1","outputs":[{"internalType":"address","name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"totalSupply","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"}],"name":"transfer","outputs":[{"internalType":"bool","name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"}],"name":"transferFrom","outputs":[{"internalType":"bool","name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"}];
 
-var basics$3 = {
+var basics$1 = {
   blockchain: 'bsc',
   name: 'pancakeswap',
   alternativeNames: ['pancake'],
@@ -178,5423 +528,6 @@ var basics$3 = {
   }
 };
 
-function _optionalChain$2(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }class Route {
-  constructor({
-    tokenIn,
-    tokenOut,
-    path,
-    amountIn,
-    amountInMax,
-    amountOut,
-    amountOutMin,
-    fromAddress,
-    toAddress,
-    transaction,
-    exchange,
-  }) {
-    this.tokenIn = tokenIn;
-    this.tokenOut = tokenOut;
-    this.path = path;
-    this.amountIn = _optionalChain$2([amountIn, 'optionalAccess', _ => _.toString, 'call', _2 => _2()]);
-    this.amountOutMin = _optionalChain$2([amountOutMin, 'optionalAccess', _3 => _3.toString, 'call', _4 => _4()]);
-    this.amountOut = _optionalChain$2([amountOut, 'optionalAccess', _5 => _5.toString, 'call', _6 => _6()]);
-    this.amountInMax = _optionalChain$2([amountInMax, 'optionalAccess', _7 => _7.toString, 'call', _8 => _8()]);
-    this.fromAddress = fromAddress;
-    this.toAddress = toAddress;
-    this.transaction = transaction;
-    this.exchange = exchange;
-  }
-}
-
-var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
-
-function createCommonjsModule(fn) {
-  var module = { exports: {} };
-	return fn(module, module.exports), module.exports;
-}
-
-var bn = createCommonjsModule(function (module) {
-(function (module, exports) {
-
-  // Utils
-  function assert (val, msg) {
-    if (!val) throw new Error(msg || 'Assertion failed');
-  }
-
-  // Could use `inherits` module, but don't want to move from single file
-  // architecture yet.
-  function inherits (ctor, superCtor) {
-    ctor.super_ = superCtor;
-    var TempCtor = function () {};
-    TempCtor.prototype = superCtor.prototype;
-    ctor.prototype = new TempCtor();
-    ctor.prototype.constructor = ctor;
-  }
-
-  // BN
-
-  function BN (number, base, endian) {
-    if (BN.isBN(number)) {
-      return number;
-    }
-
-    this.negative = 0;
-    this.words = null;
-    this.length = 0;
-
-    // Reduction context
-    this.red = null;
-
-    if (number !== null) {
-      if (base === 'le' || base === 'be') {
-        endian = base;
-        base = 10;
-      }
-
-      this._init(number || 0, base || 10, endian || 'be');
-    }
-  }
-  if (typeof module === 'object') {
-    module.exports = BN;
-  } else {
-    exports.BN = BN;
-  }
-
-  BN.BN = BN;
-  BN.wordSize = 26;
-
-  var Buffer;
-  try {
-    if (typeof window !== 'undefined' && typeof window.Buffer !== 'undefined') {
-      Buffer = window.Buffer;
-    } else {
-      Buffer = require$$0.Buffer;
-    }
-  } catch (e) {
-  }
-
-  BN.isBN = function isBN (num) {
-    if (num instanceof BN) {
-      return true;
-    }
-
-    return num !== null && typeof num === 'object' &&
-      num.constructor.wordSize === BN.wordSize && Array.isArray(num.words);
-  };
-
-  BN.max = function max (left, right) {
-    if (left.cmp(right) > 0) return left;
-    return right;
-  };
-
-  BN.min = function min (left, right) {
-    if (left.cmp(right) < 0) return left;
-    return right;
-  };
-
-  BN.prototype._init = function init (number, base, endian) {
-    if (typeof number === 'number') {
-      return this._initNumber(number, base, endian);
-    }
-
-    if (typeof number === 'object') {
-      return this._initArray(number, base, endian);
-    }
-
-    if (base === 'hex') {
-      base = 16;
-    }
-    assert(base === (base | 0) && base >= 2 && base <= 36);
-
-    number = number.toString().replace(/\s+/g, '');
-    var start = 0;
-    if (number[0] === '-') {
-      start++;
-      this.negative = 1;
-    }
-
-    if (start < number.length) {
-      if (base === 16) {
-        this._parseHex(number, start, endian);
-      } else {
-        this._parseBase(number, base, start);
-        if (endian === 'le') {
-          this._initArray(this.toArray(), base, endian);
-        }
-      }
-    }
-  };
-
-  BN.prototype._initNumber = function _initNumber (number, base, endian) {
-    if (number < 0) {
-      this.negative = 1;
-      number = -number;
-    }
-    if (number < 0x4000000) {
-      this.words = [ number & 0x3ffffff ];
-      this.length = 1;
-    } else if (number < 0x10000000000000) {
-      this.words = [
-        number & 0x3ffffff,
-        (number / 0x4000000) & 0x3ffffff
-      ];
-      this.length = 2;
-    } else {
-      assert(number < 0x20000000000000); // 2 ^ 53 (unsafe)
-      this.words = [
-        number & 0x3ffffff,
-        (number / 0x4000000) & 0x3ffffff,
-        1
-      ];
-      this.length = 3;
-    }
-
-    if (endian !== 'le') return;
-
-    // Reverse the bytes
-    this._initArray(this.toArray(), base, endian);
-  };
-
-  BN.prototype._initArray = function _initArray (number, base, endian) {
-    // Perhaps a Uint8Array
-    assert(typeof number.length === 'number');
-    if (number.length <= 0) {
-      this.words = [ 0 ];
-      this.length = 1;
-      return this;
-    }
-
-    this.length = Math.ceil(number.length / 3);
-    this.words = new Array(this.length);
-    for (var i = 0; i < this.length; i++) {
-      this.words[i] = 0;
-    }
-
-    var j, w;
-    var off = 0;
-    if (endian === 'be') {
-      for (i = number.length - 1, j = 0; i >= 0; i -= 3) {
-        w = number[i] | (number[i - 1] << 8) | (number[i - 2] << 16);
-        this.words[j] |= (w << off) & 0x3ffffff;
-        this.words[j + 1] = (w >>> (26 - off)) & 0x3ffffff;
-        off += 24;
-        if (off >= 26) {
-          off -= 26;
-          j++;
-        }
-      }
-    } else if (endian === 'le') {
-      for (i = 0, j = 0; i < number.length; i += 3) {
-        w = number[i] | (number[i + 1] << 8) | (number[i + 2] << 16);
-        this.words[j] |= (w << off) & 0x3ffffff;
-        this.words[j + 1] = (w >>> (26 - off)) & 0x3ffffff;
-        off += 24;
-        if (off >= 26) {
-          off -= 26;
-          j++;
-        }
-      }
-    }
-    return this.strip();
-  };
-
-  function parseHex4Bits (string, index) {
-    var c = string.charCodeAt(index);
-    // 'A' - 'F'
-    if (c >= 65 && c <= 70) {
-      return c - 55;
-    // 'a' - 'f'
-    } else if (c >= 97 && c <= 102) {
-      return c - 87;
-    // '0' - '9'
-    } else {
-      return (c - 48) & 0xf;
-    }
-  }
-
-  function parseHexByte (string, lowerBound, index) {
-    var r = parseHex4Bits(string, index);
-    if (index - 1 >= lowerBound) {
-      r |= parseHex4Bits(string, index - 1) << 4;
-    }
-    return r;
-  }
-
-  BN.prototype._parseHex = function _parseHex (number, start, endian) {
-    // Create possibly bigger array to ensure that it fits the number
-    this.length = Math.ceil((number.length - start) / 6);
-    this.words = new Array(this.length);
-    for (var i = 0; i < this.length; i++) {
-      this.words[i] = 0;
-    }
-
-    // 24-bits chunks
-    var off = 0;
-    var j = 0;
-
-    var w;
-    if (endian === 'be') {
-      for (i = number.length - 1; i >= start; i -= 2) {
-        w = parseHexByte(number, start, i) << off;
-        this.words[j] |= w & 0x3ffffff;
-        if (off >= 18) {
-          off -= 18;
-          j += 1;
-          this.words[j] |= w >>> 26;
-        } else {
-          off += 8;
-        }
-      }
-    } else {
-      var parseLength = number.length - start;
-      for (i = parseLength % 2 === 0 ? start + 1 : start; i < number.length; i += 2) {
-        w = parseHexByte(number, start, i) << off;
-        this.words[j] |= w & 0x3ffffff;
-        if (off >= 18) {
-          off -= 18;
-          j += 1;
-          this.words[j] |= w >>> 26;
-        } else {
-          off += 8;
-        }
-      }
-    }
-
-    this.strip();
-  };
-
-  function parseBase (str, start, end, mul) {
-    var r = 0;
-    var len = Math.min(str.length, end);
-    for (var i = start; i < len; i++) {
-      var c = str.charCodeAt(i) - 48;
-
-      r *= mul;
-
-      // 'a'
-      if (c >= 49) {
-        r += c - 49 + 0xa;
-
-      // 'A'
-      } else if (c >= 17) {
-        r += c - 17 + 0xa;
-
-      // '0' - '9'
-      } else {
-        r += c;
-      }
-    }
-    return r;
-  }
-
-  BN.prototype._parseBase = function _parseBase (number, base, start) {
-    // Initialize as zero
-    this.words = [ 0 ];
-    this.length = 1;
-
-    // Find length of limb in base
-    for (var limbLen = 0, limbPow = 1; limbPow <= 0x3ffffff; limbPow *= base) {
-      limbLen++;
-    }
-    limbLen--;
-    limbPow = (limbPow / base) | 0;
-
-    var total = number.length - start;
-    var mod = total % limbLen;
-    var end = Math.min(total, total - mod) + start;
-
-    var word = 0;
-    for (var i = start; i < end; i += limbLen) {
-      word = parseBase(number, i, i + limbLen, base);
-
-      this.imuln(limbPow);
-      if (this.words[0] + word < 0x4000000) {
-        this.words[0] += word;
-      } else {
-        this._iaddn(word);
-      }
-    }
-
-    if (mod !== 0) {
-      var pow = 1;
-      word = parseBase(number, i, number.length, base);
-
-      for (i = 0; i < mod; i++) {
-        pow *= base;
-      }
-
-      this.imuln(pow);
-      if (this.words[0] + word < 0x4000000) {
-        this.words[0] += word;
-      } else {
-        this._iaddn(word);
-      }
-    }
-
-    this.strip();
-  };
-
-  BN.prototype.copy = function copy (dest) {
-    dest.words = new Array(this.length);
-    for (var i = 0; i < this.length; i++) {
-      dest.words[i] = this.words[i];
-    }
-    dest.length = this.length;
-    dest.negative = this.negative;
-    dest.red = this.red;
-  };
-
-  BN.prototype.clone = function clone () {
-    var r = new BN(null);
-    this.copy(r);
-    return r;
-  };
-
-  BN.prototype._expand = function _expand (size) {
-    while (this.length < size) {
-      this.words[this.length++] = 0;
-    }
-    return this;
-  };
-
-  // Remove leading `0` from `this`
-  BN.prototype.strip = function strip () {
-    while (this.length > 1 && this.words[this.length - 1] === 0) {
-      this.length--;
-    }
-    return this._normSign();
-  };
-
-  BN.prototype._normSign = function _normSign () {
-    // -0 = 0
-    if (this.length === 1 && this.words[0] === 0) {
-      this.negative = 0;
-    }
-    return this;
-  };
-
-  BN.prototype.inspect = function inspect () {
-    return (this.red ? '<BN-R: ' : '<BN: ') + this.toString(16) + '>';
-  };
-
-  /*
-
-  var zeros = [];
-  var groupSizes = [];
-  var groupBases = [];
-
-  var s = '';
-  var i = -1;
-  while (++i < BN.wordSize) {
-    zeros[i] = s;
-    s += '0';
-  }
-  groupSizes[0] = 0;
-  groupSizes[1] = 0;
-  groupBases[0] = 0;
-  groupBases[1] = 0;
-  var base = 2 - 1;
-  while (++base < 36 + 1) {
-    var groupSize = 0;
-    var groupBase = 1;
-    while (groupBase < (1 << BN.wordSize) / base) {
-      groupBase *= base;
-      groupSize += 1;
-    }
-    groupSizes[base] = groupSize;
-    groupBases[base] = groupBase;
-  }
-
-  */
-
-  var zeros = [
-    '',
-    '0',
-    '00',
-    '000',
-    '0000',
-    '00000',
-    '000000',
-    '0000000',
-    '00000000',
-    '000000000',
-    '0000000000',
-    '00000000000',
-    '000000000000',
-    '0000000000000',
-    '00000000000000',
-    '000000000000000',
-    '0000000000000000',
-    '00000000000000000',
-    '000000000000000000',
-    '0000000000000000000',
-    '00000000000000000000',
-    '000000000000000000000',
-    '0000000000000000000000',
-    '00000000000000000000000',
-    '000000000000000000000000',
-    '0000000000000000000000000'
-  ];
-
-  var groupSizes = [
-    0, 0,
-    25, 16, 12, 11, 10, 9, 8,
-    8, 7, 7, 7, 7, 6, 6,
-    6, 6, 6, 6, 6, 5, 5,
-    5, 5, 5, 5, 5, 5, 5,
-    5, 5, 5, 5, 5, 5, 5
-  ];
-
-  var groupBases = [
-    0, 0,
-    33554432, 43046721, 16777216, 48828125, 60466176, 40353607, 16777216,
-    43046721, 10000000, 19487171, 35831808, 62748517, 7529536, 11390625,
-    16777216, 24137569, 34012224, 47045881, 64000000, 4084101, 5153632,
-    6436343, 7962624, 9765625, 11881376, 14348907, 17210368, 20511149,
-    24300000, 28629151, 33554432, 39135393, 45435424, 52521875, 60466176
-  ];
-
-  BN.prototype.toString = function toString (base, padding) {
-    base = base || 10;
-    padding = padding | 0 || 1;
-
-    var out;
-    if (base === 16 || base === 'hex') {
-      out = '';
-      var off = 0;
-      var carry = 0;
-      for (var i = 0; i < this.length; i++) {
-        var w = this.words[i];
-        var word = (((w << off) | carry) & 0xffffff).toString(16);
-        carry = (w >>> (24 - off)) & 0xffffff;
-        if (carry !== 0 || i !== this.length - 1) {
-          out = zeros[6 - word.length] + word + out;
-        } else {
-          out = word + out;
-        }
-        off += 2;
-        if (off >= 26) {
-          off -= 26;
-          i--;
-        }
-      }
-      if (carry !== 0) {
-        out = carry.toString(16) + out;
-      }
-      while (out.length % padding !== 0) {
-        out = '0' + out;
-      }
-      if (this.negative !== 0) {
-        out = '-' + out;
-      }
-      return out;
-    }
-
-    if (base === (base | 0) && base >= 2 && base <= 36) {
-      // var groupSize = Math.floor(BN.wordSize * Math.LN2 / Math.log(base));
-      var groupSize = groupSizes[base];
-      // var groupBase = Math.pow(base, groupSize);
-      var groupBase = groupBases[base];
-      out = '';
-      var c = this.clone();
-      c.negative = 0;
-      while (!c.isZero()) {
-        var r = c.modn(groupBase).toString(base);
-        c = c.idivn(groupBase);
-
-        if (!c.isZero()) {
-          out = zeros[groupSize - r.length] + r + out;
-        } else {
-          out = r + out;
-        }
-      }
-      if (this.isZero()) {
-        out = '0' + out;
-      }
-      while (out.length % padding !== 0) {
-        out = '0' + out;
-      }
-      if (this.negative !== 0) {
-        out = '-' + out;
-      }
-      return out;
-    }
-
-    assert(false, 'Base should be between 2 and 36');
-  };
-
-  BN.prototype.toNumber = function toNumber () {
-    var ret = this.words[0];
-    if (this.length === 2) {
-      ret += this.words[1] * 0x4000000;
-    } else if (this.length === 3 && this.words[2] === 0x01) {
-      // NOTE: at this stage it is known that the top bit is set
-      ret += 0x10000000000000 + (this.words[1] * 0x4000000);
-    } else if (this.length > 2) {
-      assert(false, 'Number can only safely store up to 53 bits');
-    }
-    return (this.negative !== 0) ? -ret : ret;
-  };
-
-  BN.prototype.toJSON = function toJSON () {
-    return this.toString(16);
-  };
-
-  BN.prototype.toBuffer = function toBuffer (endian, length) {
-    assert(typeof Buffer !== 'undefined');
-    return this.toArrayLike(Buffer, endian, length);
-  };
-
-  BN.prototype.toArray = function toArray (endian, length) {
-    return this.toArrayLike(Array, endian, length);
-  };
-
-  BN.prototype.toArrayLike = function toArrayLike (ArrayType, endian, length) {
-    var byteLength = this.byteLength();
-    var reqLength = length || Math.max(1, byteLength);
-    assert(byteLength <= reqLength, 'byte array longer than desired length');
-    assert(reqLength > 0, 'Requested array length <= 0');
-
-    this.strip();
-    var littleEndian = endian === 'le';
-    var res = new ArrayType(reqLength);
-
-    var b, i;
-    var q = this.clone();
-    if (!littleEndian) {
-      // Assume big-endian
-      for (i = 0; i < reqLength - byteLength; i++) {
-        res[i] = 0;
-      }
-
-      for (i = 0; !q.isZero(); i++) {
-        b = q.andln(0xff);
-        q.iushrn(8);
-
-        res[reqLength - i - 1] = b;
-      }
-    } else {
-      for (i = 0; !q.isZero(); i++) {
-        b = q.andln(0xff);
-        q.iushrn(8);
-
-        res[i] = b;
-      }
-
-      for (; i < reqLength; i++) {
-        res[i] = 0;
-      }
-    }
-
-    return res;
-  };
-
-  if (Math.clz32) {
-    BN.prototype._countBits = function _countBits (w) {
-      return 32 - Math.clz32(w);
-    };
-  } else {
-    BN.prototype._countBits = function _countBits (w) {
-      var t = w;
-      var r = 0;
-      if (t >= 0x1000) {
-        r += 13;
-        t >>>= 13;
-      }
-      if (t >= 0x40) {
-        r += 7;
-        t >>>= 7;
-      }
-      if (t >= 0x8) {
-        r += 4;
-        t >>>= 4;
-      }
-      if (t >= 0x02) {
-        r += 2;
-        t >>>= 2;
-      }
-      return r + t;
-    };
-  }
-
-  BN.prototype._zeroBits = function _zeroBits (w) {
-    // Short-cut
-    if (w === 0) return 26;
-
-    var t = w;
-    var r = 0;
-    if ((t & 0x1fff) === 0) {
-      r += 13;
-      t >>>= 13;
-    }
-    if ((t & 0x7f) === 0) {
-      r += 7;
-      t >>>= 7;
-    }
-    if ((t & 0xf) === 0) {
-      r += 4;
-      t >>>= 4;
-    }
-    if ((t & 0x3) === 0) {
-      r += 2;
-      t >>>= 2;
-    }
-    if ((t & 0x1) === 0) {
-      r++;
-    }
-    return r;
-  };
-
-  // Return number of used bits in a BN
-  BN.prototype.bitLength = function bitLength () {
-    var w = this.words[this.length - 1];
-    var hi = this._countBits(w);
-    return (this.length - 1) * 26 + hi;
-  };
-
-  function toBitArray (num) {
-    var w = new Array(num.bitLength());
-
-    for (var bit = 0; bit < w.length; bit++) {
-      var off = (bit / 26) | 0;
-      var wbit = bit % 26;
-
-      w[bit] = (num.words[off] & (1 << wbit)) >>> wbit;
-    }
-
-    return w;
-  }
-
-  // Number of trailing zero bits
-  BN.prototype.zeroBits = function zeroBits () {
-    if (this.isZero()) return 0;
-
-    var r = 0;
-    for (var i = 0; i < this.length; i++) {
-      var b = this._zeroBits(this.words[i]);
-      r += b;
-      if (b !== 26) break;
-    }
-    return r;
-  };
-
-  BN.prototype.byteLength = function byteLength () {
-    return Math.ceil(this.bitLength() / 8);
-  };
-
-  BN.prototype.toTwos = function toTwos (width) {
-    if (this.negative !== 0) {
-      return this.abs().inotn(width).iaddn(1);
-    }
-    return this.clone();
-  };
-
-  BN.prototype.fromTwos = function fromTwos (width) {
-    if (this.testn(width - 1)) {
-      return this.notn(width).iaddn(1).ineg();
-    }
-    return this.clone();
-  };
-
-  BN.prototype.isNeg = function isNeg () {
-    return this.negative !== 0;
-  };
-
-  // Return negative clone of `this`
-  BN.prototype.neg = function neg () {
-    return this.clone().ineg();
-  };
-
-  BN.prototype.ineg = function ineg () {
-    if (!this.isZero()) {
-      this.negative ^= 1;
-    }
-
-    return this;
-  };
-
-  // Or `num` with `this` in-place
-  BN.prototype.iuor = function iuor (num) {
-    while (this.length < num.length) {
-      this.words[this.length++] = 0;
-    }
-
-    for (var i = 0; i < num.length; i++) {
-      this.words[i] = this.words[i] | num.words[i];
-    }
-
-    return this.strip();
-  };
-
-  BN.prototype.ior = function ior (num) {
-    assert((this.negative | num.negative) === 0);
-    return this.iuor(num);
-  };
-
-  // Or `num` with `this`
-  BN.prototype.or = function or (num) {
-    if (this.length > num.length) return this.clone().ior(num);
-    return num.clone().ior(this);
-  };
-
-  BN.prototype.uor = function uor (num) {
-    if (this.length > num.length) return this.clone().iuor(num);
-    return num.clone().iuor(this);
-  };
-
-  // And `num` with `this` in-place
-  BN.prototype.iuand = function iuand (num) {
-    // b = min-length(num, this)
-    var b;
-    if (this.length > num.length) {
-      b = num;
-    } else {
-      b = this;
-    }
-
-    for (var i = 0; i < b.length; i++) {
-      this.words[i] = this.words[i] & num.words[i];
-    }
-
-    this.length = b.length;
-
-    return this.strip();
-  };
-
-  BN.prototype.iand = function iand (num) {
-    assert((this.negative | num.negative) === 0);
-    return this.iuand(num);
-  };
-
-  // And `num` with `this`
-  BN.prototype.and = function and (num) {
-    if (this.length > num.length) return this.clone().iand(num);
-    return num.clone().iand(this);
-  };
-
-  BN.prototype.uand = function uand (num) {
-    if (this.length > num.length) return this.clone().iuand(num);
-    return num.clone().iuand(this);
-  };
-
-  // Xor `num` with `this` in-place
-  BN.prototype.iuxor = function iuxor (num) {
-    // a.length > b.length
-    var a;
-    var b;
-    if (this.length > num.length) {
-      a = this;
-      b = num;
-    } else {
-      a = num;
-      b = this;
-    }
-
-    for (var i = 0; i < b.length; i++) {
-      this.words[i] = a.words[i] ^ b.words[i];
-    }
-
-    if (this !== a) {
-      for (; i < a.length; i++) {
-        this.words[i] = a.words[i];
-      }
-    }
-
-    this.length = a.length;
-
-    return this.strip();
-  };
-
-  BN.prototype.ixor = function ixor (num) {
-    assert((this.negative | num.negative) === 0);
-    return this.iuxor(num);
-  };
-
-  // Xor `num` with `this`
-  BN.prototype.xor = function xor (num) {
-    if (this.length > num.length) return this.clone().ixor(num);
-    return num.clone().ixor(this);
-  };
-
-  BN.prototype.uxor = function uxor (num) {
-    if (this.length > num.length) return this.clone().iuxor(num);
-    return num.clone().iuxor(this);
-  };
-
-  // Not ``this`` with ``width`` bitwidth
-  BN.prototype.inotn = function inotn (width) {
-    assert(typeof width === 'number' && width >= 0);
-
-    var bytesNeeded = Math.ceil(width / 26) | 0;
-    var bitsLeft = width % 26;
-
-    // Extend the buffer with leading zeroes
-    this._expand(bytesNeeded);
-
-    if (bitsLeft > 0) {
-      bytesNeeded--;
-    }
-
-    // Handle complete words
-    for (var i = 0; i < bytesNeeded; i++) {
-      this.words[i] = ~this.words[i] & 0x3ffffff;
-    }
-
-    // Handle the residue
-    if (bitsLeft > 0) {
-      this.words[i] = ~this.words[i] & (0x3ffffff >> (26 - bitsLeft));
-    }
-
-    // And remove leading zeroes
-    return this.strip();
-  };
-
-  BN.prototype.notn = function notn (width) {
-    return this.clone().inotn(width);
-  };
-
-  // Set `bit` of `this`
-  BN.prototype.setn = function setn (bit, val) {
-    assert(typeof bit === 'number' && bit >= 0);
-
-    var off = (bit / 26) | 0;
-    var wbit = bit % 26;
-
-    this._expand(off + 1);
-
-    if (val) {
-      this.words[off] = this.words[off] | (1 << wbit);
-    } else {
-      this.words[off] = this.words[off] & ~(1 << wbit);
-    }
-
-    return this.strip();
-  };
-
-  // Add `num` to `this` in-place
-  BN.prototype.iadd = function iadd (num) {
-    var r;
-
-    // negative + positive
-    if (this.negative !== 0 && num.negative === 0) {
-      this.negative = 0;
-      r = this.isub(num);
-      this.negative ^= 1;
-      return this._normSign();
-
-    // positive + negative
-    } else if (this.negative === 0 && num.negative !== 0) {
-      num.negative = 0;
-      r = this.isub(num);
-      num.negative = 1;
-      return r._normSign();
-    }
-
-    // a.length > b.length
-    var a, b;
-    if (this.length > num.length) {
-      a = this;
-      b = num;
-    } else {
-      a = num;
-      b = this;
-    }
-
-    var carry = 0;
-    for (var i = 0; i < b.length; i++) {
-      r = (a.words[i] | 0) + (b.words[i] | 0) + carry;
-      this.words[i] = r & 0x3ffffff;
-      carry = r >>> 26;
-    }
-    for (; carry !== 0 && i < a.length; i++) {
-      r = (a.words[i] | 0) + carry;
-      this.words[i] = r & 0x3ffffff;
-      carry = r >>> 26;
-    }
-
-    this.length = a.length;
-    if (carry !== 0) {
-      this.words[this.length] = carry;
-      this.length++;
-    // Copy the rest of the words
-    } else if (a !== this) {
-      for (; i < a.length; i++) {
-        this.words[i] = a.words[i];
-      }
-    }
-
-    return this;
-  };
-
-  // Add `num` to `this`
-  BN.prototype.add = function add (num) {
-    var res;
-    if (num.negative !== 0 && this.negative === 0) {
-      num.negative = 0;
-      res = this.sub(num);
-      num.negative ^= 1;
-      return res;
-    } else if (num.negative === 0 && this.negative !== 0) {
-      this.negative = 0;
-      res = num.sub(this);
-      this.negative = 1;
-      return res;
-    }
-
-    if (this.length > num.length) return this.clone().iadd(num);
-
-    return num.clone().iadd(this);
-  };
-
-  // Subtract `num` from `this` in-place
-  BN.prototype.isub = function isub (num) {
-    // this - (-num) = this + num
-    if (num.negative !== 0) {
-      num.negative = 0;
-      var r = this.iadd(num);
-      num.negative = 1;
-      return r._normSign();
-
-    // -this - num = -(this + num)
-    } else if (this.negative !== 0) {
-      this.negative = 0;
-      this.iadd(num);
-      this.negative = 1;
-      return this._normSign();
-    }
-
-    // At this point both numbers are positive
-    var cmp = this.cmp(num);
-
-    // Optimization - zeroify
-    if (cmp === 0) {
-      this.negative = 0;
-      this.length = 1;
-      this.words[0] = 0;
-      return this;
-    }
-
-    // a > b
-    var a, b;
-    if (cmp > 0) {
-      a = this;
-      b = num;
-    } else {
-      a = num;
-      b = this;
-    }
-
-    var carry = 0;
-    for (var i = 0; i < b.length; i++) {
-      r = (a.words[i] | 0) - (b.words[i] | 0) + carry;
-      carry = r >> 26;
-      this.words[i] = r & 0x3ffffff;
-    }
-    for (; carry !== 0 && i < a.length; i++) {
-      r = (a.words[i] | 0) + carry;
-      carry = r >> 26;
-      this.words[i] = r & 0x3ffffff;
-    }
-
-    // Copy rest of the words
-    if (carry === 0 && i < a.length && a !== this) {
-      for (; i < a.length; i++) {
-        this.words[i] = a.words[i];
-      }
-    }
-
-    this.length = Math.max(this.length, i);
-
-    if (a !== this) {
-      this.negative = 1;
-    }
-
-    return this.strip();
-  };
-
-  // Subtract `num` from `this`
-  BN.prototype.sub = function sub (num) {
-    return this.clone().isub(num);
-  };
-
-  function smallMulTo (self, num, out) {
-    out.negative = num.negative ^ self.negative;
-    var len = (self.length + num.length) | 0;
-    out.length = len;
-    len = (len - 1) | 0;
-
-    // Peel one iteration (compiler can't do it, because of code complexity)
-    var a = self.words[0] | 0;
-    var b = num.words[0] | 0;
-    var r = a * b;
-
-    var lo = r & 0x3ffffff;
-    var carry = (r / 0x4000000) | 0;
-    out.words[0] = lo;
-
-    for (var k = 1; k < len; k++) {
-      // Sum all words with the same `i + j = k` and accumulate `ncarry`,
-      // note that ncarry could be >= 0x3ffffff
-      var ncarry = carry >>> 26;
-      var rword = carry & 0x3ffffff;
-      var maxJ = Math.min(k, num.length - 1);
-      for (var j = Math.max(0, k - self.length + 1); j <= maxJ; j++) {
-        var i = (k - j) | 0;
-        a = self.words[i] | 0;
-        b = num.words[j] | 0;
-        r = a * b + rword;
-        ncarry += (r / 0x4000000) | 0;
-        rword = r & 0x3ffffff;
-      }
-      out.words[k] = rword | 0;
-      carry = ncarry | 0;
-    }
-    if (carry !== 0) {
-      out.words[k] = carry | 0;
-    } else {
-      out.length--;
-    }
-
-    return out.strip();
-  }
-
-  // TODO(indutny): it may be reasonable to omit it for users who don't need
-  // to work with 256-bit numbers, otherwise it gives 20% improvement for 256-bit
-  // multiplication (like elliptic secp256k1).
-  var comb10MulTo = function comb10MulTo (self, num, out) {
-    var a = self.words;
-    var b = num.words;
-    var o = out.words;
-    var c = 0;
-    var lo;
-    var mid;
-    var hi;
-    var a0 = a[0] | 0;
-    var al0 = a0 & 0x1fff;
-    var ah0 = a0 >>> 13;
-    var a1 = a[1] | 0;
-    var al1 = a1 & 0x1fff;
-    var ah1 = a1 >>> 13;
-    var a2 = a[2] | 0;
-    var al2 = a2 & 0x1fff;
-    var ah2 = a2 >>> 13;
-    var a3 = a[3] | 0;
-    var al3 = a3 & 0x1fff;
-    var ah3 = a3 >>> 13;
-    var a4 = a[4] | 0;
-    var al4 = a4 & 0x1fff;
-    var ah4 = a4 >>> 13;
-    var a5 = a[5] | 0;
-    var al5 = a5 & 0x1fff;
-    var ah5 = a5 >>> 13;
-    var a6 = a[6] | 0;
-    var al6 = a6 & 0x1fff;
-    var ah6 = a6 >>> 13;
-    var a7 = a[7] | 0;
-    var al7 = a7 & 0x1fff;
-    var ah7 = a7 >>> 13;
-    var a8 = a[8] | 0;
-    var al8 = a8 & 0x1fff;
-    var ah8 = a8 >>> 13;
-    var a9 = a[9] | 0;
-    var al9 = a9 & 0x1fff;
-    var ah9 = a9 >>> 13;
-    var b0 = b[0] | 0;
-    var bl0 = b0 & 0x1fff;
-    var bh0 = b0 >>> 13;
-    var b1 = b[1] | 0;
-    var bl1 = b1 & 0x1fff;
-    var bh1 = b1 >>> 13;
-    var b2 = b[2] | 0;
-    var bl2 = b2 & 0x1fff;
-    var bh2 = b2 >>> 13;
-    var b3 = b[3] | 0;
-    var bl3 = b3 & 0x1fff;
-    var bh3 = b3 >>> 13;
-    var b4 = b[4] | 0;
-    var bl4 = b4 & 0x1fff;
-    var bh4 = b4 >>> 13;
-    var b5 = b[5] | 0;
-    var bl5 = b5 & 0x1fff;
-    var bh5 = b5 >>> 13;
-    var b6 = b[6] | 0;
-    var bl6 = b6 & 0x1fff;
-    var bh6 = b6 >>> 13;
-    var b7 = b[7] | 0;
-    var bl7 = b7 & 0x1fff;
-    var bh7 = b7 >>> 13;
-    var b8 = b[8] | 0;
-    var bl8 = b8 & 0x1fff;
-    var bh8 = b8 >>> 13;
-    var b9 = b[9] | 0;
-    var bl9 = b9 & 0x1fff;
-    var bh9 = b9 >>> 13;
-
-    out.negative = self.negative ^ num.negative;
-    out.length = 19;
-    /* k = 0 */
-    lo = Math.imul(al0, bl0);
-    mid = Math.imul(al0, bh0);
-    mid = (mid + Math.imul(ah0, bl0)) | 0;
-    hi = Math.imul(ah0, bh0);
-    var w0 = (((c + lo) | 0) + ((mid & 0x1fff) << 13)) | 0;
-    c = (((hi + (mid >>> 13)) | 0) + (w0 >>> 26)) | 0;
-    w0 &= 0x3ffffff;
-    /* k = 1 */
-    lo = Math.imul(al1, bl0);
-    mid = Math.imul(al1, bh0);
-    mid = (mid + Math.imul(ah1, bl0)) | 0;
-    hi = Math.imul(ah1, bh0);
-    lo = (lo + Math.imul(al0, bl1)) | 0;
-    mid = (mid + Math.imul(al0, bh1)) | 0;
-    mid = (mid + Math.imul(ah0, bl1)) | 0;
-    hi = (hi + Math.imul(ah0, bh1)) | 0;
-    var w1 = (((c + lo) | 0) + ((mid & 0x1fff) << 13)) | 0;
-    c = (((hi + (mid >>> 13)) | 0) + (w1 >>> 26)) | 0;
-    w1 &= 0x3ffffff;
-    /* k = 2 */
-    lo = Math.imul(al2, bl0);
-    mid = Math.imul(al2, bh0);
-    mid = (mid + Math.imul(ah2, bl0)) | 0;
-    hi = Math.imul(ah2, bh0);
-    lo = (lo + Math.imul(al1, bl1)) | 0;
-    mid = (mid + Math.imul(al1, bh1)) | 0;
-    mid = (mid + Math.imul(ah1, bl1)) | 0;
-    hi = (hi + Math.imul(ah1, bh1)) | 0;
-    lo = (lo + Math.imul(al0, bl2)) | 0;
-    mid = (mid + Math.imul(al0, bh2)) | 0;
-    mid = (mid + Math.imul(ah0, bl2)) | 0;
-    hi = (hi + Math.imul(ah0, bh2)) | 0;
-    var w2 = (((c + lo) | 0) + ((mid & 0x1fff) << 13)) | 0;
-    c = (((hi + (mid >>> 13)) | 0) + (w2 >>> 26)) | 0;
-    w2 &= 0x3ffffff;
-    /* k = 3 */
-    lo = Math.imul(al3, bl0);
-    mid = Math.imul(al3, bh0);
-    mid = (mid + Math.imul(ah3, bl0)) | 0;
-    hi = Math.imul(ah3, bh0);
-    lo = (lo + Math.imul(al2, bl1)) | 0;
-    mid = (mid + Math.imul(al2, bh1)) | 0;
-    mid = (mid + Math.imul(ah2, bl1)) | 0;
-    hi = (hi + Math.imul(ah2, bh1)) | 0;
-    lo = (lo + Math.imul(al1, bl2)) | 0;
-    mid = (mid + Math.imul(al1, bh2)) | 0;
-    mid = (mid + Math.imul(ah1, bl2)) | 0;
-    hi = (hi + Math.imul(ah1, bh2)) | 0;
-    lo = (lo + Math.imul(al0, bl3)) | 0;
-    mid = (mid + Math.imul(al0, bh3)) | 0;
-    mid = (mid + Math.imul(ah0, bl3)) | 0;
-    hi = (hi + Math.imul(ah0, bh3)) | 0;
-    var w3 = (((c + lo) | 0) + ((mid & 0x1fff) << 13)) | 0;
-    c = (((hi + (mid >>> 13)) | 0) + (w3 >>> 26)) | 0;
-    w3 &= 0x3ffffff;
-    /* k = 4 */
-    lo = Math.imul(al4, bl0);
-    mid = Math.imul(al4, bh0);
-    mid = (mid + Math.imul(ah4, bl0)) | 0;
-    hi = Math.imul(ah4, bh0);
-    lo = (lo + Math.imul(al3, bl1)) | 0;
-    mid = (mid + Math.imul(al3, bh1)) | 0;
-    mid = (mid + Math.imul(ah3, bl1)) | 0;
-    hi = (hi + Math.imul(ah3, bh1)) | 0;
-    lo = (lo + Math.imul(al2, bl2)) | 0;
-    mid = (mid + Math.imul(al2, bh2)) | 0;
-    mid = (mid + Math.imul(ah2, bl2)) | 0;
-    hi = (hi + Math.imul(ah2, bh2)) | 0;
-    lo = (lo + Math.imul(al1, bl3)) | 0;
-    mid = (mid + Math.imul(al1, bh3)) | 0;
-    mid = (mid + Math.imul(ah1, bl3)) | 0;
-    hi = (hi + Math.imul(ah1, bh3)) | 0;
-    lo = (lo + Math.imul(al0, bl4)) | 0;
-    mid = (mid + Math.imul(al0, bh4)) | 0;
-    mid = (mid + Math.imul(ah0, bl4)) | 0;
-    hi = (hi + Math.imul(ah0, bh4)) | 0;
-    var w4 = (((c + lo) | 0) + ((mid & 0x1fff) << 13)) | 0;
-    c = (((hi + (mid >>> 13)) | 0) + (w4 >>> 26)) | 0;
-    w4 &= 0x3ffffff;
-    /* k = 5 */
-    lo = Math.imul(al5, bl0);
-    mid = Math.imul(al5, bh0);
-    mid = (mid + Math.imul(ah5, bl0)) | 0;
-    hi = Math.imul(ah5, bh0);
-    lo = (lo + Math.imul(al4, bl1)) | 0;
-    mid = (mid + Math.imul(al4, bh1)) | 0;
-    mid = (mid + Math.imul(ah4, bl1)) | 0;
-    hi = (hi + Math.imul(ah4, bh1)) | 0;
-    lo = (lo + Math.imul(al3, bl2)) | 0;
-    mid = (mid + Math.imul(al3, bh2)) | 0;
-    mid = (mid + Math.imul(ah3, bl2)) | 0;
-    hi = (hi + Math.imul(ah3, bh2)) | 0;
-    lo = (lo + Math.imul(al2, bl3)) | 0;
-    mid = (mid + Math.imul(al2, bh3)) | 0;
-    mid = (mid + Math.imul(ah2, bl3)) | 0;
-    hi = (hi + Math.imul(ah2, bh3)) | 0;
-    lo = (lo + Math.imul(al1, bl4)) | 0;
-    mid = (mid + Math.imul(al1, bh4)) | 0;
-    mid = (mid + Math.imul(ah1, bl4)) | 0;
-    hi = (hi + Math.imul(ah1, bh4)) | 0;
-    lo = (lo + Math.imul(al0, bl5)) | 0;
-    mid = (mid + Math.imul(al0, bh5)) | 0;
-    mid = (mid + Math.imul(ah0, bl5)) | 0;
-    hi = (hi + Math.imul(ah0, bh5)) | 0;
-    var w5 = (((c + lo) | 0) + ((mid & 0x1fff) << 13)) | 0;
-    c = (((hi + (mid >>> 13)) | 0) + (w5 >>> 26)) | 0;
-    w5 &= 0x3ffffff;
-    /* k = 6 */
-    lo = Math.imul(al6, bl0);
-    mid = Math.imul(al6, bh0);
-    mid = (mid + Math.imul(ah6, bl0)) | 0;
-    hi = Math.imul(ah6, bh0);
-    lo = (lo + Math.imul(al5, bl1)) | 0;
-    mid = (mid + Math.imul(al5, bh1)) | 0;
-    mid = (mid + Math.imul(ah5, bl1)) | 0;
-    hi = (hi + Math.imul(ah5, bh1)) | 0;
-    lo = (lo + Math.imul(al4, bl2)) | 0;
-    mid = (mid + Math.imul(al4, bh2)) | 0;
-    mid = (mid + Math.imul(ah4, bl2)) | 0;
-    hi = (hi + Math.imul(ah4, bh2)) | 0;
-    lo = (lo + Math.imul(al3, bl3)) | 0;
-    mid = (mid + Math.imul(al3, bh3)) | 0;
-    mid = (mid + Math.imul(ah3, bl3)) | 0;
-    hi = (hi + Math.imul(ah3, bh3)) | 0;
-    lo = (lo + Math.imul(al2, bl4)) | 0;
-    mid = (mid + Math.imul(al2, bh4)) | 0;
-    mid = (mid + Math.imul(ah2, bl4)) | 0;
-    hi = (hi + Math.imul(ah2, bh4)) | 0;
-    lo = (lo + Math.imul(al1, bl5)) | 0;
-    mid = (mid + Math.imul(al1, bh5)) | 0;
-    mid = (mid + Math.imul(ah1, bl5)) | 0;
-    hi = (hi + Math.imul(ah1, bh5)) | 0;
-    lo = (lo + Math.imul(al0, bl6)) | 0;
-    mid = (mid + Math.imul(al0, bh6)) | 0;
-    mid = (mid + Math.imul(ah0, bl6)) | 0;
-    hi = (hi + Math.imul(ah0, bh6)) | 0;
-    var w6 = (((c + lo) | 0) + ((mid & 0x1fff) << 13)) | 0;
-    c = (((hi + (mid >>> 13)) | 0) + (w6 >>> 26)) | 0;
-    w6 &= 0x3ffffff;
-    /* k = 7 */
-    lo = Math.imul(al7, bl0);
-    mid = Math.imul(al7, bh0);
-    mid = (mid + Math.imul(ah7, bl0)) | 0;
-    hi = Math.imul(ah7, bh0);
-    lo = (lo + Math.imul(al6, bl1)) | 0;
-    mid = (mid + Math.imul(al6, bh1)) | 0;
-    mid = (mid + Math.imul(ah6, bl1)) | 0;
-    hi = (hi + Math.imul(ah6, bh1)) | 0;
-    lo = (lo + Math.imul(al5, bl2)) | 0;
-    mid = (mid + Math.imul(al5, bh2)) | 0;
-    mid = (mid + Math.imul(ah5, bl2)) | 0;
-    hi = (hi + Math.imul(ah5, bh2)) | 0;
-    lo = (lo + Math.imul(al4, bl3)) | 0;
-    mid = (mid + Math.imul(al4, bh3)) | 0;
-    mid = (mid + Math.imul(ah4, bl3)) | 0;
-    hi = (hi + Math.imul(ah4, bh3)) | 0;
-    lo = (lo + Math.imul(al3, bl4)) | 0;
-    mid = (mid + Math.imul(al3, bh4)) | 0;
-    mid = (mid + Math.imul(ah3, bl4)) | 0;
-    hi = (hi + Math.imul(ah3, bh4)) | 0;
-    lo = (lo + Math.imul(al2, bl5)) | 0;
-    mid = (mid + Math.imul(al2, bh5)) | 0;
-    mid = (mid + Math.imul(ah2, bl5)) | 0;
-    hi = (hi + Math.imul(ah2, bh5)) | 0;
-    lo = (lo + Math.imul(al1, bl6)) | 0;
-    mid = (mid + Math.imul(al1, bh6)) | 0;
-    mid = (mid + Math.imul(ah1, bl6)) | 0;
-    hi = (hi + Math.imul(ah1, bh6)) | 0;
-    lo = (lo + Math.imul(al0, bl7)) | 0;
-    mid = (mid + Math.imul(al0, bh7)) | 0;
-    mid = (mid + Math.imul(ah0, bl7)) | 0;
-    hi = (hi + Math.imul(ah0, bh7)) | 0;
-    var w7 = (((c + lo) | 0) + ((mid & 0x1fff) << 13)) | 0;
-    c = (((hi + (mid >>> 13)) | 0) + (w7 >>> 26)) | 0;
-    w7 &= 0x3ffffff;
-    /* k = 8 */
-    lo = Math.imul(al8, bl0);
-    mid = Math.imul(al8, bh0);
-    mid = (mid + Math.imul(ah8, bl0)) | 0;
-    hi = Math.imul(ah8, bh0);
-    lo = (lo + Math.imul(al7, bl1)) | 0;
-    mid = (mid + Math.imul(al7, bh1)) | 0;
-    mid = (mid + Math.imul(ah7, bl1)) | 0;
-    hi = (hi + Math.imul(ah7, bh1)) | 0;
-    lo = (lo + Math.imul(al6, bl2)) | 0;
-    mid = (mid + Math.imul(al6, bh2)) | 0;
-    mid = (mid + Math.imul(ah6, bl2)) | 0;
-    hi = (hi + Math.imul(ah6, bh2)) | 0;
-    lo = (lo + Math.imul(al5, bl3)) | 0;
-    mid = (mid + Math.imul(al5, bh3)) | 0;
-    mid = (mid + Math.imul(ah5, bl3)) | 0;
-    hi = (hi + Math.imul(ah5, bh3)) | 0;
-    lo = (lo + Math.imul(al4, bl4)) | 0;
-    mid = (mid + Math.imul(al4, bh4)) | 0;
-    mid = (mid + Math.imul(ah4, bl4)) | 0;
-    hi = (hi + Math.imul(ah4, bh4)) | 0;
-    lo = (lo + Math.imul(al3, bl5)) | 0;
-    mid = (mid + Math.imul(al3, bh5)) | 0;
-    mid = (mid + Math.imul(ah3, bl5)) | 0;
-    hi = (hi + Math.imul(ah3, bh5)) | 0;
-    lo = (lo + Math.imul(al2, bl6)) | 0;
-    mid = (mid + Math.imul(al2, bh6)) | 0;
-    mid = (mid + Math.imul(ah2, bl6)) | 0;
-    hi = (hi + Math.imul(ah2, bh6)) | 0;
-    lo = (lo + Math.imul(al1, bl7)) | 0;
-    mid = (mid + Math.imul(al1, bh7)) | 0;
-    mid = (mid + Math.imul(ah1, bl7)) | 0;
-    hi = (hi + Math.imul(ah1, bh7)) | 0;
-    lo = (lo + Math.imul(al0, bl8)) | 0;
-    mid = (mid + Math.imul(al0, bh8)) | 0;
-    mid = (mid + Math.imul(ah0, bl8)) | 0;
-    hi = (hi + Math.imul(ah0, bh8)) | 0;
-    var w8 = (((c + lo) | 0) + ((mid & 0x1fff) << 13)) | 0;
-    c = (((hi + (mid >>> 13)) | 0) + (w8 >>> 26)) | 0;
-    w8 &= 0x3ffffff;
-    /* k = 9 */
-    lo = Math.imul(al9, bl0);
-    mid = Math.imul(al9, bh0);
-    mid = (mid + Math.imul(ah9, bl0)) | 0;
-    hi = Math.imul(ah9, bh0);
-    lo = (lo + Math.imul(al8, bl1)) | 0;
-    mid = (mid + Math.imul(al8, bh1)) | 0;
-    mid = (mid + Math.imul(ah8, bl1)) | 0;
-    hi = (hi + Math.imul(ah8, bh1)) | 0;
-    lo = (lo + Math.imul(al7, bl2)) | 0;
-    mid = (mid + Math.imul(al7, bh2)) | 0;
-    mid = (mid + Math.imul(ah7, bl2)) | 0;
-    hi = (hi + Math.imul(ah7, bh2)) | 0;
-    lo = (lo + Math.imul(al6, bl3)) | 0;
-    mid = (mid + Math.imul(al6, bh3)) | 0;
-    mid = (mid + Math.imul(ah6, bl3)) | 0;
-    hi = (hi + Math.imul(ah6, bh3)) | 0;
-    lo = (lo + Math.imul(al5, bl4)) | 0;
-    mid = (mid + Math.imul(al5, bh4)) | 0;
-    mid = (mid + Math.imul(ah5, bl4)) | 0;
-    hi = (hi + Math.imul(ah5, bh4)) | 0;
-    lo = (lo + Math.imul(al4, bl5)) | 0;
-    mid = (mid + Math.imul(al4, bh5)) | 0;
-    mid = (mid + Math.imul(ah4, bl5)) | 0;
-    hi = (hi + Math.imul(ah4, bh5)) | 0;
-    lo = (lo + Math.imul(al3, bl6)) | 0;
-    mid = (mid + Math.imul(al3, bh6)) | 0;
-    mid = (mid + Math.imul(ah3, bl6)) | 0;
-    hi = (hi + Math.imul(ah3, bh6)) | 0;
-    lo = (lo + Math.imul(al2, bl7)) | 0;
-    mid = (mid + Math.imul(al2, bh7)) | 0;
-    mid = (mid + Math.imul(ah2, bl7)) | 0;
-    hi = (hi + Math.imul(ah2, bh7)) | 0;
-    lo = (lo + Math.imul(al1, bl8)) | 0;
-    mid = (mid + Math.imul(al1, bh8)) | 0;
-    mid = (mid + Math.imul(ah1, bl8)) | 0;
-    hi = (hi + Math.imul(ah1, bh8)) | 0;
-    lo = (lo + Math.imul(al0, bl9)) | 0;
-    mid = (mid + Math.imul(al0, bh9)) | 0;
-    mid = (mid + Math.imul(ah0, bl9)) | 0;
-    hi = (hi + Math.imul(ah0, bh9)) | 0;
-    var w9 = (((c + lo) | 0) + ((mid & 0x1fff) << 13)) | 0;
-    c = (((hi + (mid >>> 13)) | 0) + (w9 >>> 26)) | 0;
-    w9 &= 0x3ffffff;
-    /* k = 10 */
-    lo = Math.imul(al9, bl1);
-    mid = Math.imul(al9, bh1);
-    mid = (mid + Math.imul(ah9, bl1)) | 0;
-    hi = Math.imul(ah9, bh1);
-    lo = (lo + Math.imul(al8, bl2)) | 0;
-    mid = (mid + Math.imul(al8, bh2)) | 0;
-    mid = (mid + Math.imul(ah8, bl2)) | 0;
-    hi = (hi + Math.imul(ah8, bh2)) | 0;
-    lo = (lo + Math.imul(al7, bl3)) | 0;
-    mid = (mid + Math.imul(al7, bh3)) | 0;
-    mid = (mid + Math.imul(ah7, bl3)) | 0;
-    hi = (hi + Math.imul(ah7, bh3)) | 0;
-    lo = (lo + Math.imul(al6, bl4)) | 0;
-    mid = (mid + Math.imul(al6, bh4)) | 0;
-    mid = (mid + Math.imul(ah6, bl4)) | 0;
-    hi = (hi + Math.imul(ah6, bh4)) | 0;
-    lo = (lo + Math.imul(al5, bl5)) | 0;
-    mid = (mid + Math.imul(al5, bh5)) | 0;
-    mid = (mid + Math.imul(ah5, bl5)) | 0;
-    hi = (hi + Math.imul(ah5, bh5)) | 0;
-    lo = (lo + Math.imul(al4, bl6)) | 0;
-    mid = (mid + Math.imul(al4, bh6)) | 0;
-    mid = (mid + Math.imul(ah4, bl6)) | 0;
-    hi = (hi + Math.imul(ah4, bh6)) | 0;
-    lo = (lo + Math.imul(al3, bl7)) | 0;
-    mid = (mid + Math.imul(al3, bh7)) | 0;
-    mid = (mid + Math.imul(ah3, bl7)) | 0;
-    hi = (hi + Math.imul(ah3, bh7)) | 0;
-    lo = (lo + Math.imul(al2, bl8)) | 0;
-    mid = (mid + Math.imul(al2, bh8)) | 0;
-    mid = (mid + Math.imul(ah2, bl8)) | 0;
-    hi = (hi + Math.imul(ah2, bh8)) | 0;
-    lo = (lo + Math.imul(al1, bl9)) | 0;
-    mid = (mid + Math.imul(al1, bh9)) | 0;
-    mid = (mid + Math.imul(ah1, bl9)) | 0;
-    hi = (hi + Math.imul(ah1, bh9)) | 0;
-    var w10 = (((c + lo) | 0) + ((mid & 0x1fff) << 13)) | 0;
-    c = (((hi + (mid >>> 13)) | 0) + (w10 >>> 26)) | 0;
-    w10 &= 0x3ffffff;
-    /* k = 11 */
-    lo = Math.imul(al9, bl2);
-    mid = Math.imul(al9, bh2);
-    mid = (mid + Math.imul(ah9, bl2)) | 0;
-    hi = Math.imul(ah9, bh2);
-    lo = (lo + Math.imul(al8, bl3)) | 0;
-    mid = (mid + Math.imul(al8, bh3)) | 0;
-    mid = (mid + Math.imul(ah8, bl3)) | 0;
-    hi = (hi + Math.imul(ah8, bh3)) | 0;
-    lo = (lo + Math.imul(al7, bl4)) | 0;
-    mid = (mid + Math.imul(al7, bh4)) | 0;
-    mid = (mid + Math.imul(ah7, bl4)) | 0;
-    hi = (hi + Math.imul(ah7, bh4)) | 0;
-    lo = (lo + Math.imul(al6, bl5)) | 0;
-    mid = (mid + Math.imul(al6, bh5)) | 0;
-    mid = (mid + Math.imul(ah6, bl5)) | 0;
-    hi = (hi + Math.imul(ah6, bh5)) | 0;
-    lo = (lo + Math.imul(al5, bl6)) | 0;
-    mid = (mid + Math.imul(al5, bh6)) | 0;
-    mid = (mid + Math.imul(ah5, bl6)) | 0;
-    hi = (hi + Math.imul(ah5, bh6)) | 0;
-    lo = (lo + Math.imul(al4, bl7)) | 0;
-    mid = (mid + Math.imul(al4, bh7)) | 0;
-    mid = (mid + Math.imul(ah4, bl7)) | 0;
-    hi = (hi + Math.imul(ah4, bh7)) | 0;
-    lo = (lo + Math.imul(al3, bl8)) | 0;
-    mid = (mid + Math.imul(al3, bh8)) | 0;
-    mid = (mid + Math.imul(ah3, bl8)) | 0;
-    hi = (hi + Math.imul(ah3, bh8)) | 0;
-    lo = (lo + Math.imul(al2, bl9)) | 0;
-    mid = (mid + Math.imul(al2, bh9)) | 0;
-    mid = (mid + Math.imul(ah2, bl9)) | 0;
-    hi = (hi + Math.imul(ah2, bh9)) | 0;
-    var w11 = (((c + lo) | 0) + ((mid & 0x1fff) << 13)) | 0;
-    c = (((hi + (mid >>> 13)) | 0) + (w11 >>> 26)) | 0;
-    w11 &= 0x3ffffff;
-    /* k = 12 */
-    lo = Math.imul(al9, bl3);
-    mid = Math.imul(al9, bh3);
-    mid = (mid + Math.imul(ah9, bl3)) | 0;
-    hi = Math.imul(ah9, bh3);
-    lo = (lo + Math.imul(al8, bl4)) | 0;
-    mid = (mid + Math.imul(al8, bh4)) | 0;
-    mid = (mid + Math.imul(ah8, bl4)) | 0;
-    hi = (hi + Math.imul(ah8, bh4)) | 0;
-    lo = (lo + Math.imul(al7, bl5)) | 0;
-    mid = (mid + Math.imul(al7, bh5)) | 0;
-    mid = (mid + Math.imul(ah7, bl5)) | 0;
-    hi = (hi + Math.imul(ah7, bh5)) | 0;
-    lo = (lo + Math.imul(al6, bl6)) | 0;
-    mid = (mid + Math.imul(al6, bh6)) | 0;
-    mid = (mid + Math.imul(ah6, bl6)) | 0;
-    hi = (hi + Math.imul(ah6, bh6)) | 0;
-    lo = (lo + Math.imul(al5, bl7)) | 0;
-    mid = (mid + Math.imul(al5, bh7)) | 0;
-    mid = (mid + Math.imul(ah5, bl7)) | 0;
-    hi = (hi + Math.imul(ah5, bh7)) | 0;
-    lo = (lo + Math.imul(al4, bl8)) | 0;
-    mid = (mid + Math.imul(al4, bh8)) | 0;
-    mid = (mid + Math.imul(ah4, bl8)) | 0;
-    hi = (hi + Math.imul(ah4, bh8)) | 0;
-    lo = (lo + Math.imul(al3, bl9)) | 0;
-    mid = (mid + Math.imul(al3, bh9)) | 0;
-    mid = (mid + Math.imul(ah3, bl9)) | 0;
-    hi = (hi + Math.imul(ah3, bh9)) | 0;
-    var w12 = (((c + lo) | 0) + ((mid & 0x1fff) << 13)) | 0;
-    c = (((hi + (mid >>> 13)) | 0) + (w12 >>> 26)) | 0;
-    w12 &= 0x3ffffff;
-    /* k = 13 */
-    lo = Math.imul(al9, bl4);
-    mid = Math.imul(al9, bh4);
-    mid = (mid + Math.imul(ah9, bl4)) | 0;
-    hi = Math.imul(ah9, bh4);
-    lo = (lo + Math.imul(al8, bl5)) | 0;
-    mid = (mid + Math.imul(al8, bh5)) | 0;
-    mid = (mid + Math.imul(ah8, bl5)) | 0;
-    hi = (hi + Math.imul(ah8, bh5)) | 0;
-    lo = (lo + Math.imul(al7, bl6)) | 0;
-    mid = (mid + Math.imul(al7, bh6)) | 0;
-    mid = (mid + Math.imul(ah7, bl6)) | 0;
-    hi = (hi + Math.imul(ah7, bh6)) | 0;
-    lo = (lo + Math.imul(al6, bl7)) | 0;
-    mid = (mid + Math.imul(al6, bh7)) | 0;
-    mid = (mid + Math.imul(ah6, bl7)) | 0;
-    hi = (hi + Math.imul(ah6, bh7)) | 0;
-    lo = (lo + Math.imul(al5, bl8)) | 0;
-    mid = (mid + Math.imul(al5, bh8)) | 0;
-    mid = (mid + Math.imul(ah5, bl8)) | 0;
-    hi = (hi + Math.imul(ah5, bh8)) | 0;
-    lo = (lo + Math.imul(al4, bl9)) | 0;
-    mid = (mid + Math.imul(al4, bh9)) | 0;
-    mid = (mid + Math.imul(ah4, bl9)) | 0;
-    hi = (hi + Math.imul(ah4, bh9)) | 0;
-    var w13 = (((c + lo) | 0) + ((mid & 0x1fff) << 13)) | 0;
-    c = (((hi + (mid >>> 13)) | 0) + (w13 >>> 26)) | 0;
-    w13 &= 0x3ffffff;
-    /* k = 14 */
-    lo = Math.imul(al9, bl5);
-    mid = Math.imul(al9, bh5);
-    mid = (mid + Math.imul(ah9, bl5)) | 0;
-    hi = Math.imul(ah9, bh5);
-    lo = (lo + Math.imul(al8, bl6)) | 0;
-    mid = (mid + Math.imul(al8, bh6)) | 0;
-    mid = (mid + Math.imul(ah8, bl6)) | 0;
-    hi = (hi + Math.imul(ah8, bh6)) | 0;
-    lo = (lo + Math.imul(al7, bl7)) | 0;
-    mid = (mid + Math.imul(al7, bh7)) | 0;
-    mid = (mid + Math.imul(ah7, bl7)) | 0;
-    hi = (hi + Math.imul(ah7, bh7)) | 0;
-    lo = (lo + Math.imul(al6, bl8)) | 0;
-    mid = (mid + Math.imul(al6, bh8)) | 0;
-    mid = (mid + Math.imul(ah6, bl8)) | 0;
-    hi = (hi + Math.imul(ah6, bh8)) | 0;
-    lo = (lo + Math.imul(al5, bl9)) | 0;
-    mid = (mid + Math.imul(al5, bh9)) | 0;
-    mid = (mid + Math.imul(ah5, bl9)) | 0;
-    hi = (hi + Math.imul(ah5, bh9)) | 0;
-    var w14 = (((c + lo) | 0) + ((mid & 0x1fff) << 13)) | 0;
-    c = (((hi + (mid >>> 13)) | 0) + (w14 >>> 26)) | 0;
-    w14 &= 0x3ffffff;
-    /* k = 15 */
-    lo = Math.imul(al9, bl6);
-    mid = Math.imul(al9, bh6);
-    mid = (mid + Math.imul(ah9, bl6)) | 0;
-    hi = Math.imul(ah9, bh6);
-    lo = (lo + Math.imul(al8, bl7)) | 0;
-    mid = (mid + Math.imul(al8, bh7)) | 0;
-    mid = (mid + Math.imul(ah8, bl7)) | 0;
-    hi = (hi + Math.imul(ah8, bh7)) | 0;
-    lo = (lo + Math.imul(al7, bl8)) | 0;
-    mid = (mid + Math.imul(al7, bh8)) | 0;
-    mid = (mid + Math.imul(ah7, bl8)) | 0;
-    hi = (hi + Math.imul(ah7, bh8)) | 0;
-    lo = (lo + Math.imul(al6, bl9)) | 0;
-    mid = (mid + Math.imul(al6, bh9)) | 0;
-    mid = (mid + Math.imul(ah6, bl9)) | 0;
-    hi = (hi + Math.imul(ah6, bh9)) | 0;
-    var w15 = (((c + lo) | 0) + ((mid & 0x1fff) << 13)) | 0;
-    c = (((hi + (mid >>> 13)) | 0) + (w15 >>> 26)) | 0;
-    w15 &= 0x3ffffff;
-    /* k = 16 */
-    lo = Math.imul(al9, bl7);
-    mid = Math.imul(al9, bh7);
-    mid = (mid + Math.imul(ah9, bl7)) | 0;
-    hi = Math.imul(ah9, bh7);
-    lo = (lo + Math.imul(al8, bl8)) | 0;
-    mid = (mid + Math.imul(al8, bh8)) | 0;
-    mid = (mid + Math.imul(ah8, bl8)) | 0;
-    hi = (hi + Math.imul(ah8, bh8)) | 0;
-    lo = (lo + Math.imul(al7, bl9)) | 0;
-    mid = (mid + Math.imul(al7, bh9)) | 0;
-    mid = (mid + Math.imul(ah7, bl9)) | 0;
-    hi = (hi + Math.imul(ah7, bh9)) | 0;
-    var w16 = (((c + lo) | 0) + ((mid & 0x1fff) << 13)) | 0;
-    c = (((hi + (mid >>> 13)) | 0) + (w16 >>> 26)) | 0;
-    w16 &= 0x3ffffff;
-    /* k = 17 */
-    lo = Math.imul(al9, bl8);
-    mid = Math.imul(al9, bh8);
-    mid = (mid + Math.imul(ah9, bl8)) | 0;
-    hi = Math.imul(ah9, bh8);
-    lo = (lo + Math.imul(al8, bl9)) | 0;
-    mid = (mid + Math.imul(al8, bh9)) | 0;
-    mid = (mid + Math.imul(ah8, bl9)) | 0;
-    hi = (hi + Math.imul(ah8, bh9)) | 0;
-    var w17 = (((c + lo) | 0) + ((mid & 0x1fff) << 13)) | 0;
-    c = (((hi + (mid >>> 13)) | 0) + (w17 >>> 26)) | 0;
-    w17 &= 0x3ffffff;
-    /* k = 18 */
-    lo = Math.imul(al9, bl9);
-    mid = Math.imul(al9, bh9);
-    mid = (mid + Math.imul(ah9, bl9)) | 0;
-    hi = Math.imul(ah9, bh9);
-    var w18 = (((c + lo) | 0) + ((mid & 0x1fff) << 13)) | 0;
-    c = (((hi + (mid >>> 13)) | 0) + (w18 >>> 26)) | 0;
-    w18 &= 0x3ffffff;
-    o[0] = w0;
-    o[1] = w1;
-    o[2] = w2;
-    o[3] = w3;
-    o[4] = w4;
-    o[5] = w5;
-    o[6] = w6;
-    o[7] = w7;
-    o[8] = w8;
-    o[9] = w9;
-    o[10] = w10;
-    o[11] = w11;
-    o[12] = w12;
-    o[13] = w13;
-    o[14] = w14;
-    o[15] = w15;
-    o[16] = w16;
-    o[17] = w17;
-    o[18] = w18;
-    if (c !== 0) {
-      o[19] = c;
-      out.length++;
-    }
-    return out;
-  };
-
-  // Polyfill comb
-  if (!Math.imul) {
-    comb10MulTo = smallMulTo;
-  }
-
-  function bigMulTo (self, num, out) {
-    out.negative = num.negative ^ self.negative;
-    out.length = self.length + num.length;
-
-    var carry = 0;
-    var hncarry = 0;
-    for (var k = 0; k < out.length - 1; k++) {
-      // Sum all words with the same `i + j = k` and accumulate `ncarry`,
-      // note that ncarry could be >= 0x3ffffff
-      var ncarry = hncarry;
-      hncarry = 0;
-      var rword = carry & 0x3ffffff;
-      var maxJ = Math.min(k, num.length - 1);
-      for (var j = Math.max(0, k - self.length + 1); j <= maxJ; j++) {
-        var i = k - j;
-        var a = self.words[i] | 0;
-        var b = num.words[j] | 0;
-        var r = a * b;
-
-        var lo = r & 0x3ffffff;
-        ncarry = (ncarry + ((r / 0x4000000) | 0)) | 0;
-        lo = (lo + rword) | 0;
-        rword = lo & 0x3ffffff;
-        ncarry = (ncarry + (lo >>> 26)) | 0;
-
-        hncarry += ncarry >>> 26;
-        ncarry &= 0x3ffffff;
-      }
-      out.words[k] = rword;
-      carry = ncarry;
-      ncarry = hncarry;
-    }
-    if (carry !== 0) {
-      out.words[k] = carry;
-    } else {
-      out.length--;
-    }
-
-    return out.strip();
-  }
-
-  function jumboMulTo (self, num, out) {
-    var fftm = new FFTM();
-    return fftm.mulp(self, num, out);
-  }
-
-  BN.prototype.mulTo = function mulTo (num, out) {
-    var res;
-    var len = this.length + num.length;
-    if (this.length === 10 && num.length === 10) {
-      res = comb10MulTo(this, num, out);
-    } else if (len < 63) {
-      res = smallMulTo(this, num, out);
-    } else if (len < 1024) {
-      res = bigMulTo(this, num, out);
-    } else {
-      res = jumboMulTo(this, num, out);
-    }
-
-    return res;
-  };
-
-  // Cooley-Tukey algorithm for FFT
-  // slightly revisited to rely on looping instead of recursion
-
-  function FFTM (x, y) {
-    this.x = x;
-    this.y = y;
-  }
-
-  FFTM.prototype.makeRBT = function makeRBT (N) {
-    var t = new Array(N);
-    var l = BN.prototype._countBits(N) - 1;
-    for (var i = 0; i < N; i++) {
-      t[i] = this.revBin(i, l, N);
-    }
-
-    return t;
-  };
-
-  // Returns binary-reversed representation of `x`
-  FFTM.prototype.revBin = function revBin (x, l, N) {
-    if (x === 0 || x === N - 1) return x;
-
-    var rb = 0;
-    for (var i = 0; i < l; i++) {
-      rb |= (x & 1) << (l - i - 1);
-      x >>= 1;
-    }
-
-    return rb;
-  };
-
-  // Performs "tweedling" phase, therefore 'emulating'
-  // behaviour of the recursive algorithm
-  FFTM.prototype.permute = function permute (rbt, rws, iws, rtws, itws, N) {
-    for (var i = 0; i < N; i++) {
-      rtws[i] = rws[rbt[i]];
-      itws[i] = iws[rbt[i]];
-    }
-  };
-
-  FFTM.prototype.transform = function transform (rws, iws, rtws, itws, N, rbt) {
-    this.permute(rbt, rws, iws, rtws, itws, N);
-
-    for (var s = 1; s < N; s <<= 1) {
-      var l = s << 1;
-
-      var rtwdf = Math.cos(2 * Math.PI / l);
-      var itwdf = Math.sin(2 * Math.PI / l);
-
-      for (var p = 0; p < N; p += l) {
-        var rtwdf_ = rtwdf;
-        var itwdf_ = itwdf;
-
-        for (var j = 0; j < s; j++) {
-          var re = rtws[p + j];
-          var ie = itws[p + j];
-
-          var ro = rtws[p + j + s];
-          var io = itws[p + j + s];
-
-          var rx = rtwdf_ * ro - itwdf_ * io;
-
-          io = rtwdf_ * io + itwdf_ * ro;
-          ro = rx;
-
-          rtws[p + j] = re + ro;
-          itws[p + j] = ie + io;
-
-          rtws[p + j + s] = re - ro;
-          itws[p + j + s] = ie - io;
-
-          /* jshint maxdepth : false */
-          if (j !== l) {
-            rx = rtwdf * rtwdf_ - itwdf * itwdf_;
-
-            itwdf_ = rtwdf * itwdf_ + itwdf * rtwdf_;
-            rtwdf_ = rx;
-          }
-        }
-      }
-    }
-  };
-
-  FFTM.prototype.guessLen13b = function guessLen13b (n, m) {
-    var N = Math.max(m, n) | 1;
-    var odd = N & 1;
-    var i = 0;
-    for (N = N / 2 | 0; N; N = N >>> 1) {
-      i++;
-    }
-
-    return 1 << i + 1 + odd;
-  };
-
-  FFTM.prototype.conjugate = function conjugate (rws, iws, N) {
-    if (N <= 1) return;
-
-    for (var i = 0; i < N / 2; i++) {
-      var t = rws[i];
-
-      rws[i] = rws[N - i - 1];
-      rws[N - i - 1] = t;
-
-      t = iws[i];
-
-      iws[i] = -iws[N - i - 1];
-      iws[N - i - 1] = -t;
-    }
-  };
-
-  FFTM.prototype.normalize13b = function normalize13b (ws, N) {
-    var carry = 0;
-    for (var i = 0; i < N / 2; i++) {
-      var w = Math.round(ws[2 * i + 1] / N) * 0x2000 +
-        Math.round(ws[2 * i] / N) +
-        carry;
-
-      ws[i] = w & 0x3ffffff;
-
-      if (w < 0x4000000) {
-        carry = 0;
-      } else {
-        carry = w / 0x4000000 | 0;
-      }
-    }
-
-    return ws;
-  };
-
-  FFTM.prototype.convert13b = function convert13b (ws, len, rws, N) {
-    var carry = 0;
-    for (var i = 0; i < len; i++) {
-      carry = carry + (ws[i] | 0);
-
-      rws[2 * i] = carry & 0x1fff; carry = carry >>> 13;
-      rws[2 * i + 1] = carry & 0x1fff; carry = carry >>> 13;
-    }
-
-    // Pad with zeroes
-    for (i = 2 * len; i < N; ++i) {
-      rws[i] = 0;
-    }
-
-    assert(carry === 0);
-    assert((carry & ~0x1fff) === 0);
-  };
-
-  FFTM.prototype.stub = function stub (N) {
-    var ph = new Array(N);
-    for (var i = 0; i < N; i++) {
-      ph[i] = 0;
-    }
-
-    return ph;
-  };
-
-  FFTM.prototype.mulp = function mulp (x, y, out) {
-    var N = 2 * this.guessLen13b(x.length, y.length);
-
-    var rbt = this.makeRBT(N);
-
-    var _ = this.stub(N);
-
-    var rws = new Array(N);
-    var rwst = new Array(N);
-    var iwst = new Array(N);
-
-    var nrws = new Array(N);
-    var nrwst = new Array(N);
-    var niwst = new Array(N);
-
-    var rmws = out.words;
-    rmws.length = N;
-
-    this.convert13b(x.words, x.length, rws, N);
-    this.convert13b(y.words, y.length, nrws, N);
-
-    this.transform(rws, _, rwst, iwst, N, rbt);
-    this.transform(nrws, _, nrwst, niwst, N, rbt);
-
-    for (var i = 0; i < N; i++) {
-      var rx = rwst[i] * nrwst[i] - iwst[i] * niwst[i];
-      iwst[i] = rwst[i] * niwst[i] + iwst[i] * nrwst[i];
-      rwst[i] = rx;
-    }
-
-    this.conjugate(rwst, iwst, N);
-    this.transform(rwst, iwst, rmws, _, N, rbt);
-    this.conjugate(rmws, _, N);
-    this.normalize13b(rmws, N);
-
-    out.negative = x.negative ^ y.negative;
-    out.length = x.length + y.length;
-    return out.strip();
-  };
-
-  // Multiply `this` by `num`
-  BN.prototype.mul = function mul (num) {
-    var out = new BN(null);
-    out.words = new Array(this.length + num.length);
-    return this.mulTo(num, out);
-  };
-
-  // Multiply employing FFT
-  BN.prototype.mulf = function mulf (num) {
-    var out = new BN(null);
-    out.words = new Array(this.length + num.length);
-    return jumboMulTo(this, num, out);
-  };
-
-  // In-place Multiplication
-  BN.prototype.imul = function imul (num) {
-    return this.clone().mulTo(num, this);
-  };
-
-  BN.prototype.imuln = function imuln (num) {
-    assert(typeof num === 'number');
-    assert(num < 0x4000000);
-
-    // Carry
-    var carry = 0;
-    for (var i = 0; i < this.length; i++) {
-      var w = (this.words[i] | 0) * num;
-      var lo = (w & 0x3ffffff) + (carry & 0x3ffffff);
-      carry >>= 26;
-      carry += (w / 0x4000000) | 0;
-      // NOTE: lo is 27bit maximum
-      carry += lo >>> 26;
-      this.words[i] = lo & 0x3ffffff;
-    }
-
-    if (carry !== 0) {
-      this.words[i] = carry;
-      this.length++;
-    }
-
-    return this;
-  };
-
-  BN.prototype.muln = function muln (num) {
-    return this.clone().imuln(num);
-  };
-
-  // `this` * `this`
-  BN.prototype.sqr = function sqr () {
-    return this.mul(this);
-  };
-
-  // `this` * `this` in-place
-  BN.prototype.isqr = function isqr () {
-    return this.imul(this.clone());
-  };
-
-  // Math.pow(`this`, `num`)
-  BN.prototype.pow = function pow (num) {
-    var w = toBitArray(num);
-    if (w.length === 0) return new BN(1);
-
-    // Skip leading zeroes
-    var res = this;
-    for (var i = 0; i < w.length; i++, res = res.sqr()) {
-      if (w[i] !== 0) break;
-    }
-
-    if (++i < w.length) {
-      for (var q = res.sqr(); i < w.length; i++, q = q.sqr()) {
-        if (w[i] === 0) continue;
-
-        res = res.mul(q);
-      }
-    }
-
-    return res;
-  };
-
-  // Shift-left in-place
-  BN.prototype.iushln = function iushln (bits) {
-    assert(typeof bits === 'number' && bits >= 0);
-    var r = bits % 26;
-    var s = (bits - r) / 26;
-    var carryMask = (0x3ffffff >>> (26 - r)) << (26 - r);
-    var i;
-
-    if (r !== 0) {
-      var carry = 0;
-
-      for (i = 0; i < this.length; i++) {
-        var newCarry = this.words[i] & carryMask;
-        var c = ((this.words[i] | 0) - newCarry) << r;
-        this.words[i] = c | carry;
-        carry = newCarry >>> (26 - r);
-      }
-
-      if (carry) {
-        this.words[i] = carry;
-        this.length++;
-      }
-    }
-
-    if (s !== 0) {
-      for (i = this.length - 1; i >= 0; i--) {
-        this.words[i + s] = this.words[i];
-      }
-
-      for (i = 0; i < s; i++) {
-        this.words[i] = 0;
-      }
-
-      this.length += s;
-    }
-
-    return this.strip();
-  };
-
-  BN.prototype.ishln = function ishln (bits) {
-    // TODO(indutny): implement me
-    assert(this.negative === 0);
-    return this.iushln(bits);
-  };
-
-  // Shift-right in-place
-  // NOTE: `hint` is a lowest bit before trailing zeroes
-  // NOTE: if `extended` is present - it will be filled with destroyed bits
-  BN.prototype.iushrn = function iushrn (bits, hint, extended) {
-    assert(typeof bits === 'number' && bits >= 0);
-    var h;
-    if (hint) {
-      h = (hint - (hint % 26)) / 26;
-    } else {
-      h = 0;
-    }
-
-    var r = bits % 26;
-    var s = Math.min((bits - r) / 26, this.length);
-    var mask = 0x3ffffff ^ ((0x3ffffff >>> r) << r);
-    var maskedWords = extended;
-
-    h -= s;
-    h = Math.max(0, h);
-
-    // Extended mode, copy masked part
-    if (maskedWords) {
-      for (var i = 0; i < s; i++) {
-        maskedWords.words[i] = this.words[i];
-      }
-      maskedWords.length = s;
-    }
-
-    if (s === 0) ; else if (this.length > s) {
-      this.length -= s;
-      for (i = 0; i < this.length; i++) {
-        this.words[i] = this.words[i + s];
-      }
-    } else {
-      this.words[0] = 0;
-      this.length = 1;
-    }
-
-    var carry = 0;
-    for (i = this.length - 1; i >= 0 && (carry !== 0 || i >= h); i--) {
-      var word = this.words[i] | 0;
-      this.words[i] = (carry << (26 - r)) | (word >>> r);
-      carry = word & mask;
-    }
-
-    // Push carried bits as a mask
-    if (maskedWords && carry !== 0) {
-      maskedWords.words[maskedWords.length++] = carry;
-    }
-
-    if (this.length === 0) {
-      this.words[0] = 0;
-      this.length = 1;
-    }
-
-    return this.strip();
-  };
-
-  BN.prototype.ishrn = function ishrn (bits, hint, extended) {
-    // TODO(indutny): implement me
-    assert(this.negative === 0);
-    return this.iushrn(bits, hint, extended);
-  };
-
-  // Shift-left
-  BN.prototype.shln = function shln (bits) {
-    return this.clone().ishln(bits);
-  };
-
-  BN.prototype.ushln = function ushln (bits) {
-    return this.clone().iushln(bits);
-  };
-
-  // Shift-right
-  BN.prototype.shrn = function shrn (bits) {
-    return this.clone().ishrn(bits);
-  };
-
-  BN.prototype.ushrn = function ushrn (bits) {
-    return this.clone().iushrn(bits);
-  };
-
-  // Test if n bit is set
-  BN.prototype.testn = function testn (bit) {
-    assert(typeof bit === 'number' && bit >= 0);
-    var r = bit % 26;
-    var s = (bit - r) / 26;
-    var q = 1 << r;
-
-    // Fast case: bit is much higher than all existing words
-    if (this.length <= s) return false;
-
-    // Check bit and return
-    var w = this.words[s];
-
-    return !!(w & q);
-  };
-
-  // Return only lowers bits of number (in-place)
-  BN.prototype.imaskn = function imaskn (bits) {
-    assert(typeof bits === 'number' && bits >= 0);
-    var r = bits % 26;
-    var s = (bits - r) / 26;
-
-    assert(this.negative === 0, 'imaskn works only with positive numbers');
-
-    if (this.length <= s) {
-      return this;
-    }
-
-    if (r !== 0) {
-      s++;
-    }
-    this.length = Math.min(s, this.length);
-
-    if (r !== 0) {
-      var mask = 0x3ffffff ^ ((0x3ffffff >>> r) << r);
-      this.words[this.length - 1] &= mask;
-    }
-
-    return this.strip();
-  };
-
-  // Return only lowers bits of number
-  BN.prototype.maskn = function maskn (bits) {
-    return this.clone().imaskn(bits);
-  };
-
-  // Add plain number `num` to `this`
-  BN.prototype.iaddn = function iaddn (num) {
-    assert(typeof num === 'number');
-    assert(num < 0x4000000);
-    if (num < 0) return this.isubn(-num);
-
-    // Possible sign change
-    if (this.negative !== 0) {
-      if (this.length === 1 && (this.words[0] | 0) < num) {
-        this.words[0] = num - (this.words[0] | 0);
-        this.negative = 0;
-        return this;
-      }
-
-      this.negative = 0;
-      this.isubn(num);
-      this.negative = 1;
-      return this;
-    }
-
-    // Add without checks
-    return this._iaddn(num);
-  };
-
-  BN.prototype._iaddn = function _iaddn (num) {
-    this.words[0] += num;
-
-    // Carry
-    for (var i = 0; i < this.length && this.words[i] >= 0x4000000; i++) {
-      this.words[i] -= 0x4000000;
-      if (i === this.length - 1) {
-        this.words[i + 1] = 1;
-      } else {
-        this.words[i + 1]++;
-      }
-    }
-    this.length = Math.max(this.length, i + 1);
-
-    return this;
-  };
-
-  // Subtract plain number `num` from `this`
-  BN.prototype.isubn = function isubn (num) {
-    assert(typeof num === 'number');
-    assert(num < 0x4000000);
-    if (num < 0) return this.iaddn(-num);
-
-    if (this.negative !== 0) {
-      this.negative = 0;
-      this.iaddn(num);
-      this.negative = 1;
-      return this;
-    }
-
-    this.words[0] -= num;
-
-    if (this.length === 1 && this.words[0] < 0) {
-      this.words[0] = -this.words[0];
-      this.negative = 1;
-    } else {
-      // Carry
-      for (var i = 0; i < this.length && this.words[i] < 0; i++) {
-        this.words[i] += 0x4000000;
-        this.words[i + 1] -= 1;
-      }
-    }
-
-    return this.strip();
-  };
-
-  BN.prototype.addn = function addn (num) {
-    return this.clone().iaddn(num);
-  };
-
-  BN.prototype.subn = function subn (num) {
-    return this.clone().isubn(num);
-  };
-
-  BN.prototype.iabs = function iabs () {
-    this.negative = 0;
-
-    return this;
-  };
-
-  BN.prototype.abs = function abs () {
-    return this.clone().iabs();
-  };
-
-  BN.prototype._ishlnsubmul = function _ishlnsubmul (num, mul, shift) {
-    var len = num.length + shift;
-    var i;
-
-    this._expand(len);
-
-    var w;
-    var carry = 0;
-    for (i = 0; i < num.length; i++) {
-      w = (this.words[i + shift] | 0) + carry;
-      var right = (num.words[i] | 0) * mul;
-      w -= right & 0x3ffffff;
-      carry = (w >> 26) - ((right / 0x4000000) | 0);
-      this.words[i + shift] = w & 0x3ffffff;
-    }
-    for (; i < this.length - shift; i++) {
-      w = (this.words[i + shift] | 0) + carry;
-      carry = w >> 26;
-      this.words[i + shift] = w & 0x3ffffff;
-    }
-
-    if (carry === 0) return this.strip();
-
-    // Subtraction overflow
-    assert(carry === -1);
-    carry = 0;
-    for (i = 0; i < this.length; i++) {
-      w = -(this.words[i] | 0) + carry;
-      carry = w >> 26;
-      this.words[i] = w & 0x3ffffff;
-    }
-    this.negative = 1;
-
-    return this.strip();
-  };
-
-  BN.prototype._wordDiv = function _wordDiv (num, mode) {
-    var shift = this.length - num.length;
-
-    var a = this.clone();
-    var b = num;
-
-    // Normalize
-    var bhi = b.words[b.length - 1] | 0;
-    var bhiBits = this._countBits(bhi);
-    shift = 26 - bhiBits;
-    if (shift !== 0) {
-      b = b.ushln(shift);
-      a.iushln(shift);
-      bhi = b.words[b.length - 1] | 0;
-    }
-
-    // Initialize quotient
-    var m = a.length - b.length;
-    var q;
-
-    if (mode !== 'mod') {
-      q = new BN(null);
-      q.length = m + 1;
-      q.words = new Array(q.length);
-      for (var i = 0; i < q.length; i++) {
-        q.words[i] = 0;
-      }
-    }
-
-    var diff = a.clone()._ishlnsubmul(b, 1, m);
-    if (diff.negative === 0) {
-      a = diff;
-      if (q) {
-        q.words[m] = 1;
-      }
-    }
-
-    for (var j = m - 1; j >= 0; j--) {
-      var qj = (a.words[b.length + j] | 0) * 0x4000000 +
-        (a.words[b.length + j - 1] | 0);
-
-      // NOTE: (qj / bhi) is (0x3ffffff * 0x4000000 + 0x3ffffff) / 0x2000000 max
-      // (0x7ffffff)
-      qj = Math.min((qj / bhi) | 0, 0x3ffffff);
-
-      a._ishlnsubmul(b, qj, j);
-      while (a.negative !== 0) {
-        qj--;
-        a.negative = 0;
-        a._ishlnsubmul(b, 1, j);
-        if (!a.isZero()) {
-          a.negative ^= 1;
-        }
-      }
-      if (q) {
-        q.words[j] = qj;
-      }
-    }
-    if (q) {
-      q.strip();
-    }
-    a.strip();
-
-    // Denormalize
-    if (mode !== 'div' && shift !== 0) {
-      a.iushrn(shift);
-    }
-
-    return {
-      div: q || null,
-      mod: a
-    };
-  };
-
-  // NOTE: 1) `mode` can be set to `mod` to request mod only,
-  //       to `div` to request div only, or be absent to
-  //       request both div & mod
-  //       2) `positive` is true if unsigned mod is requested
-  BN.prototype.divmod = function divmod (num, mode, positive) {
-    assert(!num.isZero());
-
-    if (this.isZero()) {
-      return {
-        div: new BN(0),
-        mod: new BN(0)
-      };
-    }
-
-    var div, mod, res;
-    if (this.negative !== 0 && num.negative === 0) {
-      res = this.neg().divmod(num, mode);
-
-      if (mode !== 'mod') {
-        div = res.div.neg();
-      }
-
-      if (mode !== 'div') {
-        mod = res.mod.neg();
-        if (positive && mod.negative !== 0) {
-          mod.iadd(num);
-        }
-      }
-
-      return {
-        div: div,
-        mod: mod
-      };
-    }
-
-    if (this.negative === 0 && num.negative !== 0) {
-      res = this.divmod(num.neg(), mode);
-
-      if (mode !== 'mod') {
-        div = res.div.neg();
-      }
-
-      return {
-        div: div,
-        mod: res.mod
-      };
-    }
-
-    if ((this.negative & num.negative) !== 0) {
-      res = this.neg().divmod(num.neg(), mode);
-
-      if (mode !== 'div') {
-        mod = res.mod.neg();
-        if (positive && mod.negative !== 0) {
-          mod.isub(num);
-        }
-      }
-
-      return {
-        div: res.div,
-        mod: mod
-      };
-    }
-
-    // Both numbers are positive at this point
-
-    // Strip both numbers to approximate shift value
-    if (num.length > this.length || this.cmp(num) < 0) {
-      return {
-        div: new BN(0),
-        mod: this
-      };
-    }
-
-    // Very short reduction
-    if (num.length === 1) {
-      if (mode === 'div') {
-        return {
-          div: this.divn(num.words[0]),
-          mod: null
-        };
-      }
-
-      if (mode === 'mod') {
-        return {
-          div: null,
-          mod: new BN(this.modn(num.words[0]))
-        };
-      }
-
-      return {
-        div: this.divn(num.words[0]),
-        mod: new BN(this.modn(num.words[0]))
-      };
-    }
-
-    return this._wordDiv(num, mode);
-  };
-
-  // Find `this` / `num`
-  BN.prototype.div = function div (num) {
-    return this.divmod(num, 'div', false).div;
-  };
-
-  // Find `this` % `num`
-  BN.prototype.mod = function mod (num) {
-    return this.divmod(num, 'mod', false).mod;
-  };
-
-  BN.prototype.umod = function umod (num) {
-    return this.divmod(num, 'mod', true).mod;
-  };
-
-  // Find Round(`this` / `num`)
-  BN.prototype.divRound = function divRound (num) {
-    var dm = this.divmod(num);
-
-    // Fast case - exact division
-    if (dm.mod.isZero()) return dm.div;
-
-    var mod = dm.div.negative !== 0 ? dm.mod.isub(num) : dm.mod;
-
-    var half = num.ushrn(1);
-    var r2 = num.andln(1);
-    var cmp = mod.cmp(half);
-
-    // Round down
-    if (cmp < 0 || r2 === 1 && cmp === 0) return dm.div;
-
-    // Round up
-    return dm.div.negative !== 0 ? dm.div.isubn(1) : dm.div.iaddn(1);
-  };
-
-  BN.prototype.modn = function modn (num) {
-    assert(num <= 0x3ffffff);
-    var p = (1 << 26) % num;
-
-    var acc = 0;
-    for (var i = this.length - 1; i >= 0; i--) {
-      acc = (p * acc + (this.words[i] | 0)) % num;
-    }
-
-    return acc;
-  };
-
-  // In-place division by number
-  BN.prototype.idivn = function idivn (num) {
-    assert(num <= 0x3ffffff);
-
-    var carry = 0;
-    for (var i = this.length - 1; i >= 0; i--) {
-      var w = (this.words[i] | 0) + carry * 0x4000000;
-      this.words[i] = (w / num) | 0;
-      carry = w % num;
-    }
-
-    return this.strip();
-  };
-
-  BN.prototype.divn = function divn (num) {
-    return this.clone().idivn(num);
-  };
-
-  BN.prototype.egcd = function egcd (p) {
-    assert(p.negative === 0);
-    assert(!p.isZero());
-
-    var x = this;
-    var y = p.clone();
-
-    if (x.negative !== 0) {
-      x = x.umod(p);
-    } else {
-      x = x.clone();
-    }
-
-    // A * x + B * y = x
-    var A = new BN(1);
-    var B = new BN(0);
-
-    // C * x + D * y = y
-    var C = new BN(0);
-    var D = new BN(1);
-
-    var g = 0;
-
-    while (x.isEven() && y.isEven()) {
-      x.iushrn(1);
-      y.iushrn(1);
-      ++g;
-    }
-
-    var yp = y.clone();
-    var xp = x.clone();
-
-    while (!x.isZero()) {
-      for (var i = 0, im = 1; (x.words[0] & im) === 0 && i < 26; ++i, im <<= 1);
-      if (i > 0) {
-        x.iushrn(i);
-        while (i-- > 0) {
-          if (A.isOdd() || B.isOdd()) {
-            A.iadd(yp);
-            B.isub(xp);
-          }
-
-          A.iushrn(1);
-          B.iushrn(1);
-        }
-      }
-
-      for (var j = 0, jm = 1; (y.words[0] & jm) === 0 && j < 26; ++j, jm <<= 1);
-      if (j > 0) {
-        y.iushrn(j);
-        while (j-- > 0) {
-          if (C.isOdd() || D.isOdd()) {
-            C.iadd(yp);
-            D.isub(xp);
-          }
-
-          C.iushrn(1);
-          D.iushrn(1);
-        }
-      }
-
-      if (x.cmp(y) >= 0) {
-        x.isub(y);
-        A.isub(C);
-        B.isub(D);
-      } else {
-        y.isub(x);
-        C.isub(A);
-        D.isub(B);
-      }
-    }
-
-    return {
-      a: C,
-      b: D,
-      gcd: y.iushln(g)
-    };
-  };
-
-  // This is reduced incarnation of the binary EEA
-  // above, designated to invert members of the
-  // _prime_ fields F(p) at a maximal speed
-  BN.prototype._invmp = function _invmp (p) {
-    assert(p.negative === 0);
-    assert(!p.isZero());
-
-    var a = this;
-    var b = p.clone();
-
-    if (a.negative !== 0) {
-      a = a.umod(p);
-    } else {
-      a = a.clone();
-    }
-
-    var x1 = new BN(1);
-    var x2 = new BN(0);
-
-    var delta = b.clone();
-
-    while (a.cmpn(1) > 0 && b.cmpn(1) > 0) {
-      for (var i = 0, im = 1; (a.words[0] & im) === 0 && i < 26; ++i, im <<= 1);
-      if (i > 0) {
-        a.iushrn(i);
-        while (i-- > 0) {
-          if (x1.isOdd()) {
-            x1.iadd(delta);
-          }
-
-          x1.iushrn(1);
-        }
-      }
-
-      for (var j = 0, jm = 1; (b.words[0] & jm) === 0 && j < 26; ++j, jm <<= 1);
-      if (j > 0) {
-        b.iushrn(j);
-        while (j-- > 0) {
-          if (x2.isOdd()) {
-            x2.iadd(delta);
-          }
-
-          x2.iushrn(1);
-        }
-      }
-
-      if (a.cmp(b) >= 0) {
-        a.isub(b);
-        x1.isub(x2);
-      } else {
-        b.isub(a);
-        x2.isub(x1);
-      }
-    }
-
-    var res;
-    if (a.cmpn(1) === 0) {
-      res = x1;
-    } else {
-      res = x2;
-    }
-
-    if (res.cmpn(0) < 0) {
-      res.iadd(p);
-    }
-
-    return res;
-  };
-
-  BN.prototype.gcd = function gcd (num) {
-    if (this.isZero()) return num.abs();
-    if (num.isZero()) return this.abs();
-
-    var a = this.clone();
-    var b = num.clone();
-    a.negative = 0;
-    b.negative = 0;
-
-    // Remove common factor of two
-    for (var shift = 0; a.isEven() && b.isEven(); shift++) {
-      a.iushrn(1);
-      b.iushrn(1);
-    }
-
-    do {
-      while (a.isEven()) {
-        a.iushrn(1);
-      }
-      while (b.isEven()) {
-        b.iushrn(1);
-      }
-
-      var r = a.cmp(b);
-      if (r < 0) {
-        // Swap `a` and `b` to make `a` always bigger than `b`
-        var t = a;
-        a = b;
-        b = t;
-      } else if (r === 0 || b.cmpn(1) === 0) {
-        break;
-      }
-
-      a.isub(b);
-    } while (true);
-
-    return b.iushln(shift);
-  };
-
-  // Invert number in the field F(num)
-  BN.prototype.invm = function invm (num) {
-    return this.egcd(num).a.umod(num);
-  };
-
-  BN.prototype.isEven = function isEven () {
-    return (this.words[0] & 1) === 0;
-  };
-
-  BN.prototype.isOdd = function isOdd () {
-    return (this.words[0] & 1) === 1;
-  };
-
-  // And first word and num
-  BN.prototype.andln = function andln (num) {
-    return this.words[0] & num;
-  };
-
-  // Increment at the bit position in-line
-  BN.prototype.bincn = function bincn (bit) {
-    assert(typeof bit === 'number');
-    var r = bit % 26;
-    var s = (bit - r) / 26;
-    var q = 1 << r;
-
-    // Fast case: bit is much higher than all existing words
-    if (this.length <= s) {
-      this._expand(s + 1);
-      this.words[s] |= q;
-      return this;
-    }
-
-    // Add bit and propagate, if needed
-    var carry = q;
-    for (var i = s; carry !== 0 && i < this.length; i++) {
-      var w = this.words[i] | 0;
-      w += carry;
-      carry = w >>> 26;
-      w &= 0x3ffffff;
-      this.words[i] = w;
-    }
-    if (carry !== 0) {
-      this.words[i] = carry;
-      this.length++;
-    }
-    return this;
-  };
-
-  BN.prototype.isZero = function isZero () {
-    return this.length === 1 && this.words[0] === 0;
-  };
-
-  BN.prototype.cmpn = function cmpn (num) {
-    var negative = num < 0;
-
-    if (this.negative !== 0 && !negative) return -1;
-    if (this.negative === 0 && negative) return 1;
-
-    this.strip();
-
-    var res;
-    if (this.length > 1) {
-      res = 1;
-    } else {
-      if (negative) {
-        num = -num;
-      }
-
-      assert(num <= 0x3ffffff, 'Number is too big');
-
-      var w = this.words[0] | 0;
-      res = w === num ? 0 : w < num ? -1 : 1;
-    }
-    if (this.negative !== 0) return -res | 0;
-    return res;
-  };
-
-  // Compare two numbers and return:
-  // 1 - if `this` > `num`
-  // 0 - if `this` == `num`
-  // -1 - if `this` < `num`
-  BN.prototype.cmp = function cmp (num) {
-    if (this.negative !== 0 && num.negative === 0) return -1;
-    if (this.negative === 0 && num.negative !== 0) return 1;
-
-    var res = this.ucmp(num);
-    if (this.negative !== 0) return -res | 0;
-    return res;
-  };
-
-  // Unsigned comparison
-  BN.prototype.ucmp = function ucmp (num) {
-    // At this point both numbers have the same sign
-    if (this.length > num.length) return 1;
-    if (this.length < num.length) return -1;
-
-    var res = 0;
-    for (var i = this.length - 1; i >= 0; i--) {
-      var a = this.words[i] | 0;
-      var b = num.words[i] | 0;
-
-      if (a === b) continue;
-      if (a < b) {
-        res = -1;
-      } else if (a > b) {
-        res = 1;
-      }
-      break;
-    }
-    return res;
-  };
-
-  BN.prototype.gtn = function gtn (num) {
-    return this.cmpn(num) === 1;
-  };
-
-  BN.prototype.gt = function gt (num) {
-    return this.cmp(num) === 1;
-  };
-
-  BN.prototype.gten = function gten (num) {
-    return this.cmpn(num) >= 0;
-  };
-
-  BN.prototype.gte = function gte (num) {
-    return this.cmp(num) >= 0;
-  };
-
-  BN.prototype.ltn = function ltn (num) {
-    return this.cmpn(num) === -1;
-  };
-
-  BN.prototype.lt = function lt (num) {
-    return this.cmp(num) === -1;
-  };
-
-  BN.prototype.lten = function lten (num) {
-    return this.cmpn(num) <= 0;
-  };
-
-  BN.prototype.lte = function lte (num) {
-    return this.cmp(num) <= 0;
-  };
-
-  BN.prototype.eqn = function eqn (num) {
-    return this.cmpn(num) === 0;
-  };
-
-  BN.prototype.eq = function eq (num) {
-    return this.cmp(num) === 0;
-  };
-
-  //
-  // A reduce context, could be using montgomery or something better, depending
-  // on the `m` itself.
-  //
-  BN.red = function red (num) {
-    return new Red(num);
-  };
-
-  BN.prototype.toRed = function toRed (ctx) {
-    assert(!this.red, 'Already a number in reduction context');
-    assert(this.negative === 0, 'red works only with positives');
-    return ctx.convertTo(this)._forceRed(ctx);
-  };
-
-  BN.prototype.fromRed = function fromRed () {
-    assert(this.red, 'fromRed works only with numbers in reduction context');
-    return this.red.convertFrom(this);
-  };
-
-  BN.prototype._forceRed = function _forceRed (ctx) {
-    this.red = ctx;
-    return this;
-  };
-
-  BN.prototype.forceRed = function forceRed (ctx) {
-    assert(!this.red, 'Already a number in reduction context');
-    return this._forceRed(ctx);
-  };
-
-  BN.prototype.redAdd = function redAdd (num) {
-    assert(this.red, 'redAdd works only with red numbers');
-    return this.red.add(this, num);
-  };
-
-  BN.prototype.redIAdd = function redIAdd (num) {
-    assert(this.red, 'redIAdd works only with red numbers');
-    return this.red.iadd(this, num);
-  };
-
-  BN.prototype.redSub = function redSub (num) {
-    assert(this.red, 'redSub works only with red numbers');
-    return this.red.sub(this, num);
-  };
-
-  BN.prototype.redISub = function redISub (num) {
-    assert(this.red, 'redISub works only with red numbers');
-    return this.red.isub(this, num);
-  };
-
-  BN.prototype.redShl = function redShl (num) {
-    assert(this.red, 'redShl works only with red numbers');
-    return this.red.shl(this, num);
-  };
-
-  BN.prototype.redMul = function redMul (num) {
-    assert(this.red, 'redMul works only with red numbers');
-    this.red._verify2(this, num);
-    return this.red.mul(this, num);
-  };
-
-  BN.prototype.redIMul = function redIMul (num) {
-    assert(this.red, 'redMul works only with red numbers');
-    this.red._verify2(this, num);
-    return this.red.imul(this, num);
-  };
-
-  BN.prototype.redSqr = function redSqr () {
-    assert(this.red, 'redSqr works only with red numbers');
-    this.red._verify1(this);
-    return this.red.sqr(this);
-  };
-
-  BN.prototype.redISqr = function redISqr () {
-    assert(this.red, 'redISqr works only with red numbers');
-    this.red._verify1(this);
-    return this.red.isqr(this);
-  };
-
-  // Square root over p
-  BN.prototype.redSqrt = function redSqrt () {
-    assert(this.red, 'redSqrt works only with red numbers');
-    this.red._verify1(this);
-    return this.red.sqrt(this);
-  };
-
-  BN.prototype.redInvm = function redInvm () {
-    assert(this.red, 'redInvm works only with red numbers');
-    this.red._verify1(this);
-    return this.red.invm(this);
-  };
-
-  // Return negative clone of `this` % `red modulo`
-  BN.prototype.redNeg = function redNeg () {
-    assert(this.red, 'redNeg works only with red numbers');
-    this.red._verify1(this);
-    return this.red.neg(this);
-  };
-
-  BN.prototype.redPow = function redPow (num) {
-    assert(this.red && !num.red, 'redPow(normalNum)');
-    this.red._verify1(this);
-    return this.red.pow(this, num);
-  };
-
-  // Prime numbers with efficient reduction
-  var primes = {
-    k256: null,
-    p224: null,
-    p192: null,
-    p25519: null
-  };
-
-  // Pseudo-Mersenne prime
-  function MPrime (name, p) {
-    // P = 2 ^ N - K
-    this.name = name;
-    this.p = new BN(p, 16);
-    this.n = this.p.bitLength();
-    this.k = new BN(1).iushln(this.n).isub(this.p);
-
-    this.tmp = this._tmp();
-  }
-
-  MPrime.prototype._tmp = function _tmp () {
-    var tmp = new BN(null);
-    tmp.words = new Array(Math.ceil(this.n / 13));
-    return tmp;
-  };
-
-  MPrime.prototype.ireduce = function ireduce (num) {
-    // Assumes that `num` is less than `P^2`
-    // num = HI * (2 ^ N - K) + HI * K + LO = HI * K + LO (mod P)
-    var r = num;
-    var rlen;
-
-    do {
-      this.split(r, this.tmp);
-      r = this.imulK(r);
-      r = r.iadd(this.tmp);
-      rlen = r.bitLength();
-    } while (rlen > this.n);
-
-    var cmp = rlen < this.n ? -1 : r.ucmp(this.p);
-    if (cmp === 0) {
-      r.words[0] = 0;
-      r.length = 1;
-    } else if (cmp > 0) {
-      r.isub(this.p);
-    } else {
-      if (r.strip !== undefined) {
-        // r is BN v4 instance
-        r.strip();
-      } else {
-        // r is BN v5 instance
-        r._strip();
-      }
-    }
-
-    return r;
-  };
-
-  MPrime.prototype.split = function split (input, out) {
-    input.iushrn(this.n, 0, out);
-  };
-
-  MPrime.prototype.imulK = function imulK (num) {
-    return num.imul(this.k);
-  };
-
-  function K256 () {
-    MPrime.call(
-      this,
-      'k256',
-      'ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff fffffffe fffffc2f');
-  }
-  inherits(K256, MPrime);
-
-  K256.prototype.split = function split (input, output) {
-    // 256 = 9 * 26 + 22
-    var mask = 0x3fffff;
-
-    var outLen = Math.min(input.length, 9);
-    for (var i = 0; i < outLen; i++) {
-      output.words[i] = input.words[i];
-    }
-    output.length = outLen;
-
-    if (input.length <= 9) {
-      input.words[0] = 0;
-      input.length = 1;
-      return;
-    }
-
-    // Shift by 9 limbs
-    var prev = input.words[9];
-    output.words[output.length++] = prev & mask;
-
-    for (i = 10; i < input.length; i++) {
-      var next = input.words[i] | 0;
-      input.words[i - 10] = ((next & mask) << 4) | (prev >>> 22);
-      prev = next;
-    }
-    prev >>>= 22;
-    input.words[i - 10] = prev;
-    if (prev === 0 && input.length > 10) {
-      input.length -= 10;
-    } else {
-      input.length -= 9;
-    }
-  };
-
-  K256.prototype.imulK = function imulK (num) {
-    // K = 0x1000003d1 = [ 0x40, 0x3d1 ]
-    num.words[num.length] = 0;
-    num.words[num.length + 1] = 0;
-    num.length += 2;
-
-    // bounded at: 0x40 * 0x3ffffff + 0x3d0 = 0x100000390
-    var lo = 0;
-    for (var i = 0; i < num.length; i++) {
-      var w = num.words[i] | 0;
-      lo += w * 0x3d1;
-      num.words[i] = lo & 0x3ffffff;
-      lo = w * 0x40 + ((lo / 0x4000000) | 0);
-    }
-
-    // Fast length reduction
-    if (num.words[num.length - 1] === 0) {
-      num.length--;
-      if (num.words[num.length - 1] === 0) {
-        num.length--;
-      }
-    }
-    return num;
-  };
-
-  function P224 () {
-    MPrime.call(
-      this,
-      'p224',
-      'ffffffff ffffffff ffffffff ffffffff 00000000 00000000 00000001');
-  }
-  inherits(P224, MPrime);
-
-  function P192 () {
-    MPrime.call(
-      this,
-      'p192',
-      'ffffffff ffffffff ffffffff fffffffe ffffffff ffffffff');
-  }
-  inherits(P192, MPrime);
-
-  function P25519 () {
-    // 2 ^ 255 - 19
-    MPrime.call(
-      this,
-      '25519',
-      '7fffffffffffffff ffffffffffffffff ffffffffffffffff ffffffffffffffed');
-  }
-  inherits(P25519, MPrime);
-
-  P25519.prototype.imulK = function imulK (num) {
-    // K = 0x13
-    var carry = 0;
-    for (var i = 0; i < num.length; i++) {
-      var hi = (num.words[i] | 0) * 0x13 + carry;
-      var lo = hi & 0x3ffffff;
-      hi >>>= 26;
-
-      num.words[i] = lo;
-      carry = hi;
-    }
-    if (carry !== 0) {
-      num.words[num.length++] = carry;
-    }
-    return num;
-  };
-
-  // Exported mostly for testing purposes, use plain name instead
-  BN._prime = function prime (name) {
-    // Cached version of prime
-    if (primes[name]) return primes[name];
-
-    var prime;
-    if (name === 'k256') {
-      prime = new K256();
-    } else if (name === 'p224') {
-      prime = new P224();
-    } else if (name === 'p192') {
-      prime = new P192();
-    } else if (name === 'p25519') {
-      prime = new P25519();
-    } else {
-      throw new Error('Unknown prime ' + name);
-    }
-    primes[name] = prime;
-
-    return prime;
-  };
-
-  //
-  // Base reduction engine
-  //
-  function Red (m) {
-    if (typeof m === 'string') {
-      var prime = BN._prime(m);
-      this.m = prime.p;
-      this.prime = prime;
-    } else {
-      assert(m.gtn(1), 'modulus must be greater than 1');
-      this.m = m;
-      this.prime = null;
-    }
-  }
-
-  Red.prototype._verify1 = function _verify1 (a) {
-    assert(a.negative === 0, 'red works only with positives');
-    assert(a.red, 'red works only with red numbers');
-  };
-
-  Red.prototype._verify2 = function _verify2 (a, b) {
-    assert((a.negative | b.negative) === 0, 'red works only with positives');
-    assert(a.red && a.red === b.red,
-      'red works only with red numbers');
-  };
-
-  Red.prototype.imod = function imod (a) {
-    if (this.prime) return this.prime.ireduce(a)._forceRed(this);
-    return a.umod(this.m)._forceRed(this);
-  };
-
-  Red.prototype.neg = function neg (a) {
-    if (a.isZero()) {
-      return a.clone();
-    }
-
-    return this.m.sub(a)._forceRed(this);
-  };
-
-  Red.prototype.add = function add (a, b) {
-    this._verify2(a, b);
-
-    var res = a.add(b);
-    if (res.cmp(this.m) >= 0) {
-      res.isub(this.m);
-    }
-    return res._forceRed(this);
-  };
-
-  Red.prototype.iadd = function iadd (a, b) {
-    this._verify2(a, b);
-
-    var res = a.iadd(b);
-    if (res.cmp(this.m) >= 0) {
-      res.isub(this.m);
-    }
-    return res;
-  };
-
-  Red.prototype.sub = function sub (a, b) {
-    this._verify2(a, b);
-
-    var res = a.sub(b);
-    if (res.cmpn(0) < 0) {
-      res.iadd(this.m);
-    }
-    return res._forceRed(this);
-  };
-
-  Red.prototype.isub = function isub (a, b) {
-    this._verify2(a, b);
-
-    var res = a.isub(b);
-    if (res.cmpn(0) < 0) {
-      res.iadd(this.m);
-    }
-    return res;
-  };
-
-  Red.prototype.shl = function shl (a, num) {
-    this._verify1(a);
-    return this.imod(a.ushln(num));
-  };
-
-  Red.prototype.imul = function imul (a, b) {
-    this._verify2(a, b);
-    return this.imod(a.imul(b));
-  };
-
-  Red.prototype.mul = function mul (a, b) {
-    this._verify2(a, b);
-    return this.imod(a.mul(b));
-  };
-
-  Red.prototype.isqr = function isqr (a) {
-    return this.imul(a, a.clone());
-  };
-
-  Red.prototype.sqr = function sqr (a) {
-    return this.mul(a, a);
-  };
-
-  Red.prototype.sqrt = function sqrt (a) {
-    if (a.isZero()) return a.clone();
-
-    var mod3 = this.m.andln(3);
-    assert(mod3 % 2 === 1);
-
-    // Fast case
-    if (mod3 === 3) {
-      var pow = this.m.add(new BN(1)).iushrn(2);
-      return this.pow(a, pow);
-    }
-
-    // Tonelli-Shanks algorithm (Totally unoptimized and slow)
-    //
-    // Find Q and S, that Q * 2 ^ S = (P - 1)
-    var q = this.m.subn(1);
-    var s = 0;
-    while (!q.isZero() && q.andln(1) === 0) {
-      s++;
-      q.iushrn(1);
-    }
-    assert(!q.isZero());
-
-    var one = new BN(1).toRed(this);
-    var nOne = one.redNeg();
-
-    // Find quadratic non-residue
-    // NOTE: Max is such because of generalized Riemann hypothesis.
-    var lpow = this.m.subn(1).iushrn(1);
-    var z = this.m.bitLength();
-    z = new BN(2 * z * z).toRed(this);
-
-    while (this.pow(z, lpow).cmp(nOne) !== 0) {
-      z.redIAdd(nOne);
-    }
-
-    var c = this.pow(z, q);
-    var r = this.pow(a, q.addn(1).iushrn(1));
-    var t = this.pow(a, q);
-    var m = s;
-    while (t.cmp(one) !== 0) {
-      var tmp = t;
-      for (var i = 0; tmp.cmp(one) !== 0; i++) {
-        tmp = tmp.redSqr();
-      }
-      assert(i < m);
-      var b = this.pow(c, new BN(1).iushln(m - i - 1));
-
-      r = r.redMul(b);
-      c = b.redSqr();
-      t = t.redMul(c);
-      m = i;
-    }
-
-    return r;
-  };
-
-  Red.prototype.invm = function invm (a) {
-    var inv = a._invmp(this.m);
-    if (inv.negative !== 0) {
-      inv.negative = 0;
-      return this.imod(inv).redNeg();
-    } else {
-      return this.imod(inv);
-    }
-  };
-
-  Red.prototype.pow = function pow (a, num) {
-    if (num.isZero()) return new BN(1).toRed(this);
-    if (num.cmpn(1) === 0) return a.clone();
-
-    var windowSize = 4;
-    var wnd = new Array(1 << windowSize);
-    wnd[0] = new BN(1).toRed(this);
-    wnd[1] = a;
-    for (var i = 2; i < wnd.length; i++) {
-      wnd[i] = this.mul(wnd[i - 1], a);
-    }
-
-    var res = wnd[0];
-    var current = 0;
-    var currentLen = 0;
-    var start = num.bitLength() % 26;
-    if (start === 0) {
-      start = 26;
-    }
-
-    for (i = num.length - 1; i >= 0; i--) {
-      var word = num.words[i];
-      for (var j = start - 1; j >= 0; j--) {
-        var bit = (word >> j) & 1;
-        if (res !== wnd[0]) {
-          res = this.sqr(res);
-        }
-
-        if (bit === 0 && current === 0) {
-          currentLen = 0;
-          continue;
-        }
-
-        current <<= 1;
-        current |= bit;
-        currentLen++;
-        if (currentLen !== windowSize && (i !== 0 || j !== 0)) continue;
-
-        res = this.mul(res, wnd[current]);
-        currentLen = 0;
-        current = 0;
-      }
-      start = 26;
-    }
-
-    return res;
-  };
-
-  Red.prototype.convertTo = function convertTo (num) {
-    var r = num.umod(this.m);
-
-    return r === num ? r.clone() : r;
-  };
-
-  Red.prototype.convertFrom = function convertFrom (num) {
-    var res = num.clone();
-    res.red = null;
-    return res;
-  };
-
-  //
-  // Montgomery method engine
-  //
-
-  BN.mont = function mont (num) {
-    return new Mont(num);
-  };
-
-  function Mont (m) {
-    Red.call(this, m);
-
-    this.shift = this.m.bitLength();
-    if (this.shift % 26 !== 0) {
-      this.shift += 26 - (this.shift % 26);
-    }
-
-    this.r = new BN(1).iushln(this.shift);
-    this.r2 = this.imod(this.r.sqr());
-    this.rinv = this.r._invmp(this.m);
-
-    this.minv = this.rinv.mul(this.r).isubn(1).div(this.m);
-    this.minv = this.minv.umod(this.r);
-    this.minv = this.r.sub(this.minv);
-  }
-  inherits(Mont, Red);
-
-  Mont.prototype.convertTo = function convertTo (num) {
-    return this.imod(num.ushln(this.shift));
-  };
-
-  Mont.prototype.convertFrom = function convertFrom (num) {
-    var r = this.imod(num.mul(this.rinv));
-    r.red = null;
-    return r;
-  };
-
-  Mont.prototype.imul = function imul (a, b) {
-    if (a.isZero() || b.isZero()) {
-      a.words[0] = 0;
-      a.length = 1;
-      return a;
-    }
-
-    var t = a.imul(b);
-    var c = t.maskn(this.shift).mul(this.minv).imaskn(this.shift).mul(this.m);
-    var u = t.isub(c).iushrn(this.shift);
-    var res = u;
-
-    if (u.cmp(this.m) >= 0) {
-      res = u.isub(this.m);
-    } else if (u.cmpn(0) < 0) {
-      res = u.iadd(this.m);
-    }
-
-    return res._forceRed(this);
-  };
-
-  Mont.prototype.mul = function mul (a, b) {
-    if (a.isZero() || b.isZero()) return new BN(0)._forceRed(this);
-
-    var t = a.mul(b);
-    var c = t.maskn(this.shift).mul(this.minv).imaskn(this.shift).mul(this.m);
-    var u = t.isub(c).iushrn(this.shift);
-    var res = u;
-    if (u.cmp(this.m) >= 0) {
-      res = u.isub(this.m);
-    } else if (u.cmpn(0) < 0) {
-      res = u.iadd(this.m);
-    }
-
-    return res._forceRed(this);
-  };
-
-  Mont.prototype.invm = function invm (a) {
-    // (AR)^-1 * R^2 = (A^-1 * R^-1) * R^2 = A^-1 * R
-    var res = this.imod(a._invmp(this.m).mul(this.r2));
-    return res._forceRed(this);
-  };
-})(module, commonjsGlobal);
-});
-
-const version$4 = "logger/5.6.0";
-
-let _permanentCensorErrors = false;
-let _censorErrors = false;
-const LogLevels = { debug: 1, "default": 2, info: 2, warning: 3, error: 4, off: 5 };
-let _logLevel = LogLevels["default"];
-let _globalLogger = null;
-function _checkNormalize() {
-    try {
-        const missing = [];
-        // Make sure all forms of normalization are supported
-        ["NFD", "NFC", "NFKD", "NFKC"].forEach((form) => {
-            try {
-                if ("test".normalize(form) !== "test") {
-                    throw new Error("bad normalize");
-                }
-                ;
-            }
-            catch (error) {
-                missing.push(form);
-            }
-        });
-        if (missing.length) {
-            throw new Error("missing " + missing.join(", "));
-        }
-        if (String.fromCharCode(0xe9).normalize("NFD") !== String.fromCharCode(0x65, 0x0301)) {
-            throw new Error("broken implementation");
-        }
-    }
-    catch (error) {
-        return error.message;
-    }
-    return null;
-}
-const _normalizeError = _checkNormalize();
-var LogLevel;
-(function (LogLevel) {
-    LogLevel["DEBUG"] = "DEBUG";
-    LogLevel["INFO"] = "INFO";
-    LogLevel["WARNING"] = "WARNING";
-    LogLevel["ERROR"] = "ERROR";
-    LogLevel["OFF"] = "OFF";
-})(LogLevel || (LogLevel = {}));
-var ErrorCode;
-(function (ErrorCode) {
-    ///////////////////
-    // Generic Errors
-    // Unknown Error
-    ErrorCode["UNKNOWN_ERROR"] = "UNKNOWN_ERROR";
-    // Not Implemented
-    ErrorCode["NOT_IMPLEMENTED"] = "NOT_IMPLEMENTED";
-    // Unsupported Operation
-    //   - operation
-    ErrorCode["UNSUPPORTED_OPERATION"] = "UNSUPPORTED_OPERATION";
-    // Network Error (i.e. Ethereum Network, such as an invalid chain ID)
-    //   - event ("noNetwork" is not re-thrown in provider.ready; otherwise thrown)
-    ErrorCode["NETWORK_ERROR"] = "NETWORK_ERROR";
-    // Some sort of bad response from the server
-    ErrorCode["SERVER_ERROR"] = "SERVER_ERROR";
-    // Timeout
-    ErrorCode["TIMEOUT"] = "TIMEOUT";
-    ///////////////////
-    // Operational  Errors
-    // Buffer Overrun
-    ErrorCode["BUFFER_OVERRUN"] = "BUFFER_OVERRUN";
-    // Numeric Fault
-    //   - operation: the operation being executed
-    //   - fault: the reason this faulted
-    ErrorCode["NUMERIC_FAULT"] = "NUMERIC_FAULT";
-    ///////////////////
-    // Argument Errors
-    // Missing new operator to an object
-    //  - name: The name of the class
-    ErrorCode["MISSING_NEW"] = "MISSING_NEW";
-    // Invalid argument (e.g. value is incompatible with type) to a function:
-    //   - argument: The argument name that was invalid
-    //   - value: The value of the argument
-    ErrorCode["INVALID_ARGUMENT"] = "INVALID_ARGUMENT";
-    // Missing argument to a function:
-    //   - count: The number of arguments received
-    //   - expectedCount: The number of arguments expected
-    ErrorCode["MISSING_ARGUMENT"] = "MISSING_ARGUMENT";
-    // Too many arguments
-    //   - count: The number of arguments received
-    //   - expectedCount: The number of arguments expected
-    ErrorCode["UNEXPECTED_ARGUMENT"] = "UNEXPECTED_ARGUMENT";
-    ///////////////////
-    // Blockchain Errors
-    // Call exception
-    //  - transaction: the transaction
-    //  - address?: the contract address
-    //  - args?: The arguments passed into the function
-    //  - method?: The Solidity method signature
-    //  - errorSignature?: The EIP848 error signature
-    //  - errorArgs?: The EIP848 error parameters
-    //  - reason: The reason (only for EIP848 "Error(string)")
-    ErrorCode["CALL_EXCEPTION"] = "CALL_EXCEPTION";
-    // Insufficient funds (< value + gasLimit * gasPrice)
-    //   - transaction: the transaction attempted
-    ErrorCode["INSUFFICIENT_FUNDS"] = "INSUFFICIENT_FUNDS";
-    // Nonce has already been used
-    //   - transaction: the transaction attempted
-    ErrorCode["NONCE_EXPIRED"] = "NONCE_EXPIRED";
-    // The replacement fee for the transaction is too low
-    //   - transaction: the transaction attempted
-    ErrorCode["REPLACEMENT_UNDERPRICED"] = "REPLACEMENT_UNDERPRICED";
-    // The gas limit could not be estimated
-    //   - transaction: the transaction passed to estimateGas
-    ErrorCode["UNPREDICTABLE_GAS_LIMIT"] = "UNPREDICTABLE_GAS_LIMIT";
-    // The transaction was replaced by one with a higher gas price
-    //   - reason: "cancelled", "replaced" or "repriced"
-    //   - cancelled: true if reason == "cancelled" or reason == "replaced")
-    //   - hash: original transaction hash
-    //   - replacement: the full TransactionsResponse for the replacement
-    //   - receipt: the receipt of the replacement
-    ErrorCode["TRANSACTION_REPLACED"] = "TRANSACTION_REPLACED";
-})(ErrorCode || (ErrorCode = {}));
-const HEX = "0123456789abcdef";
-class Logger {
-    constructor(version) {
-        Object.defineProperty(this, "version", {
-            enumerable: true,
-            value: version,
-            writable: false
-        });
-    }
-    _log(logLevel, args) {
-        const level = logLevel.toLowerCase();
-        if (LogLevels[level] == null) {
-            this.throwArgumentError("invalid log level name", "logLevel", logLevel);
-        }
-        if (_logLevel > LogLevels[level]) {
-            return;
-        }
-        console.log.apply(console, args);
-    }
-    debug(...args) {
-        this._log(Logger.levels.DEBUG, args);
-    }
-    info(...args) {
-        this._log(Logger.levels.INFO, args);
-    }
-    warn(...args) {
-        this._log(Logger.levels.WARNING, args);
-    }
-    makeError(message, code, params) {
-        // Errors are being censored
-        if (_censorErrors) {
-            return this.makeError("censored error", code, {});
-        }
-        if (!code) {
-            code = Logger.errors.UNKNOWN_ERROR;
-        }
-        if (!params) {
-            params = {};
-        }
-        const messageDetails = [];
-        Object.keys(params).forEach((key) => {
-            const value = params[key];
-            try {
-                if (value instanceof Uint8Array) {
-                    let hex = "";
-                    for (let i = 0; i < value.length; i++) {
-                        hex += HEX[value[i] >> 4];
-                        hex += HEX[value[i] & 0x0f];
-                    }
-                    messageDetails.push(key + "=Uint8Array(0x" + hex + ")");
-                }
-                else {
-                    messageDetails.push(key + "=" + JSON.stringify(value));
-                }
-            }
-            catch (error) {
-                messageDetails.push(key + "=" + JSON.stringify(params[key].toString()));
-            }
-        });
-        messageDetails.push(`code=${code}`);
-        messageDetails.push(`version=${this.version}`);
-        const reason = message;
-        let url = "";
-        switch (code) {
-            case ErrorCode.NUMERIC_FAULT: {
-                url = "NUMERIC_FAULT";
-                const fault = message;
-                switch (fault) {
-                    case "overflow":
-                    case "underflow":
-                    case "division-by-zero":
-                        url += "-" + fault;
-                        break;
-                    case "negative-power":
-                    case "negative-width":
-                        url += "-unsupported";
-                        break;
-                    case "unbound-bitwise-result":
-                        url += "-unbound-result";
-                        break;
-                }
-                break;
-            }
-            case ErrorCode.CALL_EXCEPTION:
-            case ErrorCode.INSUFFICIENT_FUNDS:
-            case ErrorCode.MISSING_NEW:
-            case ErrorCode.NONCE_EXPIRED:
-            case ErrorCode.REPLACEMENT_UNDERPRICED:
-            case ErrorCode.TRANSACTION_REPLACED:
-            case ErrorCode.UNPREDICTABLE_GAS_LIMIT:
-                url = code;
-                break;
-        }
-        if (url) {
-            message += " [ See: https:/\/links.ethers.org/v5-errors-" + url + " ]";
-        }
-        if (messageDetails.length) {
-            message += " (" + messageDetails.join(", ") + ")";
-        }
-        // @TODO: Any??
-        const error = new Error(message);
-        error.reason = reason;
-        error.code = code;
-        Object.keys(params).forEach(function (key) {
-            error[key] = params[key];
-        });
-        return error;
-    }
-    throwError(message, code, params) {
-        throw this.makeError(message, code, params);
-    }
-    throwArgumentError(message, name, value) {
-        return this.throwError(message, Logger.errors.INVALID_ARGUMENT, {
-            argument: name,
-            value: value
-        });
-    }
-    assert(condition, message, code, params) {
-        if (!!condition) {
-            return;
-        }
-        this.throwError(message, code, params);
-    }
-    assertArgument(condition, message, name, value) {
-        if (!!condition) {
-            return;
-        }
-        this.throwArgumentError(message, name, value);
-    }
-    checkNormalize(message) {
-        if (_normalizeError) {
-            this.throwError("platform missing String.prototype.normalize", Logger.errors.UNSUPPORTED_OPERATION, {
-                operation: "String.prototype.normalize", form: _normalizeError
-            });
-        }
-    }
-    checkSafeUint53(value, message) {
-        if (typeof (value) !== "number") {
-            return;
-        }
-        if (message == null) {
-            message = "value not safe";
-        }
-        if (value < 0 || value >= 0x1fffffffffffff) {
-            this.throwError(message, Logger.errors.NUMERIC_FAULT, {
-                operation: "checkSafeInteger",
-                fault: "out-of-safe-range",
-                value: value
-            });
-        }
-        if (value % 1) {
-            this.throwError(message, Logger.errors.NUMERIC_FAULT, {
-                operation: "checkSafeInteger",
-                fault: "non-integer",
-                value: value
-            });
-        }
-    }
-    checkArgumentCount(count, expectedCount, message) {
-        if (message) {
-            message = ": " + message;
-        }
-        else {
-            message = "";
-        }
-        if (count < expectedCount) {
-            this.throwError("missing argument" + message, Logger.errors.MISSING_ARGUMENT, {
-                count: count,
-                expectedCount: expectedCount
-            });
-        }
-        if (count > expectedCount) {
-            this.throwError("too many arguments" + message, Logger.errors.UNEXPECTED_ARGUMENT, {
-                count: count,
-                expectedCount: expectedCount
-            });
-        }
-    }
-    checkNew(target, kind) {
-        if (target === Object || target == null) {
-            this.throwError("missing new", Logger.errors.MISSING_NEW, { name: kind.name });
-        }
-    }
-    checkAbstract(target, kind) {
-        if (target === kind) {
-            this.throwError("cannot instantiate abstract class " + JSON.stringify(kind.name) + " directly; use a sub-class", Logger.errors.UNSUPPORTED_OPERATION, { name: target.name, operation: "new" });
-        }
-        else if (target === Object || target == null) {
-            this.throwError("missing new", Logger.errors.MISSING_NEW, { name: kind.name });
-        }
-    }
-    static globalLogger() {
-        if (!_globalLogger) {
-            _globalLogger = new Logger(version$4);
-        }
-        return _globalLogger;
-    }
-    static setCensorship(censorship, permanent) {
-        if (!censorship && permanent) {
-            this.globalLogger().throwError("cannot permanently disable censorship", Logger.errors.UNSUPPORTED_OPERATION, {
-                operation: "setCensorship"
-            });
-        }
-        if (_permanentCensorErrors) {
-            if (!censorship) {
-                return;
-            }
-            this.globalLogger().throwError("error censorship permanent", Logger.errors.UNSUPPORTED_OPERATION, {
-                operation: "setCensorship"
-            });
-        }
-        _censorErrors = !!censorship;
-        _permanentCensorErrors = !!permanent;
-    }
-    static setLogLevel(logLevel) {
-        const level = LogLevels[logLevel.toLowerCase()];
-        if (level == null) {
-            Logger.globalLogger().warn("invalid log level - " + logLevel);
-            return;
-        }
-        _logLevel = level;
-    }
-    static from(version) {
-        return new Logger(version);
-    }
-}
-Logger.errors = ErrorCode;
-Logger.levels = LogLevel;
-
-const version$3 = "bytes/5.6.1";
-
-const logger$4 = new Logger(version$3);
-///////////////////////////////
-function isHexable(value) {
-    return !!(value.toHexString);
-}
-function addSlice(array) {
-    if (array.slice) {
-        return array;
-    }
-    array.slice = function () {
-        const args = Array.prototype.slice.call(arguments);
-        return addSlice(new Uint8Array(Array.prototype.slice.apply(array, args)));
-    };
-    return array;
-}
-function isInteger(value) {
-    return (typeof (value) === "number" && value == value && (value % 1) === 0);
-}
-function isBytes(value) {
-    if (value == null) {
-        return false;
-    }
-    if (value.constructor === Uint8Array) {
-        return true;
-    }
-    if (typeof (value) === "string") {
-        return false;
-    }
-    if (!isInteger(value.length) || value.length < 0) {
-        return false;
-    }
-    for (let i = 0; i < value.length; i++) {
-        const v = value[i];
-        if (!isInteger(v) || v < 0 || v >= 256) {
-            return false;
-        }
-    }
-    return true;
-}
-function arrayify(value, options) {
-    if (!options) {
-        options = {};
-    }
-    if (typeof (value) === "number") {
-        logger$4.checkSafeUint53(value, "invalid arrayify value");
-        const result = [];
-        while (value) {
-            result.unshift(value & 0xff);
-            value = parseInt(String(value / 256));
-        }
-        if (result.length === 0) {
-            result.push(0);
-        }
-        return addSlice(new Uint8Array(result));
-    }
-    if (options.allowMissingPrefix && typeof (value) === "string" && value.substring(0, 2) !== "0x") {
-        value = "0x" + value;
-    }
-    if (isHexable(value)) {
-        value = value.toHexString();
-    }
-    if (isHexString(value)) {
-        let hex = value.substring(2);
-        if (hex.length % 2) {
-            if (options.hexPad === "left") {
-                hex = "0" + hex;
-            }
-            else if (options.hexPad === "right") {
-                hex += "0";
-            }
-            else {
-                logger$4.throwArgumentError("hex data is odd-length", "value", value);
-            }
-        }
-        const result = [];
-        for (let i = 0; i < hex.length; i += 2) {
-            result.push(parseInt(hex.substring(i, i + 2), 16));
-        }
-        return addSlice(new Uint8Array(result));
-    }
-    if (isBytes(value)) {
-        return addSlice(new Uint8Array(value));
-    }
-    return logger$4.throwArgumentError("invalid arrayify value", "value", value);
-}
-function isHexString(value, length) {
-    if (typeof (value) !== "string" || !value.match(/^0x[0-9A-Fa-f]*$/)) {
-        return false;
-    }
-    if (length && value.length !== 2 + 2 * length) {
-        return false;
-    }
-    return true;
-}
-const HexCharacters = "0123456789abcdef";
-function hexlify(value, options) {
-    if (!options) {
-        options = {};
-    }
-    if (typeof (value) === "number") {
-        logger$4.checkSafeUint53(value, "invalid hexlify value");
-        let hex = "";
-        while (value) {
-            hex = HexCharacters[value & 0xf] + hex;
-            value = Math.floor(value / 16);
-        }
-        if (hex.length) {
-            if (hex.length % 2) {
-                hex = "0" + hex;
-            }
-            return "0x" + hex;
-        }
-        return "0x00";
-    }
-    if (typeof (value) === "bigint") {
-        value = value.toString(16);
-        if (value.length % 2) {
-            return ("0x0" + value);
-        }
-        return "0x" + value;
-    }
-    if (options.allowMissingPrefix && typeof (value) === "string" && value.substring(0, 2) !== "0x") {
-        value = "0x" + value;
-    }
-    if (isHexable(value)) {
-        return value.toHexString();
-    }
-    if (isHexString(value)) {
-        if (value.length % 2) {
-            if (options.hexPad === "left") {
-                value = "0x0" + value.substring(2);
-            }
-            else if (options.hexPad === "right") {
-                value += "0";
-            }
-            else {
-                logger$4.throwArgumentError("hex data is odd-length", "value", value);
-            }
-        }
-        return value.toLowerCase();
-    }
-    if (isBytes(value)) {
-        let result = "0x";
-        for (let i = 0; i < value.length; i++) {
-            let v = value[i];
-            result += HexCharacters[(v & 0xf0) >> 4] + HexCharacters[v & 0x0f];
-        }
-        return result;
-    }
-    return logger$4.throwArgumentError("invalid hexlify value", "value", value);
-}
-function hexZeroPad(value, length) {
-    if (typeof (value) !== "string") {
-        value = hexlify(value);
-    }
-    else if (!isHexString(value)) {
-        logger$4.throwArgumentError("invalid hex string", "value", value);
-    }
-    if (value.length > 2 * length + 2) {
-        logger$4.throwArgumentError("value out of range", "value", arguments[1]);
-    }
-    while (value.length < 2 * length + 2) {
-        value = "0x0" + value.substring(2);
-    }
-    return value;
-}
-
-const version$2 = "bignumber/5.6.1";
-
-var BN = bn.BN;
-const logger$3 = new Logger(version$2);
-const _constructorGuard$1 = {};
-const MAX_SAFE = 0x1fffffffffffff;
-function isBigNumberish(value) {
-    return (value != null) && (BigNumber.isBigNumber(value) ||
-        (typeof (value) === "number" && (value % 1) === 0) ||
-        (typeof (value) === "string" && !!value.match(/^-?[0-9]+$/)) ||
-        isHexString(value) ||
-        (typeof (value) === "bigint") ||
-        isBytes(value));
-}
-// Only warn about passing 10 into radix once
-let _warnedToStringRadix = false;
-class BigNumber {
-    constructor(constructorGuard, hex) {
-        if (constructorGuard !== _constructorGuard$1) {
-            logger$3.throwError("cannot call constructor directly; use BigNumber.from", Logger.errors.UNSUPPORTED_OPERATION, {
-                operation: "new (BigNumber)"
-            });
-        }
-        this._hex = hex;
-        this._isBigNumber = true;
-        Object.freeze(this);
-    }
-    fromTwos(value) {
-        return toBigNumber(toBN(this).fromTwos(value));
-    }
-    toTwos(value) {
-        return toBigNumber(toBN(this).toTwos(value));
-    }
-    abs() {
-        if (this._hex[0] === "-") {
-            return BigNumber.from(this._hex.substring(1));
-        }
-        return this;
-    }
-    add(other) {
-        return toBigNumber(toBN(this).add(toBN(other)));
-    }
-    sub(other) {
-        return toBigNumber(toBN(this).sub(toBN(other)));
-    }
-    div(other) {
-        const o = BigNumber.from(other);
-        if (o.isZero()) {
-            throwFault$1("division-by-zero", "div");
-        }
-        return toBigNumber(toBN(this).div(toBN(other)));
-    }
-    mul(other) {
-        return toBigNumber(toBN(this).mul(toBN(other)));
-    }
-    mod(other) {
-        const value = toBN(other);
-        if (value.isNeg()) {
-            throwFault$1("division-by-zero", "mod");
-        }
-        return toBigNumber(toBN(this).umod(value));
-    }
-    pow(other) {
-        const value = toBN(other);
-        if (value.isNeg()) {
-            throwFault$1("negative-power", "pow");
-        }
-        return toBigNumber(toBN(this).pow(value));
-    }
-    and(other) {
-        const value = toBN(other);
-        if (this.isNegative() || value.isNeg()) {
-            throwFault$1("unbound-bitwise-result", "and");
-        }
-        return toBigNumber(toBN(this).and(value));
-    }
-    or(other) {
-        const value = toBN(other);
-        if (this.isNegative() || value.isNeg()) {
-            throwFault$1("unbound-bitwise-result", "or");
-        }
-        return toBigNumber(toBN(this).or(value));
-    }
-    xor(other) {
-        const value = toBN(other);
-        if (this.isNegative() || value.isNeg()) {
-            throwFault$1("unbound-bitwise-result", "xor");
-        }
-        return toBigNumber(toBN(this).xor(value));
-    }
-    mask(value) {
-        if (this.isNegative() || value < 0) {
-            throwFault$1("negative-width", "mask");
-        }
-        return toBigNumber(toBN(this).maskn(value));
-    }
-    shl(value) {
-        if (this.isNegative() || value < 0) {
-            throwFault$1("negative-width", "shl");
-        }
-        return toBigNumber(toBN(this).shln(value));
-    }
-    shr(value) {
-        if (this.isNegative() || value < 0) {
-            throwFault$1("negative-width", "shr");
-        }
-        return toBigNumber(toBN(this).shrn(value));
-    }
-    eq(other) {
-        return toBN(this).eq(toBN(other));
-    }
-    lt(other) {
-        return toBN(this).lt(toBN(other));
-    }
-    lte(other) {
-        return toBN(this).lte(toBN(other));
-    }
-    gt(other) {
-        return toBN(this).gt(toBN(other));
-    }
-    gte(other) {
-        return toBN(this).gte(toBN(other));
-    }
-    isNegative() {
-        return (this._hex[0] === "-");
-    }
-    isZero() {
-        return toBN(this).isZero();
-    }
-    toNumber() {
-        try {
-            return toBN(this).toNumber();
-        }
-        catch (error) {
-            throwFault$1("overflow", "toNumber", this.toString());
-        }
-        return null;
-    }
-    toBigInt() {
-        try {
-            return BigInt(this.toString());
-        }
-        catch (e) { }
-        return logger$3.throwError("this platform does not support BigInt", Logger.errors.UNSUPPORTED_OPERATION, {
-            value: this.toString()
-        });
-    }
-    toString() {
-        // Lots of people expect this, which we do not support, so check (See: #889)
-        if (arguments.length > 0) {
-            if (arguments[0] === 10) {
-                if (!_warnedToStringRadix) {
-                    _warnedToStringRadix = true;
-                    logger$3.warn("BigNumber.toString does not accept any parameters; base-10 is assumed");
-                }
-            }
-            else if (arguments[0] === 16) {
-                logger$3.throwError("BigNumber.toString does not accept any parameters; use bigNumber.toHexString()", Logger.errors.UNEXPECTED_ARGUMENT, {});
-            }
-            else {
-                logger$3.throwError("BigNumber.toString does not accept parameters", Logger.errors.UNEXPECTED_ARGUMENT, {});
-            }
-        }
-        return toBN(this).toString(10);
-    }
-    toHexString() {
-        return this._hex;
-    }
-    toJSON(key) {
-        return { type: "BigNumber", hex: this.toHexString() };
-    }
-    static from(value) {
-        if (value instanceof BigNumber) {
-            return value;
-        }
-        if (typeof (value) === "string") {
-            if (value.match(/^-?0x[0-9a-f]+$/i)) {
-                return new BigNumber(_constructorGuard$1, toHex(value));
-            }
-            if (value.match(/^-?[0-9]+$/)) {
-                return new BigNumber(_constructorGuard$1, toHex(new BN(value)));
-            }
-            return logger$3.throwArgumentError("invalid BigNumber string", "value", value);
-        }
-        if (typeof (value) === "number") {
-            if (value % 1) {
-                throwFault$1("underflow", "BigNumber.from", value);
-            }
-            if (value >= MAX_SAFE || value <= -MAX_SAFE) {
-                throwFault$1("overflow", "BigNumber.from", value);
-            }
-            return BigNumber.from(String(value));
-        }
-        const anyValue = value;
-        if (typeof (anyValue) === "bigint") {
-            return BigNumber.from(anyValue.toString());
-        }
-        if (isBytes(anyValue)) {
-            return BigNumber.from(hexlify(anyValue));
-        }
-        if (anyValue) {
-            // Hexable interface (takes priority)
-            if (anyValue.toHexString) {
-                const hex = anyValue.toHexString();
-                if (typeof (hex) === "string") {
-                    return BigNumber.from(hex);
-                }
-            }
-            else {
-                // For now, handle legacy JSON-ified values (goes away in v6)
-                let hex = anyValue._hex;
-                // New-form JSON
-                if (hex == null && anyValue.type === "BigNumber") {
-                    hex = anyValue.hex;
-                }
-                if (typeof (hex) === "string") {
-                    if (isHexString(hex) || (hex[0] === "-" && isHexString(hex.substring(1)))) {
-                        return BigNumber.from(hex);
-                    }
-                }
-            }
-        }
-        return logger$3.throwArgumentError("invalid BigNumber value", "value", value);
-    }
-    static isBigNumber(value) {
-        return !!(value && value._isBigNumber);
-    }
-}
-// Normalize the hex string
-function toHex(value) {
-    // For BN, call on the hex string
-    if (typeof (value) !== "string") {
-        return toHex(value.toString(16));
-    }
-    // If negative, prepend the negative sign to the normalized positive value
-    if (value[0] === "-") {
-        // Strip off the negative sign
-        value = value.substring(1);
-        // Cannot have multiple negative signs (e.g. "--0x04")
-        if (value[0] === "-") {
-            logger$3.throwArgumentError("invalid hex", "value", value);
-        }
-        // Call toHex on the positive component
-        value = toHex(value);
-        // Do not allow "-0x00"
-        if (value === "0x00") {
-            return value;
-        }
-        // Negate the value
-        return "-" + value;
-    }
-    // Add a "0x" prefix if missing
-    if (value.substring(0, 2) !== "0x") {
-        value = "0x" + value;
-    }
-    // Normalize zero
-    if (value === "0x") {
-        return "0x00";
-    }
-    // Make the string even length
-    if (value.length % 2) {
-        value = "0x0" + value.substring(2);
-    }
-    // Trim to smallest even-length string
-    while (value.length > 4 && value.substring(0, 4) === "0x00") {
-        value = "0x" + value.substring(4);
-    }
-    return value;
-}
-function toBigNumber(value) {
-    return BigNumber.from(toHex(value));
-}
-function toBN(value) {
-    const hex = BigNumber.from(value).toHexString();
-    if (hex[0] === "-") {
-        return (new BN("-" + hex.substring(3), 16));
-    }
-    return new BN(hex.substring(2), 16);
-}
-function throwFault$1(fault, operation, value) {
-    const params = { fault: fault, operation: operation };
-    if (value != null) {
-        params.value = value;
-    }
-    return logger$3.throwError(fault, Logger.errors.NUMERIC_FAULT, params);
-}
-// value should have no prefix
-function _base36To16(value) {
-    return (new BN(value, 36)).toString(16);
-}
-
-const logger$2 = new Logger(version$2);
-const _constructorGuard = {};
-const Zero = BigNumber.from(0);
-const NegativeOne = BigNumber.from(-1);
-function throwFault(message, fault, operation, value) {
-    const params = { fault: fault, operation: operation };
-    if (value !== undefined) {
-        params.value = value;
-    }
-    return logger$2.throwError(message, Logger.errors.NUMERIC_FAULT, params);
-}
-// Constant to pull zeros from for multipliers
-let zeros = "0";
-while (zeros.length < 256) {
-    zeros += zeros;
-}
-// Returns a string "1" followed by decimal "0"s
-function getMultiplier(decimals) {
-    if (typeof (decimals) !== "number") {
-        try {
-            decimals = BigNumber.from(decimals).toNumber();
-        }
-        catch (e) { }
-    }
-    if (typeof (decimals) === "number" && decimals >= 0 && decimals <= 256 && !(decimals % 1)) {
-        return ("1" + zeros.substring(0, decimals));
-    }
-    return logger$2.throwArgumentError("invalid decimal size", "decimals", decimals);
-}
-function formatFixed(value, decimals) {
-    if (decimals == null) {
-        decimals = 0;
-    }
-    const multiplier = getMultiplier(decimals);
-    // Make sure wei is a big number (convert as necessary)
-    value = BigNumber.from(value);
-    const negative = value.lt(Zero);
-    if (negative) {
-        value = value.mul(NegativeOne);
-    }
-    let fraction = value.mod(multiplier).toString();
-    while (fraction.length < multiplier.length - 1) {
-        fraction = "0" + fraction;
-    }
-    // Strip training 0
-    fraction = fraction.match(/^([0-9]*[1-9]|0)(0*)/)[1];
-    const whole = value.div(multiplier).toString();
-    if (multiplier.length === 1) {
-        value = whole;
-    }
-    else {
-        value = whole + "." + fraction;
-    }
-    if (negative) {
-        value = "-" + value;
-    }
-    return value;
-}
-function parseFixed(value, decimals) {
-    if (decimals == null) {
-        decimals = 0;
-    }
-    const multiplier = getMultiplier(decimals);
-    if (typeof (value) !== "string" || !value.match(/^-?[0-9.]+$/)) {
-        logger$2.throwArgumentError("invalid decimal value", "value", value);
-    }
-    // Is it negative?
-    const negative = (value.substring(0, 1) === "-");
-    if (negative) {
-        value = value.substring(1);
-    }
-    if (value === ".") {
-        logger$2.throwArgumentError("missing value", "value", value);
-    }
-    // Split it into a whole and fractional part
-    const comps = value.split(".");
-    if (comps.length > 2) {
-        logger$2.throwArgumentError("too many decimal points", "value", value);
-    }
-    let whole = comps[0], fraction = comps[1];
-    if (!whole) {
-        whole = "0";
-    }
-    if (!fraction) {
-        fraction = "0";
-    }
-    // Trim trailing zeros
-    while (fraction[fraction.length - 1] === "0") {
-        fraction = fraction.substring(0, fraction.length - 1);
-    }
-    // Check the fraction doesn't exceed our decimals size
-    if (fraction.length > multiplier.length - 1) {
-        throwFault("fractional component exceeds decimals", "underflow", "parseFixed");
-    }
-    // If decimals is 0, we have an empty string for fraction
-    if (fraction === "") {
-        fraction = "0";
-    }
-    // Fully pad the string with zeros to get to wei
-    while (fraction.length < multiplier.length - 1) {
-        fraction += "0";
-    }
-    const wholeValue = BigNumber.from(whole);
-    const fractionValue = BigNumber.from(fraction);
-    let wei = (wholeValue.mul(multiplier)).add(fractionValue);
-    if (negative) {
-        wei = wei.mul(NegativeOne);
-    }
-    return wei;
-}
-class FixedFormat {
-    constructor(constructorGuard, signed, width, decimals) {
-        if (constructorGuard !== _constructorGuard) {
-            logger$2.throwError("cannot use FixedFormat constructor; use FixedFormat.from", Logger.errors.UNSUPPORTED_OPERATION, {
-                operation: "new FixedFormat"
-            });
-        }
-        this.signed = signed;
-        this.width = width;
-        this.decimals = decimals;
-        this.name = (signed ? "" : "u") + "fixed" + String(width) + "x" + String(decimals);
-        this._multiplier = getMultiplier(decimals);
-        Object.freeze(this);
-    }
-    static from(value) {
-        if (value instanceof FixedFormat) {
-            return value;
-        }
-        if (typeof (value) === "number") {
-            value = `fixed128x${value}`;
-        }
-        let signed = true;
-        let width = 128;
-        let decimals = 18;
-        if (typeof (value) === "string") {
-            if (value === "fixed") ;
-            else if (value === "ufixed") {
-                signed = false;
-            }
-            else {
-                const match = value.match(/^(u?)fixed([0-9]+)x([0-9]+)$/);
-                if (!match) {
-                    logger$2.throwArgumentError("invalid fixed format", "format", value);
-                }
-                signed = (match[1] !== "u");
-                width = parseInt(match[2]);
-                decimals = parseInt(match[3]);
-            }
-        }
-        else if (value) {
-            const check = (key, type, defaultValue) => {
-                if (value[key] == null) {
-                    return defaultValue;
-                }
-                if (typeof (value[key]) !== type) {
-                    logger$2.throwArgumentError("invalid fixed format (" + key + " not " + type + ")", "format." + key, value[key]);
-                }
-                return value[key];
-            };
-            signed = check("signed", "boolean", signed);
-            width = check("width", "number", width);
-            decimals = check("decimals", "number", decimals);
-        }
-        if (width % 8) {
-            logger$2.throwArgumentError("invalid fixed format width (not byte aligned)", "format.width", width);
-        }
-        if (decimals > 80) {
-            logger$2.throwArgumentError("invalid fixed format (decimals too large)", "format.decimals", decimals);
-        }
-        return new FixedFormat(_constructorGuard, signed, width, decimals);
-    }
-}
-class FixedNumber {
-    constructor(constructorGuard, hex, value, format) {
-        if (constructorGuard !== _constructorGuard) {
-            logger$2.throwError("cannot use FixedNumber constructor; use FixedNumber.from", Logger.errors.UNSUPPORTED_OPERATION, {
-                operation: "new FixedFormat"
-            });
-        }
-        this.format = format;
-        this._hex = hex;
-        this._value = value;
-        this._isFixedNumber = true;
-        Object.freeze(this);
-    }
-    _checkFormat(other) {
-        if (this.format.name !== other.format.name) {
-            logger$2.throwArgumentError("incompatible format; use fixedNumber.toFormat", "other", other);
-        }
-    }
-    addUnsafe(other) {
-        this._checkFormat(other);
-        const a = parseFixed(this._value, this.format.decimals);
-        const b = parseFixed(other._value, other.format.decimals);
-        return FixedNumber.fromValue(a.add(b), this.format.decimals, this.format);
-    }
-    subUnsafe(other) {
-        this._checkFormat(other);
-        const a = parseFixed(this._value, this.format.decimals);
-        const b = parseFixed(other._value, other.format.decimals);
-        return FixedNumber.fromValue(a.sub(b), this.format.decimals, this.format);
-    }
-    mulUnsafe(other) {
-        this._checkFormat(other);
-        const a = parseFixed(this._value, this.format.decimals);
-        const b = parseFixed(other._value, other.format.decimals);
-        return FixedNumber.fromValue(a.mul(b).div(this.format._multiplier), this.format.decimals, this.format);
-    }
-    divUnsafe(other) {
-        this._checkFormat(other);
-        const a = parseFixed(this._value, this.format.decimals);
-        const b = parseFixed(other._value, other.format.decimals);
-        return FixedNumber.fromValue(a.mul(this.format._multiplier).div(b), this.format.decimals, this.format);
-    }
-    floor() {
-        const comps = this.toString().split(".");
-        if (comps.length === 1) {
-            comps.push("0");
-        }
-        let result = FixedNumber.from(comps[0], this.format);
-        const hasFraction = !comps[1].match(/^(0*)$/);
-        if (this.isNegative() && hasFraction) {
-            result = result.subUnsafe(ONE.toFormat(result.format));
-        }
-        return result;
-    }
-    ceiling() {
-        const comps = this.toString().split(".");
-        if (comps.length === 1) {
-            comps.push("0");
-        }
-        let result = FixedNumber.from(comps[0], this.format);
-        const hasFraction = !comps[1].match(/^(0*)$/);
-        if (!this.isNegative() && hasFraction) {
-            result = result.addUnsafe(ONE.toFormat(result.format));
-        }
-        return result;
-    }
-    // @TODO: Support other rounding algorithms
-    round(decimals) {
-        if (decimals == null) {
-            decimals = 0;
-        }
-        // If we are already in range, we're done
-        const comps = this.toString().split(".");
-        if (comps.length === 1) {
-            comps.push("0");
-        }
-        if (decimals < 0 || decimals > 80 || (decimals % 1)) {
-            logger$2.throwArgumentError("invalid decimal count", "decimals", decimals);
-        }
-        if (comps[1].length <= decimals) {
-            return this;
-        }
-        const factor = FixedNumber.from("1" + zeros.substring(0, decimals), this.format);
-        const bump = BUMP.toFormat(this.format);
-        return this.mulUnsafe(factor).addUnsafe(bump).floor().divUnsafe(factor);
-    }
-    isZero() {
-        return (this._value === "0.0" || this._value === "0");
-    }
-    isNegative() {
-        return (this._value[0] === "-");
-    }
-    toString() { return this._value; }
-    toHexString(width) {
-        if (width == null) {
-            return this._hex;
-        }
-        if (width % 8) {
-            logger$2.throwArgumentError("invalid byte width", "width", width);
-        }
-        const hex = BigNumber.from(this._hex).fromTwos(this.format.width).toTwos(width).toHexString();
-        return hexZeroPad(hex, width / 8);
-    }
-    toUnsafeFloat() { return parseFloat(this.toString()); }
-    toFormat(format) {
-        return FixedNumber.fromString(this._value, format);
-    }
-    static fromValue(value, decimals, format) {
-        // If decimals looks more like a format, and there is no format, shift the parameters
-        if (format == null && decimals != null && !isBigNumberish(decimals)) {
-            format = decimals;
-            decimals = null;
-        }
-        if (decimals == null) {
-            decimals = 0;
-        }
-        if (format == null) {
-            format = "fixed";
-        }
-        return FixedNumber.fromString(formatFixed(value, decimals), FixedFormat.from(format));
-    }
-    static fromString(value, format) {
-        if (format == null) {
-            format = "fixed";
-        }
-        const fixedFormat = FixedFormat.from(format);
-        const numeric = parseFixed(value, fixedFormat.decimals);
-        if (!fixedFormat.signed && numeric.lt(Zero)) {
-            throwFault("unsigned value cannot be negative", "overflow", "value", value);
-        }
-        let hex = null;
-        if (fixedFormat.signed) {
-            hex = numeric.toTwos(fixedFormat.width).toHexString();
-        }
-        else {
-            hex = numeric.toHexString();
-            hex = hexZeroPad(hex, fixedFormat.width / 8);
-        }
-        const decimal = formatFixed(numeric, fixedFormat.decimals);
-        return new FixedNumber(_constructorGuard, hex, decimal, fixedFormat);
-    }
-    static fromBytes(value, format) {
-        if (format == null) {
-            format = "fixed";
-        }
-        const fixedFormat = FixedFormat.from(format);
-        if (arrayify(value).length > fixedFormat.width / 8) {
-            throw new Error("overflow");
-        }
-        let numeric = BigNumber.from(value);
-        if (fixedFormat.signed) {
-            numeric = numeric.fromTwos(fixedFormat.width);
-        }
-        const hex = numeric.toTwos((fixedFormat.signed ? 0 : 1) + fixedFormat.width).toHexString();
-        const decimal = formatFixed(numeric, fixedFormat.decimals);
-        return new FixedNumber(_constructorGuard, hex, decimal, fixedFormat);
-    }
-    static from(value, format) {
-        if (typeof (value) === "string") {
-            return FixedNumber.fromString(value, format);
-        }
-        if (isBytes(value)) {
-            return FixedNumber.fromBytes(value, format);
-        }
-        try {
-            return FixedNumber.fromValue(value, 0, format);
-        }
-        catch (error) {
-            // Allow NUMERIC_FAULT to bubble up
-            if (error.code !== Logger.errors.INVALID_ARGUMENT) {
-                throw error;
-            }
-        }
-        return logger$2.throwArgumentError("invalid FixedNumber value", "value", value);
-    }
-    static isFixedNumber(value) {
-        return !!(value && value._isFixedNumber);
-    }
-}
-const ONE = FixedNumber.from(1);
-const BUMP = FixedNumber.from("0.5");
-
-/**
- * [js-sha3]{@link https://github.com/emn178/js-sha3}
- *
- * @version 0.8.0
- * @author Chen, Yi-Cyuan [emn178@gmail.com]
- * @copyright Chen, Yi-Cyuan 2015-2018
- * @license MIT
- */
-
-var sha3 = createCommonjsModule(function (module) {
-/*jslint bitwise: true */
-(function () {
-
-  var INPUT_ERROR = 'input is invalid type';
-  var FINALIZE_ERROR = 'finalize already called';
-  var WINDOW = typeof window === 'object';
-  var root = WINDOW ? window : {};
-  if (root.JS_SHA3_NO_WINDOW) {
-    WINDOW = false;
-  }
-  var WEB_WORKER = !WINDOW && typeof self === 'object';
-  var NODE_JS = !root.JS_SHA3_NO_NODE_JS && typeof process === 'object' && process.versions && process.versions.node;
-  if (NODE_JS) {
-    root = commonjsGlobal;
-  } else if (WEB_WORKER) {
-    root = self;
-  }
-  var COMMON_JS = !root.JS_SHA3_NO_COMMON_JS && 'object' === 'object' && module.exports;
-  var ARRAY_BUFFER = !root.JS_SHA3_NO_ARRAY_BUFFER && typeof ArrayBuffer !== 'undefined';
-  var HEX_CHARS = '0123456789abcdef'.split('');
-  var SHAKE_PADDING = [31, 7936, 2031616, 520093696];
-  var CSHAKE_PADDING = [4, 1024, 262144, 67108864];
-  var KECCAK_PADDING = [1, 256, 65536, 16777216];
-  var PADDING = [6, 1536, 393216, 100663296];
-  var SHIFT = [0, 8, 16, 24];
-  var RC = [1, 0, 32898, 0, 32906, 2147483648, 2147516416, 2147483648, 32907, 0, 2147483649,
-    0, 2147516545, 2147483648, 32777, 2147483648, 138, 0, 136, 0, 2147516425, 0,
-    2147483658, 0, 2147516555, 0, 139, 2147483648, 32905, 2147483648, 32771,
-    2147483648, 32770, 2147483648, 128, 2147483648, 32778, 0, 2147483658, 2147483648,
-    2147516545, 2147483648, 32896, 2147483648, 2147483649, 0, 2147516424, 2147483648];
-  var BITS = [224, 256, 384, 512];
-  var SHAKE_BITS = [128, 256];
-  var OUTPUT_TYPES = ['hex', 'buffer', 'arrayBuffer', 'array', 'digest'];
-  var CSHAKE_BYTEPAD = {
-    '128': 168,
-    '256': 136
-  };
-
-  if (root.JS_SHA3_NO_NODE_JS || !Array.isArray) {
-    Array.isArray = function (obj) {
-      return Object.prototype.toString.call(obj) === '[object Array]';
-    };
-  }
-
-  if (ARRAY_BUFFER && (root.JS_SHA3_NO_ARRAY_BUFFER_IS_VIEW || !ArrayBuffer.isView)) {
-    ArrayBuffer.isView = function (obj) {
-      return typeof obj === 'object' && obj.buffer && obj.buffer.constructor === ArrayBuffer;
-    };
-  }
-
-  var createOutputMethod = function (bits, padding, outputType) {
-    return function (message) {
-      return new Keccak(bits, padding, bits).update(message)[outputType]();
-    };
-  };
-
-  var createShakeOutputMethod = function (bits, padding, outputType) {
-    return function (message, outputBits) {
-      return new Keccak(bits, padding, outputBits).update(message)[outputType]();
-    };
-  };
-
-  var createCshakeOutputMethod = function (bits, padding, outputType) {
-    return function (message, outputBits, n, s) {
-      return methods['cshake' + bits].update(message, outputBits, n, s)[outputType]();
-    };
-  };
-
-  var createKmacOutputMethod = function (bits, padding, outputType) {
-    return function (key, message, outputBits, s) {
-      return methods['kmac' + bits].update(key, message, outputBits, s)[outputType]();
-    };
-  };
-
-  var createOutputMethods = function (method, createMethod, bits, padding) {
-    for (var i = 0; i < OUTPUT_TYPES.length; ++i) {
-      var type = OUTPUT_TYPES[i];
-      method[type] = createMethod(bits, padding, type);
-    }
-    return method;
-  };
-
-  var createMethod = function (bits, padding) {
-    var method = createOutputMethod(bits, padding, 'hex');
-    method.create = function () {
-      return new Keccak(bits, padding, bits);
-    };
-    method.update = function (message) {
-      return method.create().update(message);
-    };
-    return createOutputMethods(method, createOutputMethod, bits, padding);
-  };
-
-  var createShakeMethod = function (bits, padding) {
-    var method = createShakeOutputMethod(bits, padding, 'hex');
-    method.create = function (outputBits) {
-      return new Keccak(bits, padding, outputBits);
-    };
-    method.update = function (message, outputBits) {
-      return method.create(outputBits).update(message);
-    };
-    return createOutputMethods(method, createShakeOutputMethod, bits, padding);
-  };
-
-  var createCshakeMethod = function (bits, padding) {
-    var w = CSHAKE_BYTEPAD[bits];
-    var method = createCshakeOutputMethod(bits, padding, 'hex');
-    method.create = function (outputBits, n, s) {
-      if (!n && !s) {
-        return methods['shake' + bits].create(outputBits);
-      } else {
-        return new Keccak(bits, padding, outputBits).bytepad([n, s], w);
-      }
-    };
-    method.update = function (message, outputBits, n, s) {
-      return method.create(outputBits, n, s).update(message);
-    };
-    return createOutputMethods(method, createCshakeOutputMethod, bits, padding);
-  };
-
-  var createKmacMethod = function (bits, padding) {
-    var w = CSHAKE_BYTEPAD[bits];
-    var method = createKmacOutputMethod(bits, padding, 'hex');
-    method.create = function (key, outputBits, s) {
-      return new Kmac(bits, padding, outputBits).bytepad(['KMAC', s], w).bytepad([key], w);
-    };
-    method.update = function (key, message, outputBits, s) {
-      return method.create(key, outputBits, s).update(message);
-    };
-    return createOutputMethods(method, createKmacOutputMethod, bits, padding);
-  };
-
-  var algorithms = [
-    { name: 'keccak', padding: KECCAK_PADDING, bits: BITS, createMethod: createMethod },
-    { name: 'sha3', padding: PADDING, bits: BITS, createMethod: createMethod },
-    { name: 'shake', padding: SHAKE_PADDING, bits: SHAKE_BITS, createMethod: createShakeMethod },
-    { name: 'cshake', padding: CSHAKE_PADDING, bits: SHAKE_BITS, createMethod: createCshakeMethod },
-    { name: 'kmac', padding: CSHAKE_PADDING, bits: SHAKE_BITS, createMethod: createKmacMethod }
-  ];
-
-  var methods = {}, methodNames = [];
-
-  for (var i = 0; i < algorithms.length; ++i) {
-    var algorithm = algorithms[i];
-    var bits = algorithm.bits;
-    for (var j = 0; j < bits.length; ++j) {
-      var methodName = algorithm.name + '_' + bits[j];
-      methodNames.push(methodName);
-      methods[methodName] = algorithm.createMethod(bits[j], algorithm.padding);
-      if (algorithm.name !== 'sha3') {
-        var newMethodName = algorithm.name + bits[j];
-        methodNames.push(newMethodName);
-        methods[newMethodName] = methods[methodName];
-      }
-    }
-  }
-
-  function Keccak(bits, padding, outputBits) {
-    this.blocks = [];
-    this.s = [];
-    this.padding = padding;
-    this.outputBits = outputBits;
-    this.reset = true;
-    this.finalized = false;
-    this.block = 0;
-    this.start = 0;
-    this.blockCount = (1600 - (bits << 1)) >> 5;
-    this.byteCount = this.blockCount << 2;
-    this.outputBlocks = outputBits >> 5;
-    this.extraBytes = (outputBits & 31) >> 3;
-
-    for (var i = 0; i < 50; ++i) {
-      this.s[i] = 0;
-    }
-  }
-
-  Keccak.prototype.update = function (message) {
-    if (this.finalized) {
-      throw new Error(FINALIZE_ERROR);
-    }
-    var notString, type = typeof message;
-    if (type !== 'string') {
-      if (type === 'object') {
-        if (message === null) {
-          throw new Error(INPUT_ERROR);
-        } else if (ARRAY_BUFFER && message.constructor === ArrayBuffer) {
-          message = new Uint8Array(message);
-        } else if (!Array.isArray(message)) {
-          if (!ARRAY_BUFFER || !ArrayBuffer.isView(message)) {
-            throw new Error(INPUT_ERROR);
-          }
-        }
-      } else {
-        throw new Error(INPUT_ERROR);
-      }
-      notString = true;
-    }
-    var blocks = this.blocks, byteCount = this.byteCount, length = message.length,
-      blockCount = this.blockCount, index = 0, s = this.s, i, code;
-
-    while (index < length) {
-      if (this.reset) {
-        this.reset = false;
-        blocks[0] = this.block;
-        for (i = 1; i < blockCount + 1; ++i) {
-          blocks[i] = 0;
-        }
-      }
-      if (notString) {
-        for (i = this.start; index < length && i < byteCount; ++index) {
-          blocks[i >> 2] |= message[index] << SHIFT[i++ & 3];
-        }
-      } else {
-        for (i = this.start; index < length && i < byteCount; ++index) {
-          code = message.charCodeAt(index);
-          if (code < 0x80) {
-            blocks[i >> 2] |= code << SHIFT[i++ & 3];
-          } else if (code < 0x800) {
-            blocks[i >> 2] |= (0xc0 | (code >> 6)) << SHIFT[i++ & 3];
-            blocks[i >> 2] |= (0x80 | (code & 0x3f)) << SHIFT[i++ & 3];
-          } else if (code < 0xd800 || code >= 0xe000) {
-            blocks[i >> 2] |= (0xe0 | (code >> 12)) << SHIFT[i++ & 3];
-            blocks[i >> 2] |= (0x80 | ((code >> 6) & 0x3f)) << SHIFT[i++ & 3];
-            blocks[i >> 2] |= (0x80 | (code & 0x3f)) << SHIFT[i++ & 3];
-          } else {
-            code = 0x10000 + (((code & 0x3ff) << 10) | (message.charCodeAt(++index) & 0x3ff));
-            blocks[i >> 2] |= (0xf0 | (code >> 18)) << SHIFT[i++ & 3];
-            blocks[i >> 2] |= (0x80 | ((code >> 12) & 0x3f)) << SHIFT[i++ & 3];
-            blocks[i >> 2] |= (0x80 | ((code >> 6) & 0x3f)) << SHIFT[i++ & 3];
-            blocks[i >> 2] |= (0x80 | (code & 0x3f)) << SHIFT[i++ & 3];
-          }
-        }
-      }
-      this.lastByteIndex = i;
-      if (i >= byteCount) {
-        this.start = i - byteCount;
-        this.block = blocks[blockCount];
-        for (i = 0; i < blockCount; ++i) {
-          s[i] ^= blocks[i];
-        }
-        f(s);
-        this.reset = true;
-      } else {
-        this.start = i;
-      }
-    }
-    return this;
-  };
-
-  Keccak.prototype.encode = function (x, right) {
-    var o = x & 255, n = 1;
-    var bytes = [o];
-    x = x >> 8;
-    o = x & 255;
-    while (o > 0) {
-      bytes.unshift(o);
-      x = x >> 8;
-      o = x & 255;
-      ++n;
-    }
-    if (right) {
-      bytes.push(n);
-    } else {
-      bytes.unshift(n);
-    }
-    this.update(bytes);
-    return bytes.length;
-  };
-
-  Keccak.prototype.encodeString = function (str) {
-    var notString, type = typeof str;
-    if (type !== 'string') {
-      if (type === 'object') {
-        if (str === null) {
-          throw new Error(INPUT_ERROR);
-        } else if (ARRAY_BUFFER && str.constructor === ArrayBuffer) {
-          str = new Uint8Array(str);
-        } else if (!Array.isArray(str)) {
-          if (!ARRAY_BUFFER || !ArrayBuffer.isView(str)) {
-            throw new Error(INPUT_ERROR);
-          }
-        }
-      } else {
-        throw new Error(INPUT_ERROR);
-      }
-      notString = true;
-    }
-    var bytes = 0, length = str.length;
-    if (notString) {
-      bytes = length;
-    } else {
-      for (var i = 0; i < str.length; ++i) {
-        var code = str.charCodeAt(i);
-        if (code < 0x80) {
-          bytes += 1;
-        } else if (code < 0x800) {
-          bytes += 2;
-        } else if (code < 0xd800 || code >= 0xe000) {
-          bytes += 3;
-        } else {
-          code = 0x10000 + (((code & 0x3ff) << 10) | (str.charCodeAt(++i) & 0x3ff));
-          bytes += 4;
-        }
-      }
-    }
-    bytes += this.encode(bytes * 8);
-    this.update(str);
-    return bytes;
-  };
-
-  Keccak.prototype.bytepad = function (strs, w) {
-    var bytes = this.encode(w);
-    for (var i = 0; i < strs.length; ++i) {
-      bytes += this.encodeString(strs[i]);
-    }
-    var paddingBytes = w - bytes % w;
-    var zeros = [];
-    zeros.length = paddingBytes;
-    this.update(zeros);
-    return this;
-  };
-
-  Keccak.prototype.finalize = function () {
-    if (this.finalized) {
-      return;
-    }
-    this.finalized = true;
-    var blocks = this.blocks, i = this.lastByteIndex, blockCount = this.blockCount, s = this.s;
-    blocks[i >> 2] |= this.padding[i & 3];
-    if (this.lastByteIndex === this.byteCount) {
-      blocks[0] = blocks[blockCount];
-      for (i = 1; i < blockCount + 1; ++i) {
-        blocks[i] = 0;
-      }
-    }
-    blocks[blockCount - 1] |= 0x80000000;
-    for (i = 0; i < blockCount; ++i) {
-      s[i] ^= blocks[i];
-    }
-    f(s);
-  };
-
-  Keccak.prototype.toString = Keccak.prototype.hex = function () {
-    this.finalize();
-
-    var blockCount = this.blockCount, s = this.s, outputBlocks = this.outputBlocks,
-      extraBytes = this.extraBytes, i = 0, j = 0;
-    var hex = '', block;
-    while (j < outputBlocks) {
-      for (i = 0; i < blockCount && j < outputBlocks; ++i, ++j) {
-        block = s[i];
-        hex += HEX_CHARS[(block >> 4) & 0x0F] + HEX_CHARS[block & 0x0F] +
-          HEX_CHARS[(block >> 12) & 0x0F] + HEX_CHARS[(block >> 8) & 0x0F] +
-          HEX_CHARS[(block >> 20) & 0x0F] + HEX_CHARS[(block >> 16) & 0x0F] +
-          HEX_CHARS[(block >> 28) & 0x0F] + HEX_CHARS[(block >> 24) & 0x0F];
-      }
-      if (j % blockCount === 0) {
-        f(s);
-        i = 0;
-      }
-    }
-    if (extraBytes) {
-      block = s[i];
-      hex += HEX_CHARS[(block >> 4) & 0x0F] + HEX_CHARS[block & 0x0F];
-      if (extraBytes > 1) {
-        hex += HEX_CHARS[(block >> 12) & 0x0F] + HEX_CHARS[(block >> 8) & 0x0F];
-      }
-      if (extraBytes > 2) {
-        hex += HEX_CHARS[(block >> 20) & 0x0F] + HEX_CHARS[(block >> 16) & 0x0F];
-      }
-    }
-    return hex;
-  };
-
-  Keccak.prototype.arrayBuffer = function () {
-    this.finalize();
-
-    var blockCount = this.blockCount, s = this.s, outputBlocks = this.outputBlocks,
-      extraBytes = this.extraBytes, i = 0, j = 0;
-    var bytes = this.outputBits >> 3;
-    var buffer;
-    if (extraBytes) {
-      buffer = new ArrayBuffer((outputBlocks + 1) << 2);
-    } else {
-      buffer = new ArrayBuffer(bytes);
-    }
-    var array = new Uint32Array(buffer);
-    while (j < outputBlocks) {
-      for (i = 0; i < blockCount && j < outputBlocks; ++i, ++j) {
-        array[j] = s[i];
-      }
-      if (j % blockCount === 0) {
-        f(s);
-      }
-    }
-    if (extraBytes) {
-      array[i] = s[i];
-      buffer = buffer.slice(0, bytes);
-    }
-    return buffer;
-  };
-
-  Keccak.prototype.buffer = Keccak.prototype.arrayBuffer;
-
-  Keccak.prototype.digest = Keccak.prototype.array = function () {
-    this.finalize();
-
-    var blockCount = this.blockCount, s = this.s, outputBlocks = this.outputBlocks,
-      extraBytes = this.extraBytes, i = 0, j = 0;
-    var array = [], offset, block;
-    while (j < outputBlocks) {
-      for (i = 0; i < blockCount && j < outputBlocks; ++i, ++j) {
-        offset = j << 2;
-        block = s[i];
-        array[offset] = block & 0xFF;
-        array[offset + 1] = (block >> 8) & 0xFF;
-        array[offset + 2] = (block >> 16) & 0xFF;
-        array[offset + 3] = (block >> 24) & 0xFF;
-      }
-      if (j % blockCount === 0) {
-        f(s);
-      }
-    }
-    if (extraBytes) {
-      offset = j << 2;
-      block = s[i];
-      array[offset] = block & 0xFF;
-      if (extraBytes > 1) {
-        array[offset + 1] = (block >> 8) & 0xFF;
-      }
-      if (extraBytes > 2) {
-        array[offset + 2] = (block >> 16) & 0xFF;
-      }
-    }
-    return array;
-  };
-
-  function Kmac(bits, padding, outputBits) {
-    Keccak.call(this, bits, padding, outputBits);
-  }
-
-  Kmac.prototype = new Keccak();
-
-  Kmac.prototype.finalize = function () {
-    this.encode(this.outputBits, true);
-    return Keccak.prototype.finalize.call(this);
-  };
-
-  var f = function (s) {
-    var h, l, n, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9,
-      b0, b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11, b12, b13, b14, b15, b16, b17,
-      b18, b19, b20, b21, b22, b23, b24, b25, b26, b27, b28, b29, b30, b31, b32, b33,
-      b34, b35, b36, b37, b38, b39, b40, b41, b42, b43, b44, b45, b46, b47, b48, b49;
-    for (n = 0; n < 48; n += 2) {
-      c0 = s[0] ^ s[10] ^ s[20] ^ s[30] ^ s[40];
-      c1 = s[1] ^ s[11] ^ s[21] ^ s[31] ^ s[41];
-      c2 = s[2] ^ s[12] ^ s[22] ^ s[32] ^ s[42];
-      c3 = s[3] ^ s[13] ^ s[23] ^ s[33] ^ s[43];
-      c4 = s[4] ^ s[14] ^ s[24] ^ s[34] ^ s[44];
-      c5 = s[5] ^ s[15] ^ s[25] ^ s[35] ^ s[45];
-      c6 = s[6] ^ s[16] ^ s[26] ^ s[36] ^ s[46];
-      c7 = s[7] ^ s[17] ^ s[27] ^ s[37] ^ s[47];
-      c8 = s[8] ^ s[18] ^ s[28] ^ s[38] ^ s[48];
-      c9 = s[9] ^ s[19] ^ s[29] ^ s[39] ^ s[49];
-
-      h = c8 ^ ((c2 << 1) | (c3 >>> 31));
-      l = c9 ^ ((c3 << 1) | (c2 >>> 31));
-      s[0] ^= h;
-      s[1] ^= l;
-      s[10] ^= h;
-      s[11] ^= l;
-      s[20] ^= h;
-      s[21] ^= l;
-      s[30] ^= h;
-      s[31] ^= l;
-      s[40] ^= h;
-      s[41] ^= l;
-      h = c0 ^ ((c4 << 1) | (c5 >>> 31));
-      l = c1 ^ ((c5 << 1) | (c4 >>> 31));
-      s[2] ^= h;
-      s[3] ^= l;
-      s[12] ^= h;
-      s[13] ^= l;
-      s[22] ^= h;
-      s[23] ^= l;
-      s[32] ^= h;
-      s[33] ^= l;
-      s[42] ^= h;
-      s[43] ^= l;
-      h = c2 ^ ((c6 << 1) | (c7 >>> 31));
-      l = c3 ^ ((c7 << 1) | (c6 >>> 31));
-      s[4] ^= h;
-      s[5] ^= l;
-      s[14] ^= h;
-      s[15] ^= l;
-      s[24] ^= h;
-      s[25] ^= l;
-      s[34] ^= h;
-      s[35] ^= l;
-      s[44] ^= h;
-      s[45] ^= l;
-      h = c4 ^ ((c8 << 1) | (c9 >>> 31));
-      l = c5 ^ ((c9 << 1) | (c8 >>> 31));
-      s[6] ^= h;
-      s[7] ^= l;
-      s[16] ^= h;
-      s[17] ^= l;
-      s[26] ^= h;
-      s[27] ^= l;
-      s[36] ^= h;
-      s[37] ^= l;
-      s[46] ^= h;
-      s[47] ^= l;
-      h = c6 ^ ((c0 << 1) | (c1 >>> 31));
-      l = c7 ^ ((c1 << 1) | (c0 >>> 31));
-      s[8] ^= h;
-      s[9] ^= l;
-      s[18] ^= h;
-      s[19] ^= l;
-      s[28] ^= h;
-      s[29] ^= l;
-      s[38] ^= h;
-      s[39] ^= l;
-      s[48] ^= h;
-      s[49] ^= l;
-
-      b0 = s[0];
-      b1 = s[1];
-      b32 = (s[11] << 4) | (s[10] >>> 28);
-      b33 = (s[10] << 4) | (s[11] >>> 28);
-      b14 = (s[20] << 3) | (s[21] >>> 29);
-      b15 = (s[21] << 3) | (s[20] >>> 29);
-      b46 = (s[31] << 9) | (s[30] >>> 23);
-      b47 = (s[30] << 9) | (s[31] >>> 23);
-      b28 = (s[40] << 18) | (s[41] >>> 14);
-      b29 = (s[41] << 18) | (s[40] >>> 14);
-      b20 = (s[2] << 1) | (s[3] >>> 31);
-      b21 = (s[3] << 1) | (s[2] >>> 31);
-      b2 = (s[13] << 12) | (s[12] >>> 20);
-      b3 = (s[12] << 12) | (s[13] >>> 20);
-      b34 = (s[22] << 10) | (s[23] >>> 22);
-      b35 = (s[23] << 10) | (s[22] >>> 22);
-      b16 = (s[33] << 13) | (s[32] >>> 19);
-      b17 = (s[32] << 13) | (s[33] >>> 19);
-      b48 = (s[42] << 2) | (s[43] >>> 30);
-      b49 = (s[43] << 2) | (s[42] >>> 30);
-      b40 = (s[5] << 30) | (s[4] >>> 2);
-      b41 = (s[4] << 30) | (s[5] >>> 2);
-      b22 = (s[14] << 6) | (s[15] >>> 26);
-      b23 = (s[15] << 6) | (s[14] >>> 26);
-      b4 = (s[25] << 11) | (s[24] >>> 21);
-      b5 = (s[24] << 11) | (s[25] >>> 21);
-      b36 = (s[34] << 15) | (s[35] >>> 17);
-      b37 = (s[35] << 15) | (s[34] >>> 17);
-      b18 = (s[45] << 29) | (s[44] >>> 3);
-      b19 = (s[44] << 29) | (s[45] >>> 3);
-      b10 = (s[6] << 28) | (s[7] >>> 4);
-      b11 = (s[7] << 28) | (s[6] >>> 4);
-      b42 = (s[17] << 23) | (s[16] >>> 9);
-      b43 = (s[16] << 23) | (s[17] >>> 9);
-      b24 = (s[26] << 25) | (s[27] >>> 7);
-      b25 = (s[27] << 25) | (s[26] >>> 7);
-      b6 = (s[36] << 21) | (s[37] >>> 11);
-      b7 = (s[37] << 21) | (s[36] >>> 11);
-      b38 = (s[47] << 24) | (s[46] >>> 8);
-      b39 = (s[46] << 24) | (s[47] >>> 8);
-      b30 = (s[8] << 27) | (s[9] >>> 5);
-      b31 = (s[9] << 27) | (s[8] >>> 5);
-      b12 = (s[18] << 20) | (s[19] >>> 12);
-      b13 = (s[19] << 20) | (s[18] >>> 12);
-      b44 = (s[29] << 7) | (s[28] >>> 25);
-      b45 = (s[28] << 7) | (s[29] >>> 25);
-      b26 = (s[38] << 8) | (s[39] >>> 24);
-      b27 = (s[39] << 8) | (s[38] >>> 24);
-      b8 = (s[48] << 14) | (s[49] >>> 18);
-      b9 = (s[49] << 14) | (s[48] >>> 18);
-
-      s[0] = b0 ^ (~b2 & b4);
-      s[1] = b1 ^ (~b3 & b5);
-      s[10] = b10 ^ (~b12 & b14);
-      s[11] = b11 ^ (~b13 & b15);
-      s[20] = b20 ^ (~b22 & b24);
-      s[21] = b21 ^ (~b23 & b25);
-      s[30] = b30 ^ (~b32 & b34);
-      s[31] = b31 ^ (~b33 & b35);
-      s[40] = b40 ^ (~b42 & b44);
-      s[41] = b41 ^ (~b43 & b45);
-      s[2] = b2 ^ (~b4 & b6);
-      s[3] = b3 ^ (~b5 & b7);
-      s[12] = b12 ^ (~b14 & b16);
-      s[13] = b13 ^ (~b15 & b17);
-      s[22] = b22 ^ (~b24 & b26);
-      s[23] = b23 ^ (~b25 & b27);
-      s[32] = b32 ^ (~b34 & b36);
-      s[33] = b33 ^ (~b35 & b37);
-      s[42] = b42 ^ (~b44 & b46);
-      s[43] = b43 ^ (~b45 & b47);
-      s[4] = b4 ^ (~b6 & b8);
-      s[5] = b5 ^ (~b7 & b9);
-      s[14] = b14 ^ (~b16 & b18);
-      s[15] = b15 ^ (~b17 & b19);
-      s[24] = b24 ^ (~b26 & b28);
-      s[25] = b25 ^ (~b27 & b29);
-      s[34] = b34 ^ (~b36 & b38);
-      s[35] = b35 ^ (~b37 & b39);
-      s[44] = b44 ^ (~b46 & b48);
-      s[45] = b45 ^ (~b47 & b49);
-      s[6] = b6 ^ (~b8 & b0);
-      s[7] = b7 ^ (~b9 & b1);
-      s[16] = b16 ^ (~b18 & b10);
-      s[17] = b17 ^ (~b19 & b11);
-      s[26] = b26 ^ (~b28 & b20);
-      s[27] = b27 ^ (~b29 & b21);
-      s[36] = b36 ^ (~b38 & b30);
-      s[37] = b37 ^ (~b39 & b31);
-      s[46] = b46 ^ (~b48 & b40);
-      s[47] = b47 ^ (~b49 & b41);
-      s[8] = b8 ^ (~b0 & b2);
-      s[9] = b9 ^ (~b1 & b3);
-      s[18] = b18 ^ (~b10 & b12);
-      s[19] = b19 ^ (~b11 & b13);
-      s[28] = b28 ^ (~b20 & b22);
-      s[29] = b29 ^ (~b21 & b23);
-      s[38] = b38 ^ (~b30 & b32);
-      s[39] = b39 ^ (~b31 & b33);
-      s[48] = b48 ^ (~b40 & b42);
-      s[49] = b49 ^ (~b41 & b43);
-
-      s[0] ^= RC[n];
-      s[1] ^= RC[n + 1];
-    }
-  };
-
-  if (COMMON_JS) {
-    module.exports = methods;
-  } else {
-    for (i = 0; i < methodNames.length; ++i) {
-      root[methodNames[i]] = methods[methodNames[i]];
-    }
-  }
-})();
-});
-
-var sha3$1 = sha3;
-
-function keccak256(data) {
-    return '0x' + sha3$1.keccak_256(arrayify(data));
-}
-
-const version$1 = "address/5.6.0";
-
-const logger$1 = new Logger(version$1);
-function getChecksumAddress(address) {
-    if (!isHexString(address, 20)) {
-        logger$1.throwArgumentError("invalid address", "address", address);
-    }
-    address = address.toLowerCase();
-    const chars = address.substring(2).split("");
-    const expanded = new Uint8Array(40);
-    for (let i = 0; i < 40; i++) {
-        expanded[i] = chars[i].charCodeAt(0);
-    }
-    const hashed = arrayify(keccak256(expanded));
-    for (let i = 0; i < 40; i += 2) {
-        if ((hashed[i >> 1] >> 4) >= 8) {
-            chars[i] = chars[i].toUpperCase();
-        }
-        if ((hashed[i >> 1] & 0x0f) >= 8) {
-            chars[i + 1] = chars[i + 1].toUpperCase();
-        }
-    }
-    return "0x" + chars.join("");
-}
-// Shims for environments that are missing some required constants and functions
-const MAX_SAFE_INTEGER = 0x1fffffffffffff;
-function log10(x) {
-    if (Math.log10) {
-        return Math.log10(x);
-    }
-    return Math.log(x) / Math.LN10;
-}
-// See: https://en.wikipedia.org/wiki/International_Bank_Account_Number
-// Create lookup table
-const ibanLookup = {};
-for (let i = 0; i < 10; i++) {
-    ibanLookup[String(i)] = String(i);
-}
-for (let i = 0; i < 26; i++) {
-    ibanLookup[String.fromCharCode(65 + i)] = String(10 + i);
-}
-// How many decimal digits can we process? (for 64-bit float, this is 15)
-const safeDigits = Math.floor(log10(MAX_SAFE_INTEGER));
-function ibanChecksum(address) {
-    address = address.toUpperCase();
-    address = address.substring(4) + address.substring(0, 2) + "00";
-    let expanded = address.split("").map((c) => { return ibanLookup[c]; }).join("");
-    // Javascript can handle integers safely up to 15 (decimal) digits
-    while (expanded.length >= safeDigits) {
-        let block = expanded.substring(0, safeDigits);
-        expanded = parseInt(block, 10) % 97 + expanded.substring(block.length);
-    }
-    let checksum = String(98 - (parseInt(expanded, 10) % 97));
-    while (checksum.length < 2) {
-        checksum = "0" + checksum;
-    }
-    return checksum;
-}
-function getAddress(address) {
-    let result = null;
-    if (typeof (address) !== "string") {
-        logger$1.throwArgumentError("invalid address", "address", address);
-    }
-    if (address.match(/^(0x)?[0-9a-fA-F]{40}$/)) {
-        // Missing the 0x prefix
-        if (address.substring(0, 2) !== "0x") {
-            address = "0x" + address;
-        }
-        result = getChecksumAddress(address);
-        // It is a checksummed address with a bad checksum
-        if (address.match(/([A-F].*[a-f])|([a-f].*[A-F])/) && result !== address) {
-            logger$1.throwArgumentError("bad address checksum", "address", address);
-        }
-        // Maybe ICAP? (we only support direct mode)
-    }
-    else if (address.match(/^XE[0-9]{2}[0-9A-Za-z]{30,31}$/)) {
-        // It is an ICAP address with a bad checksum
-        if (address.substring(2, 4) !== ibanChecksum(address)) {
-            logger$1.throwArgumentError("bad icap checksum", "address", address);
-        }
-        result = _base36To16(address.substring(4));
-        while (result.length < 40) {
-            result = "0" + result;
-        }
-        result = getChecksumAddress("0x" + result);
-    }
-    else {
-        logger$1.throwArgumentError("invalid address", "address", address);
-    }
-    return result;
-}
-
-const version = "units/5.6.0";
-
-const logger = new Logger(version);
-const names = [
-    "wei",
-    "kwei",
-    "mwei",
-    "gwei",
-    "szabo",
-    "finney",
-    "ether",
-];
-function parseUnits(value, unitName) {
-    if (typeof (value) !== "string") {
-        logger.throwArgumentError("value must be a string", "value", value);
-    }
-    if (typeof (unitName) === "string") {
-        const index = names.indexOf(unitName);
-        if (index !== -1) {
-            unitName = 3 * index;
-        }
-    }
-    return parseFixed(value, (unitName != null) ? unitName : 18);
-}
-
 function _optionalChain$1(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
 // Uniswap replaces 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE with
 // the wrapped token 0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2 and implies wrapping.
@@ -5603,7 +536,7 @@ function _optionalChain$1(ops) { let lastAccessLHS = undefined; let value = ops[
 // to be able to differentiate between ETH<>Token and WETH<>Token swaps
 // as they are not the same!
 //
-let fixUniswapPath$1 = (path) => {
+let fixUniswapPath = (path) => {
   let fixedPath = path.map((token, index) => {
     if (
       token === CONSTANTS.bsc.NATIVE && path[index+1] != CONSTANTS.bsc.WRAPPED &&
@@ -5626,30 +559,30 @@ let fixUniswapPath$1 = (path) => {
 
 let minReserveRequirements$1 = ({ reserves, min, token, token0, token1, decimals }) => {
   if(token0.toLowerCase() == token.toLowerCase()) {
-    return reserves[0].gte(parseUnits(min.toString(), decimals))
+    return reserves[0].gte(ethers.utils.parseUnits(min.toString(), decimals))
   } else if (token1.toLowerCase() == token.toLowerCase()) {
-    return reserves[1].gte(parseUnits(min.toString(), decimals))
+    return reserves[1].gte(ethers.utils.parseUnits(min.toString(), decimals))
   } else {
     return false
   }
 };
 
 let pathExists$1 = async (path) => {
-  if(fixUniswapPath$1(path).length == 1) { return false }
+  if(fixUniswapPath(path).length == 1) { return false }
   let pair = await request({
     blockchain: 'bsc',
-    address: basics$3.contracts.factory.address,
+    address: basics$1.contracts.factory.address,
     method: 'getPair'
   }, {
-    api: basics$3.contracts.factory.api,
+    api: basics$1.contracts.factory.api,
     cache: 3600000,
-    params: fixUniswapPath$1(path),
+    params: fixUniswapPath(path),
   });
   if(pair == CONSTANTS.bsc.ZERO) { return false }
   let [reserves, token0, token1] = await Promise.all([
-    request({ blockchain: 'bsc', address: pair, method: 'getReserves' }, { api: basics$3.contracts.pair.api, cache: 3600000 }),
-    request({ blockchain: 'bsc', address: pair, method: 'token0' }, { api: basics$3.contracts.pair.api, cache: 3600000 }),
-    request({ blockchain: 'bsc', address: pair, method: 'token1' }, { api: basics$3.contracts.pair.api, cache: 3600000 })
+    request({ blockchain: 'bsc', address: pair, method: 'getReserves' }, { api: basics$1.contracts.pair.api, cache: 3600000 }),
+    request({ blockchain: 'bsc', address: pair, method: 'token0' }, { api: basics$1.contracts.pair.api, cache: 3600000 }),
+    request({ blockchain: 'bsc', address: pair, method: 'token1' }, { api: basics$1.contracts.pair.api, cache: 3600000 })
   ]);
   if(path.includes(CONSTANTS.bsc.WRAPPED)) {
     return minReserveRequirements$1({ min: 1, token: CONSTANTS.bsc.WRAPPED, decimals: CONSTANTS.bsc.DECIMALS, reserves, token0, token1 })
@@ -5713,13 +646,13 @@ let getAmountsOut$1 = ({ path, amountIn, tokenIn, tokenOut }) => {
   return new Promise((resolve) => {
     request({
       blockchain: 'bsc',
-      address: basics$3.contracts.router.address,
+      address: basics$1.contracts.router.address,
       method: 'getAmountsOut'
     },{
-      api: basics$3.contracts.router.api,
+      api: basics$1.contracts.router.api,
       params: {
         amountIn: amountIn,
-        path: fixUniswapPath$1(path),
+        path: fixUniswapPath(path),
       },
     })
     .then((amountsOut)=>{
@@ -5733,13 +666,13 @@ let getAmountsIn$1 = ({ path, amountOut, tokenIn, tokenOut }) => {
   return new Promise((resolve) => {
     request({
       blockchain: 'bsc',
-      address: basics$3.contracts.router.address,
+      address: basics$1.contracts.router.address,
       method: 'getAmountsIn'
     },{
-      api: basics$3.contracts.router.api,
+      api: basics$1.contracts.router.api,
       params: {
         amountOut: amountOut,
-        path: fixUniswapPath$1(path),
+        path: fixUniswapPath(path),
       },
     })
     .then((amountsIn)=>resolve(amountsIn[0]))
@@ -5807,8 +740,8 @@ let getTransaction$1 = ({
   let transaction = {
     blockchain,
     from: fromAddress,
-    to: basics$3.contracts.router.address,
-    api: basics$3.contracts.router.api,
+    to: basics$1.contracts.router.address,
+    api: basics$1.contracts.router.api,
   };
 
   if (path[0] === CONSTANTS[blockchain].NATIVE) {
@@ -5840,7 +773,7 @@ let getTransaction$1 = ({
   }
 
   transaction.params = Object.assign({}, transaction.params, {
-    path: fixUniswapPath$1(path),
+    path: fixUniswapPath(path),
     to: toAddress,
     deadline: Math.round(Date.now() / 1000) + 30 * 60, // 30 minutes
   });
@@ -5848,11 +781,7 @@ let getTransaction$1 = ({
   return transaction
 };
 
-const fixCheckSum = (address)=>{
-  return getAddress(address)
-};
-
-let route$6 = ({
+let route$2 = ({
   exchange,
   tokenIn,
   tokenOut,
@@ -5906,37 +835,26 @@ let route$6 = ({
 };
 
 var pancakeswap = new Exchange(
-  Object.assign(basics$3, { route: route$6 })
+  Object.assign(basics$1, { route: route$2 })
 );
-
-var route$5 = () => {};
-
-var sushiswap = new Exchange({
-  blockchain: 'ethereum',
-  name: 'sushiswap',
-  alternativeNames: ['sushi'],
-  label: 'SushiSwap',
-  logo: 'data:image/png;base64,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',
-  route: route$5,
-});
 
 let UniswapV2Router02 = [{"inputs":[{"internalType":"address","name":"_factory","type":"address"},{"internalType":"address","name":"_WETH","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[],"name":"WETH","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"tokenA","type":"address"},{"internalType":"address","name":"tokenB","type":"address"},{"internalType":"uint256","name":"amountADesired","type":"uint256"},{"internalType":"uint256","name":"amountBDesired","type":"uint256"},{"internalType":"uint256","name":"amountAMin","type":"uint256"},{"internalType":"uint256","name":"amountBMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"addLiquidity","outputs":[{"internalType":"uint256","name":"amountA","type":"uint256"},{"internalType":"uint256","name":"amountB","type":"uint256"},{"internalType":"uint256","name":"liquidity","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"uint256","name":"amountTokenDesired","type":"uint256"},{"internalType":"uint256","name":"amountTokenMin","type":"uint256"},{"internalType":"uint256","name":"amountETHMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"addLiquidityETH","outputs":[{"internalType":"uint256","name":"amountToken","type":"uint256"},{"internalType":"uint256","name":"amountETH","type":"uint256"},{"internalType":"uint256","name":"liquidity","type":"uint256"}],"stateMutability":"payable","type":"function"},{"inputs":[],"name":"factory","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountOut","type":"uint256"},{"internalType":"uint256","name":"reserveIn","type":"uint256"},{"internalType":"uint256","name":"reserveOut","type":"uint256"}],"name":"getAmountIn","outputs":[{"internalType":"uint256","name":"amountIn","type":"uint256"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountIn","type":"uint256"},{"internalType":"uint256","name":"reserveIn","type":"uint256"},{"internalType":"uint256","name":"reserveOut","type":"uint256"}],"name":"getAmountOut","outputs":[{"internalType":"uint256","name":"amountOut","type":"uint256"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountOut","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"}],"name":"getAmountsIn","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountIn","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"}],"name":"getAmountsOut","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountA","type":"uint256"},{"internalType":"uint256","name":"reserveA","type":"uint256"},{"internalType":"uint256","name":"reserveB","type":"uint256"}],"name":"quote","outputs":[{"internalType":"uint256","name":"amountB","type":"uint256"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"address","name":"tokenA","type":"address"},{"internalType":"address","name":"tokenB","type":"address"},{"internalType":"uint256","name":"liquidity","type":"uint256"},{"internalType":"uint256","name":"amountAMin","type":"uint256"},{"internalType":"uint256","name":"amountBMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"removeLiquidity","outputs":[{"internalType":"uint256","name":"amountA","type":"uint256"},{"internalType":"uint256","name":"amountB","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"uint256","name":"liquidity","type":"uint256"},{"internalType":"uint256","name":"amountTokenMin","type":"uint256"},{"internalType":"uint256","name":"amountETHMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"removeLiquidityETH","outputs":[{"internalType":"uint256","name":"amountToken","type":"uint256"},{"internalType":"uint256","name":"amountETH","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"uint256","name":"liquidity","type":"uint256"},{"internalType":"uint256","name":"amountTokenMin","type":"uint256"},{"internalType":"uint256","name":"amountETHMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"removeLiquidityETHSupportingFeeOnTransferTokens","outputs":[{"internalType":"uint256","name":"amountETH","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"uint256","name":"liquidity","type":"uint256"},{"internalType":"uint256","name":"amountTokenMin","type":"uint256"},{"internalType":"uint256","name":"amountETHMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"},{"internalType":"bool","name":"approveMax","type":"bool"},{"internalType":"uint8","name":"v","type":"uint8"},{"internalType":"bytes32","name":"r","type":"bytes32"},{"internalType":"bytes32","name":"s","type":"bytes32"}],"name":"removeLiquidityETHWithPermit","outputs":[{"internalType":"uint256","name":"amountToken","type":"uint256"},{"internalType":"uint256","name":"amountETH","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"uint256","name":"liquidity","type":"uint256"},{"internalType":"uint256","name":"amountTokenMin","type":"uint256"},{"internalType":"uint256","name":"amountETHMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"},{"internalType":"bool","name":"approveMax","type":"bool"},{"internalType":"uint8","name":"v","type":"uint8"},{"internalType":"bytes32","name":"r","type":"bytes32"},{"internalType":"bytes32","name":"s","type":"bytes32"}],"name":"removeLiquidityETHWithPermitSupportingFeeOnTransferTokens","outputs":[{"internalType":"uint256","name":"amountETH","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"tokenA","type":"address"},{"internalType":"address","name":"tokenB","type":"address"},{"internalType":"uint256","name":"liquidity","type":"uint256"},{"internalType":"uint256","name":"amountAMin","type":"uint256"},{"internalType":"uint256","name":"amountBMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"},{"internalType":"bool","name":"approveMax","type":"bool"},{"internalType":"uint8","name":"v","type":"uint8"},{"internalType":"bytes32","name":"r","type":"bytes32"},{"internalType":"bytes32","name":"s","type":"bytes32"}],"name":"removeLiquidityWithPermit","outputs":[{"internalType":"uint256","name":"amountA","type":"uint256"},{"internalType":"uint256","name":"amountB","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountOut","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapETHForExactTokens","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountOutMin","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapExactETHForTokens","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountOutMin","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapExactETHForTokensSupportingFeeOnTransferTokens","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountIn","type":"uint256"},{"internalType":"uint256","name":"amountOutMin","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapExactTokensForETH","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountIn","type":"uint256"},{"internalType":"uint256","name":"amountOutMin","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapExactTokensForETHSupportingFeeOnTransferTokens","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountIn","type":"uint256"},{"internalType":"uint256","name":"amountOutMin","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapExactTokensForTokens","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountIn","type":"uint256"},{"internalType":"uint256","name":"amountOutMin","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapExactTokensForTokensSupportingFeeOnTransferTokens","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountOut","type":"uint256"},{"internalType":"uint256","name":"amountInMax","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapTokensForExactETH","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountOut","type":"uint256"},{"internalType":"uint256","name":"amountInMax","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapTokensForExactTokens","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"nonpayable","type":"function"},{"stateMutability":"payable","type":"receive"}];
 let UniswapV2Factory = [{"inputs":[{"internalType":"address","name":"_feeToSetter","type":"address"}],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"token0","type":"address"},{"indexed":true,"internalType":"address","name":"token1","type":"address"},{"indexed":false,"internalType":"address","name":"pair","type":"address"},{"indexed":false,"internalType":"uint256","name":"","type":"uint256"}],"name":"PairCreated","type":"event"},{"constant":true,"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"allPairs","outputs":[{"internalType":"address","name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"allPairsLength","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"tokenA","type":"address"},{"internalType":"address","name":"tokenB","type":"address"}],"name":"createPair","outputs":[{"internalType":"address","name":"pair","type":"address"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"feeTo","outputs":[{"internalType":"address","name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"feeToSetter","outputs":[{"internalType":"address","name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"address","name":"","type":"address"}],"name":"getPair","outputs":[{"internalType":"address","name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"_feeTo","type":"address"}],"name":"setFeeTo","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"_feeToSetter","type":"address"}],"name":"setFeeToSetter","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"}];
 let UniswapV2Pair = [{"inputs":[],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"spender","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"sender","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount0","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount1","type":"uint256"},{"indexed":true,"internalType":"address","name":"to","type":"address"}],"name":"Burn","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"sender","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount0","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount1","type":"uint256"}],"name":"Mint","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"sender","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount0In","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount1In","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount0Out","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount1Out","type":"uint256"},{"indexed":true,"internalType":"address","name":"to","type":"address"}],"name":"Swap","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint112","name":"reserve0","type":"uint112"},{"indexed":false,"internalType":"uint112","name":"reserve1","type":"uint112"}],"name":"Sync","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Transfer","type":"event"},{"constant":true,"inputs":[],"name":"DOMAIN_SEPARATOR","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"MINIMUM_LIQUIDITY","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"PERMIT_TYPEHASH","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"address","name":"","type":"address"}],"name":"allowance","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"}],"name":"approve","outputs":[{"internalType":"bool","name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"to","type":"address"}],"name":"burn","outputs":[{"internalType":"uint256","name":"amount0","type":"uint256"},{"internalType":"uint256","name":"amount1","type":"uint256"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"decimals","outputs":[{"internalType":"uint8","name":"","type":"uint8"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"factory","outputs":[{"internalType":"address","name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"getReserves","outputs":[{"internalType":"uint112","name":"_reserve0","type":"uint112"},{"internalType":"uint112","name":"_reserve1","type":"uint112"},{"internalType":"uint32","name":"_blockTimestampLast","type":"uint32"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"_token0","type":"address"},{"internalType":"address","name":"_token1","type":"address"}],"name":"initialize","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"kLast","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"to","type":"address"}],"name":"mint","outputs":[{"internalType":"uint256","name":"liquidity","type":"uint256"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"nonces","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"},{"internalType":"uint256","name":"deadline","type":"uint256"},{"internalType":"uint8","name":"v","type":"uint8"},{"internalType":"bytes32","name":"r","type":"bytes32"},{"internalType":"bytes32","name":"s","type":"bytes32"}],"name":"permit","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"price0CumulativeLast","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"price1CumulativeLast","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"to","type":"address"}],"name":"skim","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"internalType":"uint256","name":"amount0Out","type":"uint256"},{"internalType":"uint256","name":"amount1Out","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"swap","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"sync","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"token0","outputs":[{"internalType":"address","name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"token1","outputs":[{"internalType":"address","name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"totalSupply","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"}],"name":"transfer","outputs":[{"internalType":"bool","name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"}],"name":"transferFrom","outputs":[{"internalType":"bool","name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"}];
 
-var basics$2 = {
-  blockchain: 'ethereum',
-  name: 'uniswap_v2',
+var basics = {
+  blockchain: 'polygon',
+  name: 'quickswap',
   alternativeNames: [],
-  label: 'Uniswap v2',
-  logo: 'data:image/png;base64,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',
+  label: 'QuickSwap',
+  logo: 'data:image/png;base64,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',
   contracts: {
     router: {
-      address: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D',
+      address: '0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff',
       api: UniswapV2Router02
     },
     factory: {
-      address: '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f',
+      address: '0x5757371414417b8C6CAad45bAeF941aBc7d3Ab32',
       api: UniswapV2Factory
     },
     pair: {
@@ -5953,21 +871,21 @@ function _optionalChain(ops) { let lastAccessLHS = undefined; let value = ops[0]
 // to be able to differentiate between ETH<>Token and WETH<>Token swaps
 // as they are not the same!
 //
-let fixUniswapPath = (path) => {
+let fixPath = (path) => {
   let fixedPath = path.map((token, index) => {
     if (
-      token === CONSTANTS.ethereum.NATIVE && path[index+1] != CONSTANTS.ethereum.WRAPPED &&
-      path[index-1] != CONSTANTS.ethereum.WRAPPED
+      token === CONSTANTS.polygon.NATIVE && path[index+1] != CONSTANTS.polygon.WRAPPED &&
+      path[index-1] != CONSTANTS.polygon.WRAPPED
     ) {
-      return CONSTANTS.ethereum.WRAPPED
+      return CONSTANTS.polygon.WRAPPED
     } else {
       return token
     }
   });
 
-  if(fixedPath[0] == CONSTANTS.ethereum.NATIVE && fixedPath[1] == CONSTANTS.ethereum.WRAPPED) {
+  if(fixedPath[0] == CONSTANTS.polygon.NATIVE && fixedPath[1] == CONSTANTS.polygon.WRAPPED) {
     fixedPath.splice(0, 1);
-  } else if(fixedPath[fixedPath.length-1] == CONSTANTS.ethereum.NATIVE && fixedPath[fixedPath.length-2] == CONSTANTS.ethereum.WRAPPED) {
+  } else if(fixedPath[fixedPath.length-1] == CONSTANTS.polygon.NATIVE && fixedPath[fixedPath.length-2] == CONSTANTS.polygon.WRAPPED) {
     fixedPath.splice(fixedPath.length-1, 1);
   }
 
@@ -5976,33 +894,33 @@ let fixUniswapPath = (path) => {
 
 let minReserveRequirements = ({ reserves, min, token, token0, token1, decimals }) => {
   if(token0.toLowerCase() == token.toLowerCase()) {
-    return reserves[0].gte(parseUnits(min.toString(), decimals))
+    return reserves[0].gte(ethers.utils.parseUnits(min.toString(), decimals))
   } else if (token1.toLowerCase() == token.toLowerCase()) {
-    return reserves[1].gte(parseUnits(min.toString(), decimals))
+    return reserves[1].gte(ethers.utils.parseUnits(min.toString(), decimals))
   } else {
     return false
   }
 };
 
 let pathExists = async (path) => {
-  if(fixUniswapPath(path).length == 1) { return false }
+  if(fixPath(path).length == 1) { return false }
   let pair = await request({
-    blockchain: 'ethereum',
-    address: basics$2.contracts.factory.address,
+    blockchain: 'polygon',
+    address: basics.contracts.factory.address,
     method: 'getPair'
-  }, { api: basics$2.contracts.factory.api, cache: 3600000, params: fixUniswapPath(path) });
-  if(pair == CONSTANTS.ethereum.ZERO) { return false }
+  }, { api: basics.contracts.factory.api, cache: 3600000, params: fixPath(path) });
+  if(pair == CONSTANTS.polygon.ZERO) { return false }
   let [reserves, token0, token1] = await Promise.all([
-    request({ blockchain: 'ethereum', address: pair, method: 'getReserves' }, { api: basics$2.contracts.pair.api, cache: 3600000 }),
-    request({ blockchain: 'ethereum', address: pair, method: 'token0' }, { api: basics$2.contracts.pair.api, cache: 3600000 }),
-    request({ blockchain: 'ethereum', address: pair, method: 'token1' }, { api: basics$2.contracts.pair.api, cache: 3600000 })
+    request({ blockchain: 'polygon', address: pair, method: 'getReserves' }, { api: basics.contracts.pair.api, cache: 3600000 }),
+    request({ blockchain: 'polygon', address: pair, method: 'token0' }, { api: basics.contracts.pair.api, cache: 3600000 }),
+    request({ blockchain: 'polygon', address: pair, method: 'token1' }, { api: basics.contracts.pair.api, cache: 3600000 })
   ]);
-  if(path.includes(CONSTANTS.ethereum.WRAPPED)) {
-    return minReserveRequirements({ min: 1, token: CONSTANTS.ethereum.WRAPPED, decimals: CONSTANTS.ethereum.DECIMALS, reserves, token0, token1 })
-  } else if (path.includes(CONSTANTS.ethereum.USD)) {
-    let token = new Token({ blockchain: 'ethereum', address: CONSTANTS.ethereum.USD });
+  if(path.includes(CONSTANTS.polygon.WRAPPED)) {
+    return minReserveRequirements({ min: 1, token: CONSTANTS.polygon.WRAPPED, decimals: CONSTANTS.polygon.DECIMALS, reserves, token0, token1 })
+  } else if (path.includes(CONSTANTS.polygon.USD)) {
+    let token = new Token({ blockchain: 'polygon', address: CONSTANTS.polygon.USD });
     let decimals = await token.decimals();
-    return minReserveRequirements({ min: 1000, token: CONSTANTS.ethereum.USD, decimals, reserves, token0, token1 })
+    return minReserveRequirements({ min: 1000, token: CONSTANTS.polygon.USD, decimals, reserves, token0, token1 })
   } else {
     return true 
   }
@@ -6010,8 +928,8 @@ let pathExists = async (path) => {
 
 let findPath = async ({ tokenIn, tokenOut }) => {
   if(
-    [tokenIn, tokenOut].includes(CONSTANTS.ethereum.NATIVE) &&
-    [tokenIn, tokenOut].includes(CONSTANTS.ethereum.WRAPPED)
+    [tokenIn, tokenOut].includes(CONSTANTS.polygon.NATIVE) &&
+    [tokenIn, tokenOut].includes(CONSTANTS.polygon.WRAPPED)
   ) { return }
 
   let path;
@@ -6019,37 +937,37 @@ let findPath = async ({ tokenIn, tokenOut }) => {
     // direct path
     path = [tokenIn, tokenOut];
   } else if (
-    tokenIn != CONSTANTS.ethereum.WRAPPED &&
-    await pathExists([tokenIn, CONSTANTS.ethereum.WRAPPED]) &&
-    tokenOut != CONSTANTS.ethereum.WRAPPED &&
-    await pathExists([tokenOut, CONSTANTS.ethereum.WRAPPED])
+    tokenIn != CONSTANTS.polygon.WRAPPED &&
+    await pathExists([tokenIn, CONSTANTS.polygon.WRAPPED]) &&
+    tokenOut != CONSTANTS.polygon.WRAPPED &&
+    await pathExists([tokenOut, CONSTANTS.polygon.WRAPPED])
   ) {
     // path via WRAPPED
-    path = [tokenIn, CONSTANTS.ethereum.WRAPPED, tokenOut];
+    path = [tokenIn, CONSTANTS.polygon.WRAPPED, tokenOut];
   } else if (
-    tokenIn != CONSTANTS.ethereum.USD &&
-    await pathExists([tokenIn, CONSTANTS.ethereum.USD]) &&
-    tokenOut != CONSTANTS.ethereum.WRAPPED &&
-    await pathExists([CONSTANTS.ethereum.WRAPPED, tokenOut])
+    tokenIn != CONSTANTS.polygon.USD &&
+    await pathExists([tokenIn, CONSTANTS.polygon.USD]) &&
+    tokenOut != CONSTANTS.polygon.WRAPPED &&
+    await pathExists([CONSTANTS.polygon.WRAPPED, tokenOut])
   ) {
     // path via tokenIn -> USD -> WRAPPED -> tokenOut
-    path = [tokenIn, CONSTANTS.ethereum.USD, CONSTANTS.ethereum.WRAPPED, tokenOut];
+    path = [tokenIn, CONSTANTS.polygon.USD, CONSTANTS.polygon.WRAPPED, tokenOut];
   } else if (
-    tokenIn != CONSTANTS.ethereum.WRAPPED &&
-    await pathExists([tokenIn, CONSTANTS.ethereum.WRAPPED]) &&
-    tokenOut != CONSTANTS.ethereum.USD &&
-    await pathExists([CONSTANTS.ethereum.USD, tokenOut])
+    tokenIn != CONSTANTS.polygon.WRAPPED &&
+    await pathExists([tokenIn, CONSTANTS.polygon.WRAPPED]) &&
+    tokenOut != CONSTANTS.polygon.USD &&
+    await pathExists([CONSTANTS.polygon.USD, tokenOut])
   ) {
     // path via tokenIn -> WRAPPED -> USD -> tokenOut
-    path = [tokenIn, CONSTANTS.ethereum.WRAPPED, CONSTANTS.ethereum.USD, tokenOut];
+    path = [tokenIn, CONSTANTS.polygon.WRAPPED, CONSTANTS.polygon.USD, tokenOut];
   }
 
   // Add WRAPPED to route path if things start or end with NATIVE
   // because that actually reflects how things are routed in reality:
-  if(_optionalChain([path, 'optionalAccess', _ => _.length]) && path[0] == CONSTANTS.ethereum.NATIVE) {
-    path.splice(1, 0, CONSTANTS.ethereum.WRAPPED);
-  } else if(_optionalChain([path, 'optionalAccess', _2 => _2.length]) && path[path.length-1] == CONSTANTS.ethereum.NATIVE) {
-    path.splice(path.length-1, 0, CONSTANTS.ethereum.WRAPPED);
+  if(_optionalChain([path, 'optionalAccess', _ => _.length]) && path[0] == CONSTANTS.polygon.NATIVE) {
+    path.splice(1, 0, CONSTANTS.polygon.WRAPPED);
+  } else if(_optionalChain([path, 'optionalAccess', _2 => _2.length]) && path[path.length-1] == CONSTANTS.polygon.NATIVE) {
+    path.splice(path.length-1, 0, CONSTANTS.polygon.WRAPPED);
   }
 
   return path
@@ -6058,14 +976,14 @@ let findPath = async ({ tokenIn, tokenOut }) => {
 let getAmountsOut = ({ path, amountIn, tokenIn, tokenOut }) => {
   return new Promise((resolve) => {
     request({
-      blockchain: 'ethereum',
-      address: basics$2.contracts.router.address,
+      blockchain: 'polygon',
+      address: basics.contracts.router.address,
       method: 'getAmountsOut'
     },{
-      api: basics$2.contracts.router.api,
+      api: basics.contracts.router.api,
       params: {
         amountIn: amountIn,
-        path: fixUniswapPath(path),
+        path: fixPath(path),
       },
     })
     .then((amountsOut)=>{
@@ -6078,14 +996,14 @@ let getAmountsOut = ({ path, amountIn, tokenIn, tokenOut }) => {
 let getAmountsIn = ({ path, amountOut, tokenIn, tokenOut }) => {
   return new Promise((resolve) => {
     request({
-      blockchain: 'ethereum',
-      address: basics$2.contracts.router.address,
+      blockchain: 'polygon',
+      address: basics.contracts.router.address,
       method: 'getAmountsIn'
     },{
-      api: basics$2.contracts.router.api,
+      api: basics.contracts.router.api,
       params: {
         amountOut: amountOut,
-        path: fixUniswapPath(path),
+        path: fixPath(path),
       },
     })
     .then((amountsIn)=>resolve(amountsIn[0]))
@@ -6149,13 +1067,13 @@ let getTransaction = ({
 }) => {
   
   let transaction = {
-    blockchain: 'ethereum',
+    blockchain: 'polygon',
     from: fromAddress,
-    to: basics$2.contracts.router.address,
-    api: basics$2.contracts.router.api,
+    to: basics.contracts.router.address,
+    api: basics.contracts.router.api,
   };
 
-  if (path[0] === CONSTANTS.ethereum.NATIVE) {
+  if (path[0] === CONSTANTS.polygon.NATIVE) {
     if (amountInInput || amountOutMinInput) {
       transaction.method = 'swapExactETHForTokens';
       transaction.value = amountIn.toString();
@@ -6165,7 +1083,7 @@ let getTransaction = ({
       transaction.value = amountInMax.toString();
       transaction.params = { amountOut: amountOut.toString() };
     }
-  } else if (path[path.length - 1] === CONSTANTS.ethereum.NATIVE) {
+  } else if (path[path.length - 1] === CONSTANTS.polygon.NATIVE) {
     if (amountInInput || amountOutMinInput) {
       transaction.method = 'swapExactTokensForETH';
       transaction.params = { amountIn: amountIn.toString(), amountOutMin: amountOutMin.toString() };
@@ -6184,7 +1102,7 @@ let getTransaction = ({
   }
 
   transaction.params = Object.assign({}, transaction.params, {
-    path: fixUniswapPath(path),
+    path: fixPath(path),
     to: toAddress,
     deadline: Math.round(Date.now() / 1000) + 30 * 60, // 30 minutes
   });
@@ -6192,7 +1110,7 @@ let getTransaction = ({
   return transaction
 };
 
-let route$4 = ({
+let route$1 = ({
   exchange,
   tokenIn,
   tokenOut,
@@ -6245,209 +1163,14 @@ let route$4 = ({
   })
 };
 
-var uniswap_v2 = new Exchange(
-  Object.assign(basics$2, { route: route$4 })
-);
-
-var route$3 = () => {};
-
-var uniswap_v3 = new Exchange({
-  blockchain: 'ethereum',
-  name: 'uniswap_v3',
-  alternativeNames: ['uniswap'],
-  label: 'Uniswap v3',
-  logo: 'data:image/png;base64,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',
-  route: route$3,
-});
-
-let WETH = [{"constant":true,"inputs":[],"name":"name","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"guy","type":"address"},{"name":"wad","type":"uint256"}],"name":"approve","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"totalSupply","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"src","type":"address"},{"name":"dst","type":"address"},{"name":"wad","type":"uint256"}],"name":"transferFrom","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"wad","type":"uint256"}],"name":"withdraw","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"decimals","outputs":[{"name":"","type":"uint8"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"balanceOf","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"symbol","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"dst","type":"address"},{"name":"wad","type":"uint256"}],"name":"transfer","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[],"name":"deposit","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"},{"name":"","type":"address"}],"name":"allowance","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"payable":true,"stateMutability":"payable","type":"fallback"},{"anonymous":false,"inputs":[{"indexed":true,"name":"src","type":"address"},{"indexed":true,"name":"guy","type":"address"},{"indexed":false,"name":"wad","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"src","type":"address"},{"indexed":true,"name":"dst","type":"address"},{"indexed":false,"name":"wad","type":"uint256"}],"name":"Transfer","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"dst","type":"address"},{"indexed":false,"name":"wad","type":"uint256"}],"name":"Deposit","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"src","type":"address"},{"indexed":false,"name":"wad","type":"uint256"}],"name":"Withdrawal","type":"event"}];
-
-var basics$1 = {
-  blockchain: 'ethereum',
-  name: 'weth',
-  alternativeNames: [],
-  label: 'Wrapped Ether',
-  logo: 'data:image/png;base64,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',
-  contracts: {
-    wrapper: {
-      address: CONSTANTS.ethereum.WRAPPED,
-      api: WETH
-    },
-  }
-};
-
-let route$2 = ({
-  exchange,
-  tokenIn,
-  tokenOut,
-  fromAddress,
-  toAddress,
-  amountIn = undefined,
-  amountOut = undefined,
-  amountInMax = undefined,
-  amountOutMin = undefined,
-}) => {
-  return new Promise(async (resolve)=> {
-
-    if(
-      ![CONSTANTS.ethereum.NATIVE, CONSTANTS.ethereum.WRAPPED].includes(tokenIn) &&
-      ![CONSTANTS.ethereum.NATIVE, CONSTANTS.ethereum.WRAPPED].includes(tokenOut)
-    ) { return resolve() }
-
-    amountIn = amountInMax = amountOut = amountOutMin = [amountIn, amountInMax, amountOut, amountOutMin].filter(Boolean)[0];
-
-    let route;
-
-    if(tokenIn === CONSTANTS.ethereum.NATIVE && tokenOut === CONSTANTS.ethereum.WRAPPED) {
-      route = new Route({
-        tokenIn,
-        tokenOut,
-        path: [CONSTANTS.ethereum.NATIVE, CONSTANTS.ethereum.WRAPPED],
-        amountIn,
-        amountInMax,
-        amountOut,
-        amountOutMin,
-        fromAddress,
-        toAddress,
-        exchange,
-        transaction: {
-          blockchain: 'ethereum',
-          from: fromAddress,
-          to: CONSTANTS.ethereum.WRAPPED,
-          api: WETH,
-          method: 'deposit',
-          value: amountOut.toString()
-        }
-      });
-    } else if(tokenIn === CONSTANTS.ethereum.WRAPPED && tokenOut === CONSTANTS.ethereum.NATIVE) {
-      route = new Route({
-        tokenIn,
-        tokenOut,
-        path: [CONSTANTS.ethereum.WRAPPED, CONSTANTS.ethereum.NATIVE],
-        amountIn,
-        amountInMax,
-        amountOut,
-        amountOutMin,
-        fromAddress,
-        toAddress,
-        exchange,
-        transaction: {
-          blockchain: 'ethereum',
-          from: fromAddress,
-          to: CONSTANTS.ethereum.WRAPPED,
-          api: WETH,
-          method: 'withdraw',
-          params: [amountOut]
-        }
-      });
-    }
-
-    return resolve(route)
-  })
-};
-
-var weth = new Exchange(
-  Object.assign(basics$1, { route: route$2 })
-);
-
-let WBNB = [{"constant":true,"inputs":[],"name":"name","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"guy","type":"address"},{"name":"wad","type":"uint256"}],"name":"approve","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"totalSupply","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"src","type":"address"},{"name":"dst","type":"address"},{"name":"wad","type":"uint256"}],"name":"transferFrom","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"wad","type":"uint256"}],"name":"withdraw","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"decimals","outputs":[{"name":"","type":"uint8"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"balanceOf","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"symbol","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"dst","type":"address"},{"name":"wad","type":"uint256"}],"name":"transfer","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[],"name":"deposit","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"},{"name":"","type":"address"}],"name":"allowance","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"payable":true,"stateMutability":"payable","type":"fallback"},{"anonymous":false,"inputs":[{"indexed":true,"name":"src","type":"address"},{"indexed":true,"name":"guy","type":"address"},{"indexed":false,"name":"wad","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"src","type":"address"},{"indexed":true,"name":"dst","type":"address"},{"indexed":false,"name":"wad","type":"uint256"}],"name":"Transfer","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"dst","type":"address"},{"indexed":false,"name":"wad","type":"uint256"}],"name":"Deposit","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"src","type":"address"},{"indexed":false,"name":"wad","type":"uint256"}],"name":"Withdrawal","type":"event"}];
-
-var basics = {
-  blockchain: 'bsc',
-  name: 'wbnb',
-  alternativeNames: [],
-  label: 'Wrapped BNB',
-  logo: 'data:image/png;base64,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',
-  contracts: {
-    wrapper: {
-      address: CONSTANTS.bsc.WRAPPED,
-      api: WBNB
-    },
-  }
-};
-
-let route$1 = ({
-  exchange,
-  tokenIn,
-  tokenOut,
-  fromAddress,
-  toAddress,
-  amountIn = undefined,
-  amountOut = undefined,
-  amountInMax = undefined,
-  amountOutMin = undefined,
-}) => {
-  return new Promise(async (resolve)=> {
-
-    if(
-      ![CONSTANTS.bsc.NATIVE, CONSTANTS.bsc.WRAPPED].includes(tokenIn) &&
-      ![CONSTANTS.bsc.NATIVE, CONSTANTS.bsc.WRAPPED].includes(tokenOut)
-    ) { return resolve() }
-
-    amountIn = amountInMax = amountOut = amountOutMin = [amountIn, amountInMax, amountOut, amountOutMin].filter(Boolean)[0];
-
-    let route;
-
-    if(tokenIn === CONSTANTS.bsc.NATIVE && tokenOut === CONSTANTS.bsc.WRAPPED) {
-      route = new Route({
-        tokenIn,
-        tokenOut,
-        path: [CONSTANTS.bsc.NATIVE, CONSTANTS.bsc.WRAPPED],
-        amountIn,
-        amountInMax,
-        amountOut,
-        amountOutMin,
-        fromAddress,
-        toAddress,
-        exchange,
-        transaction: {
-          blockchain: 'bsc',
-          from: fromAddress,
-          to: CONSTANTS.bsc.WRAPPED,
-          api: WBNB,
-          method: 'deposit',
-          value: amountOut.toString()
-        }
-      });
-    } else if(tokenIn === CONSTANTS.bsc.WRAPPED && tokenOut === CONSTANTS.bsc.NATIVE) {
-      route = new Route({
-        tokenIn,
-        tokenOut,
-        path: [CONSTANTS.bsc.WRAPPED, CONSTANTS.bsc.NATIVE],
-        amountIn,
-        amountInMax,
-        amountOut,
-        amountOutMin,
-        fromAddress,
-        toAddress,
-        exchange,
-        transaction: {
-          blockchain: 'bsc',
-          from: fromAddress,
-          to: CONSTANTS.bsc.WRAPPED,
-          api: WBNB,
-          method: 'withdraw',
-          params: [amountOut]
-        }
-      });
-    }
-
-    return resolve(route)
-  })
-};
-
-var wbnb = new Exchange(
+var quickswap = new Exchange(
   Object.assign(basics, { route: route$1 })
 );
 
 let all = [
-  curve,
-  pancakeswap,
-  sushiswap,
   uniswap_v2,
-  uniswap_v3,
-  weth,
-  wbnb
+  pancakeswap,
+  quickswap,
 ];
 
 var findByName = (name) => {
