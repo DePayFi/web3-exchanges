@@ -22,7 +22,7 @@ let getAmountsOut = ({ path, amountIn, tokenIn, tokenOut }) => {
   })
 }
 
-let getAmountsIn = ({ path, amountOut, tokenIn, tokenOut }) => {
+let getAmountIn = ({ path, amountOut, block }) => {
   return new Promise((resolve) => {
     request({
       blockchain: 'bsc',
@@ -34,6 +34,7 @@ let getAmountsIn = ({ path, amountOut, tokenIn, tokenOut }) => {
         amountOut: amountOut,
         path: fixUniswapPath(path),
       },
+      block
     })
     .then((amountsIn)=>resolve(amountsIn[0]))
     .catch(()=>resolve())
@@ -50,7 +51,7 @@ let getAmounts = async ({
   amountOutMin
 }) => {
   if (amountOut) {
-    amountIn = await getAmountsIn({ path, amountOut, tokenIn, tokenOut })
+    amountIn = await getAmountIn({ path, amountOut, tokenIn, tokenOut })
     if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
       return {}
     } else if (amountInMax === undefined) {
@@ -64,7 +65,7 @@ let getAmounts = async ({
       amountOutMin = amountOut
     }
   } else if(amountOutMin) {
-    amountIn = await getAmountsIn({ path, amountOut: amountOutMin, tokenIn, tokenOut })
+    amountIn = await getAmountIn({ path, amountOut: amountOutMin, tokenIn, tokenOut })
     if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
       return {}
     } else if (amountInMax === undefined) {
@@ -82,5 +83,6 @@ let getAmounts = async ({
 }
 
 export {
-  getAmounts
+  getAmounts,
+  getAmountIn
 }
