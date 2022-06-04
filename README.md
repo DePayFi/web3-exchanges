@@ -17,6 +17,7 @@ all
 // [
 //   { name: 'uniswap_v2', label: 'Uniswap v2', logo: '...' }
 //   { name: 'pancakeswap_v2', label: 'PancakeSwap v2', logo: '...' }
+//   { name: 'cryptoswap', label: 'CryptoSwap', logo: '...' }
 //   ...
 // ]
 
