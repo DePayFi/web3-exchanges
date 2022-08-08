@@ -918,6 +918,9 @@ let pathExists = async (path) => {
     request({ blockchain: 'polygon', address: pair, method: 'token0' }, { api: basics.contracts.pair.api, cache: 3600000 }),
     request({ blockchain: 'polygon', address: pair, method: 'token1' }, { api: basics.contracts.pair.api, cache: 3600000 })
   ]);
+  console.log('RESERVES', reserves);
+  console.log('token0', token0);
+  console.log('token1', token1);
   if(path.includes(CONSTANTS.polygon.WRAPPED)) {
     return minReserveRequirements({ min: 1, token: CONSTANTS.polygon.WRAPPED, decimals: CONSTANTS.polygon.DECIMALS, reserves, token0, token1 })
   } else if (path.includes(CONSTANTS.polygon.USD)) {

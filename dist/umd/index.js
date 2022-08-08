@@ -919,6 +919,9 @@
       web3Client.request({ blockchain: 'polygon', address: pair, method: 'token0' }, { api: basics.contracts.pair.api, cache: 3600000 }),
       web3Client.request({ blockchain: 'polygon', address: pair, method: 'token1' }, { api: basics.contracts.pair.api, cache: 3600000 })
     ]);
+    console.log('RESERVES', reserves);
+    console.log('token0', token0);
+    console.log('token1', token1);
     if(path.includes(web3Constants.CONSTANTS.polygon.WRAPPED)) {
       return minReserveRequirements({ min: 1, token: web3Constants.CONSTANTS.polygon.WRAPPED, decimals: web3Constants.CONSTANTS.polygon.DECIMALS, reserves, token0, token1 })
     } else if (path.includes(web3Constants.CONSTANTS.polygon.USD)) {

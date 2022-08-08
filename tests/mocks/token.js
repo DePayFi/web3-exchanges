@@ -6,7 +6,7 @@ function mockDecimals({ provider, blockchain, address, value }) {
   return mock({
     provider,
     blockchain,
-    call: {
+    request: {
       to: address,
       api: Token[blockchain].DEFAULT,
       method: 'decimals',

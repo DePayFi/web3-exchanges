@@ -7,8 +7,7 @@ let getAmountsOut = ({ path, amountIn, tokenIn, tokenOut }) => {
     request({
       blockchain: 'bsc',
       address: PancakeSwap.contracts.router.address,
-      method: 'getAmountsOut'
-    },{
+      method: 'getAmountsOut',
       api: PancakeSwap.contracts.router.api,
       params: {
         amountIn: amountIn,
@@ -27,8 +26,7 @@ let getAmountIn = ({ path, amountOut, block }) => {
     request({
       blockchain: 'bsc',
       address: PancakeSwap.contracts.router.address,
-      method: 'getAmountsIn'
-    },{
+      method: 'getAmountsIn',
       api: PancakeSwap.contracts.router.api,
       params: {
         amountOut: amountOut,

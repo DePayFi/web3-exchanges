@@ -47,17 +47,16 @@ let pathExists = async (path) => {
   let pair = await request({
     blockchain: 'bsc',
     address: PancakeSwap.contracts.factory.address,
-    method: 'getPair'
-  }, {
+    method: 'getPair',
     api: PancakeSwap.contracts.factory.api,
     cache: 3600000,
     params: fixUniswapPath(path),
   })
   if(pair == CONSTANTS.bsc.ZERO) { return false }
   let [reserves, token0, token1] = await Promise.all([
-    request({ blockchain: 'bsc', address: pair, method: 'getReserves' }, { api: PancakeSwap.contracts.pair.api, cache: 3600000 }),
-    request({ blockchain: 'bsc', address: pair, method: 'token0' }, { api: PancakeSwap.contracts.pair.api, cache: 3600000 }),
-    request({ blockchain: 'bsc', address: pair, method: 'token1' }, { api: PancakeSwap.contracts.pair.api, cache: 3600000 })
+    request({ blockchain: 'bsc', address: pair, method: 'getReserves', api: PancakeSwap.contracts.pair.api, cache: 3600000 }),
+    request({ blockchain: 'bsc', address: pair, method: 'token0', api: PancakeSwap.contracts.pair.api, cache: 3600000 }),
+    request({ blockchain: 'bsc', address: pair, method: 'token1', api: PancakeSwap.contracts.pair.api, cache: 3600000 })
   ])
   if(path.includes(CONSTANTS.bsc.WRAPPED)) {
     return minReserveRequirements({ min: 1, token: CONSTANTS.bsc.WRAPPED, decimals: CONSTANTS.bsc.DECIMALS, reserves, token0, token1 })

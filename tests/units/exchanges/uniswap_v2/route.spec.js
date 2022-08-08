@@ -63,7 +63,7 @@ describe('uniswap_v2', () => {
       mock({
         provider: provider(blockchain),
         blockchain,
-        call: {
+        request: {
           to: exchange.contracts.router.address,
           api: exchange.contracts.router.api,
           method: 'getAmountsIn',

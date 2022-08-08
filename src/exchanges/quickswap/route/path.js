@@ -47,13 +47,16 @@ let pathExists = async (path) => {
   let pair = await request({
     blockchain: 'polygon',
     address: QuickSwap.contracts.factory.address,
-    method: 'getPair'
-  }, { api: QuickSwap.contracts.factory.api, cache: 3600000, params: fixPath(path) })
+    method: 'getPair',
+    api: QuickSwap.contracts.factory.api, 
+    cache: 3600000, 
+    params: fixPath(path) 
+  })
   if(pair == CONSTANTS.polygon.ZERO) { return false }
   let [reserves, token0, token1] = await Promise.all([
-    request({ blockchain: 'polygon', address: pair, method: 'getReserves' }, { api: QuickSwap.contracts.pair.api, cache: 3600000 }),
-    request({ blockchain: 'polygon', address: pair, method: 'token0' }, { api: QuickSwap.contracts.pair.api, cache: 3600000 }),
-    request({ blockchain: 'polygon', address: pair, method: 'token1' }, { api: QuickSwap.contracts.pair.api, cache: 3600000 })
+    request({ blockchain: 'polygon', address: pair, method: 'getReserves', api: QuickSwap.contracts.pair.api, cache: 3600000 }),
+    request({ blockchain: 'polygon', address: pair, method: 'token0', api: QuickSwap.contracts.pair.api, cache: 3600000 }),
+    request({ blockchain: 'polygon', address: pair, method: 'token1', api: QuickSwap.contracts.pair.api, cache: 3600000 })
   ])
   if(path.includes(CONSTANTS.polygon.WRAPPED)) {
     return minReserveRequirements({ min: 1, token: CONSTANTS.polygon.WRAPPED, decimals: CONSTANTS.polygon.DECIMALS, reserves, token0, token1 })

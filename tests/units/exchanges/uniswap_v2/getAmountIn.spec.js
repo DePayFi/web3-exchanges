@@ -30,7 +30,7 @@ describe('uniswap_v2', () => {
         provider: provider(blockchain),
         blockchain,
         block,
-        call: {
+        request: {
           to: UniswapV2.contracts.router.address,
           api: UniswapV2.contracts.router.api,
           method: 'getAmountsIn',

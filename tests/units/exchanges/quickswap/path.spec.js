@@ -30,6 +30,7 @@ describe('quickswap', () => {
       let tokenOut = '0x1f9840a85d5af5bf1d1762f925bdaddc4201f984' // UNI
       mockPair({ provider: provider(blockchain), tokenIn, tokenOut, pair: CONSTANTS[blockchain].ZERO })
       mockPair({ provider: provider(blockchain), tokenIn, tokenOut: CONSTANTS[blockchain].WRAPPED, pair: CONSTANTS[blockchain].ZERO })
+      mockDecimals({ provider: provider(blockchain), blockchain, address: CONSTANTS[blockchain].USD, value: CONSTANTS[blockchain].USD_DECIMALS })
       let USDtoUSDMock = mockPair({ provider: provider(blockchain), tokenIn: CONSTANTS[blockchain].USD, tokenOut: CONSTANTS[blockchain].USD, pair: CONSTANTS[blockchain].ZERO })
       let path = await findPath({ tokenIn, tokenOut })
       expect(USDtoUSDMock.calls.count()).toEqual(0)
@@ -76,7 +77,7 @@ describe('quickswap', () => {
       mock({
         blockchain,
         provider: provider(blockchain),
-        call: {
+        request: {
           to: exchange.contracts.factory.address,
           api: exchange.contracts.factory.api,
           method: 'getPair',
@@ -87,7 +88,7 @@ describe('quickswap', () => {
       mock({
         blockchain,
         provider: provider(blockchain),
-        call: {
+        request: {
           to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
           api: exchange.contracts.pair.api,
           method: 'getReserves',
@@ -97,7 +98,7 @@ describe('quickswap', () => {
       mock({
         blockchain,
         provider: provider(blockchain),
-        call: {
+        request: {
           to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
           api: exchange.contracts.pair.api,
           method: 'token0',
@@ -107,7 +108,7 @@ describe('quickswap', () => {
       mock({
         blockchain,
         provider: provider(blockchain),
-        call: {
+        request: {
           to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
           api: exchange.contracts.pair.api,
           method: 'token1',
@@ -122,7 +123,7 @@ describe('quickswap', () => {
       mock({
         blockchain,
         provider: provider(blockchain),
-        call: {
+        request: {
           to: exchange.contracts.factory.address,
           api: exchange.contracts.factory.api,
           method: 'getPair',
@@ -133,7 +134,7 @@ describe('quickswap', () => {
       mock({
         blockchain,
         provider: provider(blockchain),
-        call: {
+        request: {
           to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
           api: exchange.contracts.pair.api,
           method: 'getReserves',
@@ -143,7 +144,7 @@ describe('quickswap', () => {
       mock({
         blockchain,
         provider: provider(blockchain),
-        call: {
+        request: {
           to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
           api: exchange.contracts.pair.api,
           method: 'token0',
@@ -153,7 +154,7 @@ describe('quickswap', () => {
       mock({
         blockchain,
         provider: provider(blockchain),
-        call: {
+        request: {
           to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
           api: exchange.contracts.pair.api,
           method: 'token1',
@@ -170,7 +171,7 @@ describe('quickswap', () => {
         mock({
           blockchain,
           provider: provider(blockchain),
-          call: {
+          request: {
             to: CONSTANTS[blockchain].USD,
             api: Token[blockchain].DEFAULT,
             method: 'decimals',
@@ -183,7 +184,7 @@ describe('quickswap', () => {
         mock({
           blockchain,
           provider: provider(blockchain),
-          call: {
+          request: {
             to: exchange.contracts.factory.address,
             api: exchange.contracts.factory.api,
             method: 'getPair',
@@ -194,7 +195,7 @@ describe('quickswap', () => {
         mock({
           blockchain,
           provider: provider(blockchain),
-          call: {
+          request: {
             to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
             api: exchange.contracts.pair.api,
             method: 'getReserves',
@@ -204,7 +205,7 @@ describe('quickswap', () => {
         mock({
           blockchain,
           provider: provider(blockchain),
-          call: {
+          request: {
             to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
             api: exchange.contracts.pair.api,
             method: 'token0',
@@ -214,7 +215,7 @@ describe('quickswap', () => {
         mock({
           blockchain,
           provider: provider(blockchain),
-          call: {
+          request: {
             to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
             api: exchange.contracts.pair.api,
             method: 'token1',
@@ -229,7 +230,7 @@ describe('quickswap', () => {
         mock({
           blockchain,
           provider: provider(blockchain),
-          call: {
+          request: {
             to: exchange.contracts.factory.address,
             api: exchange.contracts.factory.api,
             method: 'getPair',
@@ -240,7 +241,7 @@ describe('quickswap', () => {
         mock({
           blockchain,
           provider: provider(blockchain),
-          call: {
+          request: {
             to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
             api: exchange.contracts.pair.api,
             method: 'getReserves',
@@ -250,7 +251,7 @@ describe('quickswap', () => {
         mock({
           blockchain,
           provider: provider(blockchain),
-          call: {
+          request: {
             to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
             api: exchange.contracts.pair.api,
             method: 'token0',
@@ -260,7 +261,7 @@ describe('quickswap', () => {
         mock({
           blockchain,
           provider: provider(blockchain),
-          call: {
+          request: {
             to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
             api: exchange.contracts.pair.api,
             method: 'token1',

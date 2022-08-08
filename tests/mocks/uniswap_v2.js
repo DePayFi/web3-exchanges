@@ -6,7 +6,7 @@ function mockPair({ provider, tokenIn, tokenOut, pair }) {
   mock({
     provider: provider,
     blockchain: 'ethereum',
-    call: {
+    request: {
       to: pair,
       api: UniswapV2.contracts.pair.api,
       method: 'getReserves',
@@ -16,7 +16,7 @@ function mockPair({ provider, tokenIn, tokenOut, pair }) {
   mock({
     provider: provider,
     blockchain: 'ethereum',
-    call: {
+    request: {
       to: pair,
       api: UniswapV2.contracts.pair.api,
       method: 'token0',
@@ -26,7 +26,7 @@ function mockPair({ provider, tokenIn, tokenOut, pair }) {
   mock({
     provider: provider,
     blockchain: 'ethereum',
-    call: {
+    request: {
       to: pair,
       api: UniswapV2.contracts.pair.api,
       method: 'token1',
@@ -36,7 +36,7 @@ function mockPair({ provider, tokenIn, tokenOut, pair }) {
   return mock({
     provider,
     blockchain: 'ethereum',
-    call: {
+    request: {
       to: UniswapV2.contracts.factory.address,
       api: UniswapV2.contracts.factory.api,
       method: 'getPair',
@@ -50,7 +50,7 @@ function mockAmounts({ provider, method, params, amounts }){
   return mock({
     provider,
     blockchain: 'ethereum',
-    call: {
+    request: {
       to: UniswapV2.contracts.router.address,
       api: UniswapV2.contracts.router.api,
       method: method,

@@ -76,7 +76,7 @@ describe('pancakeswap', () => {
       mock({
         blockchain,
         provider: provider(blockchain),
-        call: {
+        request: {
           to: exchange.contracts.factory.address,
           api: exchange.contracts.factory.api,
           method: 'getPair',
@@ -87,7 +87,7 @@ describe('pancakeswap', () => {
       mock({
         blockchain,
         provider: provider(blockchain),
-        call: {
+        request: {
           to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
           api: exchange.contracts.pair.api,
           method: 'getReserves',
@@ -97,7 +97,7 @@ describe('pancakeswap', () => {
       mock({
         blockchain,
         provider: provider(blockchain),
-        call: {
+        request: {
           to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
           api: exchange.contracts.pair.api,
           method: 'token0',
@@ -107,7 +107,7 @@ describe('pancakeswap', () => {
       mock({
         blockchain,
         provider: provider(blockchain),
-        call: {
+        request: {
           to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
           api: exchange.contracts.pair.api,
           method: 'token1',
@@ -122,7 +122,7 @@ describe('pancakeswap', () => {
       mock({
         blockchain,
         provider: provider(blockchain),
-        call: {
+        request: {
           to: exchange.contracts.factory.address,
           api: exchange.contracts.factory.api,
           method: 'getPair',
@@ -133,7 +133,7 @@ describe('pancakeswap', () => {
       mock({
         blockchain,
         provider: provider(blockchain),
-        call: {
+        request: {
           to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
           api: exchange.contracts.pair.api,
           method: 'getReserves',
@@ -143,7 +143,7 @@ describe('pancakeswap', () => {
       mock({
         blockchain,
         provider: provider(blockchain),
-        call: {
+        request: {
           to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
           api: exchange.contracts.pair.api,
           method: 'token0',
@@ -153,7 +153,7 @@ describe('pancakeswap', () => {
       mock({
         blockchain,
         provider: provider(blockchain),
-        call: {
+        request: {
           to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
           api: exchange.contracts.pair.api,
           method: 'token1',
@@ -170,7 +170,7 @@ describe('pancakeswap', () => {
         mock({
           blockchain,
           provider: provider(blockchain),
-          call: {
+          request: {
             to: CONSTANTS[blockchain].USD,
             api: Token.ethereum.DEFAULT,
             method: 'decimals',
@@ -183,7 +183,7 @@ describe('pancakeswap', () => {
         mock({
           blockchain,
           provider: provider(blockchain),
-          call: {
+          request: {
             to: exchange.contracts.factory.address,
             api: exchange.contracts.factory.api,
             method: 'getPair',
@@ -194,7 +194,7 @@ describe('pancakeswap', () => {
         mock({
           blockchain,
           provider: provider(blockchain),
-          call: {
+          request: {
             to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
             api: exchange.contracts.pair.api,
             method: 'getReserves',
@@ -204,7 +204,7 @@ describe('pancakeswap', () => {
         mock({
           blockchain,
           provider: provider(blockchain),
-          call: {
+          request: {
             to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
             api: exchange.contracts.pair.api,
             method: 'token0',
@@ -214,7 +214,7 @@ describe('pancakeswap', () => {
         mock({
           blockchain,
           provider: provider(blockchain),
-          call: {
+          request: {
             to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
             api: exchange.contracts.pair.api,
             method: 'token1',
@@ -229,7 +229,7 @@ describe('pancakeswap', () => {
         mock({
           blockchain,
           provider: provider(blockchain),
-          call: {
+          request: {
             to: exchange.contracts.factory.address,
             api: exchange.contracts.factory.api,
             method: 'getPair',
@@ -240,7 +240,7 @@ describe('pancakeswap', () => {
         mock({
           blockchain,
           provider: provider(blockchain),
-          call: {
+          request: {
             to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
             api: exchange.contracts.pair.api,
             method: 'getReserves',
@@ -250,7 +250,7 @@ describe('pancakeswap', () => {
         mock({
           blockchain,
           provider: provider(blockchain),
-          call: {
+          request: {
             to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
             api: exchange.contracts.pair.api,
             method: 'token0',
@@ -260,7 +260,7 @@ describe('pancakeswap', () => {
         mock({
           blockchain,
           provider: provider(blockchain),
-          call: {
+          request: {
             to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
             api: exchange.contracts.pair.api,
             method: 'token1',

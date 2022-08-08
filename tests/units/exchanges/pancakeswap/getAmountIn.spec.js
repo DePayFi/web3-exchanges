@@ -30,7 +30,7 @@ describe('pancakeswap', () => {
         provider: provider(blockchain),
         blockchain,
         block,
-        call: {
+        request: {
           to: PancakeSwap.contracts.router.address,
           api: PancakeSwap.contracts.router.api,
           method: 'getAmountsIn',
