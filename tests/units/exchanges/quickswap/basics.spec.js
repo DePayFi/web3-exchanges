@@ -6,7 +6,7 @@ describe('quickswap', () => {
   describe('basics', ()=> {
     
     it('provides basic structured data for quickswap', ()=> {
-      let exchange = findByName('quickswap')
+      let exchange = findByName('polygon', 'quickswap')
       expect(exchange.name).toEqual('quickswap')
       expect(exchange.blockchain).toEqual('polygon')
       expect(exchange.alternativeNames).toEqual([])

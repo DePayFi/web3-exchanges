@@ -12,7 +12,7 @@ describe('quickswap', () => {
   beforeEach(resetCache)
   beforeEach(()=>mock({ provider: provider(blockchain), blockchain, accounts: { return: accounts } }))
 
-  let exchange = findByName('quickswap')
+  let exchange = findByName('polygon', 'quickswap')
   let pair = '0xEF8cD6Cb5c841A4f02986e8A8ab3cC545d1B8B6d'
   let fromAddress = '0x5Af489c8786A018EC4814194dC8048be1007e390'
   let toAddress = '0x5Af489c8786A018EC4814194dC8048be1007e390'

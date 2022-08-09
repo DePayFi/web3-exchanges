@@ -15,8 +15,7 @@ let route = ({
   amountInMin,
 }) => {
   return Promise.all(
-    all.map((exchange) => {
-      if(exchange.blockchain !== blockchain) { return null }
+    all[blockchain].map((exchange) => {
       return exchange.route({
         fromAddress,
         toAddress,

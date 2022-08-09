@@ -9,7 +9,7 @@ import { Token } from '@depay/web3-tokens'
 
 describe('pancakeswap', () => {
   
-  let exchange = findByName('pancakeswap')
+  let exchange = findByName('bsc', 'pancakeswap')
   let blockchain = 'bsc'
   const accounts = ['0xd8da6bf26964af9d7eed9e03e53415d37aa96045']
   beforeEach(resetMocks)

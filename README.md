@@ -20,7 +20,7 @@ all
 //   ...
 // ]
 
-let exchange = findByName('uniswap_v2')
+let exchange = findByName('ethereum', 'uniswap_v2')
 // { name: 'uniswap_v2', label: 'Uniswap v2', logo: '...' }
 
 let routes = await route({
@@ -142,10 +142,10 @@ all
 ```javascript
 import { findByName } from '@depay/web3-exchanges'
 
-findByName('uniswap_v2')
+findByName('ethereum', 'uniswap_v2')
 // { name: 'uniswap_v2', label: 'Uniswap v2', logo: '...' }
 
-findByName('pancakeswap_v2')
+findByName('bsc', 'pancakeswap_v2')
 // { name: 'pancakeswap_v2', label: 'PancakeSwap v2', logo: '...' }
 ```
 
@@ -176,7 +176,7 @@ wallet.sendTransaction(routes[0].transaction)
 ```javascript
 import { findByName } from '@depay/web3-exchanges'
 
-let exchange = findByName('uniswap_v2')
+let exchange = findByName('ethereum', 'uniswap_v2')
 
 let route = await exchange.route({
   blockchain: 'ethereum',
@@ -201,7 +201,7 @@ wallet.sendTransaction(route.transaction)
 ```javascript
 import { findByName } from '@depay/web3-exchanges'
 
-let exchange = findByName('uniswap_v2')
+let exchange = findByName('ethereum', 'uniswap_v2')
 
 let amountIn = await exchange.getAmountIn({
   path: ['0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb', '0xdAC17F958D2ee523a2206206994597C13D831ec7'],

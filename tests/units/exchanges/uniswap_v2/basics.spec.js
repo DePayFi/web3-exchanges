@@ -6,7 +6,7 @@ describe('uniswap_v2', () => {
   describe('basics', ()=> {
     
     it('provides basic structured data for uniswap_v2', ()=> {
-      let exchange = findByName('uniswap_v2')
+      let exchange = findByName('ethereum', 'uniswap_v2')
       expect(exchange.name).toEqual('uniswap_v2')
       expect(exchange.blockchain).toEqual('ethereum')
       expect(exchange.alternativeNames).toEqual([])

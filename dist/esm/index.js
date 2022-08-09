@@ -240,13 +240,16 @@ let pathExists$2 = async (path) => {
   let pair = await request({
     blockchain: 'ethereum',
     address: basics$2.contracts.factory.address,
-    method: 'getPair'
-  }, { api: basics$2.contracts.factory.api, cache: 3600000, params: fixUniswapPath$1(path) });
+    method: 'getPair',
+    api: basics$2.contracts.factory.api,
+    cache: 3600000,
+    params: fixUniswapPath$1(path) 
+  });
   if(pair == CONSTANTS.ethereum.ZERO) { return false }
   let [reserves, token0, token1] = await Promise.all([
-    request({ blockchain: 'ethereum', address: pair, method: 'getReserves' }, { api: basics$2.contracts.pair.api, cache: 3600000 }),
-    request({ blockchain: 'ethereum', address: pair, method: 'token0' }, { api: basics$2.contracts.pair.api, cache: 3600000 }),
-    request({ blockchain: 'ethereum', address: pair, method: 'token1' }, { api: basics$2.contracts.pair.api, cache: 3600000 })
+    request({ blockchain: 'ethereum', address: pair, method: 'getReserves', api: basics$2.contracts.pair.api, cache: 3600000 }),
+    request({ blockchain: 'ethereum', address: pair, method: 'token0', api: basics$2.contracts.pair.api, cache: 3600000 }),
+    request({ blockchain: 'ethereum', address: pair, method: 'token1', api: basics$2.contracts.pair.api, cache: 3600000 })
   ]);
   if(path.includes(CONSTANTS.ethereum.WRAPPED)) {
     return minReserveRequirements$2({ min: 1, token: CONSTANTS.ethereum.WRAPPED, decimals: CONSTANTS.ethereum.DECIMALS, reserves, token0, token1 })
@@ -311,8 +314,7 @@ let getAmountsOut$2 = ({ path, amountIn, tokenIn, tokenOut }) => {
     request({
       blockchain: 'ethereum',
       address: basics$2.contracts.router.address,
-      method: 'getAmountsOut'
-    },{
+      method: 'getAmountsOut',
       api: basics$2.contracts.router.api,
       params: {
         amountIn: amountIn,
@@ -331,8 +333,7 @@ let getAmountIn$2 = ({ path, amountOut, block }) => {
     request({
       blockchain: 'ethereum',
       address: basics$2.contracts.router.address,
-      method: 'getAmountsIn'
-    },{
+      method: 'getAmountsIn',
       api: basics$2.contracts.router.api,
       params: {
         amountOut: amountOut,
@@ -574,17 +575,16 @@ let pathExists$1 = async (path) => {
   let pair = await request({
     blockchain: 'bsc',
     address: basics$1.contracts.factory.address,
-    method: 'getPair'
-  }, {
+    method: 'getPair',
     api: basics$1.contracts.factory.api,
     cache: 3600000,
     params: fixUniswapPath(path),
   });
   if(pair == CONSTANTS.bsc.ZERO) { return false }
   let [reserves, token0, token1] = await Promise.all([
-    request({ blockchain: 'bsc', address: pair, method: 'getReserves' }, { api: basics$1.contracts.pair.api, cache: 3600000 }),
-    request({ blockchain: 'bsc', address: pair, method: 'token0' }, { api: basics$1.contracts.pair.api, cache: 3600000 }),
-    request({ blockchain: 'bsc', address: pair, method: 'token1' }, { api: basics$1.contracts.pair.api, cache: 3600000 })
+    request({ blockchain: 'bsc', address: pair, method: 'getReserves', api: basics$1.contracts.pair.api, cache: 3600000 }),
+    request({ blockchain: 'bsc', address: pair, method: 'token0', api: basics$1.contracts.pair.api, cache: 3600000 }),
+    request({ blockchain: 'bsc', address: pair, method: 'token1', api: basics$1.contracts.pair.api, cache: 3600000 })
   ]);
   if(path.includes(CONSTANTS.bsc.WRAPPED)) {
     return minReserveRequirements$1({ min: 1, token: CONSTANTS.bsc.WRAPPED, decimals: CONSTANTS.bsc.DECIMALS, reserves, token0, token1 })
@@ -649,8 +649,7 @@ let getAmountsOut$1 = ({ path, amountIn, tokenIn, tokenOut }) => {
     request({
       blockchain: 'bsc',
       address: basics$1.contracts.router.address,
-      method: 'getAmountsOut'
-    },{
+      method: 'getAmountsOut',
       api: basics$1.contracts.router.api,
       params: {
         amountIn: amountIn,
@@ -669,8 +668,7 @@ let getAmountIn$1 = ({ path, amountOut, block }) => {
     request({
       blockchain: 'bsc',
       address: basics$1.contracts.router.address,
-      method: 'getAmountsIn'
-    },{
+      method: 'getAmountsIn',
       api: basics$1.contracts.router.api,
       params: {
         amountOut: amountOut,
@@ -910,17 +908,17 @@ let pathExists = async (path) => {
   let pair = await request({
     blockchain: 'polygon',
     address: basics.contracts.factory.address,
-    method: 'getPair'
-  }, { api: basics.contracts.factory.api, cache: 3600000, params: fixPath(path) });
+    method: 'getPair',
+    api: basics.contracts.factory.api, 
+    cache: 3600000, 
+    params: fixPath(path) 
+  });
   if(pair == CONSTANTS.polygon.ZERO) { return false }
   let [reserves, token0, token1] = await Promise.all([
-    request({ blockchain: 'polygon', address: pair, method: 'getReserves' }, { api: basics.contracts.pair.api, cache: 3600000 }),
-    request({ blockchain: 'polygon', address: pair, method: 'token0' }, { api: basics.contracts.pair.api, cache: 3600000 }),
-    request({ blockchain: 'polygon', address: pair, method: 'token1' }, { api: basics.contracts.pair.api, cache: 3600000 })
+    request({ blockchain: 'polygon', address: pair, method: 'getReserves', api: basics.contracts.pair.api, cache: 3600000 }),
+    request({ blockchain: 'polygon', address: pair, method: 'token0', api: basics.contracts.pair.api, cache: 3600000 }),
+    request({ blockchain: 'polygon', address: pair, method: 'token1', api: basics.contracts.pair.api, cache: 3600000 })
   ]);
-  console.log('RESERVES', reserves);
-  console.log('token0', token0);
-  console.log('token1', token1);
   if(path.includes(CONSTANTS.polygon.WRAPPED)) {
     return minReserveRequirements({ min: 1, token: CONSTANTS.polygon.WRAPPED, decimals: CONSTANTS.polygon.DECIMALS, reserves, token0, token1 })
   } else if (path.includes(CONSTANTS.polygon.USD)) {
@@ -984,8 +982,7 @@ let getAmountsOut = ({ path, amountIn, tokenIn, tokenOut }) => {
     request({
       blockchain: 'polygon',
       address: basics.contracts.router.address,
-      method: 'getAmountsOut'
-    },{
+      method: 'getAmountsOut',
       api: basics.contracts.router.api,
       params: {
         amountIn: amountIn,
@@ -1004,8 +1001,7 @@ let getAmountIn = ({ path, amountOut, block }) => {
     request({
       blockchain: 'polygon',
       address: basics.contracts.router.address,
-      method: 'getAmountsIn'
-    },{
+      method: 'getAmountsIn',
       api: basics.contracts.router.api,
       params: {
         amountOut: amountOut,
@@ -1174,14 +1170,15 @@ var quickswap = new Exchange(
   Object.assign(basics, { route: route$1, getAmountIn })
 );
 
-let all = [
-  uniswap_v2,
-  pancakeswap,
-  quickswap,
-];
+let all = {
+  ethereum: [uniswap_v2],
+  bsc: [pancakeswap],
+  polygon: [quickswap],
+  solana: [],
+};
 
-var findByName = (name) => {
-  return all.find((exchange) => {
+var findByName = (blockchain, name) => {
+  return all[blockchain].find((exchange) => {
     return exchange.name == name || exchange.alternativeNames.includes(name)
   })
 };
@@ -1200,8 +1197,7 @@ let route = ({
   amountInMin,
 }) => {
   return Promise.all(
-    all.map((exchange) => {
-      if(exchange.blockchain !== blockchain) { return null }
+    all[blockchain].map((exchange) => {
       return exchange.route({
         fromAddress,
         toAddress,

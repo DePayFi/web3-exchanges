@@ -47,7 +47,7 @@ describe('route', ()=> {
     expect(routes.length).toEqual(1)
     expect(routes[0].fromAddress).toEqual(wallet)
     expect(routes[0].toAddress).toEqual(wallet)
-    expect(routes[0].exchange).toEqual(findByName('pancakeswap'))
+    expect(routes[0].exchange).toEqual(findByName('bsc', 'pancakeswap'))
     expect(routes[0].path).toEqual(path.map((address)=>ethers.utils.getAddress(address)))
     expect(routes[0].transaction.blockchain).toEqual('bsc')
     expect(routes[0].transaction.to).toEqual(PancakeSwap.contracts.router.address)

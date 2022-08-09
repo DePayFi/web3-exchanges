@@ -16,7 +16,7 @@ describe('pancakeswap', () => {
   beforeEach(resetCache)
   beforeEach(()=>mock({ blockchain, accounts: { return: accounts } }))
 
-  let exchange = findByName('pancakeswap')
+  let exchange = findByName('bsc', 'pancakeswap')
   let pair = '0x804678fa97d91B974ec2af3c843270886528a9E6'
   let fromAddress = '0x5Af489c8786A018EC4814194dC8048be1007e390'
   let toAddress = '0x5Af489c8786A018EC4814194dC8048be1007e390'
