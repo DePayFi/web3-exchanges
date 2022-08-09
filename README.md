@@ -33,9 +33,9 @@ let routes = await route({
 }) // returns routes sorted by cost-effectiveness (best first)
 
 // use connected wallet to sign and send the swap transaction
-import { getWallet } from '@depay/web3-wallets'
+import { getWallets } from '@depay/web3-wallets'
 
-let wallet = getWallet()
+let wallet = getWallets()[0]
 
 wallet.sendTransaction(route.transaction)
 
@@ -164,9 +164,9 @@ let routes = route {
 } // returns routes sorted by cost-effectiveness (best first)
 
 // use connected wallet to sign and send the swap transaction
-import { getWallet } from '@depay/web3-wallets'
+import { getWallets } from '@depay/web3-wallets'
 
-let wallet = getWallet()
+let wallet = getWallets()[0]
 
 wallet.sendTransaction(routes[0].transaction)
 ```
@@ -189,9 +189,9 @@ let route = await exchange.route({
 })
 
 // use connected wallet to sign and send the swap transaction
-import { getWallet } from '@depay/web3-wallets'
+import { getWallets } from '@depay/web3-wallets'
 
-let wallet = getWallet()
+let wallet = getWallets()[0]
 
 wallet.sendTransaction(route.transaction)
 ```
