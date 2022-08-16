@@ -1,5 +1,5 @@
 import UniswapV2 from '../basics'
-import { fixUniswapPath } from './path'
+import { fixPath } from './path'
 import { request } from '@depay/web3-client'
 
 let getAmountsOut = ({ path, amountIn, tokenIn, tokenOut }) => {
@@ -11,7 +11,7 @@ let getAmountsOut = ({ path, amountIn, tokenIn, tokenOut }) => {
       api: UniswapV2.contracts.router.api,
       params: {
         amountIn: amountIn,
-        path: fixUniswapPath(path),
+        path: fixPath(path),
       },
     })
     .then((amountsOut)=>{
@@ -30,7 +30,7 @@ let getAmountIn = ({ path, amountOut, block }) => {
       api: UniswapV2.contracts.router.api,
       params: {
         amountOut: amountOut,
-        path: fixUniswapPath(path),
+        path: fixPath(path),
       },
       block
     })
