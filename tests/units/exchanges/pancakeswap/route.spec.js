@@ -1,7 +1,7 @@
 import Route from 'src/classes/Route'
 import { CONSTANTS } from '@depay/web3-constants'
 import { ethers } from 'ethers'
-import { findByName } from 'src'
+import { find } from 'src'
 import { mock, resetMocks, anything } from '@depay/web3-mock'
 import { mockDecimals } from 'tests/mocks/token'
 import { mockPair, mockAmounts } from 'tests/mocks/pancakeswap'
@@ -16,7 +16,7 @@ describe('pancakeswap', () => {
   beforeEach(resetCache)
   beforeEach(()=>mock({ blockchain, accounts: { return: accounts } }))
 
-  let exchange = findByName('bsc', 'pancakeswap')
+  let exchange = find('bsc', 'pancakeswap')
   let pair = '0x804678fa97d91B974ec2af3c843270886528a9E6'
   let fromAddress = '0x5Af489c8786A018EC4814194dC8048be1007e390'
   let toAddress = '0x5Af489c8786A018EC4814194dC8048be1007e390'

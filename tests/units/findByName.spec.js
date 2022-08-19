@@ -1,10 +1,10 @@
-import { findByName } from 'src'
+import { find } from 'src'
 
-describe('findByName', () => {
+describe('find', () => {
   
   it('provides a dex by name', () => {
-    expect(findByName('ethereum', 'uniswap_v2').label).toEqual('Uniswap v2')
-    expect(findByName('bsc', 'pancakeswap').label).toEqual('PancakeSwap')
-    expect(findByName('polygon', 'quickswap').label).toEqual('QuickSwap')
+    expect(find('ethereum', 'uniswap_v2').label).toEqual('Uniswap v2')
+    expect(find('bsc', 'pancakeswap').label).toEqual('PancakeSwap')
+    expect(find('polygon', 'quickswap').label).toEqual('QuickSwap')
   });
 });

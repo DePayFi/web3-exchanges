@@ -1,4 +1,4 @@
-import { findByName } from 'src'
+import { find } from 'src'
 import { PancakeRouter, PancakeFactory, PancakePair } from 'src/exchanges/pancakeswap/apis'
 
 describe('pancakswap', () => {
@@ -6,7 +6,7 @@ describe('pancakswap', () => {
   describe('basics', ()=> {
     
     it('provides basic structured data for pancakeswap', ()=> {
-      let exchange = findByName('bsc', 'pancakeswap')
+      let exchange = find('bsc', 'pancakeswap')
       expect(exchange.name).toEqual('pancakeswap')
       expect(exchange.blockchain).toEqual('bsc')
       expect(exchange.alternativeNames).toEqual(['pancake'])

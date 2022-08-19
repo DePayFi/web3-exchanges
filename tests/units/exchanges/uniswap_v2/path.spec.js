@@ -1,5 +1,5 @@
 import { CONSTANTS } from '@depay/web3-constants'
-import { findByName } from 'src'
+import { find } from 'src'
 import { mock, resetMocks } from '@depay/web3-mock'
 import { mockDecimals } from 'tests/mocks/token'
 import { mockPair } from 'tests/mocks/uniswap_v2'
@@ -9,7 +9,7 @@ import { Token } from '@depay/web3-tokens'
 
 describe('uniswap_v2', () => {
   
-  let exchange = findByName('ethereum', 'uniswap_v2')
+  let exchange = find('ethereum', 'uniswap_v2')
   let blockchain = 'ethereum'
   const accounts = ['0xd8da6bf26964af9d7eed9e03e53415d37aa96045']
   beforeEach(resetMocks)

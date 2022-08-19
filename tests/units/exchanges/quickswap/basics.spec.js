@@ -1,4 +1,4 @@
-import { findByName } from 'src'
+import { find } from 'src'
 import { UniswapV2Router02, UniswapV2Factory, UniswapV2Pair } from 'src/exchanges/quickswap/apis'
 
 describe('quickswap', () => {
@@ -6,7 +6,7 @@ describe('quickswap', () => {
   describe('basics', ()=> {
     
     it('provides basic structured data for quickswap', ()=> {
-      let exchange = findByName('polygon', 'quickswap')
+      let exchange = find('polygon', 'quickswap')
       expect(exchange.name).toEqual('quickswap')
       expect(exchange.blockchain).toEqual('polygon')
       expect(exchange.alternativeNames).toEqual([])

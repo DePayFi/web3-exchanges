@@ -169,7 +169,7 @@
     }
   }
 
-  function _optionalChain$3(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }class Route {
+  function _optionalChain$4(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }class Route {
     constructor({
       tokenIn,
       tokenOut,
@@ -186,10 +186,10 @@
       this.tokenIn = tokenIn;
       this.tokenOut = tokenOut;
       this.path = path;
-      this.amountIn = _optionalChain$3([amountIn, 'optionalAccess', _ => _.toString, 'call', _2 => _2()]);
-      this.amountOutMin = _optionalChain$3([amountOutMin, 'optionalAccess', _3 => _3.toString, 'call', _4 => _4()]);
-      this.amountOut = _optionalChain$3([amountOut, 'optionalAccess', _5 => _5.toString, 'call', _6 => _6()]);
-      this.amountInMax = _optionalChain$3([amountInMax, 'optionalAccess', _7 => _7.toString, 'call', _8 => _8()]);
+      this.amountIn = _optionalChain$4([amountIn, 'optionalAccess', _ => _.toString, 'call', _2 => _2()]);
+      this.amountOutMin = _optionalChain$4([amountOutMin, 'optionalAccess', _3 => _3.toString, 'call', _4 => _4()]);
+      this.amountOut = _optionalChain$4([amountOut, 'optionalAccess', _5 => _5.toString, 'call', _6 => _6()]);
+      this.amountInMax = _optionalChain$4([amountInMax, 'optionalAccess', _7 => _7.toString, 'call', _8 => _8()]);
       this.fromAddress = fromAddress;
       this.toAddress = toAddress;
       this.transaction = transaction;
@@ -197,14 +197,14 @@
     }
   }
 
-  function _optionalChain$2(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
+  function _optionalChain$3(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
   // Replaces 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE with the wrapped token and implies wrapping.
   //
   // We keep 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE internally
   // to be able to differentiate between ETH<>Token and WETH<>Token swaps
   // as they are not the same!
   //
-  let fixPath$2 = (path) => {
+  let fixPath$3 = (path) => {
     let fixedPath = path.map((token, index) => {
       if (
         token === web3Constants.CONSTANTS.bsc.NATIVE && path[index+1] != web3Constants.CONSTANTS.bsc.WRAPPED &&
@@ -235,15 +235,15 @@
     }
   };
 
-  let pathExists$2 = async (path) => {
-    if(fixPath$2(path).length == 1) { return false }
+  let pathExists$3 = async (path) => {
+    if(fixPath$3(path).length == 1) { return false }
     let pair = await web3Client.request({
       blockchain: 'bsc',
       address: basics$3.contracts.factory.address,
       method: 'getPair',
       api: basics$3.contracts.factory.api,
       cache: 3600000,
-      params: fixPath$2(path),
+      params: fixPath$3(path),
     });
     if(pair == web3Constants.CONSTANTS.bsc.ZERO) { return false }
     let [reserves, token0, token1] = await Promise.all([
@@ -269,30 +269,30 @@
     ) { return }
 
     let path;
-    if (await pathExists$2([tokenIn, tokenOut])) {
+    if (await pathExists$3([tokenIn, tokenOut])) {
       // direct path
       path = [tokenIn, tokenOut];
     } else if (
       tokenIn != web3Constants.CONSTANTS.bsc.WRAPPED &&
-      await pathExists$2([tokenIn, web3Constants.CONSTANTS.bsc.WRAPPED]) &&
+      await pathExists$3([tokenIn, web3Constants.CONSTANTS.bsc.WRAPPED]) &&
       tokenOut != web3Constants.CONSTANTS.bsc.WRAPPED &&
-      await pathExists$2([tokenOut, web3Constants.CONSTANTS.bsc.WRAPPED])
+      await pathExists$3([tokenOut, web3Constants.CONSTANTS.bsc.WRAPPED])
     ) {
       // path via WRAPPED
       path = [tokenIn, web3Constants.CONSTANTS.bsc.WRAPPED, tokenOut];
     } else if (
       tokenIn != web3Constants.CONSTANTS.bsc.USD &&
-      await pathExists$2([tokenIn, web3Constants.CONSTANTS.bsc.USD]) &&
+      await pathExists$3([tokenIn, web3Constants.CONSTANTS.bsc.USD]) &&
       tokenOut != web3Constants.CONSTANTS.bsc.WRAPPED &&
-      await pathExists$2([web3Constants.CONSTANTS.bsc.WRAPPED, tokenOut])
+      await pathExists$3([web3Constants.CONSTANTS.bsc.WRAPPED, tokenOut])
     ) {
       // path via tokenIn -> USD -> WRAPPED -> tokenOut
       path = [tokenIn, web3Constants.CONSTANTS.bsc.USD, web3Constants.CONSTANTS.bsc.WRAPPED, tokenOut];
     } else if (
       tokenIn != web3Constants.CONSTANTS.bsc.WRAPPED &&
-      await pathExists$2([tokenIn, web3Constants.CONSTANTS.bsc.WRAPPED]) &&
+      await pathExists$3([tokenIn, web3Constants.CONSTANTS.bsc.WRAPPED]) &&
       tokenOut != web3Constants.CONSTANTS.bsc.USD &&
-      await pathExists$2([web3Constants.CONSTANTS.bsc.USD, tokenOut])
+      await pathExists$3([web3Constants.CONSTANTS.bsc.USD, tokenOut])
     ) {
       // path via tokenIn -> WRAPPED -> USD -> tokenOut
       path = [tokenIn, web3Constants.CONSTANTS.bsc.WRAPPED, web3Constants.CONSTANTS.bsc.USD, tokenOut];
@@ -300,9 +300,9 @@
 
     // Add WRAPPED to route path if things start or end with NATIVE
     // because that actually reflects how things are routed in reality:
-    if(_optionalChain$2([path, 'optionalAccess', _ => _.length]) && path[0] == web3Constants.CONSTANTS.bsc.NATIVE) {
+    if(_optionalChain$3([path, 'optionalAccess', _ => _.length]) && path[0] == web3Constants.CONSTANTS.bsc.NATIVE) {
       path.splice(1, 0, web3Constants.CONSTANTS.bsc.WRAPPED);
-    } else if(_optionalChain$2([path, 'optionalAccess', _2 => _2.length]) && path[path.length-1] == web3Constants.CONSTANTS.bsc.NATIVE) {
+    } else if(_optionalChain$3([path, 'optionalAccess', _2 => _2.length]) && path[path.length-1] == web3Constants.CONSTANTS.bsc.NATIVE) {
       path.splice(path.length-1, 0, web3Constants.CONSTANTS.bsc.WRAPPED);
     }
 
@@ -318,7 +318,7 @@
         api: basics$3.contracts.router.api,
         params: {
           amountIn: amountIn,
-          path: fixPath$2(path),
+          path: fixPath$3(path),
         },
       })
       .then((amountsOut)=>{
@@ -337,7 +337,7 @@
         api: basics$3.contracts.router.api,
         params: {
           amountOut: amountOut,
-          path: fixPath$2(path),
+          path: fixPath$3(path),
         },
         block
       })
@@ -346,7 +346,7 @@
     })
   };
 
-  let getAmounts$2 = async ({
+  let getAmounts$3 = async ({
     path,
     tokenIn,
     tokenOut,
@@ -439,7 +439,7 @@
     }
 
     transaction.params = Object.assign({}, transaction.params, {
-      path: fixPath$2(path),
+      path: fixPath$3(path),
       to: toAddress,
       deadline: Math.round(Date.now() / 1000) + 30 * 60, // 30 minutes
     });
@@ -469,7 +469,7 @@
       if (path === undefined || path.length == 0) { return resolve() }
       let [amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput] = [amountIn, amountOut, amountInMax, amountOutMin];
       
-      ({ amountIn, amountInMax, amountOut, amountOutMin } = await getAmounts$2({ path, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }));
+      ({ amountIn, amountInMax, amountOut, amountOutMin } = await getAmounts$3({ path, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }));
       if([amountIn, amountInMax, amountOut, amountOutMin].every((amount)=>{ return amount == undefined })) { return resolve() }
 
       let transaction = getTransaction$2({
@@ -533,14 +533,14 @@
     }
   };
 
-  function _optionalChain$1(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
+  function _optionalChain$2(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
   // Replaces 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE with the wrapped token and implies wrapping.
   //
   // We keep 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE internally
   // to be able to differentiate between ETH<>Token and WETH<>Token swaps
   // as they are not the same!
   //
-  let fixPath$1 = (path) => {
+  let fixPath$2 = (path) => {
     let fixedPath = path.map((token, index) => {
       if (
         token === web3Constants.CONSTANTS.polygon.NATIVE && path[index+1] != web3Constants.CONSTANTS.polygon.WRAPPED &&
@@ -571,15 +571,15 @@
     }
   };
 
-  let pathExists$1 = async (path) => {
-    if(fixPath$1(path).length == 1) { return false }
+  let pathExists$2 = async (path) => {
+    if(fixPath$2(path).length == 1) { return false }
     let pair = await web3Client.request({
       blockchain: 'polygon',
       address: basics$2.contracts.factory.address,
       method: 'getPair',
       api: basics$2.contracts.factory.api, 
       cache: 3600000, 
-      params: fixPath$1(path) 
+      params: fixPath$2(path) 
     });
     if(pair == web3Constants.CONSTANTS.polygon.ZERO) { return false }
     let [reserves, token0, token1] = await Promise.all([
@@ -605,30 +605,30 @@
     ) { return }
 
     let path;
-    if (await pathExists$1([tokenIn, tokenOut])) {
+    if (await pathExists$2([tokenIn, tokenOut])) {
       // direct path
       path = [tokenIn, tokenOut];
     } else if (
       tokenIn != web3Constants.CONSTANTS.polygon.WRAPPED &&
-      await pathExists$1([tokenIn, web3Constants.CONSTANTS.polygon.WRAPPED]) &&
+      await pathExists$2([tokenIn, web3Constants.CONSTANTS.polygon.WRAPPED]) &&
       tokenOut != web3Constants.CONSTANTS.polygon.WRAPPED &&
-      await pathExists$1([tokenOut, web3Constants.CONSTANTS.polygon.WRAPPED])
+      await pathExists$2([tokenOut, web3Constants.CONSTANTS.polygon.WRAPPED])
     ) {
       // path via WRAPPED
       path = [tokenIn, web3Constants.CONSTANTS.polygon.WRAPPED, tokenOut];
     } else if (
       tokenIn != web3Constants.CONSTANTS.polygon.USD &&
-      await pathExists$1([tokenIn, web3Constants.CONSTANTS.polygon.USD]) &&
+      await pathExists$2([tokenIn, web3Constants.CONSTANTS.polygon.USD]) &&
       tokenOut != web3Constants.CONSTANTS.polygon.WRAPPED &&
-      await pathExists$1([web3Constants.CONSTANTS.polygon.WRAPPED, tokenOut])
+      await pathExists$2([web3Constants.CONSTANTS.polygon.WRAPPED, tokenOut])
     ) {
       // path via tokenIn -> USD -> WRAPPED -> tokenOut
       path = [tokenIn, web3Constants.CONSTANTS.polygon.USD, web3Constants.CONSTANTS.polygon.WRAPPED, tokenOut];
     } else if (
       tokenIn != web3Constants.CONSTANTS.polygon.WRAPPED &&
-      await pathExists$1([tokenIn, web3Constants.CONSTANTS.polygon.WRAPPED]) &&
+      await pathExists$2([tokenIn, web3Constants.CONSTANTS.polygon.WRAPPED]) &&
       tokenOut != web3Constants.CONSTANTS.polygon.USD &&
-      await pathExists$1([web3Constants.CONSTANTS.polygon.USD, tokenOut])
+      await pathExists$2([web3Constants.CONSTANTS.polygon.USD, tokenOut])
     ) {
       // path via tokenIn -> WRAPPED -> USD -> tokenOut
       path = [tokenIn, web3Constants.CONSTANTS.polygon.WRAPPED, web3Constants.CONSTANTS.polygon.USD, tokenOut];
@@ -636,9 +636,9 @@
 
     // Add WRAPPED to route path if things start or end with NATIVE
     // because that actually reflects how things are routed in reality:
-    if(_optionalChain$1([path, 'optionalAccess', _ => _.length]) && path[0] == web3Constants.CONSTANTS.polygon.NATIVE) {
+    if(_optionalChain$2([path, 'optionalAccess', _ => _.length]) && path[0] == web3Constants.CONSTANTS.polygon.NATIVE) {
       path.splice(1, 0, web3Constants.CONSTANTS.polygon.WRAPPED);
-    } else if(_optionalChain$1([path, 'optionalAccess', _2 => _2.length]) && path[path.length-1] == web3Constants.CONSTANTS.polygon.NATIVE) {
+    } else if(_optionalChain$2([path, 'optionalAccess', _2 => _2.length]) && path[path.length-1] == web3Constants.CONSTANTS.polygon.NATIVE) {
       path.splice(path.length-1, 0, web3Constants.CONSTANTS.polygon.WRAPPED);
     }
 
@@ -654,7 +654,7 @@
         api: basics$2.contracts.router.api,
         params: {
           amountIn: amountIn,
-          path: fixPath$1(path),
+          path: fixPath$2(path),
         },
       })
       .then((amountsOut)=>{
@@ -673,7 +673,7 @@
         api: basics$2.contracts.router.api,
         params: {
           amountOut: amountOut,
-          path: fixPath$1(path),
+          path: fixPath$2(path),
         },
         block
       })
@@ -682,7 +682,7 @@
     })
   };
 
-  let getAmounts$1 = async ({
+  let getAmounts$2 = async ({
     path,
     tokenIn,
     tokenOut,
@@ -773,7 +773,7 @@
     }
 
     transaction.params = Object.assign({}, transaction.params, {
-      path: fixPath$1(path),
+      path: fixPath$2(path),
       to: toAddress,
       deadline: Math.round(Date.now() / 1000) + 30 * 60, // 30 minutes
     });
@@ -799,7 +799,7 @@
       if (path === undefined || path.length == 0) { return resolve() }
       let [amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput] = [amountIn, amountOut, amountInMax, amountOutMin];
       
-      ({ amountIn, amountInMax, amountOut, amountOutMin } = await getAmounts$1({ path, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }));
+      ({ amountIn, amountInMax, amountOut, amountOutMin } = await getAmounts$2({ path, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }));
       if([amountIn, amountInMax, amountOut, amountOutMin].every((amount)=>{ return amount == undefined })) { return resolve() }
 
       let transaction = getTransaction$1({
@@ -895,67 +895,6 @@
     solanaWeb3_js.seq(solanaWeb3_js.u64(), 3, "padding"),
   ]);
 
-  const LIQUIDITY_STATE_LAYOUT_V5 = solanaWeb3_js.struct([
-    solanaWeb3_js.u64("accountType"),
-    solanaWeb3_js.u64("status"),
-    solanaWeb3_js.u64("nonce"),
-    solanaWeb3_js.u64("maxOrder"),
-    solanaWeb3_js.u64("depth"),
-    solanaWeb3_js.u64("baseDecimal"),
-    solanaWeb3_js.u64("quoteDecimal"),
-    solanaWeb3_js.u64("state"),
-    solanaWeb3_js.u64("resetFlag"),
-    solanaWeb3_js.u64("minSize"),
-    solanaWeb3_js.u64("volMaxCutRatio"),
-    solanaWeb3_js.u64("amountWaveRatio"),
-    solanaWeb3_js.u64("baseLotSize"),
-    solanaWeb3_js.u64("quoteLotSize"),
-    solanaWeb3_js.u64("minPriceMultiplier"),
-    solanaWeb3_js.u64("maxPriceMultiplier"),
-    solanaWeb3_js.u64("systemDecimalsValue"),
-    solanaWeb3_js.u64("abortTradeFactor"),
-    solanaWeb3_js.u64("priceTickMultiplier"),
-    solanaWeb3_js.u64("priceTick"),
-    // Fees
-    solanaWeb3_js.u64("minSeparateNumerator"),
-    solanaWeb3_js.u64("minSeparateDenominator"),
-    solanaWeb3_js.u64("tradeFeeNumerator"),
-    solanaWeb3_js.u64("tradeFeeDenominator"),
-    solanaWeb3_js.u64("pnlNumerator"),
-    solanaWeb3_js.u64("pnlDenominator"),
-    solanaWeb3_js.u64("swapFeeNumerator"),
-    solanaWeb3_js.u64("swapFeeDenominator"),
-    // OutPutData
-    solanaWeb3_js.u64("baseNeedTakePnl"),
-    solanaWeb3_js.u64("quoteNeedTakePnl"),
-    solanaWeb3_js.u64("quoteTotalPnl"),
-    solanaWeb3_js.u64("baseTotalPnl"),
-    solanaWeb3_js.u64("poolOpenTime"),
-    solanaWeb3_js.u64("punishPcAmount"),
-    solanaWeb3_js.u64("punishCoinAmount"),
-    solanaWeb3_js.u64("orderbookToInitTime"),
-    solanaWeb3_js.u128("swapBaseInAmount"),
-    solanaWeb3_js.u128("swapQuoteOutAmount"),
-    solanaWeb3_js.u128("swapQuoteInAmount"),
-    solanaWeb3_js.u128("swapBaseOutAmount"),
-    solanaWeb3_js.u64("swapQuote2BaseFee"),
-    solanaWeb3_js.u64("swapBase2QuoteFee"),
-
-    solanaWeb3_js.publicKey("baseVault"),
-    solanaWeb3_js.publicKey("quoteVault"),
-    solanaWeb3_js.publicKey("baseMint"),
-    solanaWeb3_js.publicKey("quoteMint"),
-    solanaWeb3_js.publicKey("lpMint"),
-
-    solanaWeb3_js.publicKey("modelDataAccount"),
-    solanaWeb3_js.publicKey("openOrders"),
-    solanaWeb3_js.publicKey("marketId"),
-    solanaWeb3_js.publicKey("marketProgramId"),
-    solanaWeb3_js.publicKey("targetOrders"),
-    solanaWeb3_js.publicKey("owner"),
-    solanaWeb3_js.seq(solanaWeb3_js.u64(), 64, "padding")
-  ]);
-
   var basics$1 = {
     blockchain: 'solana',
     name: 'raydium',
@@ -974,66 +913,115 @@
       v4: {
         address: '675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8',
         api: LIQUIDITY_STATE_LAYOUT_V4
-      },
-      v5: {
-        address: '5quBtoiQqxF9Jv6KYKctB59NT3gtJD2Y65kdnB1Uev3h',
-        api: LIQUIDITY_STATE_LAYOUT_V5
       }
     }
   };
 
-  const PAIR = basics$1.pair;
+  function _optionalChain$1(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
+  const NATIVE = web3Constants.CONSTANTS.solana.NATIVE;
+  const WRAPPED = web3Constants.CONSTANTS.solana.WRAPPED;
+  const USD = web3Constants.CONSTANTS.solana.USD;
 
-  let findPath$1 = async ({ tokenIn, tokenOut }) => {
-    const PAIR_VERSION = PAIR.v5;
-
-    let accounts = await web3Client.request(`solana://${PAIR_VERSION.address}/getProgramAccounts`, {
-      params: { filters: [{ dataSize: PAIR_VERSION.api.span }] }});
-
-    let directPairs = [];
-    let viaPairs = [];
-    let viaTokens = [web3Constants.CONSTANTS.solana.WRAPPED, web3Constants.CONSTANTS.solana.USD];
-    accounts.forEach((item)=>{
-      const pair = PAIR_VERSION.api.decode(item.account.data);
-      const baseMint = pair.baseMint.toString();
-      const quoteMint = pair.quoteMint.toString();
-      console.log('baseMint', baseMint);
-      console.log('quoteMint', quoteMint);
-      console.log('tokenIn', tokenIn);
-      console.log('tokenOut', tokenOut);
-      console.log('[baseMint, quoteMint].includes(tokenIn)', [baseMint, quoteMint].includes(tokenIn));
-      console.log('viaTokens.some((token)=>[baseMint, quoteMint].includes(token))', viaTokens.some((token)=>[baseMint, quoteMint].includes(token)));
-      if([baseMint, quoteMint].includes(tokenIn) && [baseMint, quoteMint].includes(tokenOut)) {
-        directPairs.push(pair);
-      } else if([baseMint, quoteMint].includes(tokenIn) && viaTokens.some((token)=>[baseMint, quoteMint].includes(token))) {
-        viaPairs.push(pair);
-      } else if([baseMint, quoteMint].includes(tokenOut) && viaTokens.some((token)=>[baseMint, quoteMint].includes(token))) {
-        viaPairs.push(pair);
+  // Replaces 11111111111111111111111111111111 with the wrapped token and implies wrapping.
+  //
+  // We keep 11111111111111111111111111111111 internally
+  // to be able to differentiate between SOL<>Token and WSOL<>Token swaps
+  // as they are not the same!
+  //
+  let fixPath$1 = (path) => {
+    let fixedPath = path.map((token, index) => {
+      if (
+        token === NATIVE && path[index+1] != WRAPPED &&
+        path[index-1] != WRAPPED
+      ) {
+        return WRAPPED
+      } else {
+        return token
       }
     });
 
-    console.log('directPairs', directPairs);
-    console.log('viaPairs', viaPairs);
+    if(fixedPath[0] == NATIVE && fixedPath[1] == WRAPPED) {
+      fixedPath.splice(0, 1);
+    } else if(fixedPath[fixedPath.length-1] == NATIVE && fixedPath[fixedPath.length-2] == WRAPPED) {
+      fixedPath.splice(fixedPath.length-1, 1);
+    }
+
+    return fixedPath
+  };
+
+  let pathExists$1 = async (path) => {
+    let fixedPath = fixPath$1(path);
+    let pairs = await web3Client.request(`solana://${basics$1.pair.v4.address}/getProgramAccounts`, {
+      params: { filters: [
+        { dataSize: basics$1.pair.v4.api.span },
+        { memcmp: { offset: 400, bytes: fixedPath[0] }}, // baseMint
+        { memcmp: { offset: 432, bytes: fixedPath[1] }}  // quoteMint
+      ]},
+      api: basics$1.pair.v4.api
+    });
+    if(pairs.length == 0) { 
+      return false
+    } else {
+      return true
+    }
+  };
+
+  let findPath$1 = async ({ tokenIn, tokenOut }) => {
+    if(
+      [tokenIn, tokenOut].includes(NATIVE) &&
+      [tokenIn, tokenOut].includes(WRAPPED)
+    ) { return }
+
+    let path;
+    if (await pathExists$1([tokenIn, tokenOut])) {
+      // direct path
+      path = [tokenIn, tokenOut];
+    } else if (
+      tokenIn != WRAPPED &&
+      await pathExists$1([tokenIn, WRAPPED]) &&
+      tokenOut != WRAPPED &&
+      await pathExists$1([tokenOut, WRAPPED])
+    ) {
+      // path via WRAPPED
+      path = [tokenIn, WRAPPED, tokenOut];
+    } else if (
+      tokenIn != USD &&
+      await pathExists$1([tokenIn, USD]) &&
+      tokenOut != USD &&
+      await pathExists$1([tokenOut, USD])
+    ) {
+      // path via USD
+      path = [tokenIn, USD, tokenOut];
+    }
+
+    // Add WRAPPED to route path if things start or end with NATIVE
+    // because that actually reflects how things are routed in reality:
+    if(_optionalChain$1([path, 'optionalAccess', _ => _.length]) && path[0] == NATIVE) {
+      path.splice(1, 0, WRAPPED);
+    } else if(_optionalChain$1([path, 'optionalAccess', _2 => _2.length]) && path[path.length-1] == NATIVE) {
+      path.splice(path.length-1, 0, WRAPPED);
+    }
+
+    return path
   };
 
   let route$2 = ({
     exchange,
     tokenIn,
     tokenOut,
-    fromAddress,
-    toAddress,
     amountIn = undefined,
     amountOut = undefined,
     amountInMax = undefined,
     amountOutMin = undefined,
   }) => {
     return new Promise(async (resolve)=> {
-      await findPath$1({ tokenIn, tokenOut });
-      // if (path === undefined || path.length == 0) { return resolve() }
-      // let [amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput] = [amountIn, amountOut, amountInMax, amountOutMin];
+      let path = await findPath$1({ tokenIn, tokenOut });
+      console.log('PATH!!!', path);
+      if (path === undefined || path.length == 0) { return resolve() }
       
-      // ({ amountIn, amountInMax, amountOut, amountOutMin } = await getAmounts({ path, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }))
-      // if([amountIn, amountInMax, amountOut, amountOutMin].every((amount)=>{ return amount == undefined })) { return resolve() }
+      ({ amountIn, amountInMax, amountOut, amountOutMin } = await getAmounts({ path, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }));
+      console.log('AMOUNTS', { amountIn, amountInMax, amountOut, amountOutMin });
+      if([amountIn, amountInMax, amountOut, amountOutMin].every((amount)=>{ return amount == undefined })) { return resolve() }
 
       // let transaction = getTransaction({
       //   path,
@@ -1045,8 +1033,6 @@
       //   amountOutInput,
       //   amountInMaxInput,
       //   amountOutMinInput,
-      //   toAddress,
-      //   fromAddress
       // })
 
       // resolve(
@@ -1058,8 +1044,6 @@
       //     amountInMax,
       //     amountOut,
       //     amountOutMin,
-      //     fromAddress,
-      //     toAddress,
       //     exchange,
       //     transaction,
       //   })
@@ -1067,7 +1051,23 @@
     })
   };
 
-  const getAmountIn$1 = ()=>{};
+  let getAmountIn$1 = ({ path, amountOut, block }) => {
+    return new Promise((resolve) => {
+      web3Client.request({
+        blockchain: 'ethereum',
+        address: basics$1.contracts.router.address,
+        method: 'getAmountsIn',
+        api: basics$1.contracts.router.api,
+        params: {
+          amountOut: amountOut,
+          path: fixPath$1(path),
+        },
+        block
+      })
+      .then((amountsIn)=>resolve(amountsIn[0]))
+      .catch(()=>resolve());
+    })
+  };
 
   var raydium = new Exchange(
     Object.assign(basics$1, { route: route$2, getAmountIn: getAmountIn$1 })
@@ -1247,7 +1247,7 @@
     })
   };
 
-  let getAmounts = async ({
+  let getAmounts$1 = async ({
     path,
     tokenIn,
     tokenOut,
@@ -1364,7 +1364,7 @@
       if (path === undefined || path.length == 0) { return resolve() }
       let [amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput] = [amountIn, amountOut, amountInMax, amountOutMin];
       
-      ({ amountIn, amountInMax, amountOut, amountOutMin } = await getAmounts({ path, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }));
+      ({ amountIn, amountInMax, amountOut, amountOutMin } = await getAmounts$1({ path, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }));
       if([amountIn, amountInMax, amountOut, amountOutMin].every((amount)=>{ return amount == undefined })) { return resolve() }
 
       let transaction = getTransaction({
@@ -1410,9 +1410,8 @@
     solana: [raydium],
   };
 
-  var findByName = (blockchain, name) => {
+  var find = (blockchain, name) => {
     return all[blockchain].find((exchange) => {
-      
       return exchange.name == name || exchange.alternativeNames.includes(name)
     })
   };
@@ -1450,7 +1449,7 @@
   };
 
   exports.all = all;
-  exports.findByName = findByName;
+  exports.find = find;
   exports.route = route;
 
   Object.defineProperty(exports, '__esModule', { value: true });

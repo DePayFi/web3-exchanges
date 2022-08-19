@@ -1,6 +1,6 @@
 import UniswapV2 from 'src/exchanges/uniswap_v2'
 import { ethers } from 'ethers'
-import { findByName } from 'src'
+import { find } from 'src'
 import { mock, resetMocks } from '@depay/web3-mock'
 import { provider, resetCache } from '@depay/web3-client'
 
@@ -12,7 +12,7 @@ describe('uniswap_v2', () => {
   beforeEach(resetCache)
   beforeEach(()=>mock({ provider: provider(blockchain), blockchain, accounts: { return: accounts } }))
 
-  let exchange = findByName('ethereum', 'uniswap_v2')
+  let exchange = find('ethereum', 'uniswap_v2')
   let pair = '0xEF8cD6Cb5c841A4f02986e8A8ab3cC545d1B8B6d'
   let fromAddress = '0x5Af489c8786A018EC4814194dC8048be1007e390'
   let toAddress = '0x5Af489c8786A018EC4814194dC8048be1007e390'
