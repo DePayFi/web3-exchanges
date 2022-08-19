@@ -4,8 +4,6 @@ let route = ({
   exchange,
   tokenIn,
   tokenOut,
-  fromAddress,
-  toAddress,
   amountIn = undefined,
   amountOut = undefined,
   amountInMax = undefined,
@@ -13,11 +11,13 @@ let route = ({
 }) => {
   return new Promise(async (resolve)=> {
     let path = await findPath({ tokenIn, tokenOut })
-    // if (path === undefined || path.length == 0) { return resolve() }
-    // let [amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput] = [amountIn, amountOut, amountInMax, amountOutMin];
+    console.log('PATH!!!', path)
+    if (path === undefined || path.length == 0) { return resolve() }
+    let [amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput] = [amountIn, amountOut, amountInMax, amountOutMin];
     
-    // ({ amountIn, amountInMax, amountOut, amountOutMin } = await getAmounts({ path, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }))
-    // if([amountIn, amountInMax, amountOut, amountOutMin].every((amount)=>{ return amount == undefined })) { return resolve() }
+    ({ amountIn, amountInMax, amountOut, amountOutMin } = await getAmounts({ path, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }))
+    console.log('AMOUNTS', { amountIn, amountInMax, amountOut, amountOutMin })
+    if([amountIn, amountInMax, amountOut, amountOutMin].every((amount)=>{ return amount == undefined })) { return resolve() }
 
     // let transaction = getTransaction({
     //   path,
@@ -29,8 +29,6 @@ let route = ({
     //   amountOutInput,
     //   amountInMaxInput,
     //   amountOutMinInput,
-    //   toAddress,
-    //   fromAddress
     // })
 
     // resolve(
@@ -42,8 +40,6 @@ let route = ({
     //     amountInMax,
     //     amountOut,
     //     amountOutMin,
-    //     fromAddress,
-    //     toAddress,
     //     exchange,
     //     transaction,
     //   })

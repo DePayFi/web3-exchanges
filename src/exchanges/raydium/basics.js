@@ -1,4 +1,4 @@
-import { LIQUIDITY_STATE_LAYOUT_V4, LIQUIDITY_STATE_LAYOUT_V5 } from './apis'
+import { LIQUIDITY_STATE_LAYOUT_V4 } from './apis'
 
 export default {
   blockchain: 'solana',
@@ -18,10 +18,6 @@ export default {
     v4: {
       address: '675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8',
       api: LIQUIDITY_STATE_LAYOUT_V4
-    },
-    v5: {
-      address: '5quBtoiQqxF9Jv6KYKctB59NT3gtJD2Y65kdnB1Uev3h',
-      api: LIQUIDITY_STATE_LAYOUT_V5
     }
   }
 }

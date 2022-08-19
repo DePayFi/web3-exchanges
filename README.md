@@ -11,7 +11,7 @@ npm install --save @depay/web3-exchanges
 ```
 
 ```javascript
-import { all, findByName, route } from '@depay/web3-exchanges'
+import { all, find, route } from '@depay/web3-exchanges'
 
 all
 // [
@@ -20,16 +20,14 @@ all
 //   ...
 // ]
 
-let exchange = findByName('ethereum', 'uniswap_v2')
+let exchange = find('ethereum', 'uniswap_v2')
 // { name: 'uniswap_v2', label: 'Uniswap v2', logo: '...' }
 
 let routes = await route({
   blockchain: 'ethereum',
   tokenIn: '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb',
   tokenOut: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
-  amountIn: 1,
-  fromAddress: '0x5Af489c8786A018EC4814194dC8048be1007e390',
-  toAddress: '0x5Af489c8786A018EC4814194dC8048be1007e390'
+  amountIn: 1
 }) // returns routes sorted by cost-effectiveness (best first)
 
 // use connected wallet to sign and send the swap transaction
@@ -84,8 +82,6 @@ A Swap configuration is fed into the `route` function:
   amountInMax: Human Readable Number (e.g. 1.2)
   amountOut: Human Readable Number (e.g. 1.2)
   amountOutMin: Human Readable Number (e.g. 1.2)
-  fromAddress: '0x5Af489c8786A018EC4814194dC8048be1007e390'
-  toAddress: '0x5Af489c8786A018EC4814194dC8048be1007e390'
 }
 ```
 
@@ -97,7 +93,6 @@ The following combinations of provided amounts are possible:
 - Only `amountOutMin`, `amountIn` will be calculated automatically and can vary
 - `amountIn` and `amountOutMax` (routing will stick to both)
 - `amountOut` and `amountInMin` (routing will stick to both)
-
 
 ### Route
 
@@ -112,8 +107,6 @@ Routes are returned by calling `route`. A single Route has the following structu
   amountOutMin: BigNumber (e.g. '32000000000000000000')
   amountOut: BigNumber (e.g. '32000000000000000000')
   amountInMax: BigNumber (e.g. '1000000000000000000')
-  fromAddress: '0x5Af489c8786A018EC4814194dC8048be1007e390'
-  toAddress: '0x5Af489c8786A018EC4814194dC8048be1007e390'
   transaction: Transaction (see @depay/web3-wallets for details)
   exchange: Exchange (see [Exchange data structure](#exchange))
 }
@@ -137,15 +130,15 @@ all
 
 ```
 
-### findByName: Get decentralized exchanged by name (name usually contains version, too)
+### find: Get decentralized exchanged by name (name usually contains version, too)
 
 ```javascript
-import { findByName } from '@depay/web3-exchanges'
+import { find } from '@depay/web3-exchanges'
 
-findByName('ethereum', 'uniswap_v2')
+find('ethereum', 'uniswap_v2')
 // { name: 'uniswap_v2', label: 'Uniswap v2', logo: '...' }
 
-findByName('bsc', 'pancakeswap_v2')
+find('bsc', 'pancakeswap_v2')
 // { name: 'pancakeswap_v2', label: 'PancakeSwap v2', logo: '...' }
 ```
 
@@ -158,9 +151,7 @@ let routes = route {
   tokenIn: '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb',
   tokenOut: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
   amountIn: 1,
-  amountOutMin: 2,
-  fromAddress: '0x5Af489c8786A018EC4814194dC8048be1007e390',
-  toAddress: '0x5Af489c8786A018EC4814194dC8048be1007e390'
+  amountOutMin: 2
 } // returns routes sorted by cost-effectiveness (best first)
 
 // use connected wallet to sign and send the swap transaction
@@ -174,18 +165,15 @@ wallet.sendTransaction(routes[0].transaction)
 `route` can also be called on concrete exchanges: 
 
 ```javascript
-import { findByName } from '@depay/web3-exchanges'
+import { find } from '@depay/web3-exchanges'
 
-let exchange = findByName('ethereum', 'uniswap_v2')
+let exchange = find('ethereum', 'uniswap_v2')
 
 let route = await exchange.route({
-  blockchain: 'ethereum',
   tokenIn: '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb',
   tokenOut: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
   amountIn: 1,
-  amountOutMin: 2,
-  fromAddress: '0x5Af489c8786A018EC4814194dC8048be1007e390',
-  toAddress: '0x5Af489c8786A018EC4814194dC8048be1007e390'
+  amountOutMin: 2
 })
 
 // use connected wallet to sign and send the swap transaction
@@ -199,9 +187,9 @@ wallet.sendTransaction(route.transaction)
 ### getAmountIn: gets the required amountIn for a specific block
 
 ```javascript
-import { findByName } from '@depay/web3-exchanges'
+import { find } from '@depay/web3-exchanges'
 
-let exchange = findByName('ethereum', 'uniswap_v2')
+let exchange = find('ethereum', 'uniswap_v2')
 
 let amountIn = await exchange.getAmountIn({
   path: ['0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb', '0xdAC17F958D2ee523a2206206994597C13D831ec7'],

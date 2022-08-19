@@ -1,42 +1,95 @@
 import basics from '../basics'
-import { request } from '@depay/web3-client'
 import { CONSTANTS } from '@depay/web3-constants'
+import { request } from '@depay/web3-client'
 
-const PAIR = basics.pair
+const NATIVE = CONSTANTS.solana.NATIVE
+const WRAPPED = CONSTANTS.solana.WRAPPED
+const USD = CONSTANTS.solana.USD
 
-let findPath = async ({ tokenIn, tokenOut }) => {
-  const PAIR_VERSION = PAIR.v5
-
-  let accounts = await request(`solana://${PAIR_VERSION.address}/getProgramAccounts`, {
-    params: { filters: [{ dataSize: PAIR_VERSION.api.span }] }})
-
-  let directPairs = []
-  let via = []
-  let viaPairs = []
-  let viaTokens = [CONSTANTS.solana.WRAPPED, CONSTANTS.solana.USD]
-  accounts.forEach((item)=>{
-    const pair = PAIR_VERSION.api.decode(item.account.data)
-    const baseMint = pair.baseMint.toString()
-    const quoteMint = pair.quoteMint.toString()
-    console.log('baseMint', baseMint)
-    console.log('quoteMint', quoteMint)
-    console.log('tokenIn', tokenIn)
-    console.log('tokenOut', tokenOut)
-    console.log('[baseMint, quoteMint].includes(tokenIn)', [baseMint, quoteMint].includes(tokenIn))
-    console.log('viaTokens.some((token)=>[baseMint, quoteMint].includes(token))', viaTokens.some((token)=>[baseMint, quoteMint].includes(token)))
-    if([baseMint, quoteMint].includes(tokenIn) && [baseMint, quoteMint].includes(tokenOut)) {
-      directPairs.push(pair)
-    } else if([baseMint, quoteMint].includes(tokenIn) && viaTokens.some((token)=>[baseMint, quoteMint].includes(token))) {
-      viaPairs.push(pair)
-    } else if([baseMint, quoteMint].includes(tokenOut) && viaTokens.some((token)=>[baseMint, quoteMint].includes(token))) {
-      viaPairs.push(pair)
+// Replaces 11111111111111111111111111111111 with the wrapped token and implies wrapping.
+//
+// We keep 11111111111111111111111111111111 internally
+// to be able to differentiate between SOL<>Token and WSOL<>Token swaps
+// as they are not the same!
+//
+let fixPath = (path) => {
+  let fixedPath = path.map((token, index) => {
+    if (
+      token === NATIVE && path[index+1] != WRAPPED &&
+      path[index-1] != WRAPPED
+    ) {
+      return WRAPPED
+    } else {
+      return token
     }
   })
 
-  console.log('directPairs', directPairs)
-  console.log('viaPairs', viaPairs)
+  if(fixedPath[0] == NATIVE && fixedPath[1] == WRAPPED) {
+    fixedPath.splice(0, 1)
+  } else if(fixedPath[fixedPath.length-1] == NATIVE && fixedPath[fixedPath.length-2] == WRAPPED) {
+    fixedPath.splice(fixedPath.length-1, 1)
+  }
+
+  return fixedPath
+}
+
+let pathExists = async (path) => {
+  let fixedPath = fixPath(path)
+  let pairs = await request(`solana://${basics.pair.v4.address}/getProgramAccounts`, {
+    params: { filters: [
+      { dataSize: basics.pair.v4.api.span },
+      { memcmp: { offset: 400, bytes: fixedPath[0] }}, // baseMint
+      { memcmp: { offset: 432, bytes: fixedPath[1] }}  // quoteMint
+    ]},
+    api: basics.pair.v4.api
+  })
+  if(pairs.length == 0) { 
+    return false
+  } else {
+    return true
+  }
+}
+
+let findPath = async ({ tokenIn, tokenOut }) => {
+  if(
+    [tokenIn, tokenOut].includes(NATIVE) &&
+    [tokenIn, tokenOut].includes(WRAPPED)
+  ) { return }
+
+  let path
+  if (await pathExists([tokenIn, tokenOut])) {
+    // direct path
+    path = [tokenIn, tokenOut]
+  } else if (
+    tokenIn != WRAPPED &&
+    await pathExists([tokenIn, WRAPPED]) &&
+    tokenOut != WRAPPED &&
+    await pathExists([tokenOut, WRAPPED])
+  ) {
+    // path via WRAPPED
+    path = [tokenIn, WRAPPED, tokenOut]
+  } else if (
+    tokenIn != USD &&
+    await pathExists([tokenIn, USD]) &&
+    tokenOut != USD &&
+    await pathExists([tokenOut, USD])
+  ) {
+    // path via USD
+    path = [tokenIn, USD, tokenOut]
+  }
+
+  // Add WRAPPED to route path if things start or end with NATIVE
+  // because that actually reflects how things are routed in reality:
+  if(path?.length && path[0] == NATIVE) {
+    path.splice(1, 0, WRAPPED)
+  } else if(path?.length && path[path.length-1] == NATIVE) {
+    path.splice(path.length-1, 0, WRAPPED)
+  }
+
+  return path
 }
 
 export {
-  findPath
+  findPath,
+  fixPath
 }
