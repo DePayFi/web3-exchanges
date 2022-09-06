@@ -8,7 +8,7 @@ function mockPair({ provider, tokenIn, tokenOut, pair }) {
     blockchain: 'polygon',
     request: {
       to: pair,
-      api: QuickSwap.contracts.pair.api,
+      api: QuickSwap.pair.api,
       method: 'getReserves',
       return: [ethers.utils.parseUnits('1000', 18), ethers.utils.parseUnits('1000', 18), '1629804922']
     }
@@ -18,7 +18,7 @@ function mockPair({ provider, tokenIn, tokenOut, pair }) {
     blockchain: 'polygon',
     request: {
       to: pair,
-      api: QuickSwap.contracts.pair.api,
+      api: QuickSwap.pair.api,
       method: 'token0',
       return: tokenIn
     }
@@ -28,7 +28,7 @@ function mockPair({ provider, tokenIn, tokenOut, pair }) {
     blockchain: 'polygon',
     request: {
       to: pair,
-      api: QuickSwap.contracts.pair.api,
+      api: QuickSwap.pair.api,
       method: 'token1',
       return: tokenOut
     }
@@ -37,8 +37,8 @@ function mockPair({ provider, tokenIn, tokenOut, pair }) {
     provider,
     blockchain: 'polygon',
     request: {
-      to: QuickSwap.contracts.factory.address,
-      api: QuickSwap.contracts.factory.api,
+      to: QuickSwap.factory.address,
+      api: QuickSwap.factory.api,
       method: 'getPair',
       params: [tokenIn, tokenOut],
       return: pair
@@ -51,8 +51,8 @@ function mockAmounts({ provider, method, params, amounts }){
     provider,
     blockchain: 'polygon',
     request: {
-      to: QuickSwap.contracts.router.address,
-      api: QuickSwap.contracts.router.api,
+      to: QuickSwap.router.address,
+      api: QuickSwap.router.api,
       method: method,
       params: params,
       return: amounts

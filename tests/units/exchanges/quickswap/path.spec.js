@@ -78,8 +78,8 @@ describe('quickswap', () => {
         blockchain,
         provider: provider(blockchain),
         request: {
-          to: exchange.contracts.factory.address,
-          api: exchange.contracts.factory.api,
+          to: exchange.factory.address,
+          api: exchange.factory.api,
           method: 'getPair',
           params: ['0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a', CONSTANTS[blockchain].WRAPPED],
           return: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675'
@@ -90,7 +90,7 @@ describe('quickswap', () => {
         provider: provider(blockchain),
         request: {
           to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
-          api: exchange.contracts.pair.api,
+          api: exchange.pair.api,
           method: 'getReserves',
           return: ['1115408461069632429', '10031', '1617377350']
         }
@@ -100,7 +100,7 @@ describe('quickswap', () => {
         provider: provider(blockchain),
         request: {
           to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
-          api: exchange.contracts.pair.api,
+          api: exchange.pair.api,
           method: 'token0',
           return: '0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a'
         }
@@ -110,7 +110,7 @@ describe('quickswap', () => {
         provider: provider(blockchain),
         request: {
           to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
-          api: exchange.contracts.pair.api,
+          api: exchange.pair.api,
           method: 'token1',
           return: CONSTANTS[blockchain].WRAPPED
         }
@@ -124,8 +124,8 @@ describe('quickswap', () => {
         blockchain,
         provider: provider(blockchain),
         request: {
-          to: exchange.contracts.factory.address,
-          api: exchange.contracts.factory.api,
+          to: exchange.factory.address,
+          api: exchange.factory.api,
           method: 'getPair',
           params: ['0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a', CONSTANTS[blockchain].WRAPPED],
           return: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675'
@@ -136,7 +136,7 @@ describe('quickswap', () => {
         provider: provider(blockchain),
         request: {
           to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
-          api: exchange.contracts.pair.api,
+          api: exchange.pair.api,
           method: 'getReserves',
           return: ['10031', '1115408461069632429', '1617377350']
         }
@@ -146,7 +146,7 @@ describe('quickswap', () => {
         provider: provider(blockchain),
         request: {
           to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
-          api: exchange.contracts.pair.api,
+          api: exchange.pair.api,
           method: 'token0',
           return: CONSTANTS[blockchain].WRAPPED
         }
@@ -156,7 +156,7 @@ describe('quickswap', () => {
         provider: provider(blockchain),
         request: {
           to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
-          api: exchange.contracts.pair.api,
+          api: exchange.pair.api,
           method: 'token1',
           return: '0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a'
         }
@@ -185,8 +185,8 @@ describe('quickswap', () => {
           blockchain,
           provider: provider(blockchain),
           request: {
-            to: exchange.contracts.factory.address,
-            api: exchange.contracts.factory.api,
+            to: exchange.factory.address,
+            api: exchange.factory.api,
             method: 'getPair',
             params: ['0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a', CONSTANTS[blockchain].USD],
             return: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675'
@@ -197,7 +197,7 @@ describe('quickswap', () => {
           provider: provider(blockchain),
           request: {
             to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
-            api: exchange.contracts.pair.api,
+            api: exchange.pair.api,
             method: 'getReserves',
             return: ['1115408461069632429', '10031', '1617377350']
           }
@@ -207,7 +207,7 @@ describe('quickswap', () => {
           provider: provider(blockchain),
           request: {
             to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
-            api: exchange.contracts.pair.api,
+            api: exchange.pair.api,
             method: 'token0',
             return: '0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a'
           }
@@ -217,7 +217,7 @@ describe('quickswap', () => {
           provider: provider(blockchain),
           request: {
             to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
-            api: exchange.contracts.pair.api,
+            api: exchange.pair.api,
             method: 'token1',
             return: CONSTANTS[blockchain].USD
           }
@@ -231,8 +231,8 @@ describe('quickswap', () => {
           blockchain,
           provider: provider(blockchain),
           request: {
-            to: exchange.contracts.factory.address,
-            api: exchange.contracts.factory.api,
+            to: exchange.factory.address,
+            api: exchange.factory.api,
             method: 'getPair',
             params: ['0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a', CONSTANTS[blockchain].USD],
             return: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675'
@@ -243,7 +243,7 @@ describe('quickswap', () => {
           provider: provider(blockchain),
           request: {
             to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
-            api: exchange.contracts.pair.api,
+            api: exchange.pair.api,
             method: 'getReserves',
             return: ['10031', '1000000', '1617377350']
           }
@@ -253,7 +253,7 @@ describe('quickswap', () => {
           provider: provider(blockchain),
           request: {
             to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
-            api: exchange.contracts.pair.api,
+            api: exchange.pair.api,
             method: 'token0',
             return: CONSTANTS[blockchain].USD
           }
@@ -263,7 +263,7 @@ describe('quickswap', () => {
           provider: provider(blockchain),
           request: {
             to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
-            api: exchange.contracts.pair.api,
+            api: exchange.pair.api,
             method: 'token1',
             return: '0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a'
           }

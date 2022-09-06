@@ -31,8 +31,8 @@ describe('quickswap', () => {
         blockchain,
         block,
         request: {
-          to: Quickswap.contracts.router.address,
-          api: Quickswap.contracts.router.api,
+          to: Quickswap.router.address,
+          api: Quickswap.router.api,
           method: 'getAmountsIn',
           params: { amountOut, path },
           return: amountsIn
