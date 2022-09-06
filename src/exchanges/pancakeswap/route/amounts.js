@@ -6,9 +6,9 @@ let getAmountsOut = ({ path, amountIn, tokenIn, tokenOut }) => {
   return new Promise((resolve) => {
     request({
       blockchain: 'bsc',
-      address: PancakeSwap.contracts.router.address,
+      address: PancakeSwap.router.address,
       method: 'getAmountsOut',
-      api: PancakeSwap.contracts.router.api,
+      api: PancakeSwap.router.api,
       params: {
         amountIn: amountIn,
         path: fixPath(path),
@@ -25,9 +25,9 @@ let getAmountIn = ({ path, amountOut, block }) => {
   return new Promise((resolve) => {
     request({
       blockchain: 'bsc',
-      address: PancakeSwap.contracts.router.address,
+      address: PancakeSwap.router.address,
       method: 'getAmountsIn',
-      api: PancakeSwap.contracts.router.api,
+      api: PancakeSwap.router.api,
       params: {
         amountOut: amountOut,
         path: fixPath(path),

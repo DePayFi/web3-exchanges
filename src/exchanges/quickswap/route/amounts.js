@@ -6,9 +6,9 @@ let getAmountsOut = ({ path, amountIn, tokenIn, tokenOut }) => {
   return new Promise((resolve) => {
     request({
       blockchain: 'polygon',
-      address: QuickSwap.contracts.router.address,
+      address: QuickSwap.router.address,
       method: 'getAmountsOut',
-      api: QuickSwap.contracts.router.api,
+      api: QuickSwap.router.api,
       params: {
         amountIn: amountIn,
         path: fixPath(path),
@@ -25,9 +25,9 @@ let getAmountIn = ({ path, amountOut, block }) => {
   return new Promise((resolve) => {
     request({
       blockchain: 'polygon',
-      address: QuickSwap.contracts.router.address,
+      address: QuickSwap.router.address,
       method: 'getAmountsIn',
-      api: QuickSwap.contracts.router.api,
+      api: QuickSwap.router.api,
       params: {
         amountOut: amountOut,
         path: fixPath(path),

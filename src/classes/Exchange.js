@@ -1,13 +1,15 @@
 import { fixRouteParams, preflight } from '../params'
 
 class Exchange {
-  constructor({ name, blockchain, alternativeNames, label, logo, contracts, route, getAmountIn }) {
+  constructor({ name, blockchain, alternativeNames, label, logo, route, getAmountIn, router, factory, pair }) {
     this.name = name
     this.blockchain = blockchain
     this.alternativeNames = alternativeNames
     this.label = label
     this.logo = logo
-    this.contracts = contracts
+    this.router = router
+    this.factory = factory
+    this.pair = pair
     this._route = route
     this.getAmountIn = getAmountIn
   }

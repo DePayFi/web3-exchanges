@@ -45,17 +45,17 @@ let pathExists = async (path) => {
   if(fixPath(path).length == 1) { return false }
   let pair = await request({
     blockchain: 'ethereum',
-    address: UniswapV2.contracts.factory.address,
+    address: UniswapV2.factory.address,
     method: 'getPair',
-    api: UniswapV2.contracts.factory.api,
+    api: UniswapV2.factory.api,
     cache: 3600000,
     params: fixPath(path) 
   })
   if(pair == CONSTANTS.ethereum.ZERO) { return false }
   let [reserves, token0, token1] = await Promise.all([
-    request({ blockchain: 'ethereum', address: pair, method: 'getReserves', api: UniswapV2.contracts.pair.api, cache: 3600000 }),
-    request({ blockchain: 'ethereum', address: pair, method: 'token0', api: UniswapV2.contracts.pair.api, cache: 3600000 }),
-    request({ blockchain: 'ethereum', address: pair, method: 'token1', api: UniswapV2.contracts.pair.api, cache: 3600000 })
+    request({ blockchain: 'ethereum', address: pair, method: 'getReserves', api: UniswapV2.pair.api, cache: 3600000 }),
+    request({ blockchain: 'ethereum', address: pair, method: 'token0', api: UniswapV2.pair.api, cache: 3600000 }),
+    request({ blockchain: 'ethereum', address: pair, method: 'token1', api: UniswapV2.pair.api, cache: 3600000 })
   ])
   if(path.includes(CONSTANTS.ethereum.WRAPPED)) {
     return minReserveRequirements({ min: 1, token: CONSTANTS.ethereum.WRAPPED, decimals: CONSTANTS.ethereum.DECIMALS, reserves, token0, token1 })

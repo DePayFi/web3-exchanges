@@ -6,9 +6,9 @@ let getAmountsOut = ({ path, amountIn, tokenIn, tokenOut }) => {
   return new Promise((resolve) => {
     request({
       blockchain: 'ethereum',
-      address: UniswapV2.contracts.router.address,
+      address: UniswapV2.router.address,
       method: 'getAmountsOut',
-      api: UniswapV2.contracts.router.api,
+      api: UniswapV2.router.api,
       params: {
         amountIn: amountIn,
         path: fixPath(path),
@@ -25,9 +25,9 @@ let getAmountIn = ({ path, amountOut, block }) => {
   return new Promise((resolve) => {
     request({
       blockchain: 'ethereum',
-      address: UniswapV2.contracts.router.address,
+      address: UniswapV2.router.address,
       method: 'getAmountsIn',
-      api: UniswapV2.contracts.router.api,
+      api: UniswapV2.router.api,
       params: {
         amountOut: amountOut,
         path: fixPath(path),

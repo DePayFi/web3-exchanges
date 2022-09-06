@@ -19,8 +19,8 @@ let getTransaction = ({
   let transaction = {
     blockchain: 'ethereum',
     from: fromAddress,
-    to: UniswapV2.contracts.router.address,
-    api: UniswapV2.contracts.router.api,
+    to: UniswapV2.router.address,
+    api: UniswapV2.router.api,
   }
 
   if (path[0] === CONSTANTS.ethereum.NATIVE) {

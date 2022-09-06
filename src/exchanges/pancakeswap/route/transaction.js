@@ -21,8 +21,8 @@ let getTransaction = ({
   let transaction = {
     blockchain,
     from: fromAddress,
-    to: PancakeSwap.contracts.router.address,
-    api: PancakeSwap.contracts.router.api,
+    to: PancakeSwap.router.address,
+    api: PancakeSwap.router.api,
   }
 
   if (path[0] === CONSTANTS[blockchain].NATIVE) {

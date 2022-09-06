@@ -1,4 +1,4 @@
-import basics from '../basics'
+import Raydium from '../basics'
 import { CONSTANTS } from '@depay/web3-constants'
 import { request } from '@depay/web3-client'
 
@@ -34,13 +34,13 @@ let fixPath = (path) => {
 }
 
 let getPairs = async(base, quote) => {
-  return await request(`solana://${basics.pair.v4.address}/getProgramAccounts`, {
+  return await request(`solana://${Raydium.pair.v4.address}/getProgramAccounts`, {
     params: { filters: [
-      { dataSize: basics.pair.v4.api.span },
+      { dataSize: Raydium.pair.v4.api.span },
       { memcmp: { offset: 400, bytes: base }},
       { memcmp: { offset: 432, bytes: quote }}
     ]},
-    api: basics.pair.v4.api
+    api: Raydium.pair.v4.api
   })
 }
 
@@ -100,5 +100,6 @@ let findPath = async ({ tokenIn, tokenOut }) => {
 
 export {
   findPath,
-  fixPath
+  fixPath,
+  pathExists,
 }
