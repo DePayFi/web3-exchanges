@@ -63,12 +63,13 @@ let getAmounts = async ({
       amountOutMin = amountOut
     }
   } else if(amountOutMin) {
-    amountIn = await getAmountIn({ path, amountOut: amountOutMin, tokenIn, tokenOut })
-    if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
-      return {}
-    } else if (amountInMax === undefined) {
-      amountInMax = amountIn
-    }
+    console.log('getAmountIn!!!')
+    // amountIn = await getAmountIn({ path, amountOut: amountOutMin, tokenIn, tokenOut })
+    // if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
+    //   return {}
+    // } else if (amountInMax === undefined) {
+    //   amountInMax = amountIn
+    // }
   } else if(amountInMax) {
     amountOut = await getAmountsOut({ path, amountIn: amountInMax, tokenIn, tokenOut })
     if (amountOut == undefined ||amountOutMin && amountOut.lt(amountOutMin)) {

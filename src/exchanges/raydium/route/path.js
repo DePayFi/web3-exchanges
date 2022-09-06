@@ -33,16 +33,23 @@ let fixPath = (path) => {
   return fixedPath
 }
 
-let pathExists = async (path) => {
-  let fixedPath = fixPath(path)
-  let pairs = await request(`solana://${basics.pair.v4.address}/getProgramAccounts`, {
+let getPairs = async(base, quote) => {
+  return await request(`solana://${basics.pair.v4.address}/getProgramAccounts`, {
     params: { filters: [
       { dataSize: basics.pair.v4.api.span },
-      { memcmp: { offset: 400, bytes: fixedPath[0] }}, // baseMint
-      { memcmp: { offset: 432, bytes: fixedPath[1] }}  // quoteMint
+      { memcmp: { offset: 400, bytes: base }},
+      { memcmp: { offset: 432, bytes: quote }}
     ]},
     api: basics.pair.v4.api
   })
+}
+
+let pathExists = async (path) => {
+  let fixedPath = fixPath(path)
+  if(fixedPath.length == 1) { return false }
+  let pairs = []
+  pairs = pairs.concat(await getPairs(fixedPath[0], fixedPath[1]))
+  pairs = pairs.concat(await getPairs(fixedPath[1], fixedPath[0]))
   if(pairs.length == 0) { 
     return false
   } else {
@@ -62,8 +69,10 @@ let findPath = async ({ tokenIn, tokenOut }) => {
     path = [tokenIn, tokenOut]
   } else if (
     tokenIn != WRAPPED &&
+    tokenIn != NATIVE &&
     await pathExists([tokenIn, WRAPPED]) &&
     tokenOut != WRAPPED &&
+    tokenOut != NATIVE &&
     await pathExists([tokenOut, WRAPPED])
   ) {
     // path via WRAPPED
