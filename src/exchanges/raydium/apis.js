@@ -1,4 +1,4 @@
-import { struct, u64, u128, publicKey, seq } from '@depay/solana-web3.js';
+import { struct, u8, u64, u128, publicKey, seq, blob } from '@depay/solana-web3.js';
 
 const LIQUIDITY_STATE_LAYOUT_V4 = struct([
   u64("status"),
@@ -57,6 +57,38 @@ const LIQUIDITY_STATE_LAYOUT_V4 = struct([
   seq(u64(), 3, "padding"),
 ])
 
+const POOL_INFO = struct([
+  u8("instruction"),
+  u8("simulateType"),
+])
+
+const MARKET_LAYOUT_V3 = struct([
+  blob(5),
+  blob(8), // accountFlagsLayout('accountFlags'),
+  publicKey("ownAddress"),
+  u64("vaultSignerNonce"),
+  publicKey("baseMint"),
+  publicKey("quoteMint"),
+  publicKey("baseVault"),
+  u64("baseDepositsTotal"),
+  u64("baseFeesAccrued"),
+  publicKey("quoteVault"),
+  u64("quoteDepositsTotal"),
+  u64("quoteFeesAccrued"),
+  u64("quoteDustThreshold"),
+  publicKey("requestQueue"),
+  publicKey("eventQueue"),
+  publicKey("bids"),
+  publicKey("asks"),
+  u64("baseLotSize"),
+  u64("quoteLotSize"),
+  u64("feeRateBps"),
+  u64("referrerRebatesAccrued"),
+  blob(7),
+])
+
 export {
   LIQUIDITY_STATE_LAYOUT_V4,
+  POOL_INFO,
+  MARKET_LAYOUT_V3,
 }

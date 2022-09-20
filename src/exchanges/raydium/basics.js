@@ -1,4 +1,5 @@
-import { LIQUIDITY_STATE_LAYOUT_V4 } from './apis'
+import { ethers } from 'ethers'
+import { LIQUIDITY_STATE_LAYOUT_V4, MARKET_LAYOUT_V3 } from './apis'
 
 export default {
   blockchain: 'solana',
@@ -9,7 +10,21 @@ export default {
   pair: {
     v4: {
       address: '675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8',
-      api: LIQUIDITY_STATE_LAYOUT_V4
+      authority: '5Q544fKrFoe6tsEbD7S8EmxGTJYAKtTVhAW5Q5pge4j1',
+      api: LIQUIDITY_STATE_LAYOUT_V4,
+      LIQUIDITY_FEES_NUMERATOR: ethers.BigNumber.from(25),
+      LIQUIDITY_FEES_DENOMINATOR: ethers.BigNumber.from(10000),
+    }
+  },
+  router: {
+    v1: {
+      address: 'routeUGWgWzqBWFcrCfv8tritsqukccJPu3q5GPP3xS'
+    }
+  },
+  market: {
+    v3: {
+      address: '9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin',
+      api: MARKET_LAYOUT_V3
     }
   }
 }

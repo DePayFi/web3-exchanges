@@ -1,8 +1,8 @@
 import { Token } from '@depay/web3-tokens';
 import { CONSTANTS } from '@depay/web3-constants';
 import { ethers } from 'ethers';
-import { request } from '@depay/web3-client';
-import { struct, u64, u128, publicKey, seq } from '@depay/solana-web3.js';
+import { request, provider } from '@depay/web3-client';
+import { struct, u64, u128, publicKey, seq, u8, Buffer as Buffer$1, PublicKey, TransactionInstruction as TransactionInstruction$1, Transaction } from '@depay/solana-web3.js';
 
 let PancakeRouter = [{"inputs":[{"internalType":"address","name":"_factory","type":"address"},{"internalType":"address","name":"_WETH","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[],"name":"WETH","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"tokenA","type":"address"},{"internalType":"address","name":"tokenB","type":"address"},{"internalType":"uint256","name":"amountADesired","type":"uint256"},{"internalType":"uint256","name":"amountBDesired","type":"uint256"},{"internalType":"uint256","name":"amountAMin","type":"uint256"},{"internalType":"uint256","name":"amountBMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"addLiquidity","outputs":[{"internalType":"uint256","name":"amountA","type":"uint256"},{"internalType":"uint256","name":"amountB","type":"uint256"},{"internalType":"uint256","name":"liquidity","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"uint256","name":"amountTokenDesired","type":"uint256"},{"internalType":"uint256","name":"amountTokenMin","type":"uint256"},{"internalType":"uint256","name":"amountETHMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"addLiquidityETH","outputs":[{"internalType":"uint256","name":"amountToken","type":"uint256"},{"internalType":"uint256","name":"amountETH","type":"uint256"},{"internalType":"uint256","name":"liquidity","type":"uint256"}],"stateMutability":"payable","type":"function"},{"inputs":[],"name":"factory","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountOut","type":"uint256"},{"internalType":"uint256","name":"reserveIn","type":"uint256"},{"internalType":"uint256","name":"reserveOut","type":"uint256"}],"name":"getAmountIn","outputs":[{"internalType":"uint256","name":"amountIn","type":"uint256"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountIn","type":"uint256"},{"internalType":"uint256","name":"reserveIn","type":"uint256"},{"internalType":"uint256","name":"reserveOut","type":"uint256"}],"name":"getAmountOut","outputs":[{"internalType":"uint256","name":"amountOut","type":"uint256"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountOut","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"}],"name":"getAmountsIn","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountIn","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"}],"name":"getAmountsOut","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountA","type":"uint256"},{"internalType":"uint256","name":"reserveA","type":"uint256"},{"internalType":"uint256","name":"reserveB","type":"uint256"}],"name":"quote","outputs":[{"internalType":"uint256","name":"amountB","type":"uint256"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"address","name":"tokenA","type":"address"},{"internalType":"address","name":"tokenB","type":"address"},{"internalType":"uint256","name":"liquidity","type":"uint256"},{"internalType":"uint256","name":"amountAMin","type":"uint256"},{"internalType":"uint256","name":"amountBMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"removeLiquidity","outputs":[{"internalType":"uint256","name":"amountA","type":"uint256"},{"internalType":"uint256","name":"amountB","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"uint256","name":"liquidity","type":"uint256"},{"internalType":"uint256","name":"amountTokenMin","type":"uint256"},{"internalType":"uint256","name":"amountETHMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"removeLiquidityETH","outputs":[{"internalType":"uint256","name":"amountToken","type":"uint256"},{"internalType":"uint256","name":"amountETH","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"uint256","name":"liquidity","type":"uint256"},{"internalType":"uint256","name":"amountTokenMin","type":"uint256"},{"internalType":"uint256","name":"amountETHMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"removeLiquidityETHSupportingFeeOnTransferTokens","outputs":[{"internalType":"uint256","name":"amountETH","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"uint256","name":"liquidity","type":"uint256"},{"internalType":"uint256","name":"amountTokenMin","type":"uint256"},{"internalType":"uint256","name":"amountETHMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"},{"internalType":"bool","name":"approveMax","type":"bool"},{"internalType":"uint8","name":"v","type":"uint8"},{"internalType":"bytes32","name":"r","type":"bytes32"},{"internalType":"bytes32","name":"s","type":"bytes32"}],"name":"removeLiquidityETHWithPermit","outputs":[{"internalType":"uint256","name":"amountToken","type":"uint256"},{"internalType":"uint256","name":"amountETH","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"uint256","name":"liquidity","type":"uint256"},{"internalType":"uint256","name":"amountTokenMin","type":"uint256"},{"internalType":"uint256","name":"amountETHMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"},{"internalType":"bool","name":"approveMax","type":"bool"},{"internalType":"uint8","name":"v","type":"uint8"},{"internalType":"bytes32","name":"r","type":"bytes32"},{"internalType":"bytes32","name":"s","type":"bytes32"}],"name":"removeLiquidityETHWithPermitSupportingFeeOnTransferTokens","outputs":[{"internalType":"uint256","name":"amountETH","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"tokenA","type":"address"},{"internalType":"address","name":"tokenB","type":"address"},{"internalType":"uint256","name":"liquidity","type":"uint256"},{"internalType":"uint256","name":"amountAMin","type":"uint256"},{"internalType":"uint256","name":"amountBMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"},{"internalType":"bool","name":"approveMax","type":"bool"},{"internalType":"uint8","name":"v","type":"uint8"},{"internalType":"bytes32","name":"r","type":"bytes32"},{"internalType":"bytes32","name":"s","type":"bytes32"}],"name":"removeLiquidityWithPermit","outputs":[{"internalType":"uint256","name":"amountA","type":"uint256"},{"internalType":"uint256","name":"amountB","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountOut","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapETHForExactTokens","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountOutMin","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapExactETHForTokens","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountOutMin","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapExactETHForTokensSupportingFeeOnTransferTokens","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountIn","type":"uint256"},{"internalType":"uint256","name":"amountOutMin","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapExactTokensForETH","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountIn","type":"uint256"},{"internalType":"uint256","name":"amountOutMin","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapExactTokensForETHSupportingFeeOnTransferTokens","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountIn","type":"uint256"},{"internalType":"uint256","name":"amountOutMin","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapExactTokensForTokens","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountIn","type":"uint256"},{"internalType":"uint256","name":"amountOutMin","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapExactTokensForTokensSupportingFeeOnTransferTokens","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountOut","type":"uint256"},{"internalType":"uint256","name":"amountInMax","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapTokensForExactETH","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountOut","type":"uint256"},{"internalType":"uint256","name":"amountInMax","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapTokensForExactTokens","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"nonpayable","type":"function"},{"stateMutability":"payable","type":"receive"}];
 let PancakeFactory = [{"inputs":[{"internalType":"address","name":"_feeToSetter","type":"address"}],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"token0","type":"address"},{"indexed":true,"internalType":"address","name":"token1","type":"address"},{"indexed":false,"internalType":"address","name":"pair","type":"address"},{"indexed":false,"internalType":"uint256","name":"","type":"uint256"}],"name":"PairCreated","type":"event"},{"constant":true,"inputs":[],"name":"INIT_CODE_PAIR_HASH","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"allPairs","outputs":[{"internalType":"address","name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"allPairsLength","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"tokenA","type":"address"},{"internalType":"address","name":"tokenB","type":"address"}],"name":"createPair","outputs":[{"internalType":"address","name":"pair","type":"address"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"feeTo","outputs":[{"internalType":"address","name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"feeToSetter","outputs":[{"internalType":"address","name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"address","name":"","type":"address"}],"name":"getPair","outputs":[{"internalType":"address","name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"_feeTo","type":"address"}],"name":"setFeeTo","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"_feeToSetter","type":"address"}],"name":"setFeeToSetter","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"}];
@@ -169,7 +169,7 @@ class Exchange {
   }
 }
 
-function _optionalChain$4(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }class Route {
+function _optionalChain$4(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }class Route$1 {
   constructor({
     tokenIn,
     tokenOut,
@@ -309,7 +309,7 @@ let findPath$3 = async ({ tokenIn, tokenOut }) => {
   return path
 };
 
-let getAmountsOut$2 = ({ path, amountIn, tokenIn, tokenOut }) => {
+let getAmountsOut$3 = ({ path, amountIn, tokenIn, tokenOut }) => {
   return new Promise((resolve) => {
     request({
       blockchain: 'bsc',
@@ -363,7 +363,7 @@ let getAmounts$3 = async ({
       amountInMax = amountIn;
     }
   } else if (amountIn) {
-    amountOut = await getAmountsOut$2({ path, amountIn, tokenIn, tokenOut });
+    amountOut = await getAmountsOut$3({ path, amountIn, tokenIn, tokenOut });
     if (amountOut == undefined || amountOutMin && amountOut.lt(amountOutMin)) {
       return {}
     } else if (amountOutMin === undefined) {
@@ -377,7 +377,7 @@ let getAmounts$3 = async ({
       amountInMax = amountIn;
     }
   } else if(amountInMax) {
-    amountOut = await getAmountsOut$2({ path, amountIn: amountInMax, tokenIn, tokenOut });
+    amountOut = await getAmountsOut$3({ path, amountIn: amountInMax, tokenIn, tokenOut });
     if (amountOut == undefined ||amountOutMin && amountOut.lt(amountOutMin)) {
       return {}
     } else if (amountOutMin === undefined) {
@@ -387,7 +387,7 @@ let getAmounts$3 = async ({
   return { amountOut, amountIn, amountInMax, amountOutMin }
 };
 
-let getTransaction$2 = ({
+let getTransaction$3 = ({
   path,
   amountIn,
   amountInMax,
@@ -472,7 +472,7 @@ let route$4 = ({
     ({ amountIn, amountInMax, amountOut, amountOutMin } = await getAmounts$3({ path, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }));
     if([amountIn, amountInMax, amountOut, amountOutMin].every((amount)=>{ return amount == undefined })) { return resolve() }
 
-    let transaction = getTransaction$2({
+    let transaction = getTransaction$3({
       path,
       amountIn,
       amountInMax,
@@ -487,7 +487,7 @@ let route$4 = ({
     });
 
     resolve(
-      new Route({
+      new Route$1({
         tokenIn,
         tokenOut,
         path,
@@ -643,7 +643,7 @@ let findPath$2 = async ({ tokenIn, tokenOut }) => {
   return path
 };
 
-let getAmountsOut$1 = ({ path, amountIn, tokenIn, tokenOut }) => {
+let getAmountsOut$2 = ({ path, amountIn, tokenIn, tokenOut }) => {
   return new Promise((resolve) => {
     request({
       blockchain: 'polygon',
@@ -697,7 +697,7 @@ let getAmounts$2 = async ({
       amountInMax = amountIn;
     }
   } else if (amountIn) {
-    amountOut = await getAmountsOut$1({ path, amountIn, tokenIn, tokenOut });
+    amountOut = await getAmountsOut$2({ path, amountIn, tokenIn, tokenOut });
     if (amountOut == undefined || amountOutMin && amountOut.lt(amountOutMin)) {
       return {}
     } else if (amountOutMin === undefined) {
@@ -711,7 +711,7 @@ let getAmounts$2 = async ({
       amountInMax = amountIn;
     }
   } else if(amountInMax) {
-    amountOut = await getAmountsOut$1({ path, amountIn: amountInMax, tokenIn, tokenOut });
+    amountOut = await getAmountsOut$2({ path, amountIn: amountInMax, tokenIn, tokenOut });
     if (amountOut == undefined ||amountOutMin && amountOut.lt(amountOutMin)) {
       return {}
     } else if (amountOutMin === undefined) {
@@ -721,7 +721,7 @@ let getAmounts$2 = async ({
   return { amountOut, amountIn, amountInMax, amountOutMin }
 };
 
-let getTransaction$1 = ({
+let getTransaction$2 = ({
   path,
   amountIn,
   amountInMax,
@@ -800,7 +800,7 @@ let route$3 = ({
     ({ amountIn, amountInMax, amountOut, amountOutMin } = await getAmounts$2({ path, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }));
     if([amountIn, amountInMax, amountOut, amountOutMin].every((amount)=>{ return amount == undefined })) { return resolve() }
 
-    let transaction = getTransaction$1({
+    let transaction = getTransaction$2({
       path,
       amountIn,
       amountInMax,
@@ -815,7 +815,7 @@ let route$3 = ({
     });
 
     resolve(
-      new Route({
+      new Route$1({
         tokenIn,
         tokenOut,
         path,
@@ -893,6 +893,11 @@ const LIQUIDITY_STATE_LAYOUT_V4 = struct([
   seq(u64(), 3, "padding"),
 ]);
 
+const POOL_INFO = struct([
+  u8("instruction"),
+  u8("simulateType"),
+]);
+
 var basics$1 = {
   blockchain: 'solana',
   name: 'raydium',
@@ -902,9 +907,45 @@ var basics$1 = {
   pair: {
     v4: {
       address: '675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8',
-      api: LIQUIDITY_STATE_LAYOUT_V4
+      api: LIQUIDITY_STATE_LAYOUT_V4,
+      LIQUIDITY_FEES_NUMERATOR: ethers.BigNumber.from(25),
+      LIQUIDITY_FEES_DENOMINATOR: ethers.BigNumber.from(10000),
     }
   }
+};
+
+let getPairs = async(base, quote) => {
+  try {
+    let accounts = await request(`solana://${basics$1.pair.v4.address}/getProgramAccounts`, {
+      params: { filters: [
+        { dataSize: basics$1.pair.v4.api.span },
+        { memcmp: { offset: 400, bytes: base }},
+        { memcmp: { offset: 432, bytes: quote }}
+      ]},
+      api: basics$1.pair.v4.api
+    });
+    return accounts
+  } catch (e) { return [] }
+};
+
+let getBestPair = async(base, quote) => {
+  let accounts = await getPairs(base, quote);
+  if(accounts.length == 1){ return accounts[0] }
+  if(accounts.length < 1){ return null }
+  let best = accounts.reduce((account, current) => {
+    let currentReserve = current.data.lpReserve;
+    let accountReserve = account.data.lpReserve;
+    if(accountReserve.gte(currentReserve)) {
+      return account
+    } else {
+      return current
+    }
+  });  
+  return best
+};
+
+let anyPairs = async(base, quote) => {
+  return (await getPairs(base, quote)).length > 0
 };
 
 function _optionalChain$1(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
@@ -939,27 +980,13 @@ let fixPath$1 = (path) => {
   return fixedPath
 };
 
-let getPairs = async(base, quote) => {
-  return await request(`solana://${basics$1.pair.v4.address}/getProgramAccounts`, {
-    params: { filters: [
-      { dataSize: basics$1.pair.v4.api.span },
-      { memcmp: { offset: 400, bytes: base }},
-      { memcmp: { offset: 432, bytes: quote }}
-    ]},
-    api: basics$1.pair.v4.api
-  })
-};
-
 let pathExists$1 = async (path) => {
   let fixedPath = fixPath$1(path);
   if(fixedPath.length == 1) { return false }
-  let pairs = [];
-  pairs = pairs.concat(await getPairs(fixedPath[0], fixedPath[1]));
-  pairs = pairs.concat(await getPairs(fixedPath[1], fixedPath[0]));
-  if(pairs.length == 0) { 
-    return false
-  } else {
+  if(await anyPairs(fixedPath[0], fixedPath[1]) || await anyPairs(fixedPath[1], fixedPath[0])) {
     return true
+  } else {
+    return false
   }
 };
 
@@ -1004,10 +1031,198 @@ let findPath$1 = async ({ tokenIn, tokenOut }) => {
   return path
 };
 
+const getInfo = async (pair)=>{
+  const data = Buffer$1.alloc(POOL_INFO.span);
+  POOL_INFO.encode({ instruction: 12, simulateType: 0 }, data);
+
+  const programId = new PublicKey(basics$1.pair.v4.address);
+
+  const [authority] = await PublicKey.findProgramAddress(
+    [Buffer$1.from([97, 109, 109, 32, 97, 117, 116, 104, 111, 114, 105, 116, 121])]
+  , programId);
+
+  const keys = [
+    { pubkey: pair.pubkey, isWritable: false, isSigner: false },
+    { pubkey: authority, isWritable: false, isSigner: false },
+    { pubkey: pair.data.openOrders, isWritable: false, isSigner: false },
+    { pubkey: pair.data.baseVault, isWritable: false, isSigner: false },
+    { pubkey: pair.data.quoteVault, isWritable: false, isSigner: false },
+    { pubkey: pair.data.lpMint, isWritable: false, isSigner: false },
+    { pubkey: pair.data.marketId, isWritable: false, isSigner: false },
+  ];
+
+  const instruction = new TransactionInstruction$1({
+    programId,
+    keys,
+    data,
+  });
+
+  const feePayer = new PublicKey("RaydiumSimuLateTransaction11111111111111111");
+
+  let transaction = new Transaction({ feePayer });
+  transaction.add(instruction);
+
+  let result;
+  try{ result = await provider('solana').simulateTransaction(transaction); } catch (e) {}
+
+  let info;
+  if(result && result.value && result.value.logs) {
+    let log = result.value.logs.find((log)=>log.match("GetPoolData:"));
+    if(log) {
+      info = JSON.parse(log.replace(/.*GetPoolData:\s/, ''));
+    }
+  }
+
+  return info
+};
+
+let getAmountsOut$1 = ({ path, amountIn, tokenIn, tokenOut }) => {
+};
+
+let getAmountIn$1 = async({ path, amountOut }) => {
+  let amounts = await Promise.all(path.slice(0,-1).reverse().map(async (step, i)=>{
+    let previousStep = path[path.length-1-i];
+    let pair = await getBestPair(step, previousStep);
+    let info = await getInfo(pair);
+    const baseReserve = ethers.BigNumber.from(info.pool_coin_amount);
+    const quoteReserve = ethers.BigNumber.from(info.pool_pc_amount);
+    const denominator = quoteReserve.sub(amountOut);
+    const amountInWithoutFee = baseReserve.mul(amountOut).div(denominator);
+    const amountInRaw = amountInWithoutFee.mul(basics$1.pair.v4.LIQUIDITY_FEES_DENOMINATOR).div(basics$1.pair.v4.LIQUIDITY_FEES_DENOMINATOR.sub(basics$1.pair.v4.LIQUIDITY_FEES_NUMERATOR));
+    return amountInRaw
+  }));
+
+  return amounts[0]
+};
+
+let getAmounts$1 = async ({
+  path,
+  tokenIn,
+  tokenOut,
+  amountOut,
+  amountIn,
+  amountInMax,
+  amountOutMin
+}) => {
+  if (amountOut) {
+    amountIn = await getAmountIn$1({ path, amountOut, tokenIn, tokenOut });
+    if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
+      return {}
+    } else if (amountInMax === undefined) {
+      amountInMax = amountIn;
+    }
+  } else if (amountIn) {
+    amountOut = await getAmountsOut$1({ path, amountIn, tokenIn, tokenOut });
+    if (amountOut == undefined || amountOutMin && amountOut.lt(amountOutMin)) {
+      return {}
+    } else if (amountOutMin === undefined) {
+      amountOutMin = amountOut;
+    }
+  } else if(amountOutMin) {
+    amountIn = await getAmountIn$1({ path, amountOut: amountOutMin, tokenIn, tokenOut });
+    if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
+      return {}
+    } else if (amountInMax === undefined) {
+      amountInMax = amountIn;
+    }
+  } else if(amountInMax) {
+    amountOut = await getAmountsOut$1({ path, amountIn: amountInMax, tokenIn, tokenOut });
+    if (amountOut == undefined ||amountOutMin && amountOut.lt(amountOutMin)) {
+      return {}
+    } else if (amountOutMin === undefined) {
+      amountOutMin = amountOut;
+    }
+  }
+  return { amountOut, amountIn, amountInMax, amountOutMin }
+};
+
+let getTransaction$1 = async ({
+  path,
+  amountIn,
+  amountInMax,
+  amountOut,
+  amountOutMin,
+  amountInInput,
+  amountOutInput,
+  amountInMaxInput,
+  amountOutMinInput,
+  toAddress,
+  fromAddress
+}) => {
+
+  let instructions = [];
+  let transaction = { blockchain: 'solana', instructions };
+
+  const fixedPath = fixPath$1(path);
+  const tokenOut = fixedPath[0];
+  const tokenIn = fixedPath[fixedPath.length-1];
+
+  await Token.solana.findAccount({ owner: toAddress, token: tokenOut });
+  await Token.solana.findProgramAddress({ owner: toAddress, token: tokenOut });
+  
+  const existingTokenAccountIn = await Token.solana.findAccount({ owner: toAddress, token: tokenIn });
+  await Token.solana.findProgramAddress({ owner: toAddress, token: tokenIn });
+
+  console.log('fixedPath', fixedPath);
+
+  if(!existingTokenAccountIn) {
+    instructions.unshift(
+      Token.solana.createAssociatedTokenAccountInstruction({ token: tokenIn, owner: toAddress, payer: fromAddress })
+    );
+  }
+
+  if (amountInInput || amountOutMinInput) ; else if (amountOutInput || amountInMaxInput) {
+    const LAYOUT = struct([u8("instruction"), u64("maxAmountIn"), u64("amountOut")]);
+    const data = Buffer.alloc(LAYOUT.span);
+    LAYOUT.encode(
+      {
+        instruction: 11,
+        maxAmountIn: new BN(amountInMax.toString()),
+        amountOut: new BN(amountOut.toString()),
+      },
+      data,
+    );
+
+    const keys = [
+      // system
+      { pubkey: new PublicKey(Token.solana.TOKEN_PROGRAM), isWritable: false, isSigner: false },
+      // amm
+      { pubkey: poolKeys.id, isWritable: true, isSigner: false },
+      { pubkey: poolKeys.authority, isWritable: false, isSigner: false },
+      { pubkey: poolKeys.openOrders, isWritable: true, isSigner: false },
+      { pubkey: poolKeys.targetOrders, isWritable: true, isSigner: false },
+      { pubkey: poolKeys.baseVault, isWritable: true, isSigner: false },
+      { pubkey: poolKeys.quoteVault, isWritable: true, isSigner: false },
+      // serum
+      { pubkey: poolKeys.marketProgramId, isWritable: false, isSigner: false },
+      { pubkey: poolKeys.marketId, isWritable: true, isSigner: false },
+      { pubkey: poolKeys.marketBids, isWritable: true, isSigner: false },
+      { pubkey: poolKeys.marketAsks, isWritable: true, isSigner: false },
+      { pubkey: poolKeys.marketEventQueue, isWritable: true, isSigner: false },
+      { pubkey: poolKeys.marketBaseVault, isWritable: true, isSigner: false },
+      { pubkey: poolKeys.marketQuoteVault, isWritable: true, isSigner: false },
+      { pubkey: poolKeys.marketAuthority, isWritable: false, isSigner: false },
+      // user
+      { pubkey: userKeys.tokenAccountIn, isWritable: true, isSigner: false },
+      { pubkey: userKeys.tokenAccountOut, isWritable: true, isSigner: false },
+      { pubkey: userKeys.owner, isWritable: false, isSigner: false },
+    ];
+    instructions.push(new TransactionInstruction({
+      programId: new PublicKey(basics$1.pair.v4.address),
+      keys,
+      data,
+    }));
+  }
+  
+  return transaction
+};
+
 let route$2 = ({
   exchange,
   tokenIn,
   tokenOut,
+  fromAddress,
+  toAddress,
   amountIn = undefined,
   amountOut = undefined,
   amountInMax = undefined,
@@ -1015,56 +1230,41 @@ let route$2 = ({
 }) => {
   return new Promise(async (resolve)=> {
     let path = await findPath$1({ tokenIn, tokenOut });
-    console.log('PATH!!!', path);
     if (path === undefined || path.length == 0) { return resolve() }
+    let [amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput] = [amountIn, amountOut, amountInMax, amountOutMin];
     
-    ({ amountIn, amountInMax, amountOut, amountOutMin } = await getAmounts({ path, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }));
-    console.log('AMOUNTS', { amountIn, amountInMax, amountOut, amountOutMin });
+    ({ amountIn, amountInMax, amountOut, amountOutMin } = await getAmounts$1({ path, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }));
     if([amountIn, amountInMax, amountOut, amountOutMin].every((amount)=>{ return amount == undefined })) { return resolve() }
 
-    // let transaction = getTransaction({
-    //   path,
-    //   amountIn,
-    //   amountInMax,
-    //   amountOut,
-    //   amountOutMin,
-    //   amountInInput,
-    //   amountOutInput,
-    //   amountInMaxInput,
-    //   amountOutMinInput,
-    // })
+    let transaction = await getTransaction$1({
+      path,
+      amountIn,
+      amountInMax,
+      amountOut,
+      amountOutMin,
+      amountInInput,
+      amountOutInput,
+      amountInMaxInput,
+      amountOutMinInput,
+      toAddress,
+      fromAddress
+    });
 
-    // resolve(
-    //   new Route({
-    //     tokenIn,
-    //     tokenOut,
-    //     path,
-    //     amountIn,
-    //     amountInMax,
-    //     amountOut,
-    //     amountOutMin,
-    //     exchange,
-    //     transaction,
-    //   })
-    // )
-  })
-};
-
-let getAmountIn$1 = ({ path, amountOut, block }) => {
-  return new Promise((resolve) => {
-    request({
-      blockchain: 'ethereum',
-      address: basics$1.router.address,
-      method: 'getAmountsIn',
-      api: basics$1.router.api,
-      params: {
-        amountOut: amountOut,
-        path: fixPath$1(path),
-      },
-      block
-    })
-    .then((amountsIn)=>resolve(amountsIn[0]))
-    .catch(()=>resolve());
+    resolve(
+      new Route({
+        tokenIn,
+        tokenOut,
+        path,
+        amountIn,
+        amountInMax,
+        amountOut,
+        amountOutMin,
+        fromAddress,
+        toAddress,
+        exchange,
+        transaction,
+      })
+    );
   })
 };
 
@@ -1244,7 +1444,7 @@ let getAmountIn = ({ path, amountOut, block }) => {
   })
 };
 
-let getAmounts$1 = async ({
+let getAmounts = async ({
   path,
   tokenIn,
   tokenOut,
@@ -1361,7 +1561,7 @@ let route$1 = ({
     if (path === undefined || path.length == 0) { return resolve() }
     let [amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput] = [amountIn, amountOut, amountInMax, amountOutMin];
     
-    ({ amountIn, amountInMax, amountOut, amountOutMin } = await getAmounts$1({ path, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }));
+    ({ amountIn, amountInMax, amountOut, amountOutMin } = await getAmounts({ path, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }));
     if([amountIn, amountInMax, amountOut, amountOutMin].every((amount)=>{ return amount == undefined })) { return resolve() }
 
     let transaction = getTransaction({
@@ -1379,7 +1579,7 @@ let route$1 = ({
     });
 
     resolve(
-      new Route({
+      new Route$1({
         tokenIn,
         tokenOut,
         path,

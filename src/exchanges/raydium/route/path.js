@@ -1,6 +1,7 @@
 import Raydium from '../basics'
 import { CONSTANTS } from '@depay/web3-constants'
 import { request } from '@depay/web3-client'
+import { anyPairs } from './pairs'
 
 const NATIVE = CONSTANTS.solana.NATIVE
 const WRAPPED = CONSTANTS.solana.WRAPPED
@@ -33,27 +34,14 @@ let fixPath = (path) => {
   return fixedPath
 }
 
-let getPairs = async(base, quote) => {
-  return await request(`solana://${Raydium.pair.v4.address}/getProgramAccounts`, {
-    params: { filters: [
-      { dataSize: Raydium.pair.v4.api.span },
-      { memcmp: { offset: 400, bytes: base }},
-      { memcmp: { offset: 432, bytes: quote }}
-    ]},
-    api: Raydium.pair.v4.api
-  })
-}
-
 let pathExists = async (path) => {
   let fixedPath = fixPath(path)
   if(fixedPath.length == 1) { return false }
   let pairs = []
-  pairs = pairs.concat(await getPairs(fixedPath[0], fixedPath[1]))
-  pairs = pairs.concat(await getPairs(fixedPath[1], fixedPath[0]))
-  if(pairs.length == 0) { 
-    return false
-  } else {
+  if(await anyPairs(fixedPath[0], fixedPath[1]) || await anyPairs(fixedPath[1], fixedPath[0])) {
     return true
+  } else {
+    return false
   }
 }
 

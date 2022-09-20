@@ -31,13 +31,13 @@
   "bugs": {
     "url": "https://github.com/DePayFi/web3-exchanges/issues"
   },
-  "homepage": "https://github.com/DePayFi/web3-exchanges#readme",
+  "homepage": "https://depay.com",
   "private": false,
   "peerDependencies": {
-    "@depay/solana-web3.js": "^1.17.5",
+    "@depay/solana-web3.js": "^1.18.0",
     "@depay/web3-client": "^9.4.0",
     "@depay/web3-constants": "^6.2.2",
-    "@depay/web3-tokens": "^9.4.1",
+    "@depay/web3-tokens": "^9.6.0",
     "ethers": "^5.6.8"
   },
   "engines": {
@@ -47,13 +47,13 @@
     "@babel/core": "^7.12.9",
     "@babel/preset-env": "^7.12.7",
     "@depay/coinbase-wallet-sdk": "^1.1.0",
-    "@depay/solana-web3.js": "^1.17.5",
+    "@depay/solana-web3.js": "^1.18.0",
     "@depay/walletconnect-v1": "^1.7.8",
     "@depay/web3-blockchains": "^6.0.2",
     "@depay/web3-client": "^9.4.0",
     "@depay/web3-constants": "^6.2.2",
-    "@depay/web3-mock": "^13.13.1",
-    "@depay/web3-tokens": "^9.4.1",
+    "@depay/web3-mock": "^13.16.0",
+    "@depay/web3-tokens": "^9.6.0",
     "@depay/web3-wallets": "^12.1.2",
     "@peculiar/webcrypto": "^1.4.0",
     "@rollup/plugin-commonjs": "^18.0.0",

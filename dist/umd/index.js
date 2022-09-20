@@ -169,7 +169,7 @@
     }
   }
 
-  function _optionalChain$4(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }class Route {
+  function _optionalChain$4(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }class Route$1 {
     constructor({
       tokenIn,
       tokenOut,
@@ -309,7 +309,7 @@
     return path
   };
 
-  let getAmountsOut$2 = ({ path, amountIn, tokenIn, tokenOut }) => {
+  let getAmountsOut$3 = ({ path, amountIn, tokenIn, tokenOut }) => {
     return new Promise((resolve) => {
       web3Client.request({
         blockchain: 'bsc',
@@ -363,7 +363,7 @@
         amountInMax = amountIn;
       }
     } else if (amountIn) {
-      amountOut = await getAmountsOut$2({ path, amountIn, tokenIn, tokenOut });
+      amountOut = await getAmountsOut$3({ path, amountIn, tokenIn, tokenOut });
       if (amountOut == undefined || amountOutMin && amountOut.lt(amountOutMin)) {
         return {}
       } else if (amountOutMin === undefined) {
@@ -377,7 +377,7 @@
         amountInMax = amountIn;
       }
     } else if(amountInMax) {
-      amountOut = await getAmountsOut$2({ path, amountIn: amountInMax, tokenIn, tokenOut });
+      amountOut = await getAmountsOut$3({ path, amountIn: amountInMax, tokenIn, tokenOut });
       if (amountOut == undefined ||amountOutMin && amountOut.lt(amountOutMin)) {
         return {}
       } else if (amountOutMin === undefined) {
@@ -387,7 +387,7 @@
     return { amountOut, amountIn, amountInMax, amountOutMin }
   };
 
-  let getTransaction$2 = ({
+  let getTransaction$3 = ({
     path,
     amountIn,
     amountInMax,
@@ -472,7 +472,7 @@
       ({ amountIn, amountInMax, amountOut, amountOutMin } = await getAmounts$3({ path, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }));
       if([amountIn, amountInMax, amountOut, amountOutMin].every((amount)=>{ return amount == undefined })) { return resolve() }
 
-      let transaction = getTransaction$2({
+      let transaction = getTransaction$3({
         path,
         amountIn,
         amountInMax,
@@ -487,7 +487,7 @@
       });
 
       resolve(
-        new Route({
+        new Route$1({
           tokenIn,
           tokenOut,
           path,
@@ -643,7 +643,7 @@
     return path
   };
 
-  let getAmountsOut$1 = ({ path, amountIn, tokenIn, tokenOut }) => {
+  let getAmountsOut$2 = ({ path, amountIn, tokenIn, tokenOut }) => {
     return new Promise((resolve) => {
       web3Client.request({
         blockchain: 'polygon',
@@ -697,7 +697,7 @@
         amountInMax = amountIn;
       }
     } else if (amountIn) {
-      amountOut = await getAmountsOut$1({ path, amountIn, tokenIn, tokenOut });
+      amountOut = await getAmountsOut$2({ path, amountIn, tokenIn, tokenOut });
       if (amountOut == undefined || amountOutMin && amountOut.lt(amountOutMin)) {
         return {}
       } else if (amountOutMin === undefined) {
@@ -711,7 +711,7 @@
         amountInMax = amountIn;
       }
     } else if(amountInMax) {
-      amountOut = await getAmountsOut$1({ path, amountIn: amountInMax, tokenIn, tokenOut });
+      amountOut = await getAmountsOut$2({ path, amountIn: amountInMax, tokenIn, tokenOut });
       if (amountOut == undefined ||amountOutMin && amountOut.lt(amountOutMin)) {
         return {}
       } else if (amountOutMin === undefined) {
@@ -721,7 +721,7 @@
     return { amountOut, amountIn, amountInMax, amountOutMin }
   };
 
-  let getTransaction$1 = ({
+  let getTransaction$2 = ({
     path,
     amountIn,
     amountInMax,
@@ -800,7 +800,7 @@
       ({ amountIn, amountInMax, amountOut, amountOutMin } = await getAmounts$2({ path, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }));
       if([amountIn, amountInMax, amountOut, amountOutMin].every((amount)=>{ return amount == undefined })) { return resolve() }
 
-      let transaction = getTransaction$1({
+      let transaction = getTransaction$2({
         path,
         amountIn,
         amountInMax,
@@ -815,7 +815,7 @@
       });
 
       resolve(
-        new Route({
+        new Route$1({
           tokenIn,
           tokenOut,
           path,
@@ -893,6 +893,11 @@
     solanaWeb3_js.seq(solanaWeb3_js.u64(), 3, "padding"),
   ]);
 
+  const POOL_INFO = solanaWeb3_js.struct([
+    solanaWeb3_js.u8("instruction"),
+    solanaWeb3_js.u8("simulateType"),
+  ]);
+
   var basics$1 = {
     blockchain: 'solana',
     name: 'raydium',
@@ -902,9 +907,45 @@
     pair: {
       v4: {
         address: '675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8',
-        api: LIQUIDITY_STATE_LAYOUT_V4
+        api: LIQUIDITY_STATE_LAYOUT_V4,
+        LIQUIDITY_FEES_NUMERATOR: ethers.ethers.BigNumber.from(25),
+        LIQUIDITY_FEES_DENOMINATOR: ethers.ethers.BigNumber.from(10000),
       }
     }
+  };
+
+  let getPairs = async(base, quote) => {
+    try {
+      let accounts = await web3Client.request(`solana://${basics$1.pair.v4.address}/getProgramAccounts`, {
+        params: { filters: [
+          { dataSize: basics$1.pair.v4.api.span },
+          { memcmp: { offset: 400, bytes: base }},
+          { memcmp: { offset: 432, bytes: quote }}
+        ]},
+        api: basics$1.pair.v4.api
+      });
+      return accounts
+    } catch (e) { return [] }
+  };
+
+  let getBestPair = async(base, quote) => {
+    let accounts = await getPairs(base, quote);
+    if(accounts.length == 1){ return accounts[0] }
+    if(accounts.length < 1){ return null }
+    let best = accounts.reduce((account, current) => {
+      let currentReserve = current.data.lpReserve;
+      let accountReserve = account.data.lpReserve;
+      if(accountReserve.gte(currentReserve)) {
+        return account
+      } else {
+        return current
+      }
+    });  
+    return best
+  };
+
+  let anyPairs = async(base, quote) => {
+    return (await getPairs(base, quote)).length > 0
   };
 
   function _optionalChain$1(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
@@ -939,27 +980,13 @@
     return fixedPath
   };
 
-  let getPairs = async(base, quote) => {
-    return await web3Client.request(`solana://${basics$1.pair.v4.address}/getProgramAccounts`, {
-      params: { filters: [
-        { dataSize: basics$1.pair.v4.api.span },
-        { memcmp: { offset: 400, bytes: base }},
-        { memcmp: { offset: 432, bytes: quote }}
-      ]},
-      api: basics$1.pair.v4.api
-    })
-  };
-
   let pathExists$1 = async (path) => {
     let fixedPath = fixPath$1(path);
     if(fixedPath.length == 1) { return false }
-    let pairs = [];
-    pairs = pairs.concat(await getPairs(fixedPath[0], fixedPath[1]));
-    pairs = pairs.concat(await getPairs(fixedPath[1], fixedPath[0]));
-    if(pairs.length == 0) { 
-      return false
-    } else {
+    if(await anyPairs(fixedPath[0], fixedPath[1]) || await anyPairs(fixedPath[1], fixedPath[0])) {
       return true
+    } else {
+      return false
     }
   };
 
@@ -1004,10 +1031,198 @@
     return path
   };
 
+  const getInfo = async (pair)=>{
+    const data = solanaWeb3_js.Buffer.alloc(POOL_INFO.span);
+    POOL_INFO.encode({ instruction: 12, simulateType: 0 }, data);
+
+    const programId = new solanaWeb3_js.PublicKey(basics$1.pair.v4.address);
+
+    const [authority] = await solanaWeb3_js.PublicKey.findProgramAddress(
+      [solanaWeb3_js.Buffer.from([97, 109, 109, 32, 97, 117, 116, 104, 111, 114, 105, 116, 121])]
+    , programId);
+
+    const keys = [
+      { pubkey: pair.pubkey, isWritable: false, isSigner: false },
+      { pubkey: authority, isWritable: false, isSigner: false },
+      { pubkey: pair.data.openOrders, isWritable: false, isSigner: false },
+      { pubkey: pair.data.baseVault, isWritable: false, isSigner: false },
+      { pubkey: pair.data.quoteVault, isWritable: false, isSigner: false },
+      { pubkey: pair.data.lpMint, isWritable: false, isSigner: false },
+      { pubkey: pair.data.marketId, isWritable: false, isSigner: false },
+    ];
+
+    const instruction = new solanaWeb3_js.TransactionInstruction({
+      programId,
+      keys,
+      data,
+    });
+
+    const feePayer = new solanaWeb3_js.PublicKey("RaydiumSimuLateTransaction11111111111111111");
+
+    let transaction = new solanaWeb3_js.Transaction({ feePayer });
+    transaction.add(instruction);
+
+    let result;
+    try{ result = await web3Client.provider('solana').simulateTransaction(transaction); } catch (e) {}
+
+    let info;
+    if(result && result.value && result.value.logs) {
+      let log = result.value.logs.find((log)=>log.match("GetPoolData:"));
+      if(log) {
+        info = JSON.parse(log.replace(/.*GetPoolData:\s/, ''));
+      }
+    }
+
+    return info
+  };
+
+  let getAmountsOut$1 = ({ path, amountIn, tokenIn, tokenOut }) => {
+  };
+
+  let getAmountIn$1 = async({ path, amountOut }) => {
+    let amounts = await Promise.all(path.slice(0,-1).reverse().map(async (step, i)=>{
+      let previousStep = path[path.length-1-i];
+      let pair = await getBestPair(step, previousStep);
+      let info = await getInfo(pair);
+      const baseReserve = ethers.ethers.BigNumber.from(info.pool_coin_amount);
+      const quoteReserve = ethers.ethers.BigNumber.from(info.pool_pc_amount);
+      const denominator = quoteReserve.sub(amountOut);
+      const amountInWithoutFee = baseReserve.mul(amountOut).div(denominator);
+      const amountInRaw = amountInWithoutFee.mul(basics$1.pair.v4.LIQUIDITY_FEES_DENOMINATOR).div(basics$1.pair.v4.LIQUIDITY_FEES_DENOMINATOR.sub(basics$1.pair.v4.LIQUIDITY_FEES_NUMERATOR));
+      return amountInRaw
+    }));
+
+    return amounts[0]
+  };
+
+  let getAmounts$1 = async ({
+    path,
+    tokenIn,
+    tokenOut,
+    amountOut,
+    amountIn,
+    amountInMax,
+    amountOutMin
+  }) => {
+    if (amountOut) {
+      amountIn = await getAmountIn$1({ path, amountOut, tokenIn, tokenOut });
+      if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
+        return {}
+      } else if (amountInMax === undefined) {
+        amountInMax = amountIn;
+      }
+    } else if (amountIn) {
+      amountOut = await getAmountsOut$1({ path, amountIn, tokenIn, tokenOut });
+      if (amountOut == undefined || amountOutMin && amountOut.lt(amountOutMin)) {
+        return {}
+      } else if (amountOutMin === undefined) {
+        amountOutMin = amountOut;
+      }
+    } else if(amountOutMin) {
+      amountIn = await getAmountIn$1({ path, amountOut: amountOutMin, tokenIn, tokenOut });
+      if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
+        return {}
+      } else if (amountInMax === undefined) {
+        amountInMax = amountIn;
+      }
+    } else if(amountInMax) {
+      amountOut = await getAmountsOut$1({ path, amountIn: amountInMax, tokenIn, tokenOut });
+      if (amountOut == undefined ||amountOutMin && amountOut.lt(amountOutMin)) {
+        return {}
+      } else if (amountOutMin === undefined) {
+        amountOutMin = amountOut;
+      }
+    }
+    return { amountOut, amountIn, amountInMax, amountOutMin }
+  };
+
+  let getTransaction$1 = async ({
+    path,
+    amountIn,
+    amountInMax,
+    amountOut,
+    amountOutMin,
+    amountInInput,
+    amountOutInput,
+    amountInMaxInput,
+    amountOutMinInput,
+    toAddress,
+    fromAddress
+  }) => {
+
+    let instructions = [];
+    let transaction = { blockchain: 'solana', instructions };
+
+    const fixedPath = fixPath$1(path);
+    const tokenOut = fixedPath[0];
+    const tokenIn = fixedPath[fixedPath.length-1];
+
+    await web3Tokens.Token.solana.findAccount({ owner: toAddress, token: tokenOut });
+    await web3Tokens.Token.solana.findProgramAddress({ owner: toAddress, token: tokenOut });
+    
+    const existingTokenAccountIn = await web3Tokens.Token.solana.findAccount({ owner: toAddress, token: tokenIn });
+    await web3Tokens.Token.solana.findProgramAddress({ owner: toAddress, token: tokenIn });
+
+    console.log('fixedPath', fixedPath);
+
+    if(!existingTokenAccountIn) {
+      instructions.unshift(
+        web3Tokens.Token.solana.createAssociatedTokenAccountInstruction({ token: tokenIn, owner: toAddress, payer: fromAddress })
+      );
+    }
+
+    if (amountInInput || amountOutMinInput) ; else if (amountOutInput || amountInMaxInput) {
+      const LAYOUT = solanaWeb3_js.struct([solanaWeb3_js.u8("instruction"), solanaWeb3_js.u64("maxAmountIn"), solanaWeb3_js.u64("amountOut")]);
+      const data = Buffer.alloc(LAYOUT.span);
+      LAYOUT.encode(
+        {
+          instruction: 11,
+          maxAmountIn: new BN(amountInMax.toString()),
+          amountOut: new BN(amountOut.toString()),
+        },
+        data,
+      );
+
+      const keys = [
+        // system
+        { pubkey: new solanaWeb3_js.PublicKey(web3Tokens.Token.solana.TOKEN_PROGRAM), isWritable: false, isSigner: false },
+        // amm
+        { pubkey: poolKeys.id, isWritable: true, isSigner: false },
+        { pubkey: poolKeys.authority, isWritable: false, isSigner: false },
+        { pubkey: poolKeys.openOrders, isWritable: true, isSigner: false },
+        { pubkey: poolKeys.targetOrders, isWritable: true, isSigner: false },
+        { pubkey: poolKeys.baseVault, isWritable: true, isSigner: false },
+        { pubkey: poolKeys.quoteVault, isWritable: true, isSigner: false },
+        // serum
+        { pubkey: poolKeys.marketProgramId, isWritable: false, isSigner: false },
+        { pubkey: poolKeys.marketId, isWritable: true, isSigner: false },
+        { pubkey: poolKeys.marketBids, isWritable: true, isSigner: false },
+        { pubkey: poolKeys.marketAsks, isWritable: true, isSigner: false },
+        { pubkey: poolKeys.marketEventQueue, isWritable: true, isSigner: false },
+        { pubkey: poolKeys.marketBaseVault, isWritable: true, isSigner: false },
+        { pubkey: poolKeys.marketQuoteVault, isWritable: true, isSigner: false },
+        { pubkey: poolKeys.marketAuthority, isWritable: false, isSigner: false },
+        // user
+        { pubkey: userKeys.tokenAccountIn, isWritable: true, isSigner: false },
+        { pubkey: userKeys.tokenAccountOut, isWritable: true, isSigner: false },
+        { pubkey: userKeys.owner, isWritable: false, isSigner: false },
+      ];
+      instructions.push(new TransactionInstruction({
+        programId: new solanaWeb3_js.PublicKey(basics$1.pair.v4.address),
+        keys,
+        data,
+      }));
+    }
+    
+    return transaction
+  };
+
   let route$2 = ({
     exchange,
     tokenIn,
     tokenOut,
+    fromAddress,
+    toAddress,
     amountIn = undefined,
     amountOut = undefined,
     amountInMax = undefined,
@@ -1015,56 +1230,41 @@
   }) => {
     return new Promise(async (resolve)=> {
       let path = await findPath$1({ tokenIn, tokenOut });
-      console.log('PATH!!!', path);
       if (path === undefined || path.length == 0) { return resolve() }
+      let [amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput] = [amountIn, amountOut, amountInMax, amountOutMin];
       
-      ({ amountIn, amountInMax, amountOut, amountOutMin } = await getAmounts({ path, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }));
-      console.log('AMOUNTS', { amountIn, amountInMax, amountOut, amountOutMin });
+      ({ amountIn, amountInMax, amountOut, amountOutMin } = await getAmounts$1({ path, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }));
       if([amountIn, amountInMax, amountOut, amountOutMin].every((amount)=>{ return amount == undefined })) { return resolve() }
 
-      // let transaction = getTransaction({
-      //   path,
-      //   amountIn,
-      //   amountInMax,
-      //   amountOut,
-      //   amountOutMin,
-      //   amountInInput,
-      //   amountOutInput,
-      //   amountInMaxInput,
-      //   amountOutMinInput,
-      // })
+      let transaction = await getTransaction$1({
+        path,
+        amountIn,
+        amountInMax,
+        amountOut,
+        amountOutMin,
+        amountInInput,
+        amountOutInput,
+        amountInMaxInput,
+        amountOutMinInput,
+        toAddress,
+        fromAddress
+      });
 
-      // resolve(
-      //   new Route({
-      //     tokenIn,
-      //     tokenOut,
-      //     path,
-      //     amountIn,
-      //     amountInMax,
-      //     amountOut,
-      //     amountOutMin,
-      //     exchange,
-      //     transaction,
-      //   })
-      // )
-    })
-  };
-
-  let getAmountIn$1 = ({ path, amountOut, block }) => {
-    return new Promise((resolve) => {
-      web3Client.request({
-        blockchain: 'ethereum',
-        address: basics$1.router.address,
-        method: 'getAmountsIn',
-        api: basics$1.router.api,
-        params: {
-          amountOut: amountOut,
-          path: fixPath$1(path),
-        },
-        block
-      })
-      .then((amountsIn)=>resolve(amountsIn[0]))
-      .catch(()=>resolve());
+      resolve(
+        new Route({
+          tokenIn,
+          tokenOut,
+          path,
+          amountIn,
+          amountInMax,
+          amountOut,
+          amountOutMin,
+          fromAddress,
+          toAddress,
+          exchange,
+          transaction,
+        })
+      );
     })
   };
 
@@ -1244,7 +1444,7 @@
     })
   };
 
-  let getAmounts$1 = async ({
+  let getAmounts = async ({
     path,
     tokenIn,
     tokenOut,
@@ -1361,7 +1561,7 @@
       if (path === undefined || path.length == 0) { return resolve() }
       let [amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput] = [amountIn, amountOut, amountInMax, amountOutMin];
       
-      ({ amountIn, amountInMax, amountOut, amountOutMin } = await getAmounts$1({ path, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }));
+      ({ amountIn, amountInMax, amountOut, amountOutMin } = await getAmounts({ path, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }));
       if([amountIn, amountInMax, amountOut, amountOutMin].every((amount)=>{ return amount == undefined })) { return resolve() }
 
       let transaction = getTransaction({
@@ -1379,7 +1579,7 @@
       });
 
       resolve(
-        new Route({
+        new Route$1({
           tokenIn,
           tokenOut,
           path,

@@ -53,7 +53,6 @@ async function testRouting({
   amountInMax,
   amountOut,
   amountOutMin,
-  pair,
   fromAddress,
   toAddress,
   transaction
@@ -76,6 +75,7 @@ async function testRouting({
     tokenIn,
     tokenOut
   })
+  console.log('ROUTE?!', route)
 
   expectRoute({
     blockchain,

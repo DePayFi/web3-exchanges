@@ -978,10 +978,15 @@
   dependencies:
     "@coinbase/wallet-sdk" "^3.4.0"
 
-"@depay/solana-web3.js@^1.17.3", "@depay/solana-web3.js@^1.17.5":
+"@depay/solana-web3.js@^1.17.3":
   version "1.17.5"
   resolved "https://registry.yarnpkg.com/@depay/solana-web3.js/-/solana-web3.js-1.17.5.tgz#6a4d568919f02aef4e915cfebe1f57db587b48a0"
   integrity sha512-ti9nGK/skBNWWC2q6Vd2SYQlebv/be1JjEI1JKL7y/S+enF04pCtDYhTrC3fI1pKx299CGPky/OU/EgCcRmhbA==
+
+"@depay/solana-web3.js@^1.18.0":
+  version "1.18.0"
+  resolved "https://registry.yarnpkg.com/@depay/solana-web3.js/-/solana-web3.js-1.18.0.tgz#e96b480c2e9f4a8965e4d46cb335db644ec1286a"
+  integrity sha512-tGZaOmho6WETbIIW54z4Okaj6pVssxSOxU/KcfIDqSpIDiEJ2A0LnuvmJJPdAnySwWBrXLGMLKibvrmalnsNiQ==
 
 "@depay/walletconnect-v1@^1.7.8":
   version "1.7.8"
@@ -1006,10 +1011,10 @@
   resolved "https://registry.yarnpkg.com/@depay/web3-constants/-/web3-constants-6.2.2.tgz#8b7b4b234f5559477a2b1f6ca9aaa4b57dd37934"
   integrity sha512-gIXMEOpJHbfV3feNJ1Cy3TyW9qRlV4YYZ1KKLe0i5q+uSKX6VHciQzZFtvbOi0owTf2Y+g2K8jeo+1lmSf2pSA==
 
-"@depay/web3-mock@^13.13.1":
-  version "13.13.1"
-  resolved "https://registry.yarnpkg.com/@depay/web3-mock/-/web3-mock-13.13.1.tgz#9df14a083c8958e340fc2a24d27f583409ce5f11"
-  integrity sha512-Z7ovo0XnvdVTbe7WjgVRJrFiTM6vBr45SKffuiN/kJofOiCaTWUtsV8Hl4oJGq1YJh0/qqYnFoKUB5yRzXhFVQ==
+"@depay/web3-mock@^13.16.0":
+  version "13.16.0"
+  resolved "https://registry.yarnpkg.com/@depay/web3-mock/-/web3-mock-13.16.0.tgz#bee543fb93c90471c486f291d67d7e46df125bbf"
+  integrity sha512-4327+OGSh3GInIQHwMKMT8oU5IMYD5sLj1F4bRcammb7h4sNqP4b4XUxeCPfI05Aq7XdZ1QBdyZPBmqhF6DJnw==
   dependencies:
     "@depay/solana-web3.js" "^1.17.3"
     "@depay/web3-blockchains" "^6.0.2"
@@ -1017,10 +1022,10 @@
     ethers "^5.6.8"
     xhr2 "^0.2.1"
 
-"@depay/web3-tokens@^9.4.1":
-  version "9.4.1"
-  resolved "https://registry.yarnpkg.com/@depay/web3-tokens/-/web3-tokens-9.4.1.tgz#c8fb7fde988e82b9bd606c5c6e0e1df4c1b7094a"
-  integrity sha512-IIHqJgFx6TDHIVFVa4Gcvbry/2YfCJL0W778EdMPM/RaDDD83PhpoZrzYaM+ElqX23677HbpLrI7Lo1q/U/biw==
+"@depay/web3-tokens@^9.6.0":
+  version "9.6.0"
+  resolved "https://registry.yarnpkg.com/@depay/web3-tokens/-/web3-tokens-9.6.0.tgz#0d69058c489cbacdf77ce528c4a11babe393185a"
+  integrity sha512-KETlKFzlB5KQEolfLUvG4MR+CaiaKPaht/PWfhq5i9oijcE5j8lLOhdDUNnM+YQkYN0R7RJF84+QySDm2n7Waw==
 
 "@depay/web3-wallets@^12.1.2":
   version "12.1.2"
