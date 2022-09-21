@@ -39,7 +39,6 @@ describe('route', ()=> {
       tokenIn: tokenIn,
       tokenOut: tokenOut,
       amountIn: amountIn,
-      amountOutMin: amountOutMin,
       fromAddress: wallet,
       toAddress: wallet
     });

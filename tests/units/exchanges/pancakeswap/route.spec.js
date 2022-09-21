@@ -166,14 +166,14 @@ describe('pancakeswap', () => {
     });
 
     it('routes a token to token swap for given amountOutMin without given amountIn on pancakeswap', async ()=> {
-
       let amountOutMin = 1
       let amountOutMinBN = ethers.utils.parseUnits(amountOutMin.toString(), decimalsOut)
       let fetchedAmountIn = 43
       let fetchedAmountInBN = ethers.utils.parseUnits(fetchedAmountIn.toString(), decimalsIn)
+      let slippage = ethers.BigNumber.from('215000000000000000')
 
       mockPair({ provider: provider(blockchain), tokenIn, tokenOut, pair })
-      mockAmounts({ method: 'getAmountsIn', params: [amountOutMinBN,path], amounts: [fetchedAmountInBN, amountOutMinBN] })
+      mockAmounts({ method: 'getAmountsIn', params: [amountOutMinBN, path], amounts: [fetchedAmountInBN, amountOutMinBN] })
 
       await testRouting({
         blockchain,
@@ -192,7 +192,7 @@ describe('pancakeswap', () => {
           api: exchange.router.api,
           method: 'swapExactTokensForTokens',
           params: {
-            amountIn: fetchedAmountInBN,
+            amountIn: fetchedAmountInBN.add(slippage),
             amountOutMin: amountOutMinBN,
             path: path,
             to: toAddress
@@ -313,16 +313,16 @@ describe('pancakeswap', () => {
       })
     });
 
-    it('routes a token to token swap for given amountIn and amountOutMin on pancakeswap', async ()=> {
-
+    it('routes a token to token swap for given amountOutMin on pancakeswap', async ()=> {
       let amountOutMin = 1
       let amountOutMinBN = ethers.utils.parseUnits(amountOutMin.toString(), decimalsOut)
-      let amountIn = 32
-      let amountInBN = ethers.utils.parseUnits(amountIn.toString(), decimalsIn)
+      let fetchedAmountIn = 32
+      let fetchedAmountInBN = ethers.utils.parseUnits(fetchedAmountIn.toString(), decimalsIn)
+      let slippage = ethers.BigNumber.from('160000000000000000')
       let path = [tokenIn, tokenOut]
 
       mockPair({ provider: provider(blockchain), tokenIn, tokenOut, pair })
-      mockAmounts({ method: 'getAmountsOut', params: [amountInBN,path], amounts: [amountInBN, amountOutMinBN] })
+      mockAmounts({ method: 'getAmountsIn', params: [amountOutMinBN, path], amounts: [fetchedAmountInBN, amountOutMinBN] })
 
       await testRouting({
         blockchain,
@@ -331,7 +331,6 @@ describe('pancakeswap', () => {
         decimalsIn,
         tokenOut,
         decimalsOut,
-        amountIn,
         amountOutMin,
         path,
         pair,
@@ -342,7 +341,7 @@ describe('pancakeswap', () => {
           api: exchange.router.api,
           method: 'swapExactTokensForTokens',
           params: {
-            amountIn: amountInBN,
+            amountIn: fetchedAmountInBN.add(slippage),
             amountOutMin: amountOutMinBN,
             path: path,
             to: toAddress
@@ -354,9 +353,9 @@ describe('pancakeswap', () => {
     it('routes a token to token swap on pancakeswap also if the routing path is via another token A->B->C', async ()=> {
       let amountOutMin = 1
       let amountOutMinBN = ethers.utils.parseUnits(amountOutMin.toString(), decimalsOut)
-      let amountIn = 32
-      let amountInBN = ethers.utils.parseUnits(amountIn.toString(), decimalsIn)
-
+      let fetchedAmountIn = 32
+      let fetchedAmountInBN = ethers.utils.parseUnits(fetchedAmountIn.toString(), decimalsIn)
+      let slippage = ethers.BigNumber.from('160000000000000000')
       let tokenVia = CONSTANTS[blockchain].WRAPPED
       let amountVia = 0.1
       let amountViaBN = ethers.utils.parseUnits(amountVia.toString(), CONSTANTS[blockchain].DECIMALS)
@@ -366,7 +365,7 @@ describe('pancakeswap', () => {
       mockPair({ provider: provider(blockchain), tokenIn, tokenOut, pair: CONSTANTS[blockchain].ZERO })
       mockPair({ provider: provider(blockchain), tokenIn, tokenOut: tokenVia, pair: '0xef8cd6cb5c841a4f02986e8a8ab3cc545d1b8b6d' })
       mockPair({ provider: provider(blockchain), tokenIn: tokenOut, tokenOut: tokenVia, pair: '0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852' })
-      mockAmounts({ method: 'getAmountsOut', params: [amountInBN, path], amounts: [amountInBN, amountViaBN, amountOutMinBN] })
+      mockAmounts({ method: 'getAmountsIn', params: [amountOutMinBN, path], amounts: [fetchedAmountInBN, amountViaBN, amountOutMinBN] })
 
       await testRouting({
         blockchain,
@@ -376,7 +375,6 @@ describe('pancakeswap', () => {
         tokenOut,
         decimalsOut,
         path,
-        amountIn,
         amountOutMin,
         pair,
         fromAddress,
@@ -386,7 +384,7 @@ describe('pancakeswap', () => {
           api: exchange.router.api,
           method: 'swapExactTokensForTokens',
           params: {
-            amountIn: amountInBN,
+            amountIn: fetchedAmountInBN.add(slippage),
             amountOutMin: amountOutMinBN,
             path: path,
             to: toAddress
@@ -423,8 +421,9 @@ describe('pancakeswap', () => {
     it('routes a token to token swap on PancakeSwap also if the routing path is via TOKEN_A->USD->WRAPPED->TOKEN_B', async ()=> {
       let amountOutMin = 1
       let amountOutMinBN = ethers.utils.parseUnits(amountOutMin.toString(), decimalsOut)
-      let amountIn = 32
-      let amountInBN = ethers.utils.parseUnits(amountIn.toString(), decimalsIn)
+      let fetchedAmountIn = 32
+      let fetchedAmountInBN = ethers.utils.parseUnits(fetchedAmountIn.toString(), decimalsIn)
+      let slippage = ethers.BigNumber.from('160000000000000000')
       let amountWRAPPED = 0.1
       let amountWRAPPEDBN = ethers.utils.parseUnits(amountWRAPPED.toString(), CONSTANTS[blockchain].DECIMALS)
       let amountUSD = 420
@@ -437,7 +436,7 @@ describe('pancakeswap', () => {
       mockPair({ provider: provider(blockchain), tokenIn, tokenOut: CONSTANTS[blockchain].WRAPPED, pair: CONSTANTS[blockchain].ZERO })
       mockPair({ provider: provider(blockchain), tokenIn, tokenOut: CONSTANTS[blockchain].USD, pair: '0xef8cd6cb5c841a4f02986e8a8ab3cc545d1b8b6d' })
       mockPair({ provider: provider(blockchain), tokenIn: CONSTANTS[blockchain].WRAPPED, tokenOut , pair: '0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852' })
-      mockAmounts({ provider: provider(blockchain), method: 'getAmountsOut', params: [amountInBN, path], amounts: [amountInBN, amountUSDBN, amountWRAPPEDBN, amountOutMinBN] })
+      mockAmounts({ provider: provider(blockchain), method: 'getAmountsIn', params: [amountOutMinBN, path], amounts: [fetchedAmountInBN, amountUSDBN, amountWRAPPEDBN, amountOutMinBN] })
 
       await testRouting({
         blockchain,
@@ -447,7 +446,6 @@ describe('pancakeswap', () => {
         tokenOut,
         decimalsOut,
         path,
-        amountIn,
         amountOutMin,
         pair,
         fromAddress,
@@ -457,7 +455,7 @@ describe('pancakeswap', () => {
           api: exchange.router.api,
           method: 'swapExactTokensForTokens',
           params: {
-            amountIn: amountInBN,
+            amountIn: fetchedAmountInBN.add(slippage),
             amountOutMin: amountOutMinBN,
             path: path,
             to: toAddress
@@ -469,8 +467,9 @@ describe('pancakeswap', () => {
     it('routes a token to token swap on PancakeSwap also if the routing path is via TOKEN_A->WRAPPED->USD->TOKEN_B', async ()=> {
       let amountOutMin = 1
       let amountOutMinBN = ethers.utils.parseUnits(amountOutMin.toString(), decimalsOut)
-      let amountIn = 32
-      let amountInBN = ethers.utils.parseUnits(amountIn.toString(), decimalsIn)
+      let fetchedAmountIn = 32
+      let fetchedAmountInBN = ethers.utils.parseUnits(fetchedAmountIn.toString(), decimalsIn)
+      let slippage = ethers.BigNumber.from('160000000000000000')
       let amountWRAPPED = 0.1
       let amountWRAPPEDBN = ethers.utils.parseUnits(amountWRAPPED.toString(), CONSTANTS[blockchain].DECIMALS)
       let amountUSD = 420
@@ -484,7 +483,7 @@ describe('pancakeswap', () => {
       mockPair({ provider: provider(blockchain), tokenIn, tokenOut: CONSTANTS[blockchain].WRAPPED, pair: '0xef8cd6cb5c841a4f02986e8a8ab3cc545d1b8b6d' })
       mockPair({ provider: provider(blockchain), tokenIn: tokenOut, tokenOut: CONSTANTS[blockchain].WRAPPED, pair: CONSTANTS[blockchain].ZERO })
       mockPair({ provider: provider(blockchain), tokenIn: CONSTANTS[blockchain].USD, tokenOut, pair: '0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852' })
-      mockAmounts({ provider: provider(blockchain), method: 'getAmountsOut', params: [amountInBN, path], amounts: [amountInBN, amountWRAPPEDBN, amountUSDBN, amountOutMinBN] })
+      mockAmounts({ provider: provider(blockchain), method: 'getAmountsIn', params: [amountOutMinBN, path], amounts: [fetchedAmountInBN, amountWRAPPEDBN, amountUSDBN, amountOutMinBN] })
 
       await testRouting({
         blockchain,
@@ -494,7 +493,6 @@ describe('pancakeswap', () => {
         tokenOut,
         decimalsOut,
         path,
-        amountIn,
         amountOutMin,
         pair,
         fromAddress,
@@ -504,7 +502,7 @@ describe('pancakeswap', () => {
           api: exchange.router.api,
           method: 'swapExactTokensForTokens',
           params: {
-            amountIn: amountInBN,
+            amountIn: fetchedAmountInBN.add(slippage),
             amountOutMin: amountOutMinBN,
             path: path,
             to: toAddress
@@ -633,16 +631,16 @@ describe('pancakeswap', () => {
       })
     });
 
-    it('routes a BNB to token swap for given amountIn and amountOutMin on pancakeswap', async ()=> {
-
+    it('routes a BNB to token swap for given amountOutMin on pancakeswap', async ()=> {
       let amountOutMin = 1
       let amountOutMinBN = ethers.utils.parseUnits(amountOutMin.toString(), decimalsOut)
-      let amountIn = 32
-      let amountInBN = ethers.utils.parseUnits(amountIn.toString(), decimalsIn)
+      let fetchedAmountIn = 32
+      let fetchedAmountInBN = ethers.utils.parseUnits(fetchedAmountIn.toString(), decimalsIn)
+      let slippage = ethers.BigNumber.from('160000000000000000')
       let path = [tokenIn, CONSTANTS[blockchain].WRAPPED, tokenOut]
 
       mockPair({ provider: provider(blockchain), tokenIn: CONSTANTS[blockchain].WRAPPED, tokenOut, pair })
-      mockAmounts({ method: 'getAmountsOut', params: [amountInBN,[CONSTANTS[blockchain].WRAPPED,tokenOut]], amounts: [amountInBN, amountOutMinBN] })
+      mockAmounts({ method: 'getAmountsIn', params: [amountOutMinBN, [CONSTANTS[blockchain].WRAPPED,tokenOut]], amounts: [fetchedAmountInBN, amountOutMinBN] })
 
       await testRouting({
         blockchain,
@@ -651,7 +649,6 @@ describe('pancakeswap', () => {
         decimalsIn,
         tokenOut,
         decimalsOut,
-        amountIn,
         amountOutMin,
         path,
         pair,
@@ -666,7 +663,7 @@ describe('pancakeswap', () => {
             path: [CONSTANTS[blockchain].WRAPPED,tokenOut],
             to: toAddress
           },
-          value: amountInBN
+          value: fetchedAmountInBN.add(slippage)
         },
       })
     });
@@ -792,15 +789,15 @@ describe('pancakeswap', () => {
     });
 
     it('routes a token to BNB swap for given amountIn and amountOutMin on pancakeswap', async ()=> {
-
       let amountOutMin = 1
       let amountOutMinBN = ethers.utils.parseUnits(amountOutMin.toString(), decimalsOut)
-      let amountIn = 32
-      let amountInBN = ethers.utils.parseUnits(amountIn.toString(), decimalsIn)
+      let fetchedAmountIn = 32
+      let fetchedAmountInBN = ethers.utils.parseUnits(fetchedAmountIn.toString(), decimalsIn)
+      let slippage = ethers.BigNumber.from('160000000000000000')
       let path = [tokenIn, CONSTANTS[blockchain].WRAPPED, tokenOut]
 
       mockPair({ provider: provider(blockchain), tokenIn, tokenOut: CONSTANTS[blockchain].WRAPPED, pair })
-      mockAmounts({ method: 'getAmountsOut', params: [amountInBN,[tokenIn, CONSTANTS[blockchain].WRAPPED]], amounts: [amountInBN, amountOutMinBN] })
+      mockAmounts({ method: 'getAmountsIn', params: [amountOutMinBN, [tokenIn, CONSTANTS[blockchain].WRAPPED]], amounts: [fetchedAmountInBN, amountOutMinBN] })
 
       await testRouting({
         blockchain,
@@ -809,7 +806,6 @@ describe('pancakeswap', () => {
         decimalsIn,
         tokenOut,
         decimalsOut,
-        amountIn,
         amountOutMin,
         path,
         pair,
@@ -820,7 +816,7 @@ describe('pancakeswap', () => {
           api: exchange.router.api,
           method: 'swapExactTokensForETH',
           params: {
-            amountIn: amountInBN,
+            amountIn: fetchedAmountInBN.add(slippage),
             amountOutMin: amountOutMinBN,
             path: [tokenIn, CONSTANTS[blockchain].WRAPPED],
             to: toAddress

@@ -34,11 +34,10 @@ function expectRoute({
   expect(route.transaction.method).toEqual(transaction.method)
   expect(route.transaction.params.deadline).toBeDefined()
   expect(route.transaction.value).toEqual(transaction.value?.toString())
-  expect(
-    Object.keys(transaction.params).every((key)=>{
-      return JSON.stringify(normalize(route.transaction.params[key])) == JSON.stringify(normalize(transaction.params[key]))
-    })
-  ).toEqual(true)
+  Object.keys(transaction.params).every((key)=>{
+    expect(JSON.stringify(normalize(route.transaction.params[key])))
+      .toEqual(JSON.stringify(normalize(transaction.params[key])))
+  })
 }
 
 async function testRouting({
