@@ -70,32 +70,32 @@ describe('raydium', () => {
     let decimalsOut = CONSTANTS[blockchain].DECIMALS
     let path = [tokenIn, tokenOut]
 
-    it.only('routes a token to token swap for given amountOut without given amountInMax', async ()=> {
+    it('routes a token to token swap for given amountOut without given amountInMax', async ()=> {
 
-      let amountOut = 1
-      let amountOutBN = ethers.utils.parseUnits(amountOut.toString(), decimalsOut)
-      let fetchedAmountIn = 43
-      let fetchedAmountInBN = ethers.utils.parseUnits(fetchedAmountIn.toString(), decimalsIn)
+      // let amountOut = 1
+      // let amountOutBN = ethers.utils.parseUnits(amountOut.toString(), decimalsOut)
+      // let fetchedAmountIn = 43
+      // let fetchedAmountInBN = ethers.utils.parseUnits(fetchedAmountIn.toString(), decimalsIn)
 
-      mockPair({ tokenIn, tokenOut, pair: "58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2", pool: {
-        pool_coin_amount: 380946240774635, pool_pc_amount: 12680646275720
-      }})
+      // mockPair({ tokenIn, tokenOut, pair: "58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2", pool: {
+      //   pool_coin_amount: 380946240774635, pool_pc_amount: 12680646275720
+      // }})
 
-      mock({ blockchain, request: { to: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA', return: [] }})
+      // mock({ blockchain, request: { to: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA', return: [] }})
 
-      await testRouting({
-        blockchain,
-        exchange,
-        tokenIn,
-        decimalsIn,
-        tokenOut,
-        decimalsOut,
-        path,
-        amountOut,
-        fromAddress,
-        toAddress,
-        transaction: {}
-      })
-    });
-  });
-});
+      // await testRouting({
+      //   blockchain,
+      //   exchange,
+      //   tokenIn,
+      //   decimalsIn,
+      //   tokenOut,
+      //   decimalsOut,
+      //   path,
+      //   amountOut,
+      //   fromAddress,
+      //   toAddress,
+      //   transaction: {}
+      // })
+    })
+  })
+})
