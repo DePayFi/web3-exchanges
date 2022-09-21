@@ -116,6 +116,67 @@ Routes are returned by calling `route`. A single Route has the following structu
 
 See [@depay/web3-wallets](https://github.com/DePayFi/@depay/web3-wallets#sendtransaction) for details about the transaction format.
 
+## Slippage
+
+This library applies slippage strategies to amounts for the following combinations:
+
+- If `amountOutMin` is provided, slippage is applied to `amountIn`.
+
+### Auto Slippage
+
+Auto slippage applies `0.5%` default slippage.
+
+It applies only `0.1%` default slippage, if difference of amounts for tokenIn and tokenOut are `<1%`.
+
+For blockchains that allow to receive quotes for previous blocks (`EVM`), auto slippage additionally checks for:
+
+- Extreme Direction
+
+- Extreme Base Volatility
+
+And applies a higher than default slippage (`0.5%`) if required.
+
+#### Extreme Directional Price Change
+
+If there is a clear directional change of the price for the last 3 blocks,
+the target price will be projected according to the velocity of the last 3 blocks.
+
+##### Example Extreme Directional Price Change
+
+Current Price: $1'500
+
+Last 3 Blocks: $1'500, $1'530, $1'560
+
+Velocity: $30 per block
+
+Projection: $1'470
+
+Slippage 2%
+
+Slippage of `2%` will be applied, because it's higher than default slippage.
+
+#### Extreme Base Volatility
+
+If there is extreme base volatility in the last 3 blocks, 
+none-directional, 
+the target price will be the highest price over the last 3 blocks plus the smallest price change over the last 3 blocks.
+
+##### Example Extreme Base Volatility
+
+Current Price: $1'500
+
+Last 3 Blocks: $1'500, $1'490, $1'520
+
+Smallest Change: $10
+
+Highest Price: $1'520
+
+Projection: $1'530
+
+Slippage 2%
+
+Slippage of `2%` will be applied, because it's higher than default slippage.
+
 ## Functionalities
 
 ### all: Stores all information for all decentralized exchanges

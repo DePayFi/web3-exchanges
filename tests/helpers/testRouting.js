@@ -75,7 +75,6 @@ async function testRouting({
     tokenIn,
     tokenOut
   })
-  console.log('ROUTE?!', route)
 
   expectRoute({
     blockchain,
