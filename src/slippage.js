@@ -36,7 +36,7 @@ const calculateAmountInWithSlippage = async ({ exchange, path, tokenIn, tokenOut
   if(!lastAmountsIn[0] || !lastAmountsIn[1] || !lastAmountsIn[2]) { return newAmountInWithDefaultSlippageBN }
 
   let newAmountInWithExtremeSlippageBN
-
+  
   if(
     (lastAmountsIn[0].gt(lastAmountsIn[1])) &&
     (lastAmountsIn[1].gt(lastAmountsIn[2]))
@@ -64,7 +64,7 @@ const calculateAmountInWithSlippage = async ({ exchange, path, tokenIn, tokenOut
       lastAmountsIn[1].eq(lastAmountsIn[2])
     )
   ) {
-    // EXTREME BASE VOLATILITYS
+    // EXTREME BASE VOLATILITIES
 
     const difference1 = lastAmountsIn[0].sub(lastAmountsIn[1]).abs()
     const difference2 = lastAmountsIn[1].sub(lastAmountsIn[2]).abs()

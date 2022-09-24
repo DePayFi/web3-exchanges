@@ -32,7 +32,7 @@ describe('route', ()=> {
     mockDecimals({ provider: provider(blockchain), blockchain, address: tokenIn, value: decimalsIn })
     mockDecimals({ provider: provider(blockchain), blockchain, address: tokenOut, value: decimalsOut })
     mockPair({ provider: provider(blockchain), tokenIn, tokenOut, pair })
-    mockAmounts({ provider: provider(blockchain), method: 'getAmountsOut', params: [amountInBN,path], amounts: [amountInBN, amountOutMinBN] })
+    mockAmounts({ provider: provider(blockchain), method: 'getAmountsOut', params: [amountInBN, path], amounts: [amountInBN, amountOutMinBN] })
 
     let routes = await route({
       blockchain,

@@ -46,7 +46,7 @@ function mockPair({ provider, tokenIn, tokenOut, pair }) {
   })
 }
 
-function mockAmounts({ provider, method, params, amounts }){
+function mockAmounts({ provider, method, params, amounts, block }){
   return mock({
     provider,
     blockchain: 'ethereum',
@@ -56,7 +56,8 @@ function mockAmounts({ provider, method, params, amounts }){
       method: method,
       params: params,
       return: amounts
-    }
+    },
+    block
   })
 }
 
