@@ -2,11 +2,11 @@ import { ethers } from 'ethers'
 import { request } from '@depay/web3-client'
 import { supported } from './blockchains'
 
-const calculateAmountInWithSlippage = async ({ exchange, path, tokenIn, tokenOut, amountIn, amountOutMin })=>{
+const calculateAmountInWithSlippage = async ({ exchange, path, tokenIn, tokenOut, amountIn, amountOut })=>{
 
   let defaultSlippage = '0.5' // %
   if(
-    parseInt(amountIn.mul(10000).div(amountOutMin).sub(10000).toString(), 10)
+    parseInt(amountIn.mul(10000).div(amountOut).sub(10000).toString(), 10)
     < 100
   ) { // stable coin swap
     defaultSlippage = '0.1' // %
@@ -28,7 +28,7 @@ const calculateAmountInWithSlippage = async ({ exchange, path, tokenIn, tokenOut
   const lastAmountsIn = await Promise.all(blocks.map(async (block)=>{
     return await exchange.getAmountIn({
       path: path,
-      amountOut: amountOutMin,
+      amountOut,
       block
     })
   }))

@@ -13,7 +13,10 @@ let getPairs = async(base, quote) => {
       cache: 3600000,
     })
     return accounts
-  } catch { return [] }
+  } catch(e) {
+    console.log(e)
+    return []
+  }
 }
 
 let getBestPair = async(base, quote) => {

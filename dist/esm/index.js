@@ -59,11 +59,11 @@ let supported = ['ethereum', 'bsc', 'polygon', 'solana'];
 supported.evm = ['ethereum', 'bsc', 'polygon'];
 supported.solana = ['solana'];
 
-const calculateAmountInWithSlippage = async ({ exchange, path, tokenIn, tokenOut, amountIn, amountOutMin })=>{
+const calculateAmountInWithSlippage = async ({ exchange, path, tokenIn, tokenOut, amountIn, amountOut })=>{
 
   let defaultSlippage = '0.5'; // %
   if(
-    parseInt(amountIn.mul(10000).div(amountOutMin).sub(10000).toString(), 10)
+    parseInt(amountIn.mul(10000).div(amountOut).sub(10000).toString(), 10)
     < 100
   ) { // stable coin swap
     defaultSlippage = '0.1'; // %
@@ -85,7 +85,7 @@ const calculateAmountInWithSlippage = async ({ exchange, path, tokenIn, tokenOut
   const lastAmountsIn = await Promise.all(blocks.map(async (block)=>{
     return await exchange.getAmountIn({
       path: path,
-      amountOut: amountOutMin,
+      amountOut,
       block
     })
   }));
@@ -264,12 +264,12 @@ const route$1 = ({
     let path = await findPath({ tokenIn, tokenOut });
     if (path === undefined || path.length == 0) { return resolve() }
     let [amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput] = [amountIn, amountOut, amountInMax, amountOutMin];
-    
+
     ({ amountIn, amountInMax, amountOut, amountOutMin } = await getAmounts({ path, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }));
     if([amountIn, amountInMax, amountOut, amountOutMin].every((amount)=>{ return amount == undefined })) { return resolve() }
 
-    if(amountOutMinInput) {
-      amountIn = amountInMax = await calculateAmountInWithSlippage({ exchange, path, tokenIn, tokenOut, amountIn, amountOutMin });
+    if(amountOutMinInput || amountOutInput) {
+      amountIn = amountInMax = await calculateAmountInWithSlippage({ exchange, path, tokenIn, tokenOut, amountIn, amountOut: (amountOutMinInput || amountOut) });
     }
 
     let transaction = await getTransaction({
@@ -314,6 +314,7 @@ class Exchange {
     router,
     factory,
     pair,
+    market,
     findPath,
     getAmountIn,
     getAmounts,
@@ -327,6 +328,7 @@ class Exchange {
     this.router = router;
     this.factory = factory;
     this.pair = pair;
+    this.market = market;
     this.findPath = findPath;
     this.getAmountIn = getAmountIn;
     this.getAmounts = getAmounts;
@@ -1047,7 +1049,10 @@ let getPairs = async(base, quote) => {
       cache: 3600000,
     });
     return accounts
-  } catch (e) { return [] }
+  } catch(e) {
+    console.log(e);
+    return []
+  }
 };
 
 let getBestPair = async(base, quote) => {
@@ -1319,9 +1324,10 @@ let getTransaction$1 = async ({
   //   )
   // }
 
+  let LAYOUT, data;
   if (amountInInput || amountOutMinInput) {
-    const LAYOUT = struct([u8("instruction"), u64("amountIn"), u64("minAmountOut")]);
-    const data = Buffer.alloc(LAYOUT.span);
+    LAYOUT = struct([u8("instruction"), u64("amountIn"), u64("minAmountOut")]);
+    data = Buffer.alloc(LAYOUT.span);
     LAYOUT.encode(
       {
         instruction: 9,
@@ -1331,49 +1337,53 @@ let getTransaction$1 = async ({
       data,
     );
 
-    let pair = await getBestPair(fixedPath[0], fixedPath[1]);
-    console.log(pair.pubkey.toString());
-    let market = await getMarket(pair.data.marketId.toString());
-    let marketAuthority = await getMarketAuthority(pair.data.marketProgramId, pair.data.marketId);
-
-    console.log('tokenIn', tokenIn);
-    console.log('tokenAccountIn', tokenAccountIn);
-    console.log('amountIn', amountIn.toString());
-    console.log('tokenOut', tokenOut);
-    console.log('tokenAccountOut', tokenAccountOut);
-    console.log('amountOut', amountOutMin.toString());
-
-    const keys = [
-      // system
-      { pubkey: new PublicKey(Token.solana.TOKEN_PROGRAM), isWritable: false, isSigner: false },
-      // amm
-      { pubkey: pair.pubkey, isWritable: true, isSigner: false },
-      { pubkey: new PublicKey(basics$1.pair.v4.authority), isWritable: false, isSigner: false },
-      { pubkey: pair.data.openOrders, isWritable: true, isSigner: false },
-      { pubkey: pair.data.targetOrders, isWritable: true, isSigner: false },
-      { pubkey: pair.data.baseVault, isWritable: true, isSigner: false },
-      { pubkey: pair.data.quoteVault, isWritable: true, isSigner: false },
-      // serum
-      { pubkey: pair.data.marketProgramId, isWritable: false, isSigner: false },
-      { pubkey: pair.data.marketId, isWritable: true, isSigner: false },
-      { pubkey: market.bids, isWritable: true, isSigner: false },
-      { pubkey: market.asks, isWritable: true, isSigner: false },
-      { pubkey: market.eventQueue, isWritable: true, isSigner: false },
-      { pubkey: market.baseVault, isWritable: true, isSigner: false },
-      { pubkey: market.quoteVault, isWritable: true, isSigner: false },
-      { pubkey: marketAuthority, isWritable: false, isSigner: false },
-      // user
-      { pubkey: new PublicKey(tokenAccountIn), isWritable: true, isSigner: false },
-      { pubkey: new PublicKey(tokenAccountOut), isWritable: true, isSigner: false },
-      { pubkey: new PublicKey(fromAddress), isWritable: false, isSigner: false },
-    ];
-
-    instructions.push(new TransactionInstruction({
-      programId: new PublicKey(basics$1.pair.v4.address),
-      keys,
+  } else if (amountOutInput || amountInMaxInput) {
+    LAYOUT = struct([u8("instruction"), u64("maxAmountIn"), u64("amountOut")]);
+    data = Buffer.alloc(LAYOUT.span);
+    LAYOUT.encode(
+      {
+        instruction: 11,
+        maxAmountIn: new BN(amountInMax.toString()),
+        amountOut: new BN(amountOut.toString()),
+      },
       data,
-    }));
+    );
   }
+
+  let pair = await getBestPair(fixedPath[0], fixedPath[1]);
+  let market = await getMarket(pair.data.marketId.toString());
+  let marketAuthority = await getMarketAuthority(pair.data.marketProgramId, pair.data.marketId);
+
+  const keys = [
+    // system
+    { pubkey: new PublicKey(Token.solana.TOKEN_PROGRAM), isWritable: false, isSigner: false },
+    // amm
+    { pubkey: pair.pubkey, isWritable: true, isSigner: false },
+    { pubkey: new PublicKey(basics$1.pair.v4.authority), isWritable: false, isSigner: false },
+    { pubkey: pair.data.openOrders, isWritable: true, isSigner: false },
+    { pubkey: pair.data.targetOrders, isWritable: true, isSigner: false },
+    { pubkey: pair.data.baseVault, isWritable: true, isSigner: false },
+    { pubkey: pair.data.quoteVault, isWritable: true, isSigner: false },
+    // serum
+    { pubkey: pair.data.marketProgramId, isWritable: false, isSigner: false },
+    { pubkey: pair.data.marketId, isWritable: true, isSigner: false },
+    { pubkey: market.bids, isWritable: true, isSigner: false },
+    { pubkey: market.asks, isWritable: true, isSigner: false },
+    { pubkey: market.eventQueue, isWritable: true, isSigner: false },
+    { pubkey: market.baseVault, isWritable: true, isSigner: false },
+    { pubkey: market.quoteVault, isWritable: true, isSigner: false },
+    { pubkey: marketAuthority, isWritable: false, isSigner: false },
+    // user
+    { pubkey: new PublicKey(tokenAccountIn), isWritable: true, isSigner: false },
+    { pubkey: new PublicKey(tokenAccountOut), isWritable: true, isSigner: false },
+    { pubkey: new PublicKey(fromAddress), isWritable: false, isSigner: false },
+  ];
+
+  instructions.push(new TransactionInstruction({
+    programId: new PublicKey(basics$1.pair.v4.address),
+    keys,
+    data,
+  }));
   
   return transaction
 };

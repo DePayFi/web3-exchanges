@@ -4,8 +4,9 @@ import { CONSTANTS } from '@depay/web3-constants'
 import { ethers } from 'ethers'
 import { find } from 'src'
 import { mock, resetMocks, anything } from '@depay/web3-mock'
-import { mockPair, mockToken } from 'tests/mocks/raydium'
+import { mockPair, mockToken, mockTokenAccounts, mockMarket, mockTransactionKeys } from 'tests/mocks/raydium'
 import { resetCache, provider } from '@depay/web3-client'
+import { struct, u64, u8 } from '@depay/solana-web3.js'
 import { testRouting } from 'tests/helpers/testRouting'
 
 describe('raydium', () => {
@@ -70,32 +71,48 @@ describe('raydium', () => {
     let decimalsOut = CONSTANTS[blockchain].DECIMALS
     let path = [tokenIn, tokenOut]
 
-    it('routes a token to token swap for given amountOut without given amountInMax', async ()=> {
+    it.only('routes a token to token swap for given amountOutMin', async ()=> {
 
-      // let amountOut = 1
-      // let amountOutBN = ethers.utils.parseUnits(amountOut.toString(), decimalsOut)
-      // let fetchedAmountIn = 43
-      // let fetchedAmountInBN = ethers.utils.parseUnits(fetchedAmountIn.toString(), decimalsIn)
+      let amountOutMin = 1
+      let amountOutMinBN = ethers.utils.parseUnits(amountOutMin.toString(), decimalsOut)
+      let fetchedAmountIn = 43
+      let fetchedAmountInBN = ethers.utils.parseUnits(fetchedAmountIn.toString(), decimalsIn)
+      let pair = '58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2'
+      let market = '9wFFyRfZBsuAha4YcuxcXLKwMxJR43S7fPfQLusDBzvT'
 
-      // mockPair({ tokenIn, tokenOut, pair: "58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2", pool: {
-      //   pool_coin_amount: 380946240774635, pool_pc_amount: 12680646275720
-      // }})
+      mockTokenAccounts({ owner: fromAddress, token: tokenIn, accounts: [] })
+      mockTokenAccounts({ owner: fromAddress, token: tokenOut, accounts: [] })
+      mockPair({ tokenIn, tokenOut, pair, market, 
+        baseReserve: 300000000000000,
+        quoteReserve: 10000000000000,
+      })
+      mockMarket({ market })
 
-      // mock({ blockchain, request: { to: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA', return: [] }})
-
-      // await testRouting({
-      //   blockchain,
-      //   exchange,
-      //   tokenIn,
-      //   decimalsIn,
-      //   tokenOut,
-      //   decimalsOut,
-      //   path,
-      //   amountOut,
-      //   fromAddress,
-      //   toAddress,
-      //   transaction: {}
-      // })
+      await testRouting({
+        blockchain,
+        exchange,
+        tokenIn,
+        decimalsIn,
+        tokenOut,
+        decimalsOut,
+        path,
+        amountOutMin,
+        fromAddress,
+        toAddress,
+        transaction: {
+          blockchain,
+          instructions: [{
+            to: Raydium.pair.v4.address,
+            api: struct([u8("instruction"), u64("amountOut"), u64("amountOut")]),
+            params: {
+              instruction: 9,
+              amountIn: '30228586767',
+              amountOut: '1000000000',
+            },
+            keys: mockTransactionKeys({ pair, market, fromAddress })
+          }]
+        }
+      })
     })
   })
 })

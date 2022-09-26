@@ -7,8 +7,8 @@ import { Token } from '@depay/web3-tokens'
 
 let blockchain = 'solana'
 
-function mockPair({ tokenIn, tokenOut, pair, _return, pool }) {
-  if(pool) {
+function mockPair({ tokenIn, tokenOut, pair, market, _return, baseReserve, quoteReserve }) {
+  if(baseReserve || quoteReserve) {
     mock({
       blockchain,
       provider: provider(blockchain),
@@ -24,14 +24,14 @@ function mockPair({ tokenIn, tokenOut, pair, _return, pool }) {
         },
         return: {
           logs: [
-            `Program log: GetPoolData: {"status":1,"coin_decimals":9,"pc_decimals":6,"lp_decimals":9,"pool_pc_amount":${pool.pool_pc_amount},"pool_coin_amount":${pool.pool_coin_amount},"pool_lp_supply":263577512770802,"pool_open_time":0,"amm_id":"${pair}"}`
+            `Program log: GetPoolData: {"status":1,"coin_decimals":9,"pc_decimals":6,"lp_decimals":9,"pool_pc_amount":${ quoteReserve },"pool_coin_amount":${ baseReserve },"pool_lp_supply":263577512770802,"pool_open_time":0,"amm_id":"${ pair }"}`
           ]
         }
       }
     })
   }
   if(_return) {
-     mock({
+    mock({
       blockchain,
       provider: provider(blockchain),
       request: {
@@ -135,7 +135,7 @@ function mockPair({ tokenIn, tokenOut, pair, _return, pool }) {
     quoteMint: new PublicKey("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"),
     lpMint: new PublicKey("8HoQnePLqPj4M7PUDzfw8e3Ymdwgc7NLGnaTUapubyvu"),
     openOrders: new PublicKey("HRk9CMrpq7Jn9sh7mzxE8CChHG8dneX9p475QKz4Fsfc"),
-    marketId: new PublicKey("9wFFyRfZBsuAha4YcuxcXLKwMxJR43S7fPfQLusDBzvT"),
+    marketId: market ? new PublicKey(market) : new PublicKey("9wFFyRfZBsuAha4YcuxcXLKwMxJR43S7fPfQLusDBzvT"),
     marketProgramId: new PublicKey("9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin"),
     targetOrders: new PublicKey("CZza3Ej4Mc58MnxWA385itCC9jCo3L1D7zc3LKy1bZMR"),
     withdrawQueue: new PublicKey("G7xeGGLevkRwB5f44QNgQtrPKBdMfkT6ZZwpS9xcC97n"),
@@ -217,7 +217,83 @@ function mockToken({ symbol, name, mint, meta, decimals }) {
   })
 }
 
+function mockTokenAccounts({ token, owner, accounts }) {
+  return mock({
+    blockchain,
+    provider: provider(blockchain),
+    request: {
+      method: 'getProgramAccounts',
+      to: Token.solana.TOKEN_PROGRAM,
+      params: { filters: [
+        { dataSize: 165 },
+        { memcmp: { offset: 32, bytes: owner }},
+        { memcmp: { offset: 0, bytes: token }},
+      ]},
+      return: accounts
+    }
+  })
+}
+
+function mockMarket({ market }) {
+  return mock({
+    blockchain,
+    provider: provider(blockchain),
+    request: {
+      method: 'getAccountInfo',
+      to: market,
+      api: Raydium.market.v3.api,
+      return: {
+        asks: "DC1HsWWRCXVg3wk2NndS5LTbce3axwUwUZH1RgnV4oDN",
+        baseDepositsTotal: "717803800000",
+        baseFeesAccrued: "0",
+        baseLotSize: "100000",
+        baseMint: "4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R",
+        baseVault: "GGcdamvNDYFhAXr93DWyJ8QmwawUHLCyRqWL3KngtLRa",
+        bids: "Hf84mYadE1VqSvVWAvCWc9wqLXak4RwXiPb4A91EAUn5",
+        eventQueue: "H9dZt8kvz1Fe5FyRisb77KcYTaN8LEbuVAfJSnAaEABz",
+        feeRateBps: "0",
+        ownAddress: "2xiv8A5xrJ7RnGdxXB42uFEkYHJjszEhaJyKKt4WaLep",
+        quoteDepositsTotal: "622453327120",
+        quoteDustThreshold: "100",
+        quoteFeesAccrued: "5324691215",
+        quoteLotSize: "100",
+        quoteMint: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+        quoteVault: "22jHt5WmosAykp3LPGSAKgY45p7VGh4DFWSwp21SWBVe",
+        referrerRebatesAccrued: "17589004131",
+        requestQueue: "39mE6bYktM1XAKKmB6WN971X3Sa1yGkHxtCTWMkVrwN2",
+        vaultSignerNonce: "0",
+      }
+    }
+  })
+}
+
+function mockTransactionKeys({ pair, market, fromAddress }) {
+  return [
+    { pubkey: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA', isWritable: false, isSigner: false },
+    { pubkey: pair, isWritable: true, isSigner: false },
+    { pubkey: Raydium.pair.v4.authority, isWritable: false, isSigner: false },
+    { pubkey: 'HRk9CMrpq7Jn9sh7mzxE8CChHG8dneX9p475QKz4Fsfc', isWritable: true, isSigner: false },
+    { pubkey: 'CZza3Ej4Mc58MnxWA385itCC9jCo3L1D7zc3LKy1bZMR', isWritable: true, isSigner: false },
+    { pubkey: 'DQyrAcCrDXQ7NeoqGgDCZwBvWDcYmFCjSb9JtteuvPpz', isWritable: true, isSigner: false },
+    { pubkey: 'HLmqeL62xR1QoZ1HKKbXRrdN1p3phKpxRMb2VVopvBBz', isWritable: true, isSigner: false },
+    { pubkey: '9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin', isWritable: false, isSigner: false },
+    { pubkey: market, isWritable: true, isSigner: false },
+    { pubkey: 'Hf84mYadE1VqSvVWAvCWc9wqLXak4RwXiPb4A91EAUn5', isWritable: true, isSigner: false },
+    { pubkey: 'DC1HsWWRCXVg3wk2NndS5LTbce3axwUwUZH1RgnV4oDN', isWritable: true, isSigner: false },
+    { pubkey: 'H9dZt8kvz1Fe5FyRisb77KcYTaN8LEbuVAfJSnAaEABz', isWritable: true, isSigner: false },
+    { pubkey: 'GGcdamvNDYFhAXr93DWyJ8QmwawUHLCyRqWL3KngtLRa', isWritable: true, isSigner: false },
+    { pubkey: '22jHt5WmosAykp3LPGSAKgY45p7VGh4DFWSwp21SWBVe', isWritable: true, isSigner: false },
+    { pubkey: 'F8Vyqk3unwxkXukZFQeYyGmFfTG3CAX4v24iyrjEYBJV', isWritable: false, isSigner: false },
+    { pubkey: 'F7e4iBrxoSmHhEzhuBcXXs1KAknYvEoZWieiocPvrCD9', isWritable: true, isSigner: false },
+    { pubkey: '5nrTLrjSCNQ4uTVr9BxBUcwf4G4Dwuo8H5wQAQgxand8', isWritable: true, isSigner: false },
+    { pubkey: fromAddress, isWritable: false, isSigner: false },
+  ]
+}
+
 export {
   mockPair,
-  mockToken
+  mockToken,
+  mockTokenAccounts,
+  mockMarket,
+  mockTransactionKeys,
 }

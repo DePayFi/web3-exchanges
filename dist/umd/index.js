@@ -59,11 +59,11 @@
   supported.evm = ['ethereum', 'bsc', 'polygon'];
   supported.solana = ['solana'];
 
-  const calculateAmountInWithSlippage = async ({ exchange, path, tokenIn, tokenOut, amountIn, amountOutMin })=>{
+  const calculateAmountInWithSlippage = async ({ exchange, path, tokenIn, tokenOut, amountIn, amountOut })=>{
 
     let defaultSlippage = '0.5'; // %
     if(
-      parseInt(amountIn.mul(10000).div(amountOutMin).sub(10000).toString(), 10)
+      parseInt(amountIn.mul(10000).div(amountOut).sub(10000).toString(), 10)
       < 100
     ) { // stable coin swap
       defaultSlippage = '0.1'; // %
@@ -85,7 +85,7 @@
     const lastAmountsIn = await Promise.all(blocks.map(async (block)=>{
       return await exchange.getAmountIn({
         path: path,
-        amountOut: amountOutMin,
+        amountOut,
         block
       })
     }));
@@ -264,12 +264,12 @@
       let path = await findPath({ tokenIn, tokenOut });
       if (path === undefined || path.length == 0) { return resolve() }
       let [amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput] = [amountIn, amountOut, amountInMax, amountOutMin];
-      
+
       ({ amountIn, amountInMax, amountOut, amountOutMin } = await getAmounts({ path, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }));
       if([amountIn, amountInMax, amountOut, amountOutMin].every((amount)=>{ return amount == undefined })) { return resolve() }
 
-      if(amountOutMinInput) {
-        amountIn = amountInMax = await calculateAmountInWithSlippage({ exchange, path, tokenIn, tokenOut, amountIn, amountOutMin });
+      if(amountOutMinInput || amountOutInput) {
+        amountIn = amountInMax = await calculateAmountInWithSlippage({ exchange, path, tokenIn, tokenOut, amountIn, amountOut: (amountOutMinInput || amountOut) });
       }
 
       let transaction = await getTransaction({
@@ -314,6 +314,7 @@
       router,
       factory,
       pair,
+      market,
       findPath,
       getAmountIn,
       getAmounts,
@@ -327,6 +328,7 @@
       this.router = router;
       this.factory = factory;
       this.pair = pair;
+      this.market = market;
       this.findPath = findPath;
       this.getAmountIn = getAmountIn;
       this.getAmounts = getAmounts;
@@ -1047,7 +1049,10 @@
         cache: 3600000,
       });
       return accounts
-    } catch (e) { return [] }
+    } catch(e) {
+      console.log(e);
+      return []
+    }
   };
 
   let getBestPair = async(base, quote) => {
@@ -1319,9 +1324,10 @@
     //   )
     // }
 
+    let LAYOUT, data;
     if (amountInInput || amountOutMinInput) {
-      const LAYOUT = solanaWeb3_js.struct([solanaWeb3_js.u8("instruction"), solanaWeb3_js.u64("amountIn"), solanaWeb3_js.u64("minAmountOut")]);
-      const data = solanaWeb3_js.Buffer.alloc(LAYOUT.span);
+      LAYOUT = solanaWeb3_js.struct([solanaWeb3_js.u8("instruction"), solanaWeb3_js.u64("amountIn"), solanaWeb3_js.u64("minAmountOut")]);
+      data = solanaWeb3_js.Buffer.alloc(LAYOUT.span);
       LAYOUT.encode(
         {
           instruction: 9,
@@ -1331,49 +1337,53 @@
         data,
       );
 
-      let pair = await getBestPair(fixedPath[0], fixedPath[1]);
-      console.log(pair.pubkey.toString());
-      let market = await getMarket(pair.data.marketId.toString());
-      let marketAuthority = await getMarketAuthority(pair.data.marketProgramId, pair.data.marketId);
-
-      console.log('tokenIn', tokenIn);
-      console.log('tokenAccountIn', tokenAccountIn);
-      console.log('amountIn', amountIn.toString());
-      console.log('tokenOut', tokenOut);
-      console.log('tokenAccountOut', tokenAccountOut);
-      console.log('amountOut', amountOutMin.toString());
-
-      const keys = [
-        // system
-        { pubkey: new solanaWeb3_js.PublicKey(web3Tokens.Token.solana.TOKEN_PROGRAM), isWritable: false, isSigner: false },
-        // amm
-        { pubkey: pair.pubkey, isWritable: true, isSigner: false },
-        { pubkey: new solanaWeb3_js.PublicKey(basics$1.pair.v4.authority), isWritable: false, isSigner: false },
-        { pubkey: pair.data.openOrders, isWritable: true, isSigner: false },
-        { pubkey: pair.data.targetOrders, isWritable: true, isSigner: false },
-        { pubkey: pair.data.baseVault, isWritable: true, isSigner: false },
-        { pubkey: pair.data.quoteVault, isWritable: true, isSigner: false },
-        // serum
-        { pubkey: pair.data.marketProgramId, isWritable: false, isSigner: false },
-        { pubkey: pair.data.marketId, isWritable: true, isSigner: false },
-        { pubkey: market.bids, isWritable: true, isSigner: false },
-        { pubkey: market.asks, isWritable: true, isSigner: false },
-        { pubkey: market.eventQueue, isWritable: true, isSigner: false },
-        { pubkey: market.baseVault, isWritable: true, isSigner: false },
-        { pubkey: market.quoteVault, isWritable: true, isSigner: false },
-        { pubkey: marketAuthority, isWritable: false, isSigner: false },
-        // user
-        { pubkey: new solanaWeb3_js.PublicKey(tokenAccountIn), isWritable: true, isSigner: false },
-        { pubkey: new solanaWeb3_js.PublicKey(tokenAccountOut), isWritable: true, isSigner: false },
-        { pubkey: new solanaWeb3_js.PublicKey(fromAddress), isWritable: false, isSigner: false },
-      ];
-
-      instructions.push(new solanaWeb3_js.TransactionInstruction({
-        programId: new solanaWeb3_js.PublicKey(basics$1.pair.v4.address),
-        keys,
+    } else if (amountOutInput || amountInMaxInput) {
+      LAYOUT = solanaWeb3_js.struct([solanaWeb3_js.u8("instruction"), solanaWeb3_js.u64("maxAmountIn"), solanaWeb3_js.u64("amountOut")]);
+      data = solanaWeb3_js.Buffer.alloc(LAYOUT.span);
+      LAYOUT.encode(
+        {
+          instruction: 11,
+          maxAmountIn: new solanaWeb3_js.BN(amountInMax.toString()),
+          amountOut: new solanaWeb3_js.BN(amountOut.toString()),
+        },
         data,
-      }));
+      );
     }
+
+    let pair = await getBestPair(fixedPath[0], fixedPath[1]);
+    let market = await getMarket(pair.data.marketId.toString());
+    let marketAuthority = await getMarketAuthority(pair.data.marketProgramId, pair.data.marketId);
+
+    const keys = [
+      // system
+      { pubkey: new solanaWeb3_js.PublicKey(web3Tokens.Token.solana.TOKEN_PROGRAM), isWritable: false, isSigner: false },
+      // amm
+      { pubkey: pair.pubkey, isWritable: true, isSigner: false },
+      { pubkey: new solanaWeb3_js.PublicKey(basics$1.pair.v4.authority), isWritable: false, isSigner: false },
+      { pubkey: pair.data.openOrders, isWritable: true, isSigner: false },
+      { pubkey: pair.data.targetOrders, isWritable: true, isSigner: false },
+      { pubkey: pair.data.baseVault, isWritable: true, isSigner: false },
+      { pubkey: pair.data.quoteVault, isWritable: true, isSigner: false },
+      // serum
+      { pubkey: pair.data.marketProgramId, isWritable: false, isSigner: false },
+      { pubkey: pair.data.marketId, isWritable: true, isSigner: false },
+      { pubkey: market.bids, isWritable: true, isSigner: false },
+      { pubkey: market.asks, isWritable: true, isSigner: false },
+      { pubkey: market.eventQueue, isWritable: true, isSigner: false },
+      { pubkey: market.baseVault, isWritable: true, isSigner: false },
+      { pubkey: market.quoteVault, isWritable: true, isSigner: false },
+      { pubkey: marketAuthority, isWritable: false, isSigner: false },
+      // user
+      { pubkey: new solanaWeb3_js.PublicKey(tokenAccountIn), isWritable: true, isSigner: false },
+      { pubkey: new solanaWeb3_js.PublicKey(tokenAccountOut), isWritable: true, isSigner: false },
+      { pubkey: new solanaWeb3_js.PublicKey(fromAddress), isWritable: false, isSigner: false },
+    ];
+
+    instructions.push(new solanaWeb3_js.TransactionInstruction({
+      programId: new solanaWeb3_js.PublicKey(basics$1.pair.v4.address),
+      keys,
+      data,
+    }));
     
     return transaction
   };
