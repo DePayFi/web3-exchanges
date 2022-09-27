@@ -93,12 +93,13 @@ describe('uniswap_v2', () => {
     let decimalsOut = 6
     let path = [tokenIn, tokenOut]
 
-    it('routes a token to token swap for given amountOut without given amountInMax on uniswap_v2', async ()=> {
+    it('routes a token to token swap for given amountOut on uniswap_v2', async ()=> {
 
       let amountOut = 1
       let amountOutBN = ethers.utils.parseUnits(amountOut.toString(), decimalsOut)
       let fetchedAmountIn = 43
       let fetchedAmountInBN = ethers.utils.parseUnits(fetchedAmountIn.toString(), decimalsIn)
+      let slippage = ethers.BigNumber.from('215000000000000000')
 
       mockPair({ provider: provider(blockchain), tokenIn, tokenOut, pair })
       mockAmounts({ provider: provider(blockchain), method: 'getAmountsIn', params: [amountOutBN,path], amounts: [fetchedAmountInBN, amountOutBN] })
@@ -120,7 +121,7 @@ describe('uniswap_v2', () => {
           api: exchange.router.api,
           method: 'swapTokensForExactTokens',
           params: {
-            amountInMax: fetchedAmountInBN,
+            amountInMax: fetchedAmountInBN.add(slippage),
             amountOut: amountOutBN,
             path: path,
             to: toAddress
@@ -135,6 +136,7 @@ describe('uniswap_v2', () => {
       let amountOutBN = ethers.utils.parseUnits(amountOut.toString(), decimalsOut)
       let fetchedAmountIn = 43
       let fetchedAmountInBN = ethers.utils.parseUnits(fetchedAmountIn.toString(), decimalsIn)
+      let slippage = ethers.BigNumber.from('215000000000000000')
 
       mockPair({ provider: provider(blockchain), tokenIn, tokenOut, pair })
       mockAmounts({ provider: provider(blockchain), method: 'getAmountsIn', params: [amountOutBN,path], amounts: [fetchedAmountInBN, amountOutBN] })
@@ -156,7 +158,7 @@ describe('uniswap_v2', () => {
           api: exchange.router.api,
           method: 'swapTokensForExactTokens',
           params: {
-            amountInMax: fetchedAmountInBN,
+            amountInMax: fetchedAmountInBN.add(slippage),
             amountOut: amountOutBN,
             path: path,
             to: toAddress
@@ -276,12 +278,13 @@ describe('uniswap_v2', () => {
       })
     });
 
-    it('routes a token to token swap for given amountOut and amountInMax on uniswap_v2', async ()=> {
+    it('routes a token to token swap for given amountOut on uniswap_v2', async ()=> {
 
       let amountOut = 1
       let amountOutBN = ethers.utils.parseUnits(amountOut.toString(), decimalsOut)
       let amountInMax = 32
       let amountInMaxBN = ethers.utils.parseUnits(amountInMax.toString(), decimalsIn)
+      let slippage = ethers.BigNumber.from('160000000000000000')
       let path = [tokenIn, tokenOut]
 
       mockPair({ provider: provider(blockchain), tokenIn, tokenOut, pair })
@@ -294,7 +297,6 @@ describe('uniswap_v2', () => {
         decimalsIn,
         tokenOut,
         decimalsOut,
-        amountInMax,
         amountOut,
         path,
         pair,
@@ -305,7 +307,7 @@ describe('uniswap_v2', () => {
           api: exchange.router.api,
           method: 'swapTokensForExactTokens',
           params: {
-            amountInMax: amountInMaxBN,
+            amountInMax: amountInMaxBN.add(slippage),
             amountOut:  amountOutBN,
             path: [tokenIn, tokenOut],
             to: toAddress
@@ -528,6 +530,7 @@ describe('uniswap_v2', () => {
       let amountOutBN = ethers.utils.parseUnits(amountOut.toString(), decimalsOut)
       let fetchedAmountIn = 43
       let fetchedAmountInBN = ethers.utils.parseUnits(fetchedAmountIn.toString(), decimalsIn)
+      let slippage = ethers.BigNumber.from('215000000000000000')
 
       mockPair({ provider: provider(blockchain), tokenIn: CONSTANTS[blockchain].WRAPPED, tokenOut, pair })
       mockAmounts({ provider: provider(blockchain), method: 'getAmountsIn', params: [amountOutBN,[CONSTANTS[blockchain].WRAPPED,tokenOut]], amounts: [fetchedAmountInBN, amountOutBN] })
@@ -553,7 +556,7 @@ describe('uniswap_v2', () => {
             path: [CONSTANTS[blockchain].WRAPPED, tokenOut],
             to: toAddress
           },
-          value: fetchedAmountInBN
+          value: fetchedAmountInBN.add(slippage)
         }
       })
     });
@@ -595,12 +598,13 @@ describe('uniswap_v2', () => {
       })
     });
 
-    it('routes a ETH to token swap for given amountOut and amountInMax on uniswap_v2', async ()=> {
+    it('routes a ETH to token swap for given amountOut on uniswap_v2', async ()=> {
 
       let amountOut = 1
       let amountOutBN = ethers.utils.parseUnits(amountOut.toString(), decimalsOut)
       let amountInMax = 32
       let amountInMaxBN = ethers.utils.parseUnits(amountInMax.toString(), decimalsIn)
+      let slippage = ethers.BigNumber.from('160000000000000000')
       let path = [tokenIn, CONSTANTS[blockchain].WRAPPED, tokenOut]
 
       mockPair({ provider: provider(blockchain), tokenIn: CONSTANTS[blockchain].WRAPPED, tokenOut, pair })
@@ -613,7 +617,6 @@ describe('uniswap_v2', () => {
         decimalsIn,
         tokenOut,
         decimalsOut,
-        amountInMax,
         amountOut,
         path,
         pair,
@@ -628,7 +631,7 @@ describe('uniswap_v2', () => {
             path: [CONSTANTS[blockchain].WRAPPED, tokenOut],
             to: toAddress
           },
-          value: amountInMaxBN
+          value: amountInMaxBN.add(slippage)
         },
       })
     });
@@ -680,12 +683,13 @@ describe('uniswap_v2', () => {
     let decimalsOut = CONSTANTS[blockchain].DECIMALS
     let path = [tokenIn, CONSTANTS[blockchain].WRAPPED, tokenOut]
 
-    it('routes a token to ETH swap for given amountOut without given amountInMax on uniswap_v2', async ()=> {
+    it('routes a token to ETH swap for given amountOut on uniswap_v2', async ()=> {
 
       let amountOut = 1
       let amountOutBN = ethers.utils.parseUnits(amountOut.toString(), decimalsOut)
       let fetchedAmountIn = 43
       let fetchedAmountInBN = ethers.utils.parseUnits(fetchedAmountIn.toString(), decimalsIn)
+      let slippage = ethers.BigNumber.from('215000000000000000')
 
       mockPair({ provider: provider(blockchain), tokenIn, tokenOut: CONSTANTS[blockchain].WRAPPED, pair })
       mockAmounts({ provider: provider(blockchain), method: 'getAmountsIn', params: [amountOutBN,[tokenIn, CONSTANTS[blockchain].WRAPPED]], amounts: [fetchedAmountInBN, amountOutBN] })
@@ -707,7 +711,7 @@ describe('uniswap_v2', () => {
           api: exchange.router.api,
           method: 'swapTokensForExactETH',
           params: {
-            amountInMax: fetchedAmountInBN,
+            amountInMax: fetchedAmountInBN.add(slippage),
             amountOut: amountOutBN,
             path: [tokenIn, CONSTANTS[blockchain].WRAPPED],
             to: toAddress
@@ -753,12 +757,13 @@ describe('uniswap_v2', () => {
       })
     });
 
-    it('routes a token to ETH swap for given amountOut and amountInMax on uniswap_v2', async ()=> {
+    it('routes a token to ETH swap for given amountOut on uniswap_v2', async ()=> {
 
       let amountOut = 1
       let amountOutBN = ethers.utils.parseUnits(amountOut.toString(), decimalsOut)
       let amountInMax = 32
       let amountInMaxBN = ethers.utils.parseUnits(amountInMax.toString(), decimalsIn)
+      let slippage = ethers.BigNumber.from('160000000000000000')
       let path = [tokenIn, CONSTANTS[blockchain].WRAPPED, tokenOut]
 
       mockPair({ provider: provider(blockchain), tokenIn, tokenOut: CONSTANTS[blockchain].WRAPPED, pair })
@@ -771,7 +776,6 @@ describe('uniswap_v2', () => {
         decimalsIn,
         tokenOut,
         decimalsOut,
-        amountInMax,
         amountOut,
         path,
         pair,
@@ -782,7 +786,7 @@ describe('uniswap_v2', () => {
           api: exchange.router.api,
           method: 'swapTokensForExactETH',
           params: {
-            amountInMax: amountInMaxBN,
+            amountInMax: amountInMaxBN.add(slippage),
             amountOut:  amountOutBN,
             path: [tokenIn, CONSTANTS[blockchain].WRAPPED],
             to: toAddress
