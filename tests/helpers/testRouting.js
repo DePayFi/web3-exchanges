@@ -2,6 +2,7 @@ import { ethers } from 'ethers'
 import { getWallets } from '@depay/web3-wallets'
 import { mock, normalize } from '@depay/web3-mock'
 import { mockDecimals } from '../mocks/token'
+import { provider } from '@depay/web3-client'
 import { struct, u64, u8 } from '@depay/solana-web3.js'
 import { supported } from 'src/blockchains'
 
@@ -112,7 +113,7 @@ async function testRouting({
     transaction
   })
 
-  let transactionMock = mock({ blockchain, transaction })
+  let transactionMock = mock({ blockchain, provider: provider(blockchain), transaction })
 
   let wallet = getWallets()[0]
   await wallet.sendTransaction(route.transaction)
