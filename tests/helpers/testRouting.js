@@ -63,6 +63,7 @@ function expectRoute({
 }
 
 async function testRouting({
+  provider,
   blockchain,
   exchange,
   tokenIn,
@@ -113,7 +114,7 @@ async function testRouting({
     transaction
   })
 
-  let transactionMock = mock({ blockchain, provider: provider(blockchain), transaction })
+  let transactionMock = mock({ blockchain, provider, transaction })
 
   let wallet = getWallets()[0]
   await wallet.sendTransaction(route.transaction)

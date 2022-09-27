@@ -71,7 +71,52 @@ describe('raydium', () => {
     let decimalsOut = CONSTANTS[blockchain].DECIMALS
     let path = [tokenIn, tokenOut]
 
-    it.only('routes a token to token swap for given amountOutMin', async ()=> {
+    it('routes a token to token swap for given amountOut on raydium', async ()=> {
+
+      let amountOut = 1
+      let amountOutBN = ethers.utils.parseUnits(amountOut.toString(), decimalsOut)
+      let fetchedAmountIn = 43
+      let fetchedAmountInBN = ethers.utils.parseUnits(fetchedAmountIn.toString(), decimalsIn)
+      let pair = '58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2'
+      let market = '9wFFyRfZBsuAha4YcuxcXLKwMxJR43S7fPfQLusDBzvT'
+
+      mockTokenAccounts({ owner: fromAddress, token: tokenIn, accounts: [] })
+      mockTokenAccounts({ owner: fromAddress, token: tokenOut, accounts: [] })
+      mockPair({ tokenIn, tokenOut, pair, market, 
+        baseReserve: 300000000000000,
+        quoteReserve: 10000000000000,
+      })
+      mockMarket({ market })
+
+      await testRouting({
+        provider: provider(blockchain),
+        blockchain,
+        exchange,
+        tokenIn,
+        decimalsIn,
+        tokenOut,
+        decimalsOut,
+        path,
+        amountOut,
+        fromAddress,
+        toAddress,
+        transaction: {
+          blockchain,
+          instructions: [{
+            to: Raydium.pair.v4.address,
+            api: struct([u8("instruction"), u64("amountIn"), u64("amountOut")]),
+            params: {
+              instruction: 11,
+              amountIn: '30228586767',
+              amountOut: '1000000000',
+            },
+            keys: mockTransactionKeys({ pair, market, fromAddress })
+          }]
+        }
+      })
+    })
+
+    it('routes a token to token swap for given amountOutMin on raydium', async ()=> {
 
       let amountOutMin = 1
       let amountOutMinBN = ethers.utils.parseUnits(amountOutMin.toString(), decimalsOut)
@@ -89,6 +134,7 @@ describe('raydium', () => {
       mockMarket({ market })
 
       await testRouting({
+        provider: provider(blockchain),
         blockchain,
         exchange,
         tokenIn,
@@ -103,11 +149,99 @@ describe('raydium', () => {
           blockchain,
           instructions: [{
             to: Raydium.pair.v4.address,
-            api: struct([u8("instruction"), u64("amountOut"), u64("amountOut")]),
+            api: struct([u8("instruction"), u64("amountIn"), u64("amountOut")]),
             params: {
               instruction: 9,
               amountIn: '30228586767',
               amountOut: '1000000000',
+            },
+            keys: mockTransactionKeys({ pair, market, fromAddress })
+          }]
+        }
+      })
+    })
+
+    it('routes a token to token swap for given amountIn on raydium', async ()=> {
+      let amountOutMin = 1
+      let amountOutMinBN = ethers.utils.parseUnits(amountOutMin.toString(), decimalsOut)
+      let amountIn = 43
+      let amountInBN = ethers.utils.parseUnits(amountIn.toString(), decimalsIn)
+      let pair = '58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2'
+      let market = '9wFFyRfZBsuAha4YcuxcXLKwMxJR43S7fPfQLusDBzvT'
+
+      mockTokenAccounts({ owner: fromAddress, token: tokenIn, accounts: [] })
+      mockTokenAccounts({ owner: fromAddress, token: tokenOut, accounts: [] })
+      mockPair({ tokenIn, tokenOut, pair, market, 
+        baseReserve: 300000000000000,
+        quoteReserve: 10000000000000,
+      })
+      mockMarket({ market })
+
+      await testRouting({
+        provider: provider(blockchain),
+        blockchain,
+        exchange,
+        tokenIn,
+        decimalsIn,
+        tokenOut,
+        decimalsOut,
+        path,
+        amountIn,
+        fromAddress,
+        toAddress,
+        transaction: {
+          blockchain,
+          instructions: [{
+            to: Raydium.pair.v4.address,
+            api: struct([u8("instruction"), u64("amountIn"), u64("amountOut")]),
+            params: {
+              instruction: 9,
+              amountIn: '43000000',
+              amountOut: '1429749',
+            },
+            keys: mockTransactionKeys({ pair, market, fromAddress })
+          }]
+        }
+      })
+    })
+
+    it('routes a token to token swap for given amountInMax on raydium', async ()=> {
+      let amountOutMin = 1
+      let amountOutMinBN = ethers.utils.parseUnits(amountOutMin.toString(), decimalsOut)
+      let amountInMax = 43
+      let amountInMaxBN = ethers.utils.parseUnits(amountInMax.toString(), decimalsIn)
+      let pair = '58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2'
+      let market = '9wFFyRfZBsuAha4YcuxcXLKwMxJR43S7fPfQLusDBzvT'
+
+      mockTokenAccounts({ owner: fromAddress, token: tokenIn, accounts: [] })
+      mockTokenAccounts({ owner: fromAddress, token: tokenOut, accounts: [] })
+      mockPair({ tokenIn, tokenOut, pair, market, 
+        baseReserve: 300000000000000,
+        quoteReserve: 10000000000000,
+      })
+      mockMarket({ market })
+
+      await testRouting({
+        provider: provider(blockchain),
+        blockchain,
+        exchange,
+        tokenIn,
+        decimalsIn,
+        tokenOut,
+        decimalsOut,
+        path,
+        amountInMax,
+        fromAddress,
+        toAddress,
+        transaction: {
+          blockchain,
+          instructions: [{
+            to: Raydium.pair.v4.address,
+            api: struct([u8("instruction"), u64("amountIn"), u64("amountOut")]),
+            params: {
+              instruction: 11,
+              amountIn: '43000000',
+              amountOut: '1429749',
             },
             keys: mockTransactionKeys({ pair, market, fromAddress })
           }]

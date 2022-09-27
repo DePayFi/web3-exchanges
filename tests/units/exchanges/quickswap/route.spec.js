@@ -204,7 +204,7 @@ describe('quickswap', () => {
       })
     });
 
-    it('routes a token to token swap for given amountIn without given amountOutMin on quickswap', async ()=> {
+    it('routes a token to token swap for given amountIn on quickswap', async ()=> {
 
       let amountIn = 1
       let amountInBN = ethers.utils.parseUnits(amountIn.toString(), decimalsIn)
@@ -562,7 +562,7 @@ describe('quickswap', () => {
       })
     });
 
-    it('routes a ETH to token swap for given amountIn without given amountOutMin on quickswap', async ()=> {
+    it('routes a ETH to token swap for given amountIn on quickswap', async ()=> {
 
       let amountIn = 1
       let amountInBN = ethers.utils.parseUnits(amountIn.toString(), decimalsIn)
@@ -721,7 +721,7 @@ describe('quickswap', () => {
       })
     });
 
-    it('routes a token to ETH swap for given amountIn without given amountOutMin on quickswap', async ()=> {
+    it('routes a token to ETH swap for given amountIn on quickswap', async ()=> {
 
       let amountIn = 1
       let amountInBN = ethers.utils.parseUnits(amountIn.toString(), decimalsIn)

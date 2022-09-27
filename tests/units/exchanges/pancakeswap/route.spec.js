@@ -203,7 +203,7 @@ describe('pancakeswap', () => {
       })
     });
 
-    it('routes a token to token swap for given amountIn without given amountOutMin on pancakeswap', async ()=> {
+    it('routes a token to token swap for given amountIn on pancakeswap', async ()=> {
 
       let amountIn = 1
       let amountInBN = ethers.utils.parseUnits(amountIn.toString(), decimalsIn)
@@ -559,7 +559,7 @@ describe('pancakeswap', () => {
       })
     });
 
-    it('routes a BNB to token swap for given amountIn without given amountOutMin on pancakeswap', async ()=> {
+    it('routes a BNB to token swap for given amountIn on pancakeswap', async ()=> {
 
       let amountIn = 1
       let amountInBN = ethers.utils.parseUnits(amountIn.toString(), decimalsIn)
@@ -717,7 +717,7 @@ describe('pancakeswap', () => {
       })
     });
 
-    it('routes a token to BNB swap for given amountIn without given amountOutMin on pancakeswap', async ()=> {
+    it('routes a token to BNB swap for given amountIn on pancakeswap', async ()=> {
 
       let amountIn = 1
       let amountInBN = ethers.utils.parseUnits(amountIn.toString(), decimalsIn)

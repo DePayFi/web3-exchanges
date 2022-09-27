@@ -167,7 +167,7 @@ describe('uniswap_v2', () => {
       })
     });
 
-    it('routes a token to token swap for given amountOutMin without given amountIn on uniswap_v2', async ()=> {
+    it('routes a token to token swap for given amountOutMin on uniswap_v2', async ()=> {
 
       let amountOutMin = 1
       let amountOutMinBN = ethers.utils.parseUnits(amountOutMin.toString(), decimalsOut)
@@ -204,7 +204,7 @@ describe('uniswap_v2', () => {
       })
     });
 
-    it('routes a token to token swap for given amountIn without given amountOutMin on uniswap_v2', async ()=> {
+    it('routes a token to token swap for given amountIn on uniswap_v2', async ()=> {
 
       let amountIn = 1
       let amountInBN = ethers.utils.parseUnits(amountIn.toString(), decimalsIn)
@@ -561,7 +561,7 @@ describe('uniswap_v2', () => {
       })
     });
 
-    it('routes a ETH to token swap for given amountIn without given amountOutMin on uniswap_v2', async ()=> {
+    it('routes a ETH to token swap for given amountIn on uniswap_v2', async ()=> {
 
       let amountIn = 1
       let amountInBN = ethers.utils.parseUnits(amountIn.toString(), decimalsIn)
@@ -720,7 +720,7 @@ describe('uniswap_v2', () => {
       })
     });
 
-    it('routes a token to ETH swap for given amountIn without given amountOutMin on uniswap_v2', async ()=> {
+    it('routes a token to ETH swap for given amountIn on uniswap_v2', async ()=> {
 
       let amountIn = 1
       let amountInBN = ethers.utils.parseUnits(amountIn.toString(), decimalsIn)

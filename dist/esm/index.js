@@ -1197,25 +1197,41 @@ const getInfo = async (pair)=>{
   return info
 };
 
-let getAmountsOut$1 = ({ path, amountIn, tokenIn, tokenOut }) => {
-
+let getAmountsOut$1 = async ({ path, amountIn }) => {
+  
+  let amounts = await Promise.all(path.map(async (step, i)=>{
+    let nextStep = path[i+1];
+    if(nextStep == undefined){ return }
+    let pair = await getBestPair(step, nextStep);
+    let info = await getInfo(pair);
+    const baseReserve = ethers.BigNumber.from(info.pool_coin_amount);
+    const quoteReserve = ethers.BigNumber.from(info.pool_pc_amount);
+    const feeRaw = amountIn.mul(basics$1.pair.v4.LIQUIDITY_FEES_NUMERATOR).div(basics$1.pair.v4.LIQUIDITY_FEES_DENOMINATOR);
+    const amountInWithFee = amountIn.sub(feeRaw);
+    const denominator = baseReserve.add(amountInWithFee);
+    const amountOut = quoteReserve.mul(amountInWithFee).div(denominator);
+    return amountOut
+  }));
+  amounts = amounts.filter((amount)=>amount);
+  return amounts[amounts.length-1]
 };
 
 let getAmountIn$1 = async({ path, amountOut }) => {
-  let amounts = await Promise.all(path.slice(0,-1).reverse().map(async (step, i)=>{
-    let previousStep = path[path.length-1-i];
-    let pair = await getBestPair(step, previousStep);
+  let amounts = await Promise.all(path.map(async (step, i)=>{
+    let nextStep = path[i+1];
+    if(nextStep == undefined){ return }
+    let pair = await getBestPair(step, nextStep);
     let info = await getInfo(pair);
     const baseReserve = ethers.BigNumber.from(info.pool_coin_amount);
     const quoteReserve = ethers.BigNumber.from(info.pool_pc_amount);
     const denominator = quoteReserve.sub(amountOut);
     const amountInWithoutFee = baseReserve.mul(amountOut).div(denominator);
-    const amountInRaw = amountInWithoutFee
+    const amountIn = amountInWithoutFee
       .mul(basics$1.pair.v4.LIQUIDITY_FEES_DENOMINATOR)
       .div(basics$1.pair.v4.LIQUIDITY_FEES_DENOMINATOR.sub(basics$1.pair.v4.LIQUIDITY_FEES_NUMERATOR));
-    return amountInRaw
+    return amountIn
   }));
-
+  amounts = amounts.filter((amount)=>amount);
   return amounts[0]
 };
 
