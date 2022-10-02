@@ -24,7 +24,8 @@ const route = ({
     if (path === undefined || path.length == 0) { return resolve() }
     let [amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput] = [amountIn, amountOut, amountInMax, amountOutMin];
 
-    ({ amountIn, amountInMax, amountOut, amountOutMin } = await getAmounts({ path, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }))
+    let amountsIn, amountsOut
+    ({ amountIn, amountInMax, amountOut, amountOutMin, amountsIn, amountsOut } = await getAmounts({ path, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }))
     if([amountIn, amountInMax, amountOut, amountOutMin].every((amount)=>{ return amount == undefined })) { return resolve() }
 
     if(amountOutMinInput || amountOutInput) {
@@ -41,6 +42,8 @@ const route = ({
       amountOutInput,
       amountInMaxInput,
       amountOutMinInput,
+      amountsIn,
+      amountsOut,
       toAddress,
       fromAddress
     })
@@ -75,7 +78,7 @@ class Exchange {
     pair,
     market,
     findPath,
-    getAmountIn,
+    getAmountsIn,
     getAmounts,
     getTransaction,
   }) {
@@ -89,7 +92,7 @@ class Exchange {
     this.pair = pair
     this.market = market
     this.findPath = findPath
-    this.getAmountIn = getAmountIn
+    this.getAmountsIn = getAmountsIn
     this.getAmounts = getAmounts
     this.getTransaction = getTransaction
   }

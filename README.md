@@ -87,6 +87,13 @@ A Swap configuration is fed into the `route` function:
 }
 ```
 
+- `tokenIn`: The token put into the swap (out of wallet)
+- `amountIn`: The amount of tokenIn put into the swap (out of wallet)
+- `amountInMax`: The max. amount of tokenIn put into the swap (out of wallet)
+- `tokenOut`: The token expected to come out of the swap (into wallet)
+- `amountOut`: The amount of tokenOut expected to come out of the swap (into wallet)
+- `amountOutMin`: The min. amount of tokenOut expected to come out of the swap (into wallet)
+
 The following combinations of provided amounts are possible:
 
 - Only `amountIn`, `amountOutMin` will be calculated automatically and can vary
@@ -121,6 +128,7 @@ See [@depay/web3-wallets](https://github.com/DePayFi/@depay/web3-wallets#sendtra
 This library applies slippage strategies to amounts for the following combinations:
 
 - If `amountOutMin` is provided, slippage is applied to `amountIn`.
+- If `amountOut` is provided, slippage is applied to `amountInMax`.
 
 ### Auto Slippage
 

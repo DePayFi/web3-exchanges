@@ -6,40 +6,44 @@ import { request } from '@depay/web3-client'
 
 let getAmountsOut = async ({ path, amountIn }) => {
   
-  let amounts = await Promise.all(path.map(async (step, i)=>{
-    let nextStep = path[i+1]
+  let amounts = [amountIn]  
+  await Promise.all(path.map(async (step, i)=>{
+    const nextStep = path[i+1]
     if(nextStep == undefined){ return }
-    let pair = await getBestPair(step, nextStep)
-    let info = await getInfo(pair)
-    const baseReserve = ethers.BigNumber.from(info.pool_coin_amount)
-    const quoteReserve = ethers.BigNumber.from(info.pool_pc_amount)
-    const feeRaw = amountIn.mul(Raydium.pair.v4.LIQUIDITY_FEES_NUMERATOR).div(Raydium.pair.v4.LIQUIDITY_FEES_DENOMINATOR)
-    const amountInWithFee = amountIn.sub(feeRaw)
-    const denominator = baseReserve.add(amountInWithFee)
-    const amountOut = quoteReserve.mul(amountInWithFee).div(denominator)
-    return amountOut
+    const pair = await getBestPair(step, nextStep)
+    const info = await getInfo(pair)
+    const baseMint = pair.data.baseMint.toString()
+    const reserves = [ethers.BigNumber.from(info.pool_coin_amount), ethers.BigNumber.from(info.pool_pc_amount)]
+    const [reserveIn, reserveOut] = baseMint == step ? [reserves[0], reserves[1]] : [reserves[1], reserves[0]]
+    const feeRaw = amounts[i].mul(Raydium.pair.v4.LIQUIDITY_FEES_NUMERATOR).div(Raydium.pair.v4.LIQUIDITY_FEES_DENOMINATOR)
+    const amountInWithFee = amounts[i].sub(feeRaw)
+    const denominator = reserveIn.add(amountInWithFee)
+    const amountOut = reserveOut.mul(amountInWithFee).div(denominator)
+    amounts.push(amountOut)
   }))
-  amounts = amounts.filter((amount)=>amount)
-  return amounts[amounts.length-1]
+  return amounts
 }
 
-let getAmountIn = async({ path, amountOut }) => {
-  let amounts = await Promise.all(path.map(async (step, i)=>{
-    let nextStep = path[i+1]
+let getAmountsIn = async({ path, amountOut }) => {
+
+  path = path.slice().reverse()
+  let amounts = [amountOut]
+  await Promise.all(path.map(async (step, i)=>{
+    const nextStep = path[i+1]
     if(nextStep == undefined){ return }
-    let pair = await getBestPair(step, nextStep)
-    let info = await getInfo(pair)
-    const baseReserve = ethers.BigNumber.from(info.pool_coin_amount)
-    const quoteReserve = ethers.BigNumber.from(info.pool_pc_amount)
-    const denominator = quoteReserve.sub(amountOut)
-    const amountInWithoutFee = baseReserve.mul(amountOut).div(denominator)
+    const pair = await getBestPair(step, nextStep)
+    const info = await getInfo(pair)
+    const baseMint = pair.data.baseMint.toString()
+    const reserves = [ethers.BigNumber.from(info.pool_coin_amount), ethers.BigNumber.from(info.pool_pc_amount)]
+    const [reserveIn, reserveOut] = baseMint == step ? [reserves[1], reserves[0]] : [reserves[0], reserves[1]]
+    const denominator = reserveOut.sub(amounts[i])
+    const amountInWithoutFee = reserveIn.mul(amounts[i]).div(denominator)
     const amountIn = amountInWithoutFee
       .mul(Raydium.pair.v4.LIQUIDITY_FEES_DENOMINATOR)
       .div(Raydium.pair.v4.LIQUIDITY_FEES_DENOMINATOR.sub(Raydium.pair.v4.LIQUIDITY_FEES_NUMERATOR))
-    return amountIn
+    amounts.push(amountIn)
   }))
-  amounts = amounts.filter((amount)=>amount)
-  return amounts[0]
+  return amounts
 }
 
 let getAmounts = async ({
@@ -51,39 +55,45 @@ let getAmounts = async ({
   amountInMax,
   amountOutMin
 }) => {
+  let amountsIn
+  let amountsOut
   if (amountOut) {
-    amountIn = await getAmountIn({ path, amountOut, tokenIn, tokenOut })
+    amountsIn = await getAmountsIn({ path, amountOut, tokenIn, tokenOut })
+    amountIn = amountsIn[amountsIn.length-1]
     if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
       return {}
     } else if (amountInMax === undefined) {
       amountInMax = amountIn
     }
   } else if (amountIn) {
-    amountOut = await getAmountsOut({ path, amountIn, tokenIn, tokenOut })
+    amountsOut = await getAmountsOut({ path, amountIn, tokenIn, tokenOut })
+    amountOut = amountsOut[amountsOut.length-1]
     if (amountOut == undefined || amountOutMin && amountOut.lt(amountOutMin)) {
       return {}
     } else if (amountOutMin === undefined) {
       amountOutMin = amountOut
     }
   } else if(amountOutMin) {
-    amountIn = await getAmountIn({ path, amountOut: amountOutMin, tokenIn, tokenOut })
+    amountsIn = await getAmountsIn({ path, amountOut, tokenIn, tokenOut })
+    amountIn = amountsIn[amountsIn.length-1]
     if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
       return {}
     } else if (amountInMax === undefined) {
       amountInMax = amountIn
     }
   } else if(amountInMax) {
-    amountOut = await getAmountsOut({ path, amountIn: amountInMax, tokenIn, tokenOut })
+    amountsOut = await getAmountsOut({ path, amountIn, tokenIn, tokenOut })
+    amountOut = amountsOut[amountsOut.length-1]
     if (amountOut == undefined ||amountOutMin && amountOut.lt(amountOutMin)) {
       return {}
     } else if (amountOutMin === undefined) {
       amountOutMin = amountOut
     }
   }
-  return { amountOut, amountIn, amountInMax, amountOutMin }
+  return { amountOut, amountIn, amountInMax, amountOutMin, amountsIn, amountsOut }
 }
 
 export {
   getAmounts,
-  getAmountIn
+  getAmountsIn
 }

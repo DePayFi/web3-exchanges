@@ -6,41 +6,18 @@ import { getBestPair } from './pairs'
 import { getMarket, getMarketAuthority } from './markets'
 import { Token } from '@depay/web3-tokens'
 
-let getTransaction = async ({
-  path,
-  amountIn,
-  amountInMax,
-  amountOut,
-  amountOutMin,
-  amountInInput,
-  amountOutInput,
-  amountInMaxInput,
-  amountOutMinInput,
-  toAddress,
-  fromAddress
-}) => {
+const getAssociatedMiddleStatusAccount = ({ fromPoolId, middleMint, owner })=> {
+  return PublicKey.findProgramAddress(
+    [
+      (new PublicKey(fromPoolId)).toBuffer(),
+      (new PublicKey(middleMint)).toBuffer(),
+      (new PublicKey(owner)).toBuffer()
+    ],
+    new PublicKey(Raydium.router.v1.address)
+  )
+}
 
-  let instructions = []
-  let transaction = { blockchain: 'solana', instructions }
-
-  const fixedPath = fixPath(path)
-  const tokenIn = fixedPath[0]
-  const tokenOut = fixedPath[fixedPath.length-1]
-
-  const existingTokenAccountIn = await Token.solana.findAccount({ owner: toAddress, token: tokenIn })
-  const associatedTokenAccountIn = await Token.solana.findProgramAddress({ owner: toAddress, token: tokenIn })
-  const tokenAccountIn = existingTokenAccountIn || associatedTokenAccountIn
-
-  const existsingTokenAccountOut = await Token.solana.findAccount({ owner: toAddress, token: tokenOut })
-  const associatedTokenAccountOut = await Token.solana.findProgramAddress({ owner: toAddress, token: tokenOut })
-  const tokenAccountOut = existsingTokenAccountOut || associatedTokenAccountOut
-
-  // if(!existingTokenAccountIn) {
-  //   instructions.unshift(
-  //     Token.solana.createAssociatedTokenAccountInstruction({ token: tokenIn, owner: toAddress, payer: fromAddress })
-  //   )
-  // }
-
+const getInstructionData = ({ amountIn, amountOutMin, amountOut, amountInMax, amountInInput, amountOutInput, amountOutMinInput, amountInMaxInput })=> {
   let LAYOUT, data
   if (amountInInput || amountOutMinInput) {
     LAYOUT = struct([u8("instruction"), u64("amountIn"), u64("minAmountOut")])
@@ -66,12 +43,11 @@ let getTransaction = async ({
       data,
     )
   }
+  return data
+}
 
-  let pair = await getBestPair(fixedPath[0], fixedPath[1])
-  let market = await getMarket(pair.data.marketId.toString())
-  let marketAuthority = await getMarketAuthority(pair.data.marketProgramId, pair.data.marketId)
-
-  const keys = [
+const getInstructionKeys = ({ pair, market, marketAuthority, tokenAccountIn, tokenAccountOut, fromAddress })=> {
+  return [
     // system
     { pubkey: new PublicKey(Token.solana.TOKEN_PROGRAM), isWritable: false, isSigner: false },
     // amm
@@ -95,11 +71,58 @@ let getTransaction = async ({
     { pubkey: new PublicKey(tokenAccountOut), isWritable: true, isSigner: false },
     { pubkey: new PublicKey(fromAddress), isWritable: false, isSigner: false },
   ]
+}
+
+const getTransaction = async ({
+  path,
+  amountIn,
+  amountInMax,
+  amountOut,
+  amountOutMin,
+  amountInInput,
+  amountOutInput,
+  amountInMaxInput,
+  amountOutMinInput,
+  amountsIn,
+  amountsOut,
+  toAddress,
+  fromAddress
+}) => {
+
+  let instructions = []
+  let transaction = { blockchain: 'solana', instructions }
+
+  const fixedPath = fixPath(path)
+  if(fixedPath.length > 3) { throw 'Raydium can only handle fixed paths with a max length of 3!' }
+
+  const tokenIn = fixedPath[0]
+  const tokenMiddle = fixedPath.length == 3 ? fixedPath[1] : undefined
+  const tokenOut = fixedPath[fixedPath.length-1]
+
+  let tokenAccountIn
+  tokenAccountIn = await Token.solana.findAccount({ owner: fromAddress, token: tokenIn })
+  tokenAccountIn ??= await Token.solana.findProgramAddress({ owner: fromAddress, token: tokenIn })
+
+  let tokenAccountOut
+  tokenAccountOut = await Token.solana.findAccount({ owner: toAddress, token: tokenOut })
+  tokenAccountOut ??= await Token.solana.findProgramAddress({ owner: toAddress, token: tokenOut })
+
+  let pairs = fixedPath.length == await getBestPair(fixedPath[0], fixedPath[1])
+  let market = await getMarket(pair.data.marketId.toString())
+  let marketAuthority = await getMarketAuthority(pair.data.marketProgramId, pair.data.marketId)
+
+  let tokenAccountMiddle, statusAccountMiddle
+  if(tokenMiddle) {
+    tokenAccountOut = await Token.solana.findAccount({ owner: fromAddress, token: tokenMiddle })
+    tokenAccountOut ??= await Token.solana.findProgramAddress({ owner: fromAddress, token: tokenMiddle })
+    statusAccountMiddle = getAssociatedMiddleStatusAccount({ fromPoolId, middleMint, owner })
+  }
+
 
   instructions.push(new TransactionInstruction({
     programId: new PublicKey(Raydium.pair.v4.address),
-    keys,
-    data,
+    keys: getInstructionKeys({ pairs, market, marketAuthority, tokenAccountIn, tokenAccountOut, fromAddress }),
+    data: getInstructionData({ amountIn, amountOutMin, amountOut, amountInMax, amountInInput, amountOutInput, amountOutMinInput, amountInMaxInput }),
   }))
   
   return transaction

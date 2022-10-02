@@ -21,7 +21,7 @@ let getAmountsOut = ({ path, amountIn, tokenIn, tokenOut }) => {
   })
 }
 
-let getAmountIn = ({ path, amountOut, block }) => {
+let getAmountsIn = ({ path, amountOut, block }) => {
   return new Promise((resolve) => {
     request({
       blockchain: 'polygon',
@@ -49,7 +49,7 @@ let getAmounts = async ({
   amountOutMin
 }) => {
   if (amountOut) {
-    amountIn = await getAmountIn({ path, amountOut, tokenIn, tokenOut })
+    amountIn = await getAmountsIn({ path, amountOut, tokenIn, tokenOut })
     if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
       return {}
     } else if (amountInMax === undefined) {
@@ -63,7 +63,7 @@ let getAmounts = async ({
       amountOutMin = amountOut
     }
   } else if(amountOutMin) {
-    amountIn = await getAmountIn({ path, amountOut: amountOutMin, tokenIn, tokenOut })
+    amountIn = await getAmountsIn({ path, amountOut: amountOutMin, tokenIn, tokenOut })
     if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
       return {}
     } else if (amountInMax === undefined) {
@@ -82,5 +82,5 @@ let getAmounts = async ({
 
 export {
   getAmounts,
-  getAmountIn
+  getAmountsIn
 }
