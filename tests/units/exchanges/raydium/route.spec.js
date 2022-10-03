@@ -107,7 +107,7 @@ describe('raydium', () => {
             api: struct([u8("instruction"), u64("amountIn"), u64("amountOut")]),
             params: {
               instruction: 11,
-              amountIn: '30228586767',
+              amountIn: '33450402',
               amountOut: '1000000000',
             },
             keys: mockTransactionKeys({ pair, market, fromAddress })

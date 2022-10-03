@@ -21,7 +21,7 @@ let getAmountOut = async ({ path, amountIn }) => {
     const amountOut = reserveOut.mul(amountInWithFee).div(denominator)
     amounts.push(amountOut)
   }))
-  return amountsIn[amountsIn.length-1]
+  return amounts[amounts.length-1]
 }
 
 let getAmountIn = async({ path, amountOut }) => {
@@ -43,7 +43,7 @@ let getAmountIn = async({ path, amountOut }) => {
       .div(Raydium.pair.v4.LIQUIDITY_FEES_DENOMINATOR.sub(Raydium.pair.v4.LIQUIDITY_FEES_NUMERATOR))
     amounts.push(amountIn)
   }))
-  return amountsIn[amountsIn.length-1]
+  return amounts[amounts.length-1]
 }
 
 let getAmounts = async ({
@@ -87,7 +87,7 @@ let getAmounts = async ({
       amountOutMin = amountOut
     }
   }
-  return { amountOut, amountIn, amountInMax, amountOutMin, amountsIn, amountsOut }
+  return { amountOut, amountIn, amountInMax, amountOutMin }
 }
 
 export {

@@ -1227,7 +1227,7 @@ let getAmountOut$1 = async ({ path, amountIn }) => {
     const amountOut = reserveOut.mul(amountInWithFee).div(denominator);
     amounts.push(amountOut);
   }));
-  return amountsIn[amountsIn.length-1]
+  return amounts[amounts.length-1]
 };
 
 let getAmountIn$1 = async({ path, amountOut }) => {
@@ -1249,7 +1249,7 @@ let getAmountIn$1 = async({ path, amountOut }) => {
       .div(basics$1.pair.v4.LIQUIDITY_FEES_DENOMINATOR.sub(basics$1.pair.v4.LIQUIDITY_FEES_NUMERATOR));
     amounts.push(amountIn);
   }));
-  return amountsIn[amountsIn.length-1]
+  return amounts[amounts.length-1]
 };
 
 let getAmounts$1 = async ({
@@ -1293,7 +1293,7 @@ let getAmounts$1 = async ({
       amountOutMin = amountOut;
     }
   }
-  return { amountOut, amountIn, amountInMax, amountOutMin, amountsIn, amountsOut }
+  return { amountOut, amountIn, amountInMax, amountOutMin }
 };
 
 const getMarket = async (marketId)=> {
@@ -1402,8 +1402,6 @@ const getTransaction$1 = async ({
   amountOutInput,
   amountInMaxInput,
   amountOutMinInput,
-  amountsIn,
-  amountsOut,
   toAddress,
   fromAddress
 }) => {
@@ -1430,7 +1428,7 @@ const getTransaction$1 = async ({
     tokenAccountOut = await Token.solana.findProgramAddress({ owner: toAddress, token: tokenOut });
   }
 
-  let pairs = fixedPath.length == await getBestPair(fixedPath[0], fixedPath[1]);
+  let pair = await getBestPair(fixedPath[0], fixedPath[1]);
   let market = await getMarket(pair.data.marketId.toString());
   let marketAuthority = await getMarketAuthority(pair.data.marketProgramId, pair.data.marketId);
 
@@ -1445,7 +1443,7 @@ const getTransaction$1 = async ({
 
   instructions.push(new TransactionInstruction({
     programId: new PublicKey(basics$1.pair.v4.address),
-    keys: getInstructionKeys({ pairs, market, marketAuthority, tokenAccountIn, tokenAccountOut, fromAddress }),
+    keys: getInstructionKeys({ pair, market, marketAuthority, tokenAccountIn, tokenAccountOut, fromAddress }),
     data: getInstructionData({ amountIn, amountOutMin, amountOut, amountInMax, amountInInput, amountOutInput, amountOutMinInput, amountInMaxInput }),
   }));
   

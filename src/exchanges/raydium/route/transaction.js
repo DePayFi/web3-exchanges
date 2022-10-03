@@ -83,8 +83,6 @@ const getTransaction = async ({
   amountOutInput,
   amountInMaxInput,
   amountOutMinInput,
-  amountsIn,
-  amountsOut,
   toAddress,
   fromAddress
 }) => {
@@ -111,7 +109,7 @@ const getTransaction = async ({
     tokenAccountOut = await Token.solana.findProgramAddress({ owner: toAddress, token: tokenOut })
   }
 
-  let pairs = fixedPath.length == await getBestPair(fixedPath[0], fixedPath[1])
+  let pair = await getBestPair(fixedPath[0], fixedPath[1])
   let market = await getMarket(pair.data.marketId.toString())
   let marketAuthority = await getMarketAuthority(pair.data.marketProgramId, pair.data.marketId)
 
@@ -126,7 +124,7 @@ const getTransaction = async ({
 
   instructions.push(new TransactionInstruction({
     programId: new PublicKey(Raydium.pair.v4.address),
-    keys: getInstructionKeys({ pairs, market, marketAuthority, tokenAccountIn, tokenAccountOut, fromAddress }),
+    keys: getInstructionKeys({ pair, market, marketAuthority, tokenAccountIn, tokenAccountOut, fromAddress }),
     data: getInstructionData({ amountIn, amountOutMin, amountOut, amountInMax, amountInInput, amountOutInput, amountOutMinInput, amountInMaxInput }),
   }))
   
