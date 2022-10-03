@@ -265,7 +265,8 @@
       if (path === undefined || path.length == 0) { return resolve() }
       let [amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput] = [amountIn, amountOut, amountInMax, amountOutMin];
 
-      ({ amountIn, amountInMax, amountOut, amountOutMin } = await getAmounts({ path, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }));
+      let amountsIn, amountsOut;
+      ({ amountIn, amountInMax, amountOut, amountOutMin, amountsIn, amountsOut } = await getAmounts({ path, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }));
       if([amountIn, amountInMax, amountOut, amountOutMin].every((amount)=>{ return amount == undefined })) { return resolve() }
 
       if(amountOutMinInput || amountOutInput) {
@@ -282,6 +283,8 @@
         amountOutInput,
         amountInMaxInput,
         amountOutMinInput,
+        amountsIn,
+        amountsOut,
         toAddress,
         fromAddress
       });
@@ -495,7 +498,7 @@
     return path
   };
 
-  let getAmountsOut$3 = ({ path, amountIn, tokenIn, tokenOut }) => {
+  let getAmountOut$3 = ({ path, amountIn, tokenIn, tokenOut }) => {
     return new Promise((resolve) => {
       web3Client.request({
         blockchain: 'bsc',
@@ -549,7 +552,7 @@
         amountInMax = amountIn;
       }
     } else if (amountIn) {
-      amountOut = await getAmountsOut$3({ path, amountIn, tokenIn, tokenOut });
+      amountOut = await getAmountOut$3({ path, amountIn, tokenIn, tokenOut });
       if (amountOut == undefined || amountOutMin && amountOut.lt(amountOutMin)) {
         return {}
       } else if (amountOutMin === undefined) {
@@ -563,7 +566,7 @@
         amountInMax = amountIn;
       }
     } else if(amountInMax) {
-      amountOut = await getAmountsOut$3({ path, amountIn: amountInMax, tokenIn, tokenOut });
+      amountOut = await getAmountOut$3({ path, amountIn: amountInMax, tokenIn, tokenOut });
       if (amountOut == undefined ||amountOutMin && amountOut.lt(amountOutMin)) {
         return {}
       } else if (amountOutMin === undefined) {
@@ -777,7 +780,7 @@
     return path
   };
 
-  let getAmountsOut$2 = ({ path, amountIn, tokenIn, tokenOut }) => {
+  let getAmountOut$2 = ({ path, amountIn, tokenIn, tokenOut }) => {
     return new Promise((resolve) => {
       web3Client.request({
         blockchain: 'polygon',
@@ -831,7 +834,7 @@
         amountInMax = amountIn;
       }
     } else if (amountIn) {
-      amountOut = await getAmountsOut$2({ path, amountIn, tokenIn, tokenOut });
+      amountOut = await getAmountOut$2({ path, amountIn, tokenIn, tokenOut });
       if (amountOut == undefined || amountOutMin && amountOut.lt(amountOutMin)) {
         return {}
       } else if (amountOutMin === undefined) {
@@ -845,7 +848,7 @@
         amountInMax = amountIn;
       }
     } else if(amountInMax) {
-      amountOut = await getAmountsOut$2({ path, amountIn: amountInMax, tokenIn, tokenOut });
+      amountOut = await getAmountOut$2({ path, amountIn: amountInMax, tokenIn, tokenOut });
       if (amountOut == undefined ||amountOutMin && amountOut.lt(amountOutMin)) {
         return {}
       } else if (amountOutMin === undefined) {
@@ -1037,17 +1040,26 @@
     }
   };
 
+  const INITIALIZED = 1;
+  const SWAP = 6;
+
+  let getAccounts = async (base, quote) => {
+    let accounts = await web3Client.request(`solana://${basics$1.pair.v4.address}/getProgramAccounts`, {
+      params: { filters: [
+        { dataSize: basics$1.pair.v4.api.span },
+        { memcmp: { offset: 400, bytes: base }},
+        { memcmp: { offset: 432, bytes: quote }}
+      ]},
+      api: basics$1.pair.v4.api,
+      cache: 3600000,
+    });
+    return accounts
+  };
+
   let getPairs = async(base, quote) => {
     try {
-      let accounts = await web3Client.request(`solana://${basics$1.pair.v4.address}/getProgramAccounts`, {
-        params: { filters: [
-          { dataSize: basics$1.pair.v4.api.span },
-          { memcmp: { offset: 400, bytes: base }},
-          { memcmp: { offset: 432, bytes: quote }}
-        ]},
-        api: basics$1.pair.v4.api,
-        cache: 3600000,
-      });
+      let accounts = await getAccounts(base, quote);
+      if(accounts.length == 0) { accounts = await getAccounts(quote, base); }
       return accounts
     } catch(e) {
       console.log(e);
@@ -1060,6 +1072,7 @@
     if(accounts.length == 1){ return accounts[0] }
     if(accounts.length < 1){ return null }
     let best = accounts.reduce((account, current) => {
+      if(![INITIALIZED, SWAP].includes(current.data.status.toNumber())) { return }
       let currentReserve = current.data.lpReserve;
       let accountReserve = account.data.lpReserve;
       if(accountReserve.gte(currentReserve)) {
@@ -1197,42 +1210,46 @@
     return info
   };
 
-  let getAmountsOut$1 = async ({ path, amountIn }) => {
+  let getAmountOut$1 = async ({ path, amountIn }) => {
     
-    let amounts = await Promise.all(path.map(async (step, i)=>{
-      let nextStep = path[i+1];
+    let amounts = [amountIn];  
+    await Promise.all(path.map(async (step, i)=>{
+      const nextStep = path[i+1];
       if(nextStep == undefined){ return }
-      let pair = await getBestPair(step, nextStep);
-      let info = await getInfo(pair);
-      const baseReserve = ethers.ethers.BigNumber.from(info.pool_coin_amount);
-      const quoteReserve = ethers.ethers.BigNumber.from(info.pool_pc_amount);
-      const feeRaw = amountIn.mul(basics$1.pair.v4.LIQUIDITY_FEES_NUMERATOR).div(basics$1.pair.v4.LIQUIDITY_FEES_DENOMINATOR);
-      const amountInWithFee = amountIn.sub(feeRaw);
-      const denominator = baseReserve.add(amountInWithFee);
-      const amountOut = quoteReserve.mul(amountInWithFee).div(denominator);
-      return amountOut
+      const pair = await getBestPair(step, nextStep);
+      const info = await getInfo(pair);
+      const baseMint = pair.data.baseMint.toString();
+      const reserves = [ethers.ethers.BigNumber.from(info.pool_coin_amount), ethers.ethers.BigNumber.from(info.pool_pc_amount)];
+      const [reserveIn, reserveOut] = baseMint == step ? [reserves[0], reserves[1]] : [reserves[1], reserves[0]];
+      const feeRaw = amounts[i].mul(basics$1.pair.v4.LIQUIDITY_FEES_NUMERATOR).div(basics$1.pair.v4.LIQUIDITY_FEES_DENOMINATOR);
+      const amountInWithFee = amounts[i].sub(feeRaw);
+      const denominator = reserveIn.add(amountInWithFee);
+      const amountOut = reserveOut.mul(amountInWithFee).div(denominator);
+      amounts.push(amountOut);
     }));
-    amounts = amounts.filter((amount)=>amount);
-    return amounts[amounts.length-1]
+    return amountsIn[amountsIn.length-1]
   };
 
   let getAmountIn$1 = async({ path, amountOut }) => {
-    let amounts = await Promise.all(path.map(async (step, i)=>{
-      let nextStep = path[i+1];
+
+    path = path.slice().reverse();
+    let amounts = [amountOut];
+    await Promise.all(path.map(async (step, i)=>{
+      const nextStep = path[i+1];
       if(nextStep == undefined){ return }
-      let pair = await getBestPair(step, nextStep);
-      let info = await getInfo(pair);
-      const baseReserve = ethers.ethers.BigNumber.from(info.pool_coin_amount);
-      const quoteReserve = ethers.ethers.BigNumber.from(info.pool_pc_amount);
-      const denominator = quoteReserve.sub(amountOut);
-      const amountInWithoutFee = baseReserve.mul(amountOut).div(denominator);
+      const pair = await getBestPair(step, nextStep);
+      const info = await getInfo(pair);
+      const baseMint = pair.data.baseMint.toString();
+      const reserves = [ethers.ethers.BigNumber.from(info.pool_coin_amount), ethers.ethers.BigNumber.from(info.pool_pc_amount)];
+      const [reserveIn, reserveOut] = baseMint == step ? [reserves[1], reserves[0]] : [reserves[0], reserves[1]];
+      const denominator = reserveOut.sub(amounts[i]);
+      const amountInWithoutFee = reserveIn.mul(amounts[i]).div(denominator);
       const amountIn = amountInWithoutFee
         .mul(basics$1.pair.v4.LIQUIDITY_FEES_DENOMINATOR)
         .div(basics$1.pair.v4.LIQUIDITY_FEES_DENOMINATOR.sub(basics$1.pair.v4.LIQUIDITY_FEES_NUMERATOR));
-      return amountIn
+      amounts.push(amountIn);
     }));
-    amounts = amounts.filter((amount)=>amount);
-    return amounts[0]
+    return amountsIn[amountsIn.length-1]
   };
 
   let getAmounts$1 = async ({
@@ -1252,28 +1269,31 @@
         amountInMax = amountIn;
       }
     } else if (amountIn) {
-      amountOut = await getAmountsOut$1({ path, amountIn, tokenIn, tokenOut });
+      amountsOut = await getAmountOut$1({ path, amountIn, tokenIn, tokenOut });
+      amountOut = amountsOut[amountsOut.length-1];
       if (amountOut == undefined || amountOutMin && amountOut.lt(amountOutMin)) {
         return {}
       } else if (amountOutMin === undefined) {
         amountOutMin = amountOut;
       }
     } else if(amountOutMin) {
-      amountIn = await getAmountIn$1({ path, amountOut: amountOutMin, tokenIn, tokenOut });
+      amountsIn = await getAmountIn$1({ path, amountOut, tokenIn, tokenOut });
+      amountIn = amountsIn[amountsIn.length-1];
       if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
         return {}
       } else if (amountInMax === undefined) {
         amountInMax = amountIn;
       }
     } else if(amountInMax) {
-      amountOut = await getAmountsOut$1({ path, amountIn: amountInMax, tokenIn, tokenOut });
+      amountsOut = await getAmountOut$1({ path, amountIn, tokenIn, tokenOut });
+      amountOut = amountsOut[amountsOut.length-1];
       if (amountOut == undefined ||amountOutMin && amountOut.lt(amountOutMin)) {
         return {}
       } else if (amountOutMin === undefined) {
         amountOutMin = amountOut;
       }
     }
-    return { amountOut, amountIn, amountInMax, amountOutMin }
+    return { amountOut, amountIn, amountInMax, amountOutMin, amountsIn, amountsOut }
   };
 
   const getMarket = async (marketId)=> {
@@ -1305,41 +1325,18 @@
     }
   };
 
-  let getTransaction$1 = async ({
-    path,
-    amountIn,
-    amountInMax,
-    amountOut,
-    amountOutMin,
-    amountInInput,
-    amountOutInput,
-    amountInMaxInput,
-    amountOutMinInput,
-    toAddress,
-    fromAddress
-  }) => {
+  const getAssociatedMiddleStatusAccount = ({ fromPoolId, middleMint, owner })=> {
+    return solanaWeb3_js.PublicKey.findProgramAddress(
+      [
+        (new solanaWeb3_js.PublicKey(fromPoolId)).toBuffer(),
+        (new solanaWeb3_js.PublicKey(middleMint)).toBuffer(),
+        (new solanaWeb3_js.PublicKey(owner)).toBuffer()
+      ],
+      new solanaWeb3_js.PublicKey(basics$1.router.v1.address)
+    )
+  };
 
-    let instructions = [];
-    let transaction = { blockchain: 'solana', instructions };
-
-    const fixedPath = fixPath$1(path);
-    const tokenIn = fixedPath[0];
-    const tokenOut = fixedPath[fixedPath.length-1];
-
-    const existingTokenAccountIn = await web3Tokens.Token.solana.findAccount({ owner: toAddress, token: tokenIn });
-    const associatedTokenAccountIn = await web3Tokens.Token.solana.findProgramAddress({ owner: toAddress, token: tokenIn });
-    const tokenAccountIn = existingTokenAccountIn || associatedTokenAccountIn;
-
-    const existsingTokenAccountOut = await web3Tokens.Token.solana.findAccount({ owner: toAddress, token: tokenOut });
-    const associatedTokenAccountOut = await web3Tokens.Token.solana.findProgramAddress({ owner: toAddress, token: tokenOut });
-    const tokenAccountOut = existsingTokenAccountOut || associatedTokenAccountOut;
-
-    // if(!existingTokenAccountIn) {
-    //   instructions.unshift(
-    //     Token.solana.createAssociatedTokenAccountInstruction({ token: tokenIn, owner: toAddress, payer: fromAddress })
-    //   )
-    // }
-
+  const getInstructionData = ({ amountIn, amountOutMin, amountOut, amountInMax, amountInInput, amountOutInput, amountOutMinInput, amountInMaxInput })=> {
     let LAYOUT, data;
     if (amountInInput || amountOutMinInput) {
       LAYOUT = solanaWeb3_js.struct([solanaWeb3_js.u8("instruction"), solanaWeb3_js.u64("amountIn"), solanaWeb3_js.u64("minAmountOut")]);
@@ -1365,12 +1362,11 @@
         data,
       );
     }
+    return data
+  };
 
-    let pair = await getBestPair(fixedPath[0], fixedPath[1]);
-    let market = await getMarket(pair.data.marketId.toString());
-    let marketAuthority = await getMarketAuthority(pair.data.marketProgramId, pair.data.marketId);
-
-    const keys = [
+  const getInstructionKeys = ({ pair, market, marketAuthority, tokenAccountIn, tokenAccountOut, fromAddress })=> {
+    return [
       // system
       { pubkey: new solanaWeb3_js.PublicKey(web3Tokens.Token.solana.TOKEN_PROGRAM), isWritable: false, isSigner: false },
       // amm
@@ -1393,12 +1389,64 @@
       { pubkey: new solanaWeb3_js.PublicKey(tokenAccountIn), isWritable: true, isSigner: false },
       { pubkey: new solanaWeb3_js.PublicKey(tokenAccountOut), isWritable: true, isSigner: false },
       { pubkey: new solanaWeb3_js.PublicKey(fromAddress), isWritable: false, isSigner: false },
-    ];
+    ]
+  };
+
+  const getTransaction$1 = async ({
+    path,
+    amountIn,
+    amountInMax,
+    amountOut,
+    amountOutMin,
+    amountInInput,
+    amountOutInput,
+    amountInMaxInput,
+    amountOutMinInput,
+    amountsIn,
+    amountsOut,
+    toAddress,
+    fromAddress
+  }) => {
+
+    let instructions = [];
+    let transaction = { blockchain: 'solana', instructions };
+
+    const fixedPath = fixPath$1(path);
+    if(fixedPath.length > 3) { throw 'Raydium can only handle fixed paths with a max length of 3!' }
+
+    const tokenIn = fixedPath[0];
+    const tokenMiddle = fixedPath.length == 3 ? fixedPath[1] : undefined;
+    const tokenOut = fixedPath[fixedPath.length-1];
+
+    let tokenAccountIn;
+    tokenAccountIn = await web3Tokens.Token.solana.findAccount({ owner: fromAddress, token: tokenIn });
+    if(!tokenAccountIn) {
+      tokenAccountIn = await web3Tokens.Token.solana.findProgramAddress({ owner: fromAddress, token: tokenIn });
+    }
+
+    let tokenAccountOut;
+    tokenAccountOut = await web3Tokens.Token.solana.findAccount({ owner: toAddress, token: tokenOut });
+    if(!tokenAccountOut) {
+      tokenAccountOut = await web3Tokens.Token.solana.findProgramAddress({ owner: toAddress, token: tokenOut });
+    }
+
+    let pairs = fixedPath.length == await getBestPair(fixedPath[0], fixedPath[1]);
+    let market = await getMarket(pair.data.marketId.toString());
+    let marketAuthority = await getMarketAuthority(pair.data.marketProgramId, pair.data.marketId);
+
+    let tokenAccountMiddle;
+    if(tokenMiddle) {
+      tokenAccountMiddle = await web3Tokens.Token.solana.findAccount({ owner: fromAddress, token: tokenMiddle });
+      if(!tokenAccountMiddle) {
+        tokenAccountMiddle = await web3Tokens.Token.solana.findProgramAddress({ owner: fromAddress, token: tokenMiddle });
+      }
+      getAssociatedMiddleStatusAccount({ fromPoolId, middleMint, owner });
+    }
 
     instructions.push(new solanaWeb3_js.TransactionInstruction({
       programId: new solanaWeb3_js.PublicKey(basics$1.pair.v4.address),
-      keys,
-      data,
+      keys: getInstructionKeys({ pairs, market, marketAuthority, tokenAccountIn, tokenAccountOut, fromAddress }),
+      data: getInstructionData({ amountIn, amountOutMin, amountOut, amountInMax, amountInInput, amountOutInput, amountOutMinInput, amountInMaxInput }),
     }));
     
     return transaction
@@ -1548,7 +1596,7 @@
     return path
   };
 
-  let getAmountsOut = ({ path, amountIn, tokenIn, tokenOut }) => {
+  let getAmountOut = ({ path, amountIn, tokenIn, tokenOut }) => {
     return new Promise((resolve) => {
       web3Client.request({
         blockchain: 'ethereum',
@@ -1602,7 +1650,7 @@
         amountInMax = amountIn;
       }
     } else if (amountIn) {
-      amountOut = await getAmountsOut({ path, amountIn, tokenIn, tokenOut });
+      amountOut = await getAmountOut({ path, amountIn, tokenIn, tokenOut });
       if (amountOut == undefined || amountOutMin && amountOut.lt(amountOutMin)) {
         return {}
       } else if (amountOutMin === undefined) {
@@ -1616,7 +1664,7 @@
         amountInMax = amountIn;
       }
     } else if(amountInMax) {
-      amountOut = await getAmountsOut({ path, amountIn: amountInMax, tokenIn, tokenOut });
+      amountOut = await getAmountOut({ path, amountIn: amountInMax, tokenIn, tokenOut });
       if (amountOut == undefined ||amountOutMin && amountOut.lt(amountOutMin)) {
         return {}
       } else if (amountOutMin === undefined) {

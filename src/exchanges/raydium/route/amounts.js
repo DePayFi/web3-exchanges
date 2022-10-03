@@ -4,7 +4,7 @@ import { getBestPair } from './pairs'
 import { getInfo } from './pool'
 import { request } from '@depay/web3-client'
 
-let getAmountsOut = async ({ path, amountIn }) => {
+let getAmountOut = async ({ path, amountIn }) => {
   
   let amounts = [amountIn]  
   await Promise.all(path.map(async (step, i)=>{
@@ -21,10 +21,10 @@ let getAmountsOut = async ({ path, amountIn }) => {
     const amountOut = reserveOut.mul(amountInWithFee).div(denominator)
     amounts.push(amountOut)
   }))
-  return amounts
+  return amountsIn[amountsIn.length-1]
 }
 
-let getAmountsIn = async({ path, amountOut }) => {
+let getAmountIn = async({ path, amountOut }) => {
 
   path = path.slice().reverse()
   let amounts = [amountOut]
@@ -43,7 +43,7 @@ let getAmountsIn = async({ path, amountOut }) => {
       .div(Raydium.pair.v4.LIQUIDITY_FEES_DENOMINATOR.sub(Raydium.pair.v4.LIQUIDITY_FEES_NUMERATOR))
     amounts.push(amountIn)
   }))
-  return amounts
+  return amountsIn[amountsIn.length-1]
 }
 
 let getAmounts = async ({
@@ -55,18 +55,15 @@ let getAmounts = async ({
   amountInMax,
   amountOutMin
 }) => {
-  let amountsIn
-  let amountsOut
   if (amountOut) {
-    amountsIn = await getAmountsIn({ path, amountOut, tokenIn, tokenOut })
-    amountIn = amountsIn[amountsIn.length-1]
+    amountIn = await getAmountIn({ path, amountOut, tokenIn, tokenOut })
     if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
       return {}
     } else if (amountInMax === undefined) {
       amountInMax = amountIn
     }
   } else if (amountIn) {
-    amountsOut = await getAmountsOut({ path, amountIn, tokenIn, tokenOut })
+    amountsOut = await getAmountOut({ path, amountIn, tokenIn, tokenOut })
     amountOut = amountsOut[amountsOut.length-1]
     if (amountOut == undefined || amountOutMin && amountOut.lt(amountOutMin)) {
       return {}
@@ -74,7 +71,7 @@ let getAmounts = async ({
       amountOutMin = amountOut
     }
   } else if(amountOutMin) {
-    amountsIn = await getAmountsIn({ path, amountOut, tokenIn, tokenOut })
+    amountsIn = await getAmountIn({ path, amountOut, tokenIn, tokenOut })
     amountIn = amountsIn[amountsIn.length-1]
     if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
       return {}
@@ -82,7 +79,7 @@ let getAmounts = async ({
       amountInMax = amountIn
     }
   } else if(amountInMax) {
-    amountsOut = await getAmountsOut({ path, amountIn, tokenIn, tokenOut })
+    amountsOut = await getAmountOut({ path, amountIn, tokenIn, tokenOut })
     amountOut = amountsOut[amountsOut.length-1]
     if (amountOut == undefined ||amountOutMin && amountOut.lt(amountOutMin)) {
       return {}
@@ -95,5 +92,5 @@ let getAmounts = async ({
 
 export {
   getAmounts,
-  getAmountsIn
+  getAmountIn
 }

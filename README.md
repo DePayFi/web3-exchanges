@@ -266,7 +266,7 @@ let amountIn = await exchange.getAmountIn({
   path: ['0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb', '0xdAC17F958D2ee523a2206206994597C13D831ec7'],
   amountOut: '2111112220000000',
   block: 14904658
-}) // 123222200000000000
+}) // '123222200000000000'
 ```
 
 ## Development

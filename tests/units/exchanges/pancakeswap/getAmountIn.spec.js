@@ -19,7 +19,7 @@ describe('pancakeswap', () => {
 
   describe('getAmountIn', ()=>{
 
-    it('allows to pass the specific block you need to getAmountIn for', async ()=> {
+    it('allows to pass the specific block you need to getAmountsIn for', async ()=> {
 
       const path = ['0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb', '0xdAC17F958D2ee523a2206206994597C13D831ec7']
       const amountOut = '100000000000'
