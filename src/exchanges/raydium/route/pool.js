@@ -1,5 +1,6 @@
 import Raydium from '../basics'
 import { Buffer, TransactionInstruction, PublicKey, Transaction } from '@depay/solana-web3.js'
+import { getMarket } from './markets'
 import { POOL_INFO } from '../apis'
 import { provider } from '@depay/web3-client'
 
@@ -7,6 +8,7 @@ const getInfo = async (pair)=>{
   const data = Buffer.alloc(POOL_INFO.span)
   POOL_INFO.encode({ instruction: 12, simulateType: 0 }, data)
 
+  const market = await getMarket(pair.data.marketId.toString())
   const keys = [
     { pubkey: pair.pubkey, isWritable: false, isSigner: false },
     { pubkey: new PublicKey(Raydium.pair.v4.authority), isWritable: false, isSigner: false },
@@ -15,6 +17,7 @@ const getInfo = async (pair)=>{
     { pubkey: pair.data.quoteVault, isWritable: false, isSigner: false },
     { pubkey: pair.data.lpMint, isWritable: false, isSigner: false },
     { pubkey: pair.data.marketId, isWritable: false, isSigner: false },
+    { pubkey: market.eventQueue, isWritable: false, isSigner: false },
   ]
 
   const instruction = new TransactionInstruction({
