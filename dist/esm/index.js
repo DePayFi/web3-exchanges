@@ -2,7 +2,7 @@ import { ethers } from 'ethers';
 import { request, provider } from '@depay/web3-client';
 import { Token } from '@depay/web3-tokens';
 import { CONSTANTS } from '@depay/web3-constants';
-import { struct, u64, u128, publicKey, seq, u8, blob, Buffer, PublicKey, TransactionInstruction, Transaction, BN } from '@depay/solana-web3.js';
+import { struct, u64, u128, publicKey, seq, u8, blob, Buffer, PublicKey, TransactionInstruction, Transaction, BN, SystemProgram } from '@depay/solana-web3.js';
 
 let PancakeRouter = [{"inputs":[{"internalType":"address","name":"_factory","type":"address"},{"internalType":"address","name":"_WETH","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[],"name":"WETH","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"tokenA","type":"address"},{"internalType":"address","name":"tokenB","type":"address"},{"internalType":"uint256","name":"amountADesired","type":"uint256"},{"internalType":"uint256","name":"amountBDesired","type":"uint256"},{"internalType":"uint256","name":"amountAMin","type":"uint256"},{"internalType":"uint256","name":"amountBMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"addLiquidity","outputs":[{"internalType":"uint256","name":"amountA","type":"uint256"},{"internalType":"uint256","name":"amountB","type":"uint256"},{"internalType":"uint256","name":"liquidity","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"uint256","name":"amountTokenDesired","type":"uint256"},{"internalType":"uint256","name":"amountTokenMin","type":"uint256"},{"internalType":"uint256","name":"amountETHMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"addLiquidityETH","outputs":[{"internalType":"uint256","name":"amountToken","type":"uint256"},{"internalType":"uint256","name":"amountETH","type":"uint256"},{"internalType":"uint256","name":"liquidity","type":"uint256"}],"stateMutability":"payable","type":"function"},{"inputs":[],"name":"factory","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountOut","type":"uint256"},{"internalType":"uint256","name":"reserveIn","type":"uint256"},{"internalType":"uint256","name":"reserveOut","type":"uint256"}],"name":"getAmountIn","outputs":[{"internalType":"uint256","name":"amountIn","type":"uint256"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountIn","type":"uint256"},{"internalType":"uint256","name":"reserveIn","type":"uint256"},{"internalType":"uint256","name":"reserveOut","type":"uint256"}],"name":"getAmountOut","outputs":[{"internalType":"uint256","name":"amountOut","type":"uint256"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountOut","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"}],"name":"getAmountsIn","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountIn","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"}],"name":"getAmountsOut","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountA","type":"uint256"},{"internalType":"uint256","name":"reserveA","type":"uint256"},{"internalType":"uint256","name":"reserveB","type":"uint256"}],"name":"quote","outputs":[{"internalType":"uint256","name":"amountB","type":"uint256"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"address","name":"tokenA","type":"address"},{"internalType":"address","name":"tokenB","type":"address"},{"internalType":"uint256","name":"liquidity","type":"uint256"},{"internalType":"uint256","name":"amountAMin","type":"uint256"},{"internalType":"uint256","name":"amountBMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"removeLiquidity","outputs":[{"internalType":"uint256","name":"amountA","type":"uint256"},{"internalType":"uint256","name":"amountB","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"uint256","name":"liquidity","type":"uint256"},{"internalType":"uint256","name":"amountTokenMin","type":"uint256"},{"internalType":"uint256","name":"amountETHMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"removeLiquidityETH","outputs":[{"internalType":"uint256","name":"amountToken","type":"uint256"},{"internalType":"uint256","name":"amountETH","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"uint256","name":"liquidity","type":"uint256"},{"internalType":"uint256","name":"amountTokenMin","type":"uint256"},{"internalType":"uint256","name":"amountETHMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"removeLiquidityETHSupportingFeeOnTransferTokens","outputs":[{"internalType":"uint256","name":"amountETH","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"uint256","name":"liquidity","type":"uint256"},{"internalType":"uint256","name":"amountTokenMin","type":"uint256"},{"internalType":"uint256","name":"amountETHMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"},{"internalType":"bool","name":"approveMax","type":"bool"},{"internalType":"uint8","name":"v","type":"uint8"},{"internalType":"bytes32","name":"r","type":"bytes32"},{"internalType":"bytes32","name":"s","type":"bytes32"}],"name":"removeLiquidityETHWithPermit","outputs":[{"internalType":"uint256","name":"amountToken","type":"uint256"},{"internalType":"uint256","name":"amountETH","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"uint256","name":"liquidity","type":"uint256"},{"internalType":"uint256","name":"amountTokenMin","type":"uint256"},{"internalType":"uint256","name":"amountETHMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"},{"internalType":"bool","name":"approveMax","type":"bool"},{"internalType":"uint8","name":"v","type":"uint8"},{"internalType":"bytes32","name":"r","type":"bytes32"},{"internalType":"bytes32","name":"s","type":"bytes32"}],"name":"removeLiquidityETHWithPermitSupportingFeeOnTransferTokens","outputs":[{"internalType":"uint256","name":"amountETH","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"tokenA","type":"address"},{"internalType":"address","name":"tokenB","type":"address"},{"internalType":"uint256","name":"liquidity","type":"uint256"},{"internalType":"uint256","name":"amountAMin","type":"uint256"},{"internalType":"uint256","name":"amountBMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"},{"internalType":"bool","name":"approveMax","type":"bool"},{"internalType":"uint8","name":"v","type":"uint8"},{"internalType":"bytes32","name":"r","type":"bytes32"},{"internalType":"bytes32","name":"s","type":"bytes32"}],"name":"removeLiquidityWithPermit","outputs":[{"internalType":"uint256","name":"amountA","type":"uint256"},{"internalType":"uint256","name":"amountB","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountOut","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapETHForExactTokens","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountOutMin","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapExactETHForTokens","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountOutMin","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapExactETHForTokensSupportingFeeOnTransferTokens","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountIn","type":"uint256"},{"internalType":"uint256","name":"amountOutMin","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapExactTokensForETH","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountIn","type":"uint256"},{"internalType":"uint256","name":"amountOutMin","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapExactTokensForETHSupportingFeeOnTransferTokens","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountIn","type":"uint256"},{"internalType":"uint256","name":"amountOutMin","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapExactTokensForTokens","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountIn","type":"uint256"},{"internalType":"uint256","name":"amountOutMin","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapExactTokensForTokensSupportingFeeOnTransferTokens","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountOut","type":"uint256"},{"internalType":"uint256","name":"amountInMax","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapTokensForExactETH","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountOut","type":"uint256"},{"internalType":"uint256","name":"amountInMax","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapTokensForExactTokens","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"nonpayable","type":"function"},{"stateMutability":"payable","type":"receive"}];
 let PancakeFactory = [{"inputs":[{"internalType":"address","name":"_feeToSetter","type":"address"}],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"token0","type":"address"},{"indexed":true,"internalType":"address","name":"token1","type":"address"},{"indexed":false,"internalType":"address","name":"pair","type":"address"},{"indexed":false,"internalType":"uint256","name":"","type":"uint256"}],"name":"PairCreated","type":"event"},{"constant":true,"inputs":[],"name":"INIT_CODE_PAIR_HASH","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"allPairs","outputs":[{"internalType":"address","name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"allPairsLength","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"tokenA","type":"address"},{"internalType":"address","name":"tokenB","type":"address"}],"name":"createPair","outputs":[{"internalType":"address","name":"pair","type":"address"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"feeTo","outputs":[{"internalType":"address","name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"feeToSetter","outputs":[{"internalType":"address","name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"address","name":"","type":"address"}],"name":"getPair","outputs":[{"internalType":"address","name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"_feeTo","type":"address"}],"name":"setFeeTo","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"_feeToSetter","type":"address"}],"name":"setFeeToSetter","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"}];
@@ -1335,60 +1335,149 @@ const getAssociatedMiddleStatusAccount = ({ fromPoolId, middleMint, owner })=> {
   )
 };
 
-const getInstructionData = ({ amountIn, amountOutMin, amountOut, amountInMax, amountInInput, amountOutInput, amountOutMinInput, amountInMaxInput })=> {
+const getInstructionData = ({ pairs, amountIn, amountOutMin, amountOut, amountInMax, amountInInput, amountOutInput, amountOutMinInput, amountInMaxInput })=> {
   let LAYOUT, data;
-  if (amountInInput || amountOutMinInput) {
-    LAYOUT = struct([u8("instruction"), u64("amountIn"), u64("minAmountOut")]);
-    data = Buffer.alloc(LAYOUT.span);
-    LAYOUT.encode(
-      {
-        instruction: 9,
-        amountIn: new BN(amountIn.toString()),
-        minAmountOut: new BN(amountOutMin.toString()),
-      },
-      data,
-    );
+  if(pairs.length == 1) {
+    
+    if (amountInInput || amountOutMinInput) {
+      LAYOUT = struct([u8("instruction"), u64("amountIn"), u64("minAmountOut")]);
+      data = Buffer.alloc(LAYOUT.span);
+      LAYOUT.encode(
+        {
+          instruction: 9,
+          amountIn: new BN(amountIn.toString()),
+          minAmountOut: new BN(amountOutMin.toString()),
+        },
+        data,
+      );
 
-  } else if (amountOutInput || amountInMaxInput) {
-    LAYOUT = struct([u8("instruction"), u64("maxAmountIn"), u64("amountOut")]);
-    data = Buffer.alloc(LAYOUT.span);
-    LAYOUT.encode(
-      {
-        instruction: 11,
-        maxAmountIn: new BN(amountInMax.toString()),
-        amountOut: new BN(amountOut.toString()),
-      },
-      data,
-    );
+    } else if (amountOutInput || amountInMaxInput) {
+      LAYOUT = struct([u8("instruction"), u64("maxAmountIn"), u64("amountOut")]);
+      data = Buffer.alloc(LAYOUT.span);
+      LAYOUT.encode(
+        {
+          instruction: 11,
+          maxAmountIn: new BN(amountInMax.toString()),
+          amountOut: new BN(amountOut.toString()),
+        },
+        data,
+      );
+    }
+
+  } else if(pairs.length == 2) {
+
+    if (amountInInput || amountOutMinInput) {
+      LAYOUT = struct([u8("instruction"), u64("amountIn"), u64("minAmountOut")]);
+      data = Buffer.alloc(LAYOUT.span);
+      LAYOUT.encode(
+        {
+          instruction: 0,
+          amountIn: new BN(amountIn.toString()),
+          minAmountOut: new BN(amountOutMin.toString()),
+        },
+        data,
+      );
+
+    } else if (amountOutInput || amountInMaxInput) {
+      LAYOUT = struct([u8("instruction")]);
+      data = Buffer.alloc(LAYOUT.span);
+      LAYOUT.encode(
+        {
+          instruction: 1,
+        },
+        data,
+      );
+    }
   }
   return data
 };
 
-const getInstructionKeys = ({ pair, market, marketAuthority, tokenAccountIn, tokenAccountOut, fromAddress })=> {
-  return [
-    // system
-    { pubkey: new PublicKey(Token.solana.TOKEN_PROGRAM), isWritable: false, isSigner: false },
-    // amm
-    { pubkey: pair.pubkey, isWritable: true, isSigner: false },
-    { pubkey: new PublicKey(basics$1.pair.v4.authority), isWritable: false, isSigner: false },
-    { pubkey: pair.data.openOrders, isWritable: true, isSigner: false },
-    { pubkey: pair.data.targetOrders, isWritable: true, isSigner: false },
-    { pubkey: pair.data.baseVault, isWritable: true, isSigner: false },
-    { pubkey: pair.data.quoteVault, isWritable: true, isSigner: false },
-    // serum
-    { pubkey: pair.data.marketProgramId, isWritable: false, isSigner: false },
-    { pubkey: pair.data.marketId, isWritable: true, isSigner: false },
-    { pubkey: market.bids, isWritable: true, isSigner: false },
-    { pubkey: market.asks, isWritable: true, isSigner: false },
-    { pubkey: market.eventQueue, isWritable: true, isSigner: false },
-    { pubkey: market.baseVault, isWritable: true, isSigner: false },
-    { pubkey: market.quoteVault, isWritable: true, isSigner: false },
-    { pubkey: marketAuthority, isWritable: false, isSigner: false },
-    // user
-    { pubkey: new PublicKey(tokenAccountIn), isWritable: true, isSigner: false },
-    { pubkey: new PublicKey(tokenAccountOut), isWritable: true, isSigner: false },
-    { pubkey: new PublicKey(fromAddress), isWritable: false, isSigner: false },
-  ]
+const getInstructionKeys = async ({ tokenIn, tokenMiddle, tokenOut, pairs, markets, fromAddress, toAddress })=> {
+
+  let tokenAccountIn;
+  tokenAccountIn = await Token.solana.findAccount({ owner: fromAddress, token: tokenIn });
+  if(!tokenAccountIn) {
+    tokenAccountIn = await Token.solana.findProgramAddress({ owner: fromAddress, token: tokenIn });
+  }
+
+  let tokenAccountOut;
+  tokenAccountOut = await Token.solana.findAccount({ owner: toAddress, token: tokenOut });
+  if(!tokenAccountOut) {
+    tokenAccountOut = await Token.solana.findProgramAddress({ owner: toAddress, token: tokenOut });
+  }
+
+  if(pairs.length == 1) {
+    let pair = pairs[0];
+    let market = markets[0];
+    let marketAuthority = await getMarketAuthority(pair.data.marketProgramId, pair.data.marketId);
+    return [
+      // system
+      { pubkey: new PublicKey(Token.solana.TOKEN_PROGRAM), isWritable: false, isSigner: false },
+      // amm
+      { pubkey: pair.pubkey, isWritable: true, isSigner: false },
+      { pubkey: new PublicKey(basics$1.pair.v4.authority), isWritable: false, isSigner: false },
+      { pubkey: pair.data.openOrders, isWritable: true, isSigner: false },
+      { pubkey: pair.data.targetOrders, isWritable: true, isSigner: false },
+      { pubkey: pair.data.baseVault, isWritable: true, isSigner: false },
+      { pubkey: pair.data.quoteVault, isWritable: true, isSigner: false },
+      // serum
+      { pubkey: pair.data.marketProgramId, isWritable: false, isSigner: false },
+      { pubkey: pair.data.marketId, isWritable: true, isSigner: false },
+      { pubkey: market.bids, isWritable: true, isSigner: false },
+      { pubkey: market.asks, isWritable: true, isSigner: false },
+      { pubkey: market.eventQueue, isWritable: true, isSigner: false },
+      { pubkey: market.baseVault, isWritable: true, isSigner: false },
+      { pubkey: market.quoteVault, isWritable: true, isSigner: false },
+      { pubkey: marketAuthority, isWritable: false, isSigner: false },
+      // user
+      { pubkey: new PublicKey(tokenAccountIn), isWritable: true, isSigner: false },
+      { pubkey: new PublicKey(tokenAccountOut), isWritable: true, isSigner: false },
+      { pubkey: new PublicKey(fromAddress), isWritable: false, isSigner: false },
+    ]
+  } else if (pairs.length == 2) {
+    let tokenAccountMiddle, statusAccountMiddle;
+
+    tokenAccountMiddle = await Token.solana.findAccount({ owner: fromAddress, token: tokenMiddle });
+    if(!tokenAccountMiddle) {
+      tokenAccountMiddle = await Token.solana.findProgramAddress({ owner: fromAddress, token: tokenMiddle });
+    }
+    statusAccountMiddle = await getAssociatedMiddleStatusAccount({ fromPoolId: pairs[0].pubkey.toString(), middleMint: tokenMiddle, owner: fromAddress });
+
+    let fromMarketAuthority = await getMarketAuthority(pairs[0].data.marketProgramId, pairs[0].data.marketId);
+
+    let keys = [
+      // system
+      { pubkey: SystemProgram.programId, isWritable: false, isSigner: false },
+      { pubkey: new PublicKey(Token.solana.TOKEN_PROGRAM), isWritable: false, isSigner: false },
+      // amm
+      { pubkey: new PublicKey(basics$1.pair.v4.address), isWritable: false, isSigner: false },
+      { pubkey: pairs[0].pubkey, isWritable: true, isSigner: false },
+      { pubkey: pairs[1].pubkey, isWritable: false, isSigner: false },
+      { pubkey: new PublicKey(basics$1.pair.v4.authority), isWritable: false, isSigner: false },
+      { pubkey: pairs[0].data.openOrders, isWritable: true, isSigner: false },
+      { pubkey: pairs[0].data.baseVault, isWritable: true, isSigner: false },
+      { pubkey: pairs[0].data.quoteVault, isWritable: true, isSigner: false },
+      // serum
+      { pubkey: pairs[0].data.marketProgramId, isWritable: false, isSigner: false },
+      { pubkey: pairs[0].data.marketId, isWritable: true, isSigner: false },
+      { pubkey: markets[0].bids, isWritable: true, isSigner: false },
+      { pubkey: markets[0].asks, isWritable: true, isSigner: false },
+      { pubkey: markets[0].eventQueue, isWritable: true, isSigner: false },
+      { pubkey: markets[0].baseVault, isWritable: true, isSigner: false },
+      { pubkey: markets[0].quoteVault, isWritable: true, isSigner: false },
+      { pubkey: markets[0].quoteVault, isWritable: true, isSigner: false },
+      { pubkey: fromMarketAuthority, isWritable: false, isSigner: false },
+      // user
+      { pubkey: new PublicKey(tokenAccountIn), isWritable: true, isSigner: false },
+      { pubkey: new PublicKey(tokenAccountMiddle), isWritable: true, isSigner: false },
+      { pubkey: new PublicKey(statusAccountMiddle), isWritable: true, isSigner: false },
+      { pubkey: new PublicKey(fromAddress), isWritable: false, isSigner: false },
+    ];
+
+    console.log('keys', keys.map((key)=>key.pubkey.toString()));
+
+    return keys
+  }
 };
 
 const getTransaction$1 = async ({
@@ -1410,40 +1499,23 @@ const getTransaction$1 = async ({
 
   const fixedPath = fixPath$1(path);
   if(fixedPath.length > 3) { throw 'Raydium can only handle fixed paths with a max length of 3!' }
-
   const tokenIn = fixedPath[0];
   const tokenMiddle = fixedPath.length == 3 ? fixedPath[1] : undefined;
   const tokenOut = fixedPath[fixedPath.length-1];
 
-  let tokenAccountIn;
-  tokenAccountIn = await Token.solana.findAccount({ owner: fromAddress, token: tokenIn });
-  if(!tokenAccountIn) {
-    tokenAccountIn = await Token.solana.findProgramAddress({ owner: fromAddress, token: tokenIn });
-  }
-
-  let tokenAccountOut;
-  tokenAccountOut = await Token.solana.findAccount({ owner: toAddress, token: tokenOut });
-  if(!tokenAccountOut) {
-    tokenAccountOut = await Token.solana.findProgramAddress({ owner: toAddress, token: tokenOut });
-  }
-
-  let pair = await getBestPair(fixedPath[0], fixedPath[1]);
-  let market = await getMarket(pair.data.marketId.toString());
-  let marketAuthority = await getMarketAuthority(pair.data.marketProgramId, pair.data.marketId);
-
-  let tokenAccountMiddle;
-  if(tokenMiddle) {
-    tokenAccountMiddle = await Token.solana.findAccount({ owner: fromAddress, token: tokenMiddle });
-    if(!tokenAccountMiddle) {
-      tokenAccountMiddle = await Token.solana.findProgramAddress({ owner: fromAddress, token: tokenMiddle });
-    }
-    getAssociatedMiddleStatusAccount({ fromPoolId, middleMint, owner });
+  let pairs, markets;
+  if(fixedPath.length == 2) {
+    pairs = [await getBestPair(tokenIn, tokenOut)];
+    markets = [await getMarket(pairs[0].data.marketId.toString())];
+  } else {
+    pairs = [await getBestPair(tokenIn, tokenMiddle), await getBestPair(tokenMiddle, tokenOut)];
+    markets = [await getMarket(pairs[0].data.marketId.toString()), await getMarket(pairs[1].data.marketId.toString())];
   }
 
   instructions.push(new TransactionInstruction({
-    programId: new PublicKey(basics$1.pair.v4.address),
-    keys: getInstructionKeys({ pair, market, marketAuthority, tokenAccountIn, tokenAccountOut, fromAddress }),
-    data: getInstructionData({ amountIn, amountOutMin, amountOut, amountInMax, amountInInput, amountOutInput, amountOutMinInput, amountInMaxInput }),
+    programId: pairs.length == 1 ? new PublicKey(basics$1.pair.v4.address) : new PublicKey(basics$1.router.v1.address),
+    keys: await getInstructionKeys({ tokenIn, tokenMiddle, tokenOut, pairs, markets, fromAddress, toAddress }),
+    data: getInstructionData({ pairs, amountIn, amountOutMin, amountOut, amountInMax, amountInInput, amountOutInput, amountOutMinInput, amountInMaxInput }),
   }));
   
   return transaction

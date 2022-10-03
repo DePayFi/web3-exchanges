@@ -1335,60 +1335,149 @@
     )
   };
 
-  const getInstructionData = ({ amountIn, amountOutMin, amountOut, amountInMax, amountInInput, amountOutInput, amountOutMinInput, amountInMaxInput })=> {
+  const getInstructionData = ({ pairs, amountIn, amountOutMin, amountOut, amountInMax, amountInInput, amountOutInput, amountOutMinInput, amountInMaxInput })=> {
     let LAYOUT, data;
-    if (amountInInput || amountOutMinInput) {
-      LAYOUT = solanaWeb3_js.struct([solanaWeb3_js.u8("instruction"), solanaWeb3_js.u64("amountIn"), solanaWeb3_js.u64("minAmountOut")]);
-      data = solanaWeb3_js.Buffer.alloc(LAYOUT.span);
-      LAYOUT.encode(
-        {
-          instruction: 9,
-          amountIn: new solanaWeb3_js.BN(amountIn.toString()),
-          minAmountOut: new solanaWeb3_js.BN(amountOutMin.toString()),
-        },
-        data,
-      );
+    if(pairs.length == 1) {
+      
+      if (amountInInput || amountOutMinInput) {
+        LAYOUT = solanaWeb3_js.struct([solanaWeb3_js.u8("instruction"), solanaWeb3_js.u64("amountIn"), solanaWeb3_js.u64("minAmountOut")]);
+        data = solanaWeb3_js.Buffer.alloc(LAYOUT.span);
+        LAYOUT.encode(
+          {
+            instruction: 9,
+            amountIn: new solanaWeb3_js.BN(amountIn.toString()),
+            minAmountOut: new solanaWeb3_js.BN(amountOutMin.toString()),
+          },
+          data,
+        );
 
-    } else if (amountOutInput || amountInMaxInput) {
-      LAYOUT = solanaWeb3_js.struct([solanaWeb3_js.u8("instruction"), solanaWeb3_js.u64("maxAmountIn"), solanaWeb3_js.u64("amountOut")]);
-      data = solanaWeb3_js.Buffer.alloc(LAYOUT.span);
-      LAYOUT.encode(
-        {
-          instruction: 11,
-          maxAmountIn: new solanaWeb3_js.BN(amountInMax.toString()),
-          amountOut: new solanaWeb3_js.BN(amountOut.toString()),
-        },
-        data,
-      );
+      } else if (amountOutInput || amountInMaxInput) {
+        LAYOUT = solanaWeb3_js.struct([solanaWeb3_js.u8("instruction"), solanaWeb3_js.u64("maxAmountIn"), solanaWeb3_js.u64("amountOut")]);
+        data = solanaWeb3_js.Buffer.alloc(LAYOUT.span);
+        LAYOUT.encode(
+          {
+            instruction: 11,
+            maxAmountIn: new solanaWeb3_js.BN(amountInMax.toString()),
+            amountOut: new solanaWeb3_js.BN(amountOut.toString()),
+          },
+          data,
+        );
+      }
+
+    } else if(pairs.length == 2) {
+
+      if (amountInInput || amountOutMinInput) {
+        LAYOUT = solanaWeb3_js.struct([solanaWeb3_js.u8("instruction"), solanaWeb3_js.u64("amountIn"), solanaWeb3_js.u64("minAmountOut")]);
+        data = solanaWeb3_js.Buffer.alloc(LAYOUT.span);
+        LAYOUT.encode(
+          {
+            instruction: 0,
+            amountIn: new solanaWeb3_js.BN(amountIn.toString()),
+            minAmountOut: new solanaWeb3_js.BN(amountOutMin.toString()),
+          },
+          data,
+        );
+
+      } else if (amountOutInput || amountInMaxInput) {
+        LAYOUT = solanaWeb3_js.struct([solanaWeb3_js.u8("instruction")]);
+        data = solanaWeb3_js.Buffer.alloc(LAYOUT.span);
+        LAYOUT.encode(
+          {
+            instruction: 1,
+          },
+          data,
+        );
+      }
     }
     return data
   };
 
-  const getInstructionKeys = ({ pair, market, marketAuthority, tokenAccountIn, tokenAccountOut, fromAddress })=> {
-    return [
-      // system
-      { pubkey: new solanaWeb3_js.PublicKey(web3Tokens.Token.solana.TOKEN_PROGRAM), isWritable: false, isSigner: false },
-      // amm
-      { pubkey: pair.pubkey, isWritable: true, isSigner: false },
-      { pubkey: new solanaWeb3_js.PublicKey(basics$1.pair.v4.authority), isWritable: false, isSigner: false },
-      { pubkey: pair.data.openOrders, isWritable: true, isSigner: false },
-      { pubkey: pair.data.targetOrders, isWritable: true, isSigner: false },
-      { pubkey: pair.data.baseVault, isWritable: true, isSigner: false },
-      { pubkey: pair.data.quoteVault, isWritable: true, isSigner: false },
-      // serum
-      { pubkey: pair.data.marketProgramId, isWritable: false, isSigner: false },
-      { pubkey: pair.data.marketId, isWritable: true, isSigner: false },
-      { pubkey: market.bids, isWritable: true, isSigner: false },
-      { pubkey: market.asks, isWritable: true, isSigner: false },
-      { pubkey: market.eventQueue, isWritable: true, isSigner: false },
-      { pubkey: market.baseVault, isWritable: true, isSigner: false },
-      { pubkey: market.quoteVault, isWritable: true, isSigner: false },
-      { pubkey: marketAuthority, isWritable: false, isSigner: false },
-      // user
-      { pubkey: new solanaWeb3_js.PublicKey(tokenAccountIn), isWritable: true, isSigner: false },
-      { pubkey: new solanaWeb3_js.PublicKey(tokenAccountOut), isWritable: true, isSigner: false },
-      { pubkey: new solanaWeb3_js.PublicKey(fromAddress), isWritable: false, isSigner: false },
-    ]
+  const getInstructionKeys = async ({ tokenIn, tokenMiddle, tokenOut, pairs, markets, fromAddress, toAddress })=> {
+
+    let tokenAccountIn;
+    tokenAccountIn = await web3Tokens.Token.solana.findAccount({ owner: fromAddress, token: tokenIn });
+    if(!tokenAccountIn) {
+      tokenAccountIn = await web3Tokens.Token.solana.findProgramAddress({ owner: fromAddress, token: tokenIn });
+    }
+
+    let tokenAccountOut;
+    tokenAccountOut = await web3Tokens.Token.solana.findAccount({ owner: toAddress, token: tokenOut });
+    if(!tokenAccountOut) {
+      tokenAccountOut = await web3Tokens.Token.solana.findProgramAddress({ owner: toAddress, token: tokenOut });
+    }
+
+    if(pairs.length == 1) {
+      let pair = pairs[0];
+      let market = markets[0];
+      let marketAuthority = await getMarketAuthority(pair.data.marketProgramId, pair.data.marketId);
+      return [
+        // system
+        { pubkey: new solanaWeb3_js.PublicKey(web3Tokens.Token.solana.TOKEN_PROGRAM), isWritable: false, isSigner: false },
+        // amm
+        { pubkey: pair.pubkey, isWritable: true, isSigner: false },
+        { pubkey: new solanaWeb3_js.PublicKey(basics$1.pair.v4.authority), isWritable: false, isSigner: false },
+        { pubkey: pair.data.openOrders, isWritable: true, isSigner: false },
+        { pubkey: pair.data.targetOrders, isWritable: true, isSigner: false },
+        { pubkey: pair.data.baseVault, isWritable: true, isSigner: false },
+        { pubkey: pair.data.quoteVault, isWritable: true, isSigner: false },
+        // serum
+        { pubkey: pair.data.marketProgramId, isWritable: false, isSigner: false },
+        { pubkey: pair.data.marketId, isWritable: true, isSigner: false },
+        { pubkey: market.bids, isWritable: true, isSigner: false },
+        { pubkey: market.asks, isWritable: true, isSigner: false },
+        { pubkey: market.eventQueue, isWritable: true, isSigner: false },
+        { pubkey: market.baseVault, isWritable: true, isSigner: false },
+        { pubkey: market.quoteVault, isWritable: true, isSigner: false },
+        { pubkey: marketAuthority, isWritable: false, isSigner: false },
+        // user
+        { pubkey: new solanaWeb3_js.PublicKey(tokenAccountIn), isWritable: true, isSigner: false },
+        { pubkey: new solanaWeb3_js.PublicKey(tokenAccountOut), isWritable: true, isSigner: false },
+        { pubkey: new solanaWeb3_js.PublicKey(fromAddress), isWritable: false, isSigner: false },
+      ]
+    } else if (pairs.length == 2) {
+      let tokenAccountMiddle, statusAccountMiddle;
+
+      tokenAccountMiddle = await web3Tokens.Token.solana.findAccount({ owner: fromAddress, token: tokenMiddle });
+      if(!tokenAccountMiddle) {
+        tokenAccountMiddle = await web3Tokens.Token.solana.findProgramAddress({ owner: fromAddress, token: tokenMiddle });
+      }
+      statusAccountMiddle = await getAssociatedMiddleStatusAccount({ fromPoolId: pairs[0].pubkey.toString(), middleMint: tokenMiddle, owner: fromAddress });
+
+      let fromMarketAuthority = await getMarketAuthority(pairs[0].data.marketProgramId, pairs[0].data.marketId);
+
+      let keys = [
+        // system
+        { pubkey: solanaWeb3_js.SystemProgram.programId, isWritable: false, isSigner: false },
+        { pubkey: new solanaWeb3_js.PublicKey(web3Tokens.Token.solana.TOKEN_PROGRAM), isWritable: false, isSigner: false },
+        // amm
+        { pubkey: new solanaWeb3_js.PublicKey(basics$1.pair.v4.address), isWritable: false, isSigner: false },
+        { pubkey: pairs[0].pubkey, isWritable: true, isSigner: false },
+        { pubkey: pairs[1].pubkey, isWritable: false, isSigner: false },
+        { pubkey: new solanaWeb3_js.PublicKey(basics$1.pair.v4.authority), isWritable: false, isSigner: false },
+        { pubkey: pairs[0].data.openOrders, isWritable: true, isSigner: false },
+        { pubkey: pairs[0].data.baseVault, isWritable: true, isSigner: false },
+        { pubkey: pairs[0].data.quoteVault, isWritable: true, isSigner: false },
+        // serum
+        { pubkey: pairs[0].data.marketProgramId, isWritable: false, isSigner: false },
+        { pubkey: pairs[0].data.marketId, isWritable: true, isSigner: false },
+        { pubkey: markets[0].bids, isWritable: true, isSigner: false },
+        { pubkey: markets[0].asks, isWritable: true, isSigner: false },
+        { pubkey: markets[0].eventQueue, isWritable: true, isSigner: false },
+        { pubkey: markets[0].baseVault, isWritable: true, isSigner: false },
+        { pubkey: markets[0].quoteVault, isWritable: true, isSigner: false },
+        { pubkey: markets[0].quoteVault, isWritable: true, isSigner: false },
+        { pubkey: fromMarketAuthority, isWritable: false, isSigner: false },
+        // user
+        { pubkey: new solanaWeb3_js.PublicKey(tokenAccountIn), isWritable: true, isSigner: false },
+        { pubkey: new solanaWeb3_js.PublicKey(tokenAccountMiddle), isWritable: true, isSigner: false },
+        { pubkey: new solanaWeb3_js.PublicKey(statusAccountMiddle), isWritable: true, isSigner: false },
+        { pubkey: new solanaWeb3_js.PublicKey(fromAddress), isWritable: false, isSigner: false },
+      ];
+
+      console.log('keys', keys.map((key)=>key.pubkey.toString()));
+
+      return keys
+    }
   };
 
   const getTransaction$1 = async ({
@@ -1410,40 +1499,23 @@
 
     const fixedPath = fixPath$1(path);
     if(fixedPath.length > 3) { throw 'Raydium can only handle fixed paths with a max length of 3!' }
-
     const tokenIn = fixedPath[0];
     const tokenMiddle = fixedPath.length == 3 ? fixedPath[1] : undefined;
     const tokenOut = fixedPath[fixedPath.length-1];
 
-    let tokenAccountIn;
-    tokenAccountIn = await web3Tokens.Token.solana.findAccount({ owner: fromAddress, token: tokenIn });
-    if(!tokenAccountIn) {
-      tokenAccountIn = await web3Tokens.Token.solana.findProgramAddress({ owner: fromAddress, token: tokenIn });
-    }
-
-    let tokenAccountOut;
-    tokenAccountOut = await web3Tokens.Token.solana.findAccount({ owner: toAddress, token: tokenOut });
-    if(!tokenAccountOut) {
-      tokenAccountOut = await web3Tokens.Token.solana.findProgramAddress({ owner: toAddress, token: tokenOut });
-    }
-
-    let pair = await getBestPair(fixedPath[0], fixedPath[1]);
-    let market = await getMarket(pair.data.marketId.toString());
-    let marketAuthority = await getMarketAuthority(pair.data.marketProgramId, pair.data.marketId);
-
-    let tokenAccountMiddle;
-    if(tokenMiddle) {
-      tokenAccountMiddle = await web3Tokens.Token.solana.findAccount({ owner: fromAddress, token: tokenMiddle });
-      if(!tokenAccountMiddle) {
-        tokenAccountMiddle = await web3Tokens.Token.solana.findProgramAddress({ owner: fromAddress, token: tokenMiddle });
-      }
-      getAssociatedMiddleStatusAccount({ fromPoolId, middleMint, owner });
+    let pairs, markets;
+    if(fixedPath.length == 2) {
+      pairs = [await getBestPair(tokenIn, tokenOut)];
+      markets = [await getMarket(pairs[0].data.marketId.toString())];
+    } else {
+      pairs = [await getBestPair(tokenIn, tokenMiddle), await getBestPair(tokenMiddle, tokenOut)];
+      markets = [await getMarket(pairs[0].data.marketId.toString()), await getMarket(pairs[1].data.marketId.toString())];
     }
 
     instructions.push(new solanaWeb3_js.TransactionInstruction({
-      programId: new solanaWeb3_js.PublicKey(basics$1.pair.v4.address),
-      keys: getInstructionKeys({ pair, market, marketAuthority, tokenAccountIn, tokenAccountOut, fromAddress }),
-      data: getInstructionData({ amountIn, amountOutMin, amountOut, amountInMax, amountInInput, amountOutInput, amountOutMinInput, amountInMaxInput }),
+      programId: pairs.length == 1 ? new solanaWeb3_js.PublicKey(basics$1.pair.v4.address) : new solanaWeb3_js.PublicKey(basics$1.router.v1.address),
+      keys: await getInstructionKeys({ tokenIn, tokenMiddle, tokenOut, pairs, markets, fromAddress, toAddress }),
+      data: getInstructionData({ pairs, amountIn, amountOutMin, amountOut, amountInMax, amountInInput, amountOutInput, amountOutMinInput, amountInMaxInput }),
     }));
     
     return transaction

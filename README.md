@@ -221,7 +221,6 @@ import { route } from '@depay/web3-exchanges'
 let routes = route {
   tokenIn: '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb',
   tokenOut: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
-  amountIn: 1,
   amountOutMin: 2
 } // returns routes sorted by cost-effectiveness (best first)
 
@@ -243,8 +242,7 @@ let exchange = find('ethereum', 'uniswap_v2')
 let route = await exchange.route({
   tokenIn: '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb',
   tokenOut: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
-  amountIn: 1,
-  amountOutMin: 2
+  amountIn: 1
 })
 
 // use connected wallet to sign and send the swap transaction
