@@ -1171,10 +1171,40 @@ let findPath$1 = async ({ tokenIn, tokenOut }) => {
   return path
 };
 
+const getMarket = async (marketId)=> {
+  return await request({
+    blockchain: 'solana',
+    address: marketId,
+    api: basics$1.market.v3.api,
+    cache: 3600000
+  })
+};
+
+const getMarketAuthority = async (programId, marketId)=> {
+  const seeds = [marketId.toBuffer()];
+
+  let nonce = 0;
+  let publicKey;
+
+  while (nonce < 100) {
+    try {
+      // Buffer.alloc(7) nonce u64
+      const seedsWithNonce = seeds.concat(Buffer.from([nonce]), Buffer.alloc(7));
+      publicKey = await PublicKey.createProgramAddress(seedsWithNonce, programId);
+    } catch (err) {
+      if (err instanceof TypeError) { throw err }
+      nonce++;
+      continue
+    }
+    return publicKey
+  }
+};
+
 const getInfo = async (pair)=>{
   const data = Buffer.alloc(POOL_INFO.span);
   POOL_INFO.encode({ instruction: 12, simulateType: 0 }, data);
 
+  const market = await getMarket(pair.data.marketId.toString());
   const keys = [
     { pubkey: pair.pubkey, isWritable: false, isSigner: false },
     { pubkey: new PublicKey(basics$1.pair.v4.authority), isWritable: false, isSigner: false },
@@ -1183,6 +1213,7 @@ const getInfo = async (pair)=>{
     { pubkey: pair.data.quoteVault, isWritable: false, isSigner: false },
     { pubkey: pair.data.lpMint, isWritable: false, isSigner: false },
     { pubkey: pair.data.marketId, isWritable: false, isSigner: false },
+    { pubkey: market.eventQueue, isWritable: false, isSigner: false },
   ];
 
   const instruction = new TransactionInstruction({
@@ -1269,24 +1300,21 @@ let getAmounts$1 = async ({
       amountInMax = amountIn;
     }
   } else if (amountIn) {
-    amountsOut = await getAmountOut$1({ path, amountIn, tokenIn, tokenOut });
-    amountOut = amountsOut[amountsOut.length-1];
+    amountOut = await getAmountOut$1({ path, amountIn, tokenIn, tokenOut });
     if (amountOut == undefined || amountOutMin && amountOut.lt(amountOutMin)) {
       return {}
     } else if (amountOutMin === undefined) {
       amountOutMin = amountOut;
     }
   } else if(amountOutMin) {
-    amountsIn = await getAmountIn$1({ path, amountOut, tokenIn, tokenOut });
-    amountIn = amountsIn[amountsIn.length-1];
+    amountIn = await getAmountIn$1({ path, amountOut: amountOutMin, tokenIn, tokenOut });
     if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
       return {}
     } else if (amountInMax === undefined) {
       amountInMax = amountIn;
     }
   } else if(amountInMax) {
-    amountsOut = await getAmountOut$1({ path, amountIn, tokenIn, tokenOut });
-    amountOut = amountsOut[amountsOut.length-1];
+    amountOut = await getAmountOut$1({ path, amountIn: amountInMax, tokenIn, tokenOut });
     if (amountOut == undefined ||amountOutMin && amountOut.lt(amountOutMin)) {
       return {}
     } else if (amountOutMin === undefined) {
@@ -1294,35 +1322,6 @@ let getAmounts$1 = async ({
     }
   }
   return { amountOut, amountIn, amountInMax, amountOutMin }
-};
-
-const getMarket = async (marketId)=> {
-  return await request({
-    blockchain: 'solana',
-    address: marketId,
-    api: basics$1.market.v3.api,
-    cache: 3600000
-  })
-};
-
-const getMarketAuthority = async (programId, marketId)=> {
-  const seeds = [marketId.toBuffer()];
-
-  let nonce = 0;
-  let publicKey;
-
-  while (nonce < 100) {
-    try {
-      // Buffer.alloc(7) nonce u64
-      const seedsWithNonce = seeds.concat(Buffer.from([nonce]), Buffer.alloc(7));
-      publicKey = await PublicKey.createProgramAddress(seedsWithNonce, programId);
-    } catch (err) {
-      if (err instanceof TypeError) { throw err }
-      nonce++;
-      continue
-    }
-    return publicKey
-  }
 };
 
 const getAssociatedMiddleStatusAccount = ({ fromPoolId, middleMint, owner })=> {
