@@ -1,13 +1,14 @@
 import Raydium from '../basics'
-import { Buffer, BN, SystemProgram, TransactionInstruction, PublicKey, struct, u8, u64 } from '@depay/solana-web3.js'
+import { Buffer, BN, SystemProgram, Transaction, TransactionInstruction, PublicKey, struct, u8, u64 } from '@depay/solana-web3.js'
 import { CONSTANTS } from '@depay/web3-constants'
 import { fixPath } from './path'
 import { getBestPair } from './pairs'
 import { getMarket, getMarketAuthority } from './markets'
+import { provider } from '@depay/web3-client'
 import { Token } from '@depay/web3-tokens'
 
-const getAssociatedMiddleStatusAccount = ({ fromPoolId, middleMint, owner })=> {
-  return PublicKey.findProgramAddress(
+const getAssociatedMiddleStatusAccount = async ({ fromPoolId, middleMint, owner })=> {
+  let result = await PublicKey.findProgramAddress(
     [
       (new PublicKey(fromPoolId)).toBuffer(),
       (new PublicKey(middleMint)).toBuffer(),
@@ -15,6 +16,7 @@ const getAssociatedMiddleStatusAccount = ({ fromPoolId, middleMint, owner })=> {
     ],
     new PublicKey(Raydium.router.v1.address)
   )
+  return result[0]
 }
 
 const getInstructionData = ({ pairs, amountIn, amountOutMin, amountOut, amountInMax, amountInInput, amountOutInput, amountOutMinInput, amountInMaxInput })=> {
@@ -49,17 +51,16 @@ const getInstructionData = ({ pairs, amountIn, amountOutMin, amountOut, amountIn
   } else if(pairs.length == 2) {
 
     if (amountInInput || amountOutMinInput) {
-      LAYOUT = struct([u8("instruction"), u64("amountIn"), u64("minAmountOut")])
+      LAYOUT = struct([u8("instruction"), u64("amountIn"), u64("amountOut")])
       data = Buffer.alloc(LAYOUT.span)
       LAYOUT.encode(
         {
           instruction: 0,
           amountIn: new BN(amountIn.toString()),
-          minAmountOut: new BN(amountOutMin.toString()),
+          amountOut: new BN(amountOutMin.toString()),
         },
         data,
       )
-
     } else if (amountOutInput || amountInMaxInput) {
       LAYOUT = struct([u8("instruction")])
       data = Buffer.alloc(LAYOUT.span)
@@ -124,6 +125,7 @@ const getInstructionKeys = async ({ tokenIn, tokenMiddle, tokenOut, pairs, marke
       tokenAccountMiddle = await Token.solana.findProgramAddress({ owner: fromAddress, token: tokenMiddle })
     }
     statusAccountMiddle = await getAssociatedMiddleStatusAccount({ fromPoolId: pairs[0].pubkey.toString(), middleMint: tokenMiddle, owner: fromAddress })
+    console.log('statusAccountMiddle', statusAccountMiddle.toString())
 
     let fromMarketAuthority = await getMarketAuthority(pairs[0].data.marketProgramId, pairs[0].data.marketId)
 
@@ -147,16 +149,13 @@ const getInstructionKeys = async ({ tokenIn, tokenMiddle, tokenOut, pairs, marke
       { pubkey: markets[0].eventQueue, isWritable: true, isSigner: false },
       { pubkey: markets[0].baseVault, isWritable: true, isSigner: false },
       { pubkey: markets[0].quoteVault, isWritable: true, isSigner: false },
-      { pubkey: markets[0].quoteVault, isWritable: true, isSigner: false },
       { pubkey: fromMarketAuthority, isWritable: false, isSigner: false },
       // user
       { pubkey: new PublicKey(tokenAccountIn), isWritable: true, isSigner: false },
       { pubkey: new PublicKey(tokenAccountMiddle), isWritable: true, isSigner: false },
       { pubkey: new PublicKey(statusAccountMiddle), isWritable: true, isSigner: false },
-      { pubkey: new PublicKey(fromAddress), isWritable: false, isSigner: false },
+      { pubkey: new PublicKey(fromAddress), isWritable: false, isSigner: true },
     ]
-
-    console.log('keys', keys.map((key)=>key.pubkey.toString()))
 
     return keys
   }
@@ -194,11 +193,20 @@ const getTransaction = async ({
     markets = [await getMarket(pairs[0].data.marketId.toString()), await getMarket(pairs[1].data.marketId.toString())]
   }
 
-  instructions.push(new TransactionInstruction({
+  let instruction = new TransactionInstruction({
     programId: pairs.length == 1 ? new PublicKey(Raydium.pair.v4.address) : new PublicKey(Raydium.router.v1.address),
     keys: await getInstructionKeys({ tokenIn, tokenMiddle, tokenOut, pairs, markets, fromAddress, toAddress }),
     data: getInstructionData({ pairs, amountIn, amountOutMin, amountOut, amountInMax, amountInInput, amountOutInput, amountOutMinInput, amountInMaxInput }),
-  }))
+  })
+  instructions.push(instruction)
+
+  let simulation = new Transaction({ feePayer: new PublicKey('2UgCJaHU5y8NC4uWQcZYeV9a5RyYLF7iKYCybCsdFFD1') })
+  simulation.add(instruction)
+
+  let result
+  console.log('SIMULATE')
+  try{ result = await provider('solana').simulateTransaction(simulation) } catch(e) { console.log('error', e) }
+  console.log('SIMULATION RESULT', result)
   
   return transaction
 }
