@@ -286,7 +286,7 @@ function mockTransactionKeys({ pair, market, fromAddress }) {
     { pubkey: 'F8Vyqk3unwxkXukZFQeYyGmFfTG3CAX4v24iyrjEYBJV', isWritable: false, isSigner: false },
     { pubkey: 'F7e4iBrxoSmHhEzhuBcXXs1KAknYvEoZWieiocPvrCD9', isWritable: true, isSigner: false },
     { pubkey: '5nrTLrjSCNQ4uTVr9BxBUcwf4G4Dwuo8H5wQAQgxand8', isWritable: true, isSigner: false },
-    { pubkey: fromAddress, isWritable: false, isSigner: false },
+    { pubkey: fromAddress, isWritable: false, isSigner: true },
   ]
 }
 

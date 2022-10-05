@@ -23,12 +23,21 @@ all
 let exchange = find('ethereum', 'uniswap_v2')
 // { name: 'uniswap_v2', label: 'Uniswap v2', logo: '...' }
 
-let routes = await route({
+let routes
+
+routes = await route({
   blockchain: 'ethereum',
   tokenIn: '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb',
   tokenOut: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
   amountIn: 1
-}) // returns routes sorted by cost-effectiveness (best first)
+})
+
+routes = await route({
+  blockchain: 'solana',
+  tokenIn: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
+  tokenOut: '4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R',
+  amountIn: 1
+})
 
 // use connected wallet to sign and send the swap transaction
 import { getWallets } from '@depay/web3-wallets'
@@ -46,12 +55,14 @@ This library supports the following blockchains:
 - [Ethereum](https://ethereum.org)
 - [BNB Smart Chain](https://www.binance.org/smartChain)
 - [Polygon](https://polygon.technology)
+- [Solana](https://solana.com)
 
 This library supports the following decentralized exchanges:
 
 - [Uniswap v2](https://uniswap.org)
 - [PancakeSwap v2](https://pancakeswap.info)
 - [Quickswap](https://quickswap.exchange)
+- [Raydium](https://raydium.io)
 
 ## Data Structures
 
@@ -96,12 +107,12 @@ A Swap configuration is fed into the `route` function:
 
 The following combinations of provided amounts are possible:
 
-- Only `amountIn`, `amountOutMin` will be calculated automatically and can vary
-- Only `amountOut`, `amountInMax` will be calculated automatically and can vary
-- Only `amountInMax`, `amountOut` will be calculated automatically and can vary
-- Only `amountOutMin`, `amountIn` will be calculated automatically and can vary
-- `amountIn` and `amountOutMax` (routing will stick to both)
-- `amountOut` and `amountInMin` (routing will stick to both)
+- Pass `amountIn`. `amountOutMin` will be calculated automatically and can vary
+- Pass `amountOut`. `amountInMax` will be calculated automatically and can vary
+- Pass `amountInMax`. `amountOut` will be calculated automatically and can vary
+- Pass `amountOutMin`. `amountIn` will be calculated automatically and can vary
+- Pass `amountIn` and `amountOutMax` (routing will stick to both)
+- Pass `amountOut` and `amountInMin` (routing will stick to both)
 
 ### Route
 
