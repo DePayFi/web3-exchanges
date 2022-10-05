@@ -28,13 +28,6 @@ const route = ({
     ({ amountIn, amountInMax, amountOut, amountOutMin, amounts } = await getAmounts({ path, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }))
     if([amountIn, amountInMax, amountOut, amountOutMin].every((amount)=>{ return amount == undefined })) { return resolve() }
 
-    console.log('WITHOUT SLIPPAGE ===== ');
-    console.log('amounts', amounts.map((amount)=>amount.toString()));
-    console.log('amountIn', amountIn.toString());
-    console.log('amountInMax', amountInMax.toString());
-    console.log('amountOut', amountOut.toString());
-    console.log('amountOutMin', amountOutMin.toString());
-
     ({ amountIn, amountInMax, amountOut, amountOutMin, amounts } = await calculateAmountsWithSlippage({
       exchange,
       path,
@@ -43,13 +36,6 @@ const route = ({
       amountIn, amountInMax, amountOut, amountOutMin,
       amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput,
     }))
-
-    console.log('WITH SLIPPAGE =====> ');
-    console.log('amounts', amounts.map((amount)=>amount.toString()));
-    console.log('amountIn', amountIn.toString());
-    console.log('amountInMax', amountInMax.toString());
-    console.log('amountOut', amountOut.toString());
-    console.log('amountOutMin', amountOutMin.toString());
 
     let transaction = await getTransaction({
       exchange,

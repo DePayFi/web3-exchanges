@@ -33,15 +33,9 @@ const getInstructionData = ({ pair, amountIn, amountOutMin, amountOut, amountInM
       },
       data,
     )
-    console.log('FIX IN')
-    console.log('amountIn', amountIn.toString())
-    console.log('amountOutMin', amountOutMin.toString())
   } else if (fix === 'out') {
     LAYOUT = struct([u8("instruction"), u64("maxAmountIn"), u64("amountOut")])
     data = Buffer.alloc(LAYOUT.span)
-    console.log('FIX OUT')
-    console.log('amountInMax', amountInMax.toString())
-    console.log('amountOut', amountOut.toString())
     LAYOUT.encode(
       {
         instruction: 11,
@@ -113,7 +107,6 @@ const getTransaction = async ({
   fromAddress
 }) => {
 
-  console.log('getTransaction amounts', amounts.map((amount)=>amount.toString()))
 
   let instructions = []
   let transaction = { blockchain: 'solana', instructions }
@@ -171,13 +164,9 @@ const getTransaction = async ({
   }))
 
   let simulation = new Transaction({ feePayer: new PublicKey('2UgCJaHU5y8NC4uWQcZYeV9a5RyYLF7iKYCybCsdFFD1') })
-  console.log('instructions.length', instructions.length)
   instructions.forEach((instruction)=>simulation.add(instruction))
 
   let result
-  console.log('SIMULATE')
-  try{ result = await provider('solana').simulateTransaction(simulation) } catch(e) { console.log('error', e) }
-  console.log('SIMULATION RESULT', result)
   
   return transaction
 }
