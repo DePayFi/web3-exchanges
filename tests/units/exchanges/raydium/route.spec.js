@@ -63,7 +63,7 @@ describe('raydium', () => {
     })
   })
 
-   describe('route token to token', ()=>{
+   describe('route token to token via 1 pool', ()=>{
 
     let tokenIn = CONSTANTS[blockchain].USD
     let decimalsIn = CONSTANTS[blockchain].USD_DECIMALS
@@ -71,7 +71,7 @@ describe('raydium', () => {
     let decimalsOut = CONSTANTS[blockchain].DECIMALS
     let path = [tokenIn, tokenOut]
 
-    it('routes a token to token swap for given amountOut on raydium', async ()=> {
+    it('routes a token to token swap via 1 pool for given amountOut on raydium', async ()=> {
 
       let amountOut = 1
       let amountOutBN = ethers.utils.parseUnits(amountOut.toString(), decimalsOut)
@@ -116,7 +116,7 @@ describe('raydium', () => {
       })
     })
 
-    it('routes a token to token swap for given amountOutMin on raydium', async ()=> {
+    it('routes a token to token swap via 1 pool for given amountOutMin on raydium', async ()=> {
 
       let amountOutMin = 1
       let amountOutMinBN = ethers.utils.parseUnits(amountOutMin.toString(), decimalsOut)
@@ -161,7 +161,7 @@ describe('raydium', () => {
       })
     })
 
-    it('routes a token to token swap for given amountIn on raydium', async ()=> {
+    it('routes a token to token swap via 1 pool for given amountIn on raydium', async ()=> {
       let amountOutMin = 1
       let amountOutMinBN = ethers.utils.parseUnits(amountOutMin.toString(), decimalsOut)
       let amountIn = 43
@@ -197,7 +197,7 @@ describe('raydium', () => {
             params: {
               instruction: 9,
               amountIn: '43000000',
-              amountOut: '1286769480',
+              amountOut: '1285482711',
             },
             keys: mockTransactionKeys({ pair, market, fromAddress })
           }]
@@ -205,7 +205,7 @@ describe('raydium', () => {
       })
     })
 
-    it('routes a token to token swap for given amountInMax on raydium', async ()=> {
+    it('routes a token to token swap via 1 pool for given amountInMax on raydium', async ()=> {
       let amountOutMin = 1
       let amountOutMinBN = ethers.utils.parseUnits(amountOutMin.toString(), decimalsOut)
       let amountInMax = 43
@@ -241,7 +241,7 @@ describe('raydium', () => {
             params: {
               instruction: 11,
               amountIn: '43000000',
-              amountOut: '1286769480',
+              amountOut: '1285482711',
             },
             keys: mockTransactionKeys({ pair, market, fromAddress })
           }]

@@ -59,15 +59,23 @@ let supported = ['ethereum', 'bsc', 'polygon', 'solana'];
 supported.evm = ['ethereum', 'bsc', 'polygon'];
 supported.solana = ['solana'];
 
-const calculateAmountInWithSlippage = async ({ exchange, path, amountIn, amountOut })=>{
+const DEFAULT_SLIPPAGE = '0.5'; // percent
+const STABLECOIN_SLIPPAGE = '0.1'; // percent
 
-  let defaultSlippage = '0.5'; // %
+const getDefaultSlippage = ({ amountIn, amountOut })=>{
   if(
     parseInt(amountIn.mul(10000).div(amountOut).sub(10000).toString(), 10)
     < 100
-  ) { // stable coin swap
-    defaultSlippage = '0.1'; // %
+  ) {
+    return STABLECOIN_SLIPPAGE
+  } else {
+    return DEFAULT_SLIPPAGE
   }
+};
+
+const calculateAmountInWithSlippage = async ({ exchange, path, amountIn, amountOut })=>{
+
+  let defaultSlippage = getDefaultSlippage({ amountIn, amountOut });
 
   let newAmountInWithDefaultSlippageBN = amountIn.add(amountIn.mul(parseFloat(defaultSlippage)*100).div(10000));
 
@@ -150,6 +158,62 @@ const calculateAmountInWithSlippage = async ({ exchange, path, amountIn, amountO
   }
 
   return newAmountInWithDefaultSlippageBN
+};
+
+const calculateAmountOutLessSlippage = async ({ exchange, path, amountOut, amountIn })=>{
+  let defaultSlippage = getDefaultSlippage({ amountIn, amountOut });
+
+  let newAmountOutWithoutDefaultSlippageBN = amountOut.sub(amountOut.mul(parseFloat(defaultSlippage)*100).div(10000));
+
+  return newAmountOutWithoutDefaultSlippageBN
+};
+
+const calculateAmountsWithSlippage = async ({
+  exchange,
+  path,
+  amounts,
+  tokenIn, tokenOut,
+  amountIn, amountInMax, amountOut, amountOutMin,
+  amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput,
+})=>{
+  if(amountOutMinInput || amountOutInput) {
+    if(supported.evm.includes(exchange.blockchain)) {
+      amountIn = amountInMax = await calculateAmountInWithSlippage({ exchange, path, amountIn, amountOut: (amountOutMinInput || amountOut) });
+    } else if(supported.solana.includes(exchange.blockchain)){
+      let amountsWithSlippage = [];
+      await Promise.all(path.map((step, index)=>{
+        if(index != 0) {
+          let amountWithSlippage = calculateAmountInWithSlippage({ exchange, path: [path[index-1], path[index]], amountIn: amounts[index-1], amountOut: amounts[index] });
+          amountWithSlippage.then((amount)=>amountsWithSlippage.push(amount));
+          return amountWithSlippage
+        }
+      }));
+      amountsWithSlippage.push(amounts[amounts.length-1]);
+      amounts = amountsWithSlippage;
+      amountIn = amountInMax = amounts[0];
+    }
+  } else if(amountInMaxInput || amountInInput) {
+    if(supported.solana.includes(exchange.blockchain)){
+      let amountsWithSlippage = [];
+      await Promise.all(path.map((step, index)=>{
+        if(index !== 0 && index < path.length-1) {
+          amountsWithSlippage.unshift(amounts[index]);
+        } else if(index === path.length-1) {
+          let amountWithSlippage = calculateAmountOutLessSlippage({ exchange, path: [path[index-1], path[index]], amountIn: amounts[index-1], amountOut: amounts[index] });
+          amountWithSlippage.then((amount)=>{
+            amountsWithSlippage.unshift(amount);
+            return amount
+          });
+          return amountWithSlippage
+        }
+      }));
+      amountsWithSlippage.push(amounts[0]);
+      amounts = amountsWithSlippage.slice().reverse();
+      amountOut = amountOutMin = amounts[amounts.length-1];
+    }
+  }
+
+  return({ amountIn, amountInMax, amountOut, amountOutMin, amounts })
 };
 
 const fixAddress = (address)=>{
@@ -265,13 +329,18 @@ const route$1 = ({
     if (path === undefined || path.length == 0) { return resolve() }
     let [amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput] = [amountIn, amountOut, amountInMax, amountOutMin];
 
-    let amountsIn, amountsOut;
-    ({ amountIn, amountInMax, amountOut, amountOutMin, amountsIn, amountsOut } = await getAmounts({ path, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }));
+    let amounts; // includes intermediary amounts for longer routes
+    ({ amountIn, amountInMax, amountOut, amountOutMin, amounts } = await getAmounts({ path, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }));
     if([amountIn, amountInMax, amountOut, amountOutMin].every((amount)=>{ return amount == undefined })) { return resolve() }
 
-    if(amountOutMinInput || amountOutInput) {
-      amountIn = amountInMax = await calculateAmountInWithSlippage({ exchange, path, amountIn, amountOut: (amountOutMinInput || amountOut) });
-    }
+    ({ amountIn, amountInMax, amountOut, amountOutMin, amounts } = await calculateAmountsWithSlippage({
+      exchange,
+      path,
+      amounts,
+      tokenIn, tokenOut,
+      amountIn, amountInMax, amountOut, amountOutMin,
+      amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput,
+    }));
 
     let transaction = await getTransaction({
       exchange,
@@ -280,12 +349,11 @@ const route$1 = ({
       amountInMax,
       amountOut,
       amountOutMin,
+      amounts,
       amountInInput,
       amountOutInput,
       amountInMaxInput,
       amountOutMinInput,
-      amountsIn,
-      amountsOut,
       toAddress,
       fromAddress
     });
@@ -499,7 +567,7 @@ let findPath$3 = async ({ tokenIn, tokenOut }) => {
   return path
 };
 
-let getAmountOut$3 = ({ path, amountIn, tokenIn, tokenOut }) => {
+let getAmountOut$2 = ({ path, amountIn, tokenIn, tokenOut }) => {
   return new Promise((resolve) => {
     request({
       blockchain: 'bsc',
@@ -518,7 +586,7 @@ let getAmountOut$3 = ({ path, amountIn, tokenIn, tokenOut }) => {
   })
 };
 
-let getAmountIn$3 = ({ path, amountOut, block }) => {
+let getAmountIn$2 = ({ path, amountOut, block }) => {
   return new Promise((resolve) => {
     request({
       blockchain: 'bsc',
@@ -546,28 +614,28 @@ let getAmounts$3 = async ({
   amountOutMin
 }) => {
   if (amountOut) {
-    amountIn = await getAmountIn$3({ path, amountOut, tokenIn, tokenOut });
+    amountIn = await getAmountIn$2({ path, amountOut, tokenIn, tokenOut });
     if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
       return {}
     } else if (amountInMax === undefined) {
       amountInMax = amountIn;
     }
   } else if (amountIn) {
-    amountOut = await getAmountOut$3({ path, amountIn, tokenIn, tokenOut });
+    amountOut = await getAmountOut$2({ path, amountIn, tokenIn, tokenOut });
     if (amountOut == undefined || amountOutMin && amountOut.lt(amountOutMin)) {
       return {}
     } else if (amountOutMin === undefined) {
       amountOutMin = amountOut;
     }
   } else if(amountOutMin) {
-    amountIn = await getAmountIn$3({ path, amountOut: amountOutMin, tokenIn, tokenOut });
+    amountIn = await getAmountIn$2({ path, amountOut: amountOutMin, tokenIn, tokenOut });
     if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
       return {}
     } else if (amountInMax === undefined) {
       amountInMax = amountIn;
     }
   } else if(amountInMax) {
-    amountOut = await getAmountOut$3({ path, amountIn: amountInMax, tokenIn, tokenOut });
+    amountOut = await getAmountOut$2({ path, amountIn: amountInMax, tokenIn, tokenOut });
     if (amountOut == undefined ||amountOutMin && amountOut.lt(amountOutMin)) {
       return {}
     } else if (amountOutMin === undefined) {
@@ -641,7 +709,7 @@ var pancakeswap = new Exchange(
   Object.assign(basics$3, {
     findPath: findPath$3,
     getAmounts: getAmounts$3,
-    getAmountIn: getAmountIn$3,
+    getAmountIn: getAmountIn$2,
     getTransaction: getTransaction$3,
   })
 );
@@ -781,7 +849,7 @@ let findPath$2 = async ({ tokenIn, tokenOut }) => {
   return path
 };
 
-let getAmountOut$2 = ({ path, amountIn, tokenIn, tokenOut }) => {
+let getAmountOut$1 = ({ path, amountIn, tokenIn, tokenOut }) => {
   return new Promise((resolve) => {
     request({
       blockchain: 'polygon',
@@ -800,7 +868,7 @@ let getAmountOut$2 = ({ path, amountIn, tokenIn, tokenOut }) => {
   })
 };
 
-let getAmountIn$2 = ({ path, amountOut, block }) => {
+let getAmountIn$1 = ({ path, amountOut, block }) => {
   return new Promise((resolve) => {
     request({
       blockchain: 'polygon',
@@ -828,28 +896,28 @@ let getAmounts$2 = async ({
   amountOutMin
 }) => {
   if (amountOut) {
-    amountIn = await getAmountIn$2({ path, amountOut, tokenIn, tokenOut });
+    amountIn = await getAmountIn$1({ path, amountOut, tokenIn, tokenOut });
     if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
       return {}
     } else if (amountInMax === undefined) {
       amountInMax = amountIn;
     }
   } else if (amountIn) {
-    amountOut = await getAmountOut$2({ path, amountIn, tokenIn, tokenOut });
+    amountOut = await getAmountOut$1({ path, amountIn, tokenIn, tokenOut });
     if (amountOut == undefined || amountOutMin && amountOut.lt(amountOutMin)) {
       return {}
     } else if (amountOutMin === undefined) {
       amountOutMin = amountOut;
     }
   } else if(amountOutMin) {
-    amountIn = await getAmountIn$2({ path, amountOut: amountOutMin, tokenIn, tokenOut });
+    amountIn = await getAmountIn$1({ path, amountOut: amountOutMin, tokenIn, tokenOut });
     if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
       return {}
     } else if (amountInMax === undefined) {
       amountInMax = amountIn;
     }
   } else if(amountInMax) {
-    amountOut = await getAmountOut$2({ path, amountIn: amountInMax, tokenIn, tokenOut });
+    amountOut = await getAmountOut$1({ path, amountIn: amountInMax, tokenIn, tokenOut });
     if (amountOut == undefined ||amountOutMin && amountOut.lt(amountOutMin)) {
       return {}
     } else if (amountOutMin === undefined) {
@@ -921,7 +989,7 @@ var quickswap = new Exchange(
   Object.assign(basics$2, {
     findPath: findPath$2,
     getAmounts: getAmounts$2,
-    getAmountIn: getAmountIn$2,
+    getAmountIn: getAmountIn$1,
     getTransaction: getTransaction$2,
   })
 );
@@ -1242,7 +1310,7 @@ const getInfo = async (pair)=>{
   return info
 };
 
-let getAmountOut$1 = async ({ path, amountIn }) => {
+let getAmountsOut = async ({ path, amountIn }) => {
   
   let amounts = [amountIn];  
   await Promise.all(path.map(async (step, i)=>{
@@ -1259,10 +1327,10 @@ let getAmountOut$1 = async ({ path, amountIn }) => {
     const amountOut = reserveOut.mul(amountInWithFee).div(denominator);
     amounts.push(amountOut);
   }));
-  return amounts[amounts.length-1]
+  return amounts
 };
 
-let getAmountIn$1 = async({ path, amountOut }) => {
+let getAmountsIn = async({ path, amountOut }) => {
 
   path = path.slice().reverse();
   let amounts = [amountOut];
@@ -1271,7 +1339,9 @@ let getAmountIn$1 = async({ path, amountOut }) => {
     if(nextStep == undefined){ return }
     const pair = await getBestPair(step, nextStep);
     const info = await getInfo(pair);
+    pair.pubkey.toString();
     const baseMint = pair.data.baseMint.toString();
+    pair.data.quoteMint.toString();
     const reserves = [ethers.BigNumber.from(info.pool_coin_amount), ethers.BigNumber.from(info.pool_pc_amount)];
     const [reserveIn, reserveOut] = baseMint == step ? [reserves[1], reserves[0]] : [reserves[0], reserves[1]];
     const denominator = reserveOut.sub(amounts[i]);
@@ -1281,7 +1351,7 @@ let getAmountIn$1 = async({ path, amountOut }) => {
       .div(basics$1.pair.v4.LIQUIDITY_FEES_DENOMINATOR.sub(basics$1.pair.v4.LIQUIDITY_FEES_NUMERATOR));
     amounts.push(amountIn);
   }));
-  return amounts[amounts.length-1]
+  return amounts.slice().reverse()
 };
 
 let getAmounts$1 = async ({
@@ -1293,36 +1363,47 @@ let getAmounts$1 = async ({
   amountInMax,
   amountOutMin
 }) => {
+  let amounts;
   if (amountOut) {
-    amountIn = await getAmountIn$1({ path, amountOut, tokenIn, tokenOut });
+    amounts = await getAmountsIn({ path, amountOut, tokenIn, tokenOut });
+    amountIn = amounts ? amounts[0] : undefined;
     if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
       return {}
     } else if (amountInMax === undefined) {
       amountInMax = amountIn;
     }
   } else if (amountIn) {
-    amountOut = await getAmountOut$1({ path, amountIn, tokenIn, tokenOut });
+    amounts = await getAmountsOut({ path, amountIn, tokenIn, tokenOut });
+    amountOut = amounts ? amounts[amounts.length-1] : undefined;
     if (amountOut == undefined || amountOutMin && amountOut.lt(amountOutMin)) {
       return {}
     } else if (amountOutMin === undefined) {
       amountOutMin = amountOut;
     }
   } else if(amountOutMin) {
-    amountIn = await getAmountIn$1({ path, amountOut: amountOutMin, tokenIn, tokenOut });
+    amounts = await getAmountsIn({ path, amountOut: amountOutMin, tokenIn, tokenOut });
+    amountIn = amounts ? amounts[0] : undefined;
     if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
       return {}
     } else if (amountInMax === undefined) {
       amountInMax = amountIn;
     }
   } else if(amountInMax) {
-    amountOut = await getAmountOut$1({ path, amountIn: amountInMax, tokenIn, tokenOut });
+    amounts = await getAmountsOut({ path, amountIn: amountInMax, tokenIn, tokenOut });
+    amountOut = amounts ? amounts[amounts.length-1] : undefined;
     if (amountOut == undefined ||amountOutMin && amountOut.lt(amountOutMin)) {
       return {}
     } else if (amountOutMin === undefined) {
       amountOutMin = amountOut;
     }
   }
-  return { amountOut, amountIn, amountInMax, amountOutMin }
+  return {
+    amountOut: (amountOut || amountOutMin),
+    amountIn: (amountIn || amountInMax),
+    amountInMax: (amountInMax || amountIn),
+    amountOutMin: (amountOutMin || amountOut),
+    amounts
+  }
 };
 
 const getInstructionData = ({ pair, amountIn, amountOutMin, amountOut, amountInMax, fix })=> {
@@ -1339,15 +1420,9 @@ const getInstructionData = ({ pair, amountIn, amountOutMin, amountOut, amountInM
       },
       data,
     );
-    console.log('FIX IN');
-    console.log('amountIn', amountIn.toString());
-    console.log('amountOutMin', amountOutMin.toString());
   } else if (fix === 'out') {
     LAYOUT = struct([u8("instruction"), u64("maxAmountIn"), u64("amountOut")]);
     data = Buffer.alloc(LAYOUT.span);
-    console.log('FIX OUT');
-    console.log('amountInMax', amountInMax.toString());
-    console.log('amountOut', amountOut.toString());
     LAYOUT.encode(
       {
         instruction: 11,
@@ -1400,7 +1475,6 @@ const getInstructionKeys = async ({ tokenIn, tokenOut, pair, market, fromAddress
     { pubkey: new PublicKey(tokenAccountOut), isWritable: true, isSigner: false },
     { pubkey: new PublicKey(fromAddress), isWritable: false, isSigner: true },
   ];
-  console.log('keys', keys.map((key)=>key.pubkey.toString()));
   return keys
 };
 
@@ -1411,6 +1485,7 @@ const getTransaction$1 = async ({
   amountInMax,
   amountOut,
   amountOutMin,
+  amounts,
   amountInInput,
   amountOutInput,
   amountInMaxInput,
@@ -1418,6 +1493,7 @@ const getTransaction$1 = async ({
   toAddress,
   fromAddress
 }) => {
+
 
   let instructions = [];
   let transaction = { blockchain: 'solana', instructions };
@@ -1435,18 +1511,7 @@ const getTransaction$1 = async ({
   } else {
     pairs = [await getBestPair(tokenIn, tokenMiddle), await getBestPair(tokenMiddle, tokenOut)];
     markets = [await getMarket(pairs[0].data.marketId.toString()), await getMarket(pairs[1].data.marketId.toString())];
-    if (amountOutInput || amountOutMinInput) {
-      amountMiddle = await calculateAmountInWithSlippage({
-        exchange,
-        path: [path[path.length-2], path[path.length-1]],
-        amountIn: await getAmountIn$1({ path: [path[path.length-2], path[path.length-1]], amountOut: (amountOut || amountOutMin) }),
-        amountOut: (amountOut || amountOutMin)
-      });
-      console.log('amountMiddle with slippage', amountMiddle.toString());
-      console.log('amountMiddle with slippage', amountMiddle.toString());
-    } else {
-      amountMiddle = await getAmountOut$1({ path: [path[0], path[1]], amountIn: (amountIn || amountInMax) });
-    }
+    amountMiddle = amounts[1];
   }
 
   await Promise.all(pairs.map(async (pair, index)=>{
@@ -1468,14 +1533,12 @@ const getTransaction$1 = async ({
       stepTokenOut = tokenOut;
       stepAmountIn = stepAmountInMax = amountMiddle;
       stepFix = 'in';
-      // console.log('stepTokenIn', stepTokenIn)
-      // console.log('stepTokenOut', stepTokenOut)
     }
     instructions.push(
       new TransactionInstruction({
         programId: new PublicKey(basics$1.pair.v4.address),
         keys: await getInstructionKeys({ tokenIn: stepTokenIn, tokenOut: stepTokenOut, pair, market, fromAddress, toAddress }),
-        data: getInstructionData({ 
+        data: getInstructionData({
           pair,
           amountIn: stepAmountIn,
           amountOutMin: stepAmountOutMin,
@@ -1488,13 +1551,7 @@ const getTransaction$1 = async ({
   }));
 
   let simulation = new Transaction({ feePayer: new PublicKey('2UgCJaHU5y8NC4uWQcZYeV9a5RyYLF7iKYCybCsdFFD1') });
-  console.log('instructions.length', instructions.length);
   instructions.forEach((instruction)=>simulation.add(instruction));
-
-  let result;
-  console.log('SIMULATE');
-  try{ result = await provider('solana').simulateTransaction(simulation); } catch(e) { console.log('error', e); }
-  console.log('SIMULATION RESULT', result);
   
   return transaction
 };
@@ -1503,7 +1560,8 @@ var raydium = new Exchange(
   Object.assign(basics$1, {
     findPath: findPath$1,
     getAmounts: getAmounts$1,
-    getAmountIn: getAmountIn$1,
+    getAmountsIn,
+    getAmountsOut,
     getTransaction: getTransaction$1,
   })
 );
