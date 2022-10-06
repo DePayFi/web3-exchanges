@@ -75,8 +75,6 @@ describe('raydium', () => {
 
       let amountOut = 1
       let amountOutBN = ethers.utils.parseUnits(amountOut.toString(), decimalsOut)
-      let fetchedAmountIn = 43
-      let fetchedAmountInBN = ethers.utils.parseUnits(fetchedAmountIn.toString(), decimalsIn)
       let pair = '58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2'
       let market = '9wFFyRfZBsuAha4YcuxcXLKwMxJR43S7fPfQLusDBzvT'
 
@@ -110,7 +108,14 @@ describe('raydium', () => {
               amountIn: '33450402',
               amountOut: '1000000000',
             },
-            keys: mockTransactionKeys({ pair, market, fromAddress })
+            keys: mockTransactionKeys({
+              pair,
+              market,
+              marketAuthority: 'F8Vyqk3unwxkXukZFQeYyGmFfTG3CAX4v24iyrjEYBJV',
+              fromAddress,
+              tokenAccountIn: 'F7e4iBrxoSmHhEzhuBcXXs1KAknYvEoZWieiocPvrCD9',
+              tokenAccountOut: '5nrTLrjSCNQ4uTVr9BxBUcwf4G4Dwuo8H5wQAQgxand8'
+            })
           }]
         }
       })
@@ -120,8 +125,6 @@ describe('raydium', () => {
 
       let amountOutMin = 1
       let amountOutMinBN = ethers.utils.parseUnits(amountOutMin.toString(), decimalsOut)
-      let fetchedAmountIn = 43
-      let fetchedAmountInBN = ethers.utils.parseUnits(fetchedAmountIn.toString(), decimalsIn)
       let pair = '58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2'
       let market = '9wFFyRfZBsuAha4YcuxcXLKwMxJR43S7fPfQLusDBzvT'
 
@@ -155,7 +158,14 @@ describe('raydium', () => {
               amountIn: '33450402',
               amountOut: '1000000000',
             },
-            keys: mockTransactionKeys({ pair, market, fromAddress })
+            keys: mockTransactionKeys({
+              pair,
+              market,
+              marketAuthority: 'F8Vyqk3unwxkXukZFQeYyGmFfTG3CAX4v24iyrjEYBJV',
+              fromAddress,
+              tokenAccountIn: 'F7e4iBrxoSmHhEzhuBcXXs1KAknYvEoZWieiocPvrCD9',
+              tokenAccountOut: '5nrTLrjSCNQ4uTVr9BxBUcwf4G4Dwuo8H5wQAQgxand8'
+            })
           }]
         }
       })
@@ -199,7 +209,14 @@ describe('raydium', () => {
               amountIn: '43000000',
               amountOut: '1285482711',
             },
-            keys: mockTransactionKeys({ pair, market, fromAddress })
+            keys: mockTransactionKeys({
+              pair,
+              market,
+              marketAuthority: 'F8Vyqk3unwxkXukZFQeYyGmFfTG3CAX4v24iyrjEYBJV',
+              fromAddress,
+              tokenAccountIn: 'F7e4iBrxoSmHhEzhuBcXXs1KAknYvEoZWieiocPvrCD9',
+              tokenAccountOut: '5nrTLrjSCNQ4uTVr9BxBUcwf4G4Dwuo8H5wQAQgxand8'
+            })
           }]
         }
       })
@@ -243,8 +260,409 @@ describe('raydium', () => {
               amountIn: '43000000',
               amountOut: '1285482711',
             },
-            keys: mockTransactionKeys({ pair, market, fromAddress })
+            keys: mockTransactionKeys({
+              pair,
+              market,
+              marketAuthority: 'F8Vyqk3unwxkXukZFQeYyGmFfTG3CAX4v24iyrjEYBJV',
+              fromAddress,
+              tokenAccountIn: 'F7e4iBrxoSmHhEzhuBcXXs1KAknYvEoZWieiocPvrCD9',
+              tokenAccountOut: '5nrTLrjSCNQ4uTVr9BxBUcwf4G4Dwuo8H5wQAQgxand8'
+            })
           }]
+        }
+      })
+    })
+  })
+
+  describe('route NATIVE to token via 1 pool', ()=>{
+
+    let tokenIn = CONSTANTS[blockchain].NATIVE
+    let decimalsIn = CONSTANTS[blockchain].DECIMALS
+    let tokenOut = CONSTANTS[blockchain].WRAPPED
+    let decimalsOut = CONSTANTS[blockchain].DECIMALS
+    let path = [tokenIn, tokenOut]
+
+    it.only('routes NATIVE to token swap via 1 pool for given amountOut on raydium', async ()=> {
+
+      let amountOut = 1
+      let amountOutBN = ethers.utils.parseUnits(amountOut.toString(), decimalsOut)
+      let pair = '58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2'
+      let market = '9wFFyRfZBsuAha4YcuxcXLKwMxJR43S7fPfQLusDBzvT'
+
+      mockTokenAccounts({ owner: fromAddress, token: tokenIn, accounts: [] })
+      mockTokenAccounts({ owner: fromAddress, token: tokenOut, accounts: [] })
+      mockPair({ tokenIn, tokenOut, pair, market, 
+        baseReserve: 300000000000000,
+        quoteReserve: 10000000000000,
+      })
+      mockMarket({ market })
+
+      await testRouting({
+        provider: provider(blockchain),
+        blockchain,
+        exchange,
+        tokenIn,
+        decimalsIn,
+        tokenOut,
+        decimalsOut,
+        path,
+        amountOut,
+        fromAddress,
+        toAddress,
+        transaction: {
+          blockchain,
+          instructions: [{
+            to: Raydium.pair.v4.address,
+            api: struct([u8("instruction"), u64("amountIn"), u64("amountOut")]),
+            params: {
+              instruction: 11,
+              amountIn: '33450402',
+              amountOut: '1000000000',
+            },
+            keys: mockTransactionKeys({
+              pair,
+              market,
+              marketAuthority: 'F8Vyqk3unwxkXukZFQeYyGmFfTG3CAX4v24iyrjEYBJV',
+              fromAddress,
+              tokenAccountIn: 'F7e4iBrxoSmHhEzhuBcXXs1KAknYvEoZWieiocPvrCD9',
+              tokenAccountOut: '5nrTLrjSCNQ4uTVr9BxBUcwf4G4Dwuo8H5wQAQgxand8'
+            })
+          }]
+        }
+      })
+    })
+  })
+
+  describe('route token to token via 2 pools', ()=>{
+
+    let tokenIn = '9LzCMqDgTKYz9Drzqnpgee3SGa89up3a247ypMj2xrqM' // AUDIUS
+    let decimalsIn = 8
+    let tokenMiddle = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v' // USDC
+    let decimalsMiddle = 6
+    let tokenOut = 'StepAscQoEioFxxWGnh2sLBDFp9d8rvKz2Yp39iDpyT' // STEPN
+    let decimalsOut = 9
+    let path = [tokenIn, tokenMiddle, tokenOut]
+
+    it('routes a token to token swap via 2 pools for given amountOut on raydium', async ()=> {
+
+      let amountOut = 1
+      let amountOutBN = ethers.utils.parseUnits(amountOut.toString(), decimalsOut)
+      let pairs = [ // Raydium
+        '4EbdAfaShVDNeHm6GbXZX3xsKccRHdTbR5962Bvya8xt', // AUDIO-USDC
+        '4Sx1NLrQiK4b9FdLKe2DhQ9FHvRzJhzKN3LoD6BrEPnf', // STEP-USDC
+      ]
+      let markets = [ // Serum
+        'FxquLRmVMPXiS84FFSp8q5fbVExhLkX85yiXucyu7xSC', // AUDIO-USDC
+        '97qCB4cAVSTthvJu3eNoEx6AY6DLuRDtCoPm5Tdyg77S', // STEP-USDC 
+      ]
+
+      mockTokenAccounts({ owner: fromAddress, token: tokenIn, accounts: [] })
+      mockTokenAccounts({ owner: fromAddress, token: tokenMiddle, accounts: [] })
+      mockTokenAccounts({ owner: fromAddress, token: tokenOut, accounts: [] })
+      mockPair({ tokenIn, tokenOut: tokenMiddle, pair: pairs[0], market: markets[0], 
+        baseReserve: 9152000000000,
+        quoteReserve: 16602000000,
+      })
+      mockMarket({ market: markets[0] })
+      mockPair({ tokenIn: tokenMiddle, tokenOut, pair: pairs[1], market: markets[1], 
+        baseReserve: 703345000000000,
+        quoteReserve: 182596000000,
+      })
+      mockMarket({ market: markets[1] })
+
+      await testRouting({
+        provider: provider(blockchain),
+        blockchain,
+        exchange,
+        tokenIn,
+        decimalsIn,
+        tokenOut,
+        decimalsOut,
+        path,
+        amountOut,
+        fromAddress,
+        toAddress,
+        transaction: {
+          blockchain,
+          from: fromAddress,
+          instructions: [
+            {
+              to: Raydium.pair.v4.address,
+              api: struct([u8("instruction"), u64("amountIn"), u64("amountOut")]),
+              params: {
+                instruction: 11,
+                amountIn: '740642659534923',
+                amountOut: '3902251747122',
+              },
+              keys: mockTransactionKeys({
+                pair: pairs[0],
+                market: markets[0],
+                marketAuthority: '6bhvdkoTfqfmLxiMhTBU9quSVDgRHYhmRbFBpTNQVvxF',
+                fromAddress, 
+                tokenAccountIn: '3VCor9E7BmH83jds6Nvwu2FNcjEZqgcocqAiyiB9dEG4',
+                tokenAccountOut: 'F7e4iBrxoSmHhEzhuBcXXs1KAknYvEoZWieiocPvrCD9',
+              })
+            },{
+              to: Raydium.pair.v4.address,
+              api: struct([u8("instruction"), u64("amountIn"), u64("amountOut")]),
+              params: {
+                instruction: 9,
+                amountIn: '3902251747122',
+                amountOut: '1000000000',
+              },
+              keys: mockTransactionKeys({
+                pair: pairs[1],
+                market: markets[1],
+                marketAuthority: 'FbwU5U1Doj2PSKRJi7pnCny4dFPPJURwALkFhHwdHaMW',
+                fromAddress,
+                tokenAccountIn: 'F7e4iBrxoSmHhEzhuBcXXs1KAknYvEoZWieiocPvrCD9',
+                tokenAccountOut: 'BKaytRHisVsQ4onoNGTw6JH8qv31aUHENGDEsXq8nEk9',
+              })
+            }
+          ]
+        }
+      })
+    })
+
+    it('routes a token to token swap via 2 pools for given amountOutMin on raydium', async ()=> {
+
+      let amountOutMin = 1
+      let amountOutMinBN = ethers.utils.parseUnits(amountOutMin.toString(), decimalsOut)
+      let pairs = [ // Raydium
+        '4EbdAfaShVDNeHm6GbXZX3xsKccRHdTbR5962Bvya8xt', // AUDIO-USDC
+        '4Sx1NLrQiK4b9FdLKe2DhQ9FHvRzJhzKN3LoD6BrEPnf', // STEP-USDC
+      ]
+      let markets = [ // Serum
+        'FxquLRmVMPXiS84FFSp8q5fbVExhLkX85yiXucyu7xSC', // AUDIO-USDC
+        '97qCB4cAVSTthvJu3eNoEx6AY6DLuRDtCoPm5Tdyg77S', // STEP-USDC 
+      ]
+
+      mockTokenAccounts({ owner: fromAddress, token: tokenIn, accounts: [] })
+      mockTokenAccounts({ owner: fromAddress, token: tokenMiddle, accounts: [] })
+      mockTokenAccounts({ owner: fromAddress, token: tokenOut, accounts: [] })
+      mockPair({ tokenIn, tokenOut: tokenMiddle, pair: pairs[0], market: markets[0], 
+        baseReserve: 9152000000000,
+        quoteReserve: 16602000000,
+      })
+      mockMarket({ market: markets[0] })
+      mockPair({ tokenIn: tokenMiddle, tokenOut, pair: pairs[1], market: markets[1], 
+        baseReserve: 703345000000000,
+        quoteReserve: 182596000000,
+      })
+      mockMarket({ market: markets[1] })
+
+      await testRouting({
+        provider: provider(blockchain),
+        blockchain,
+        exchange,
+        tokenIn,
+        decimalsIn,
+        tokenOut,
+        decimalsOut,
+        path,
+        amountOutMin,
+        fromAddress,
+        toAddress,
+        transaction: {
+          blockchain,
+          from: fromAddress,
+          instructions: [
+            {
+              to: Raydium.pair.v4.address,
+              api: struct([u8("instruction"), u64("amountIn"), u64("amountOut")]),
+              params: {
+                instruction: 11,
+                amountIn: '740642659534923',
+                amountOut: '3902251747122',
+              },
+              keys: mockTransactionKeys({
+                pair: pairs[0],
+                market: markets[0],
+                marketAuthority: '6bhvdkoTfqfmLxiMhTBU9quSVDgRHYhmRbFBpTNQVvxF',
+                fromAddress, 
+                tokenAccountIn: '3VCor9E7BmH83jds6Nvwu2FNcjEZqgcocqAiyiB9dEG4',
+                tokenAccountOut: 'F7e4iBrxoSmHhEzhuBcXXs1KAknYvEoZWieiocPvrCD9',
+              })
+            },{
+              to: Raydium.pair.v4.address,
+              api: struct([u8("instruction"), u64("amountIn"), u64("amountOut")]),
+              params: {
+                instruction: 9,
+                amountIn: '3902251747122',
+                amountOut: '1000000000',
+              },
+              keys: mockTransactionKeys({
+                pair: pairs[1],
+                market: markets[1],
+                marketAuthority: 'FbwU5U1Doj2PSKRJi7pnCny4dFPPJURwALkFhHwdHaMW',
+                fromAddress,
+                tokenAccountIn: 'F7e4iBrxoSmHhEzhuBcXXs1KAknYvEoZWieiocPvrCD9',
+                tokenAccountOut: 'BKaytRHisVsQ4onoNGTw6JH8qv31aUHENGDEsXq8nEk9',
+              })
+            }
+          ]
+        }
+      })
+    })
+
+    it('routes a token to token swap via 2 pools for given amountIn on raydium', async ()=> {
+
+      let amountIn = 1
+      let amountInBN = ethers.utils.parseUnits(amountIn.toString(), decimalsOut)
+      let pairs = [ // Raydium
+        '4EbdAfaShVDNeHm6GbXZX3xsKccRHdTbR5962Bvya8xt', // AUDIO-USDC
+        '4Sx1NLrQiK4b9FdLKe2DhQ9FHvRzJhzKN3LoD6BrEPnf', // STEP-USDC
+      ]
+      let markets = [ // Serum
+        'FxquLRmVMPXiS84FFSp8q5fbVExhLkX85yiXucyu7xSC', // AUDIO-USDC
+        '97qCB4cAVSTthvJu3eNoEx6AY6DLuRDtCoPm5Tdyg77S', // STEP-USDC 
+      ]
+
+      mockTokenAccounts({ owner: fromAddress, token: tokenIn, accounts: [] })
+      mockTokenAccounts({ owner: fromAddress, token: tokenMiddle, accounts: [] })
+      mockTokenAccounts({ owner: fromAddress, token: tokenOut, accounts: [] })
+      mockPair({ tokenIn, tokenOut: tokenMiddle, pair: pairs[0], market: markets[0], 
+        baseReserve: 9152000000000,
+        quoteReserve: 16602000000,
+      })
+      mockMarket({ market: markets[0] })
+      mockPair({ tokenIn: tokenMiddle, tokenOut, pair: pairs[1], market: markets[1], 
+        baseReserve: 703345000000000,
+        quoteReserve: 182596000000,
+      })
+      mockMarket({ market: markets[1] })
+
+      await testRouting({
+        provider: provider(blockchain),
+        blockchain,
+        exchange,
+        tokenIn,
+        decimalsIn,
+        tokenOut,
+        decimalsOut,
+        path,
+        amountIn,
+        fromAddress,
+        toAddress,
+        transaction: {
+          blockchain,
+          from: fromAddress,
+          instructions: [
+            {
+              to: Raydium.pair.v4.address,
+              api: struct([u8("instruction"), u64("amountIn"), u64("amountOut")]),
+              params: {
+                instruction: 11,
+                amountIn: '100000000',
+                amountOut: '384019134271',
+              },
+              keys: mockTransactionKeys({
+                pair: pairs[0],
+                market: markets[0],
+                marketAuthority: '6bhvdkoTfqfmLxiMhTBU9quSVDgRHYhmRbFBpTNQVvxF',
+                fromAddress, 
+                tokenAccountIn: '3VCor9E7BmH83jds6Nvwu2FNcjEZqgcocqAiyiB9dEG4',
+                tokenAccountOut: 'F7e4iBrxoSmHhEzhuBcXXs1KAknYvEoZWieiocPvrCD9',
+              })
+            },{
+              to: Raydium.pair.v4.address,
+              api: struct([u8("instruction"), u64("amountIn"), u64("amountOut")]),
+              params: {
+                instruction: 9,
+                amountIn: '384019134271',
+                amountOut: '475825776007818',
+              },
+              keys: mockTransactionKeys({
+                pair: pairs[1],
+                market: markets[1],
+                marketAuthority: 'FbwU5U1Doj2PSKRJi7pnCny4dFPPJURwALkFhHwdHaMW',
+                fromAddress,
+                tokenAccountIn: 'F7e4iBrxoSmHhEzhuBcXXs1KAknYvEoZWieiocPvrCD9',
+                tokenAccountOut: 'BKaytRHisVsQ4onoNGTw6JH8qv31aUHENGDEsXq8nEk9',
+              })
+            }
+          ]
+        }
+      })
+    })
+
+    it('routes a token to token swap via 2 pools for given amountInMax on raydium', async ()=> {
+
+      let amountInMax = 1
+      let amountInMaxBN = ethers.utils.parseUnits(amountInMax.toString(), decimalsOut)
+      let pairs = [ // Raydium
+        '4EbdAfaShVDNeHm6GbXZX3xsKccRHdTbR5962Bvya8xt', // AUDIO-USDC
+        '4Sx1NLrQiK4b9FdLKe2DhQ9FHvRzJhzKN3LoD6BrEPnf', // STEP-USDC
+      ]
+      let markets = [ // Serum
+        'FxquLRmVMPXiS84FFSp8q5fbVExhLkX85yiXucyu7xSC', // AUDIO-USDC
+        '97qCB4cAVSTthvJu3eNoEx6AY6DLuRDtCoPm5Tdyg77S', // STEP-USDC 
+      ]
+
+      mockTokenAccounts({ owner: fromAddress, token: tokenIn, accounts: [] })
+      mockTokenAccounts({ owner: fromAddress, token: tokenMiddle, accounts: [] })
+      mockTokenAccounts({ owner: fromAddress, token: tokenOut, accounts: [] })
+      mockPair({ tokenIn, tokenOut: tokenMiddle, pair: pairs[0], market: markets[0], 
+        baseReserve: 9152000000000,
+        quoteReserve: 16602000000,
+      })
+      mockMarket({ market: markets[0] })
+      mockPair({ tokenIn: tokenMiddle, tokenOut, pair: pairs[1], market: markets[1], 
+        baseReserve: 703345000000000,
+        quoteReserve: 182596000000,
+      })
+      mockMarket({ market: markets[1] })
+
+      await testRouting({
+        provider: provider(blockchain),
+        blockchain,
+        exchange,
+        tokenIn,
+        decimalsIn,
+        tokenOut,
+        decimalsOut,
+        path,
+        amountInMax,
+        fromAddress,
+        toAddress,
+        transaction: {
+          blockchain,
+          from: fromAddress,
+          instructions: [
+            {
+              to: Raydium.pair.v4.address,
+              api: struct([u8("instruction"), u64("amountIn"), u64("amountOut")]),
+              params: {
+                instruction: 11,
+                amountIn: '100000000',
+                amountOut: '384019134271',
+              },
+              keys: mockTransactionKeys({
+                pair: pairs[0],
+                market: markets[0],
+                marketAuthority: '6bhvdkoTfqfmLxiMhTBU9quSVDgRHYhmRbFBpTNQVvxF',
+                fromAddress, 
+                tokenAccountIn: '3VCor9E7BmH83jds6Nvwu2FNcjEZqgcocqAiyiB9dEG4',
+                tokenAccountOut: 'F7e4iBrxoSmHhEzhuBcXXs1KAknYvEoZWieiocPvrCD9',
+              })
+            },{
+              to: Raydium.pair.v4.address,
+              api: struct([u8("instruction"), u64("amountIn"), u64("amountOut")]),
+              params: {
+                instruction: 9,
+                amountIn: '384019134271',
+                amountOut: '475825776007818',
+              },
+              keys: mockTransactionKeys({
+                pair: pairs[1],
+                market: markets[1],
+                marketAuthority: 'FbwU5U1Doj2PSKRJi7pnCny4dFPPJURwALkFhHwdHaMW',
+                fromAddress,
+                tokenAccountIn: 'F7e4iBrxoSmHhEzhuBcXXs1KAknYvEoZWieiocPvrCD9',
+                tokenAccountOut: 'BKaytRHisVsQ4onoNGTw6JH8qv31aUHENGDEsXq8nEk9',
+              })
+            }
+          ]
         }
       })
     })

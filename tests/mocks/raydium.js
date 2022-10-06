@@ -267,7 +267,7 @@ function mockMarket({ market }) {
   })
 }
 
-function mockTransactionKeys({ pair, market, fromAddress }) {
+function mockTransactionKeys({ pair, market, marketAuthority, fromAddress, tokenAccountIn, tokenAccountOut }) {
   return [
     { pubkey: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA', isWritable: false, isSigner: false },
     { pubkey: pair, isWritable: true, isSigner: false },
@@ -283,9 +283,9 @@ function mockTransactionKeys({ pair, market, fromAddress }) {
     { pubkey: 'H9dZt8kvz1Fe5FyRisb77KcYTaN8LEbuVAfJSnAaEABz', isWritable: true, isSigner: false },
     { pubkey: 'GGcdamvNDYFhAXr93DWyJ8QmwawUHLCyRqWL3KngtLRa', isWritable: true, isSigner: false },
     { pubkey: '22jHt5WmosAykp3LPGSAKgY45p7VGh4DFWSwp21SWBVe', isWritable: true, isSigner: false },
-    { pubkey: 'F8Vyqk3unwxkXukZFQeYyGmFfTG3CAX4v24iyrjEYBJV', isWritable: false, isSigner: false },
-    { pubkey: 'F7e4iBrxoSmHhEzhuBcXXs1KAknYvEoZWieiocPvrCD9', isWritable: true, isSigner: false },
-    { pubkey: '5nrTLrjSCNQ4uTVr9BxBUcwf4G4Dwuo8H5wQAQgxand8', isWritable: true, isSigner: false },
+    { pubkey: marketAuthority, isWritable: false, isSigner: false },
+    { pubkey: tokenAccountIn, isWritable: true, isSigner: false },
+    { pubkey: tokenAccountOut, isWritable: true, isSigner: false },
     { pubkey: fromAddress, isWritable: false, isSigner: true },
   ]
 }

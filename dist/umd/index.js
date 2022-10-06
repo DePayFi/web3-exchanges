@@ -1495,8 +1495,7 @@
   }) => {
 
 
-    let instructions = [];
-    let transaction = { blockchain: 'solana', instructions };
+    let transaction = { blockchain: 'solana' };
 
     const fixedPath = fixPath$1(path);
     if(fixedPath.length > 3) { throw 'Raydium can only handle fixed paths with a max length of 3!' }
@@ -1514,7 +1513,7 @@
       amountMiddle = amounts[1];
     }
 
-    await Promise.all(pairs.map(async (pair, index)=>{
+    transaction.instructions = await Promise.all(pairs.map(async (pair, index)=>{
       let market = markets[index];
       let stepTokenIn = tokenIn;
       let stepTokenOut = tokenOut;
@@ -1534,25 +1533,20 @@
         stepAmountIn = stepAmountInMax = amountMiddle;
         stepFix = 'in';
       }
-      instructions.push(
-        new solanaWeb3_js.TransactionInstruction({
-          programId: new solanaWeb3_js.PublicKey(basics$1.pair.v4.address),
-          keys: await getInstructionKeys({ tokenIn: stepTokenIn, tokenOut: stepTokenOut, pair, market, fromAddress, toAddress }),
-          data: getInstructionData({
-            pair,
-            amountIn: stepAmountIn,
-            amountOutMin: stepAmountOutMin,
-            amountOut: stepAmountOut,
-            amountInMax: stepAmountInMax,
-            fix: stepFix
-          }),
-        })
-      );
+      return new solanaWeb3_js.TransactionInstruction({
+        programId: new solanaWeb3_js.PublicKey(basics$1.pair.v4.address),
+        keys: await getInstructionKeys({ tokenIn: stepTokenIn, tokenOut: stepTokenOut, pair, market, fromAddress, toAddress }),
+        data: getInstructionData({
+          pair,
+          amountIn: stepAmountIn,
+          amountOutMin: stepAmountOutMin,
+          amountOut: stepAmountOut,
+          amountInMax: stepAmountInMax,
+          fix: stepFix
+        }),
+      })
     }));
 
-    let simulation = new solanaWeb3_js.Transaction({ feePayer: new solanaWeb3_js.PublicKey('2UgCJaHU5y8NC4uWQcZYeV9a5RyYLF7iKYCybCsdFFD1') });
-    instructions.forEach((instruction)=>simulation.add(instruction));
-    
     return transaction
   };
 

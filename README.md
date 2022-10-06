@@ -107,12 +107,10 @@ A Swap configuration is fed into the `route` function:
 
 The following combinations of provided amounts are possible:
 
-- Pass `amountIn`. `amountOutMin` will be calculated automatically and can vary
-- Pass `amountOut`. `amountInMax` will be calculated automatically and can vary
-- Pass `amountInMax`. `amountOut` will be calculated automatically and can vary
 - Pass `amountOutMin`. `amountIn` will be calculated automatically and can vary
-- Pass `amountIn` and `amountOutMax` (routing will stick to both)
-- Pass `amountOut` and `amountInMin` (routing will stick to both)
+- Pass `amountInMax`. `amountOut` will be calculated automatically and can vary
+- Pass `amountOut`. `amountInMax` will be calculated automatically and can vary
+- Pass `amountIn`. `amountOutMin` will be calculated automatically and can vary
 
 ### Route
 

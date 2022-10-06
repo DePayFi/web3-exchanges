@@ -127,7 +127,7 @@ const getTransaction = async ({
     amountMiddle = amounts[1]
   }
 
-  await Promise.all(pairs.map(async (pair, index)=>{
+  transaction.instructions = await Promise.all(pairs.map(async (pair, index)=>{
     let market = markets[index]
     let stepTokenIn = tokenIn
     let stepTokenOut = tokenOut
@@ -147,27 +147,20 @@ const getTransaction = async ({
       stepAmountIn = stepAmountInMax = amountMiddle
       stepFix = 'in'
     }
-    instructions.push(
-      new TransactionInstruction({
-        programId: new PublicKey(Raydium.pair.v4.address),
-        keys: await getInstructionKeys({ tokenIn: stepTokenIn, tokenOut: stepTokenOut, pair, market, fromAddress, toAddress }),
-        data: getInstructionData({
-          pair,
-          amountIn: stepAmountIn,
-          amountOutMin: stepAmountOutMin,
-          amountOut: stepAmountOut,
-          amountInMax: stepAmountInMax,
-          fix: stepFix
-        }),
-      })
-    )
+    return new TransactionInstruction({
+      programId: new PublicKey(Raydium.pair.v4.address),
+      keys: await getInstructionKeys({ tokenIn: stepTokenIn, tokenOut: stepTokenOut, pair, market, fromAddress, toAddress }),
+      data: getInstructionData({
+        pair,
+        amountIn: stepAmountIn,
+        amountOutMin: stepAmountOutMin,
+        amountOut: stepAmountOut,
+        amountInMax: stepAmountInMax,
+        fix: stepFix
+      }),
+    })
   }))
 
-  let simulation = new Transaction({ feePayer: new PublicKey('2UgCJaHU5y8NC4uWQcZYeV9a5RyYLF7iKYCybCsdFFD1') })
-  instructions.forEach((instruction)=>simulation.add(instruction))
-
-  let result
-  
   return transaction
 }
 
