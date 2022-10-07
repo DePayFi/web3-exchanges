@@ -20,7 +20,9 @@ const route = ({
   tokenIn = fixAddress(tokenIn)
   tokenOut = fixAddress(tokenOut)
   return new Promise(async (resolve)=> {
-    let path = await findPath({ tokenIn, tokenOut })
+    let { path, fixedPath } = await findPath({ tokenIn, tokenOut })
+    console.log('path', path)
+    console.log('fixedPath', fixedPath)
     if (path === undefined || path.length == 0) { return resolve() }
     let [amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput] = [amountIn, amountOut, amountInMax, amountOutMin];
 
@@ -28,9 +30,19 @@ const route = ({
     ({ amountIn, amountInMax, amountOut, amountOutMin, amounts } = await getAmounts({ path, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }))
     if([amountIn, amountInMax, amountOut, amountOutMin].every((amount)=>{ return amount == undefined })) { return resolve() }
 
+    console.log('calculateAmountsWithSlippage ===')
+    console.log('path', path)
+    console.log('amounts', amounts.map((a)=>a.toString()))
+    console.log('tokenIn', tokenIn)
+    console.log('tokenOut', tokenOut)
+    console.log('amountIn', amountIn.toString())
+    console.log('amountInMax', amountInMax.toString())
+    console.log('amountOut', amountOut.toString())
+    console.log('amountOutMin', amountOutMin.toString());
+
     ({ amountIn, amountInMax, amountOut, amountOutMin, amounts } = await calculateAmountsWithSlippage({
       exchange,
-      path,
+      fixedPath,
       amounts,
       tokenIn, tokenOut,
       amountIn, amountInMax, amountOut, amountOutMin,

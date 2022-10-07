@@ -1,5 +1,5 @@
 import Raydium from '../basics'
-import { Buffer, BN, Transaction, TransactionInstruction, PublicKey, struct, u8, u64 } from '@depay/solana-web3.js'
+import { Buffer, BN, Transaction, TransactionInstruction, SystemProgram, PublicKey, Keypair, struct, u8, u64 } from '@depay/solana-web3.js'
 import { CONSTANTS } from '@depay/web3-constants'
 import { fixPath } from './path'
 import { getBestPair } from './pairs'
@@ -49,18 +49,20 @@ const getInstructionData = ({ pair, amountIn, amountOutMin, amountOut, amountInM
   return data
 }
 
-const getInstructionKeys = async ({ tokenIn, tokenOut, pair, market, fromAddress, toAddress })=> {
+const getInstructionKeys = async ({ tokenIn, tokenInAccount, tokenOut, tokenOutAccount, pair, market, fromAddress, toAddress })=> {
 
-  let tokenAccountIn
-  tokenAccountIn = await Token.solana.findAccount({ owner: fromAddress, token: tokenIn })
-  if(!tokenAccountIn) {
-    tokenAccountIn = await Token.solana.findProgramAddress({ owner: fromAddress, token: tokenIn })
+  if(!tokenInAccount) {
+    tokenInAccount = await Token.solana.findAccount({ owner: fromAddress, token: tokenIn })
+  }
+  if(!tokenInAccount) {
+    tokenInAccount = await Token.solana.findProgramAddress({ owner: fromAddress, token: tokenIn })
   }
 
-  let tokenAccountOut
-  tokenAccountOut = await Token.solana.findAccount({ owner: toAddress, token: tokenOut })
-  if(!tokenAccountOut) {
-    tokenAccountOut = await Token.solana.findProgramAddress({ owner: toAddress, token: tokenOut })
+  if(!tokenOutAccount) {
+    tokenOutAccount = await Token.solana.findAccount({ owner: toAddress, token: tokenOut })
+  }
+  if(!tokenOutAccount) {
+    tokenOutAccount = await Token.solana.findProgramAddress({ owner: toAddress, token: tokenOut })
   }
 
   let marketAuthority = await getMarketAuthority(pair.data.marketProgramId, pair.data.marketId)
@@ -84,8 +86,8 @@ const getInstructionKeys = async ({ tokenIn, tokenOut, pair, market, fromAddress
     { pubkey: market.quoteVault, isWritable: true, isSigner: false },
     { pubkey: marketAuthority, isWritable: false, isSigner: false },
     // user
-    { pubkey: new PublicKey(tokenAccountIn), isWritable: true, isSigner: false },
-    { pubkey: new PublicKey(tokenAccountOut), isWritable: true, isSigner: false },
+    { pubkey: new PublicKey(tokenInAccount), isWritable: true, isSigner: false },
+    { pubkey: new PublicKey(tokenOutAccount), isWritable: true, isSigner: false },
     { pubkey: new PublicKey(fromAddress), isWritable: false, isSigner: true },
   ]
   return keys
@@ -107,9 +109,8 @@ const getTransaction = async ({
   fromAddress
 }) => {
 
-
+  let transaction = { blockchain: 'solana' }
   let instructions = []
-  let transaction = { blockchain: 'solana', instructions }
 
   const fixedPath = fixPath(path)
   if(fixedPath.length > 3) { throw 'Raydium can only handle fixed paths with a max length of 3!' }
@@ -127,7 +128,31 @@ const getTransaction = async ({
     amountMiddle = amounts[1]
   }
 
-  transaction.instructions = await Promise.all(pairs.map(async (pair, index)=>{
+  let startsWrapped = (path[0] === CONSTANTS.solana.NATIVE && fixedPath[0] === CONSTANTS.solana.WRAPPED)
+  let endsUnwrapped = (path[path.length-1] === CONSTANTS.solana.NATIVE && fixedPath[fixedPath.length-1] === CONSTANTS.solana.WRAPPED)
+  let wrappedAccount
+  if(startsWrapped) {
+    const rent = await provider('solana').getMinimumBalanceForRentExemption(Token.solana.TOKEN_LAYOUT.span)
+    wrappedAccount = Keypair.generate().publicKey.toString()
+    instructions.push(
+      SystemProgram.createAccount({
+        fromPubkey: new PublicKey(fromAddress),
+        newAccountPubkey: new PublicKey(wrappedAccount),
+        programId: new PublicKey(Token.solana.TOKEN_PROGRAM),
+        space: Token.solana.TOKEN_LAYOUT.span,
+        lamports: new BN(amountIn.toString()).add(new BN(rent))
+      })
+    )
+    instructions.push(
+      Token.solana.initializeAccountInstruction({
+        account: wrappedAccount,
+        token: CONSTANTS.solana.WRAPPED,
+        owner: fromAddress
+      })
+    )
+  }
+
+  await Promise.all(pairs.map(async (pair, index)=>{
     let market = markets[index]
     let stepTokenIn = tokenIn
     let stepTokenOut = tokenOut
@@ -136,31 +161,67 @@ const getTransaction = async ({
     let stepAmountOut = amountOut || amountOutMin
     let stepAmountOutMin = amountOutMin || amountOut
     let stepFix = (amountInInput || amountOutMinInput) ? 'in' : 'out'
+    let stepTokenInAccount = startsWrapped ? wrappedAccount : undefined
+    let stepTokenOutAccount = endsUnwrapped ? wrappedAccount : undefined
     if(pairs.length === 2 && index === 0) {
       stepTokenIn = tokenIn
       stepTokenOut = tokenMiddle
       stepAmountOut = stepAmountOutMin = amountMiddle
       stepFix = 'out'
+      if(wrappedAccount) { stepTokenOutAccount = wrappedAccount }
     } else if(pairs.length === 2 && index === 1) {
       stepTokenIn = tokenMiddle
       stepTokenOut = tokenOut
       stepAmountIn = stepAmountInMax = amountMiddle
       stepFix = 'in'
+      if(wrappedAccount) { stepTokenInAccount = wrappedAccount }
     }
-    return new TransactionInstruction({
-      programId: new PublicKey(Raydium.pair.v4.address),
-      keys: await getInstructionKeys({ tokenIn: stepTokenIn, tokenOut: stepTokenOut, pair, market, fromAddress, toAddress }),
-      data: getInstructionData({
-        pair,
-        amountIn: stepAmountIn,
-        amountOutMin: stepAmountOutMin,
-        amountOut: stepAmountOut,
-        amountInMax: stepAmountInMax,
-        fix: stepFix
-      }),
-    })
+    instructions.push(
+      new TransactionInstruction({
+        programId: new PublicKey(Raydium.pair.v4.address),
+        keys: await getInstructionKeys({
+          tokenIn: stepTokenIn,
+          tokenInAccount: stepTokenInAccount,
+          tokenOut: stepTokenOut,
+          tokenOutAccount: stepTokenOutAccount,
+          pair,
+          market,
+          fromAddress,
+          toAddress
+        }),
+        data: getInstructionData({
+          pair,
+          amountIn: stepAmountIn,
+          amountOutMin: stepAmountOutMin,
+          amountOut: stepAmountOut,
+          amountInMax: stepAmountInMax,
+          fix: stepFix
+        }),
+      })
+    )
   }))
+  
+  if(path[0] === CONSTANTS['solana'].NATIVE && fixedPath[0] === CONSTANTS['solana'].WRAPPED) {
+    instructions.push(
+      Token.solana.closeAccountInstruction({
+        account: wrappedAccount,
+        owner: fromAddress
+      })
+    )
+  }
 
+  // // for DEBUGGING:
+  // 
+  // let simulation = new Transaction({ feePayer: new PublicKey('2UgCJaHU5y8NC4uWQcZYeV9a5RyYLF7iKYCybCsdFFD1') })
+  // console.log('instructions.length', instructions.length)
+  // instructions.forEach((instruction)=>simulation.add(instruction))
+  // let result
+  // console.log('SIMULATE')
+  // try{ result = await provider('solana').simulateTransaction(simulation) } catch(e) { console.log('error', e) }
+  // console.log('SIMULATION RESULT', result)
+  // console.log('instructions.length', instructions.length)
+
+  transaction.instructions = instructions
   return transaction
 }
 

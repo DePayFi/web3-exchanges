@@ -112,7 +112,7 @@ let findPath = async ({ tokenIn, tokenOut }) => {
     path.splice(path.length-1, 0, CONSTANTS.ethereum.WRAPPED)
   }
 
-  return path
+  return { path, fixedPath: fixPath(path) }
 }
 
 export {

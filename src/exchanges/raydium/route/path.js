@@ -35,10 +35,10 @@ let fixPath = (path) => {
 }
 
 let pathExists = async (path) => {
-  let fixedPath = fixPath(path)
-  if(fixedPath.length == 1) { return false }
+  if(path.length == 1) { return false }
+  path = fixPath(path)
   let pairs = []
-  if(await anyPairs(fixedPath[0], fixedPath[1]) || await anyPairs(fixedPath[1], fixedPath[0])) {
+  if(await anyPairs(path[0], path[1]) || await anyPairs(path[1], path[0])) {
     return true
   } else {
     return false
@@ -82,8 +82,7 @@ let findPath = async ({ tokenIn, tokenOut }) => {
   } else if(path?.length && path[path.length-1] == NATIVE) {
     path.splice(path.length-1, 0, WRAPPED)
   }
-
-  return path
+  return { path, fixedPath: fixPath(path) }
 }
 
 export {
