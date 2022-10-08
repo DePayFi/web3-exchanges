@@ -2,7 +2,7 @@ import { ethers } from 'ethers';
 import { request, provider } from '@depay/web3-client';
 import { Token } from '@depay/web3-tokens';
 import { CONSTANTS } from '@depay/web3-constants';
-import { struct, u64, u128, publicKey, seq, u8, blob, Buffer, PublicKey, TransactionInstruction, Transaction, BN } from '@depay/solana-web3.js';
+import { struct, u64, u128, publicKey, seq, u8, blob, Buffer, PublicKey, TransactionInstruction, Transaction, Keypair, SystemProgram, BN } from '@depay/solana-web3.js';
 
 let PancakeRouter = [{"inputs":[{"internalType":"address","name":"_factory","type":"address"},{"internalType":"address","name":"_WETH","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[],"name":"WETH","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"tokenA","type":"address"},{"internalType":"address","name":"tokenB","type":"address"},{"internalType":"uint256","name":"amountADesired","type":"uint256"},{"internalType":"uint256","name":"amountBDesired","type":"uint256"},{"internalType":"uint256","name":"amountAMin","type":"uint256"},{"internalType":"uint256","name":"amountBMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"addLiquidity","outputs":[{"internalType":"uint256","name":"amountA","type":"uint256"},{"internalType":"uint256","name":"amountB","type":"uint256"},{"internalType":"uint256","name":"liquidity","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"uint256","name":"amountTokenDesired","type":"uint256"},{"internalType":"uint256","name":"amountTokenMin","type":"uint256"},{"internalType":"uint256","name":"amountETHMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"addLiquidityETH","outputs":[{"internalType":"uint256","name":"amountToken","type":"uint256"},{"internalType":"uint256","name":"amountETH","type":"uint256"},{"internalType":"uint256","name":"liquidity","type":"uint256"}],"stateMutability":"payable","type":"function"},{"inputs":[],"name":"factory","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountOut","type":"uint256"},{"internalType":"uint256","name":"reserveIn","type":"uint256"},{"internalType":"uint256","name":"reserveOut","type":"uint256"}],"name":"getAmountIn","outputs":[{"internalType":"uint256","name":"amountIn","type":"uint256"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountIn","type":"uint256"},{"internalType":"uint256","name":"reserveIn","type":"uint256"},{"internalType":"uint256","name":"reserveOut","type":"uint256"}],"name":"getAmountOut","outputs":[{"internalType":"uint256","name":"amountOut","type":"uint256"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountOut","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"}],"name":"getAmountsIn","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountIn","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"}],"name":"getAmountsOut","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountA","type":"uint256"},{"internalType":"uint256","name":"reserveA","type":"uint256"},{"internalType":"uint256","name":"reserveB","type":"uint256"}],"name":"quote","outputs":[{"internalType":"uint256","name":"amountB","type":"uint256"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"address","name":"tokenA","type":"address"},{"internalType":"address","name":"tokenB","type":"address"},{"internalType":"uint256","name":"liquidity","type":"uint256"},{"internalType":"uint256","name":"amountAMin","type":"uint256"},{"internalType":"uint256","name":"amountBMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"removeLiquidity","outputs":[{"internalType":"uint256","name":"amountA","type":"uint256"},{"internalType":"uint256","name":"amountB","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"uint256","name":"liquidity","type":"uint256"},{"internalType":"uint256","name":"amountTokenMin","type":"uint256"},{"internalType":"uint256","name":"amountETHMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"removeLiquidityETH","outputs":[{"internalType":"uint256","name":"amountToken","type":"uint256"},{"internalType":"uint256","name":"amountETH","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"uint256","name":"liquidity","type":"uint256"},{"internalType":"uint256","name":"amountTokenMin","type":"uint256"},{"internalType":"uint256","name":"amountETHMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"removeLiquidityETHSupportingFeeOnTransferTokens","outputs":[{"internalType":"uint256","name":"amountETH","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"uint256","name":"liquidity","type":"uint256"},{"internalType":"uint256","name":"amountTokenMin","type":"uint256"},{"internalType":"uint256","name":"amountETHMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"},{"internalType":"bool","name":"approveMax","type":"bool"},{"internalType":"uint8","name":"v","type":"uint8"},{"internalType":"bytes32","name":"r","type":"bytes32"},{"internalType":"bytes32","name":"s","type":"bytes32"}],"name":"removeLiquidityETHWithPermit","outputs":[{"internalType":"uint256","name":"amountToken","type":"uint256"},{"internalType":"uint256","name":"amountETH","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"uint256","name":"liquidity","type":"uint256"},{"internalType":"uint256","name":"amountTokenMin","type":"uint256"},{"internalType":"uint256","name":"amountETHMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"},{"internalType":"bool","name":"approveMax","type":"bool"},{"internalType":"uint8","name":"v","type":"uint8"},{"internalType":"bytes32","name":"r","type":"bytes32"},{"internalType":"bytes32","name":"s","type":"bytes32"}],"name":"removeLiquidityETHWithPermitSupportingFeeOnTransferTokens","outputs":[{"internalType":"uint256","name":"amountETH","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"tokenA","type":"address"},{"internalType":"address","name":"tokenB","type":"address"},{"internalType":"uint256","name":"liquidity","type":"uint256"},{"internalType":"uint256","name":"amountAMin","type":"uint256"},{"internalType":"uint256","name":"amountBMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"},{"internalType":"bool","name":"approveMax","type":"bool"},{"internalType":"uint8","name":"v","type":"uint8"},{"internalType":"bytes32","name":"r","type":"bytes32"},{"internalType":"bytes32","name":"s","type":"bytes32"}],"name":"removeLiquidityWithPermit","outputs":[{"internalType":"uint256","name":"amountA","type":"uint256"},{"internalType":"uint256","name":"amountB","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountOut","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapETHForExactTokens","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountOutMin","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapExactETHForTokens","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountOutMin","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapExactETHForTokensSupportingFeeOnTransferTokens","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountIn","type":"uint256"},{"internalType":"uint256","name":"amountOutMin","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapExactTokensForETH","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountIn","type":"uint256"},{"internalType":"uint256","name":"amountOutMin","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapExactTokensForETHSupportingFeeOnTransferTokens","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountIn","type":"uint256"},{"internalType":"uint256","name":"amountOutMin","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapExactTokensForTokens","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountIn","type":"uint256"},{"internalType":"uint256","name":"amountOutMin","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapExactTokensForTokensSupportingFeeOnTransferTokens","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountOut","type":"uint256"},{"internalType":"uint256","name":"amountInMax","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapTokensForExactETH","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountOut","type":"uint256"},{"internalType":"uint256","name":"amountInMax","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapTokensForExactTokens","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"nonpayable","type":"function"},{"stateMutability":"payable","type":"receive"}];
 let PancakeFactory = [{"inputs":[{"internalType":"address","name":"_feeToSetter","type":"address"}],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"token0","type":"address"},{"indexed":true,"internalType":"address","name":"token1","type":"address"},{"indexed":false,"internalType":"address","name":"pair","type":"address"},{"indexed":false,"internalType":"uint256","name":"","type":"uint256"}],"name":"PairCreated","type":"event"},{"constant":true,"inputs":[],"name":"INIT_CODE_PAIR_HASH","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"allPairs","outputs":[{"internalType":"address","name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"allPairsLength","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"tokenA","type":"address"},{"internalType":"address","name":"tokenB","type":"address"}],"name":"createPair","outputs":[{"internalType":"address","name":"pair","type":"address"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"feeTo","outputs":[{"internalType":"address","name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"feeToSetter","outputs":[{"internalType":"address","name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"address","name":"","type":"address"}],"name":"getPair","outputs":[{"internalType":"address","name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"_feeTo","type":"address"}],"name":"setFeeTo","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"_feeToSetter","type":"address"}],"name":"setFeeToSetter","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"}];
@@ -73,7 +73,7 @@ const getDefaultSlippage = ({ amountIn, amountOut })=>{
   }
 };
 
-const calculateAmountInWithSlippage = async ({ exchange, path, amountIn, amountOut })=>{
+const calculateAmountInWithSlippage = async ({ exchange, fixedPath, amountIn, amountOut })=>{
 
   let defaultSlippage = getDefaultSlippage({ amountIn, amountOut });
 
@@ -92,7 +92,7 @@ const calculateAmountInWithSlippage = async ({ exchange, path, amountIn, amountO
 
   const lastAmountsIn = await Promise.all(blocks.map(async (block)=>{
     return await exchange.getAmountIn({
-      path: path,
+      fixedPath,
       amountOut,
       block
     })
@@ -160,7 +160,7 @@ const calculateAmountInWithSlippage = async ({ exchange, path, amountIn, amountO
   return newAmountInWithDefaultSlippageBN
 };
 
-const calculateAmountOutLessSlippage = async ({ exchange, path, amountOut, amountIn })=>{
+const calculateAmountOutLessSlippage = async ({ exchange, fixedPath, amountOut, amountIn })=>{
   let defaultSlippage = getDefaultSlippage({ amountIn, amountOut });
 
   let newAmountOutWithoutDefaultSlippageBN = amountOut.sub(amountOut.mul(parseFloat(defaultSlippage)*100).div(10000));
@@ -170,7 +170,7 @@ const calculateAmountOutLessSlippage = async ({ exchange, path, amountOut, amoun
 
 const calculateAmountsWithSlippage = async ({
   exchange,
-  path,
+  fixedPath,
   amounts,
   tokenIn, tokenOut,
   amountIn, amountInMax, amountOut, amountOutMin,
@@ -178,12 +178,12 @@ const calculateAmountsWithSlippage = async ({
 })=>{
   if(amountOutMinInput || amountOutInput) {
     if(supported.evm.includes(exchange.blockchain)) {
-      amountIn = amountInMax = await calculateAmountInWithSlippage({ exchange, path, amountIn, amountOut: (amountOutMinInput || amountOut) });
+      amountIn = amountInMax = await calculateAmountInWithSlippage({ exchange, fixedPath, amountIn, amountOut: (amountOutMinInput || amountOut) });
     } else if(supported.solana.includes(exchange.blockchain)){
       let amountsWithSlippage = [];
-      await Promise.all(path.map((step, index)=>{
+      await Promise.all(fixedPath.map((step, index)=>{
         if(index != 0) {
-          let amountWithSlippage = calculateAmountInWithSlippage({ exchange, path: [path[index-1], path[index]], amountIn: amounts[index-1], amountOut: amounts[index] });
+          let amountWithSlippage = calculateAmountInWithSlippage({ exchange, fixedPath: [fixedPath[index-1], fixedPath[index]], amountIn: amounts[index-1], amountOut: amounts[index] });
           amountWithSlippage.then((amount)=>amountsWithSlippage.push(amount));
           return amountWithSlippage
         }
@@ -195,11 +195,11 @@ const calculateAmountsWithSlippage = async ({
   } else if(amountInMaxInput || amountInInput) {
     if(supported.solana.includes(exchange.blockchain)){
       let amountsWithSlippage = [];
-      await Promise.all(path.map((step, index)=>{
-        if(index !== 0 && index < path.length-1) {
+      await Promise.all(fixedPath.map((step, index)=>{
+        if(index !== 0 && index < fixedPath.length-1) {
           amountsWithSlippage.unshift(amounts[index]);
-        } else if(index === path.length-1) {
-          let amountWithSlippage = calculateAmountOutLessSlippage({ exchange, path: [path[index-1], path[index]], amountIn: amounts[index-1], amountOut: amounts[index] });
+        } else if(index === fixedPath.length-1) {
+          let amountWithSlippage = calculateAmountOutLessSlippage({ exchange, fixedPath: [fixedPath[index-1], fixedPath[index]], amountIn: amounts[index-1], amountOut: amounts[index] });
           amountWithSlippage.then((amount)=>{
             amountsWithSlippage.unshift(amount);
             return amount
@@ -325,7 +325,7 @@ const route$1 = ({
   tokenIn = fixAddress(tokenIn);
   tokenOut = fixAddress(tokenOut);
   return new Promise(async (resolve)=> {
-    let path = await findPath({ tokenIn, tokenOut });
+    let { path, fixedPath } = await findPath({ tokenIn, tokenOut });
     if (path === undefined || path.length == 0) { return resolve() }
     let [amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput] = [amountIn, amountOut, amountInMax, amountOutMin];
 
@@ -335,7 +335,7 @@ const route$1 = ({
 
     ({ amountIn, amountInMax, amountOut, amountOutMin, amounts } = await calculateAmountsWithSlippage({
       exchange,
-      path,
+      fixedPath,
       amounts,
       tokenIn, tokenOut,
       amountIn, amountInMax, amountOut, amountOutMin,
@@ -564,7 +564,7 @@ let findPath$3 = async ({ tokenIn, tokenOut }) => {
     path.splice(path.length-1, 0, CONSTANTS.bsc.WRAPPED);
   }
 
-  return path
+  return { path, fixedPath: fixPath$3(path) }
 };
 
 let getAmountOut$2 = ({ path, amountIn, tokenIn, tokenOut }) => {
@@ -846,7 +846,7 @@ let findPath$2 = async ({ tokenIn, tokenOut }) => {
     path.splice(path.length-1, 0, CONSTANTS.polygon.WRAPPED);
   }
 
-  return path
+  return { path, fixedPath: fixPath$2(path) }
 };
 
 let getAmountOut$1 = ({ path, amountIn, tokenIn, tokenOut }) => {
@@ -1113,6 +1113,7 @@ const INITIALIZED = 1;
 const SWAP = 6;
 
 let getAccounts = async (base, quote) => {
+  console.log('get accounts');
   let accounts = await request(`solana://${basics$1.pair.v4.address}/getProgramAccounts`, {
     params: { filters: [
       { dataSize: basics$1.pair.v4.api.span },
@@ -1122,6 +1123,7 @@ let getAccounts = async (base, quote) => {
     api: basics$1.pair.v4.api,
     cache: 3600000,
   });
+  console.log('accounts');
   return accounts
 };
 
@@ -1169,6 +1171,7 @@ const USD = CONSTANTS.solana.USD;
 // as they are not the same!
 //
 let fixPath$1 = (path) => {
+  if(!path) { return }
   let fixedPath = path.map((token, index) => {
     if (
       token === NATIVE && path[index+1] != WRAPPED &&
@@ -1190,11 +1193,14 @@ let fixPath$1 = (path) => {
 };
 
 let pathExists$1 = async (path) => {
-  let fixedPath = fixPath$1(path);
-  if(fixedPath.length == 1) { return false }
-  if(await anyPairs(fixedPath[0], fixedPath[1]) || await anyPairs(fixedPath[1], fixedPath[0])) {
+  if(path.length == 1) { return false }
+  path = fixPath$1(path);
+  console.log('pathExists???', path);
+  if(await anyPairs(path[0], path[1]) || await anyPairs(path[1], path[0])) {
+    console.log('true');
     return true
   } else {
+    console.log('false');
     return false
   }
 };
@@ -1236,8 +1242,7 @@ let findPath$1 = async ({ tokenIn, tokenOut }) => {
   } else if(_optionalChain$1([path, 'optionalAccess', _2 => _2.length]) && path[path.length-1] == NATIVE) {
     path.splice(path.length-1, 0, WRAPPED);
   }
-
-  return path
+  return { path, fixedPath: fixPath$1(path) }
 };
 
 const getMarket = async (marketId)=> {
@@ -1363,6 +1368,7 @@ let getAmounts$1 = async ({
   amountInMax,
   amountOutMin
 }) => {
+  path = fixPath$1(path);
   let amounts;
   if (amountOut) {
     amounts = await getAmountsIn({ path, amountOut, tokenIn, tokenOut });
@@ -1436,18 +1442,20 @@ const getInstructionData = ({ pair, amountIn, amountOutMin, amountOut, amountInM
   return data
 };
 
-const getInstructionKeys = async ({ tokenIn, tokenOut, pair, market, fromAddress, toAddress })=> {
+const getInstructionKeys = async ({ tokenIn, tokenInAccount, tokenOut, tokenOutAccount, pair, market, fromAddress, toAddress })=> {
 
-  let tokenAccountIn;
-  tokenAccountIn = await Token.solana.findAccount({ owner: fromAddress, token: tokenIn });
-  if(!tokenAccountIn) {
-    tokenAccountIn = await Token.solana.findProgramAddress({ owner: fromAddress, token: tokenIn });
+  if(!tokenInAccount) {
+    tokenInAccount = await Token.solana.findAccount({ owner: fromAddress, token: tokenIn });
+  }
+  if(!tokenInAccount) {
+    tokenInAccount = await Token.solana.findProgramAddress({ owner: fromAddress, token: tokenIn });
   }
 
-  let tokenAccountOut;
-  tokenAccountOut = await Token.solana.findAccount({ owner: toAddress, token: tokenOut });
-  if(!tokenAccountOut) {
-    tokenAccountOut = await Token.solana.findProgramAddress({ owner: toAddress, token: tokenOut });
+  if(!tokenOutAccount) {
+    tokenOutAccount = await Token.solana.findAccount({ owner: toAddress, token: tokenOut });
+  }
+  if(!tokenOutAccount) {
+    tokenOutAccount = await Token.solana.findProgramAddress({ owner: toAddress, token: tokenOut });
   }
 
   let marketAuthority = await getMarketAuthority(pair.data.marketProgramId, pair.data.marketId);
@@ -1471,8 +1479,8 @@ const getInstructionKeys = async ({ tokenIn, tokenOut, pair, market, fromAddress
     { pubkey: market.quoteVault, isWritable: true, isSigner: false },
     { pubkey: marketAuthority, isWritable: false, isSigner: false },
     // user
-    { pubkey: new PublicKey(tokenAccountIn), isWritable: true, isSigner: false },
-    { pubkey: new PublicKey(tokenAccountOut), isWritable: true, isSigner: false },
+    { pubkey: new PublicKey(tokenInAccount), isWritable: true, isSigner: false },
+    { pubkey: new PublicKey(tokenOutAccount), isWritable: true, isSigner: false },
     { pubkey: new PublicKey(fromAddress), isWritable: false, isSigner: true },
   ];
   return keys
@@ -1494,8 +1502,8 @@ const getTransaction$1 = async ({
   fromAddress
 }) => {
 
-
   let transaction = { blockchain: 'solana' };
+  let instructions = [];
 
   const fixedPath = fixPath$1(path);
   if(fixedPath.length > 3) { throw 'Raydium can only handle fixed paths with a max length of 3!' }
@@ -1513,7 +1521,31 @@ const getTransaction$1 = async ({
     amountMiddle = amounts[1];
   }
 
-  transaction.instructions = await Promise.all(pairs.map(async (pair, index)=>{
+  let startsWrapped = (path[0] === CONSTANTS.solana.NATIVE && fixedPath[0] === CONSTANTS.solana.WRAPPED);
+  let endsUnwrapped = (path[path.length-1] === CONSTANTS.solana.NATIVE && fixedPath[fixedPath.length-1] === CONSTANTS.solana.WRAPPED);
+  let wrappedAccount;
+  if(startsWrapped) {
+    const rent = await provider('solana').getMinimumBalanceForRentExemption(Token.solana.TOKEN_LAYOUT.span);
+    wrappedAccount = Keypair.generate().publicKey.toString();
+    instructions.push(
+      SystemProgram.createAccount({
+        fromPubkey: new PublicKey(fromAddress),
+        newAccountPubkey: new PublicKey(wrappedAccount),
+        programId: new PublicKey(Token.solana.TOKEN_PROGRAM),
+        space: Token.solana.TOKEN_LAYOUT.span,
+        lamports: new BN(amountIn.toString()).add(new BN(rent))
+      })
+    );
+    instructions.push(
+      Token.solana.initializeAccountInstruction({
+        account: wrappedAccount,
+        token: CONSTANTS.solana.WRAPPED,
+        owner: fromAddress
+      })
+    );
+  }
+
+  await Promise.all(pairs.map(async (pair, index)=>{
     let market = markets[index];
     let stepTokenIn = tokenIn;
     let stepTokenOut = tokenOut;
@@ -1522,31 +1554,67 @@ const getTransaction$1 = async ({
     let stepAmountOut = amountOut || amountOutMin;
     let stepAmountOutMin = amountOutMin || amountOut;
     let stepFix = (amountInInput || amountOutMinInput) ? 'in' : 'out';
+    let stepTokenInAccount = startsWrapped ? wrappedAccount : undefined;
+    let stepTokenOutAccount = endsUnwrapped ? wrappedAccount : undefined;
     if(pairs.length === 2 && index === 0) {
       stepTokenIn = tokenIn;
       stepTokenOut = tokenMiddle;
       stepAmountOut = stepAmountOutMin = amountMiddle;
       stepFix = 'out';
+      if(wrappedAccount) { stepTokenOutAccount = wrappedAccount; }
     } else if(pairs.length === 2 && index === 1) {
       stepTokenIn = tokenMiddle;
       stepTokenOut = tokenOut;
       stepAmountIn = stepAmountInMax = amountMiddle;
       stepFix = 'in';
+      if(wrappedAccount) { stepTokenInAccount = wrappedAccount; }
     }
-    return new TransactionInstruction({
-      programId: new PublicKey(basics$1.pair.v4.address),
-      keys: await getInstructionKeys({ tokenIn: stepTokenIn, tokenOut: stepTokenOut, pair, market, fromAddress, toAddress }),
-      data: getInstructionData({
-        pair,
-        amountIn: stepAmountIn,
-        amountOutMin: stepAmountOutMin,
-        amountOut: stepAmountOut,
-        amountInMax: stepAmountInMax,
-        fix: stepFix
-      }),
-    })
+    instructions.push(
+      new TransactionInstruction({
+        programId: new PublicKey(basics$1.pair.v4.address),
+        keys: await getInstructionKeys({
+          tokenIn: stepTokenIn,
+          tokenInAccount: stepTokenInAccount,
+          tokenOut: stepTokenOut,
+          tokenOutAccount: stepTokenOutAccount,
+          pair,
+          market,
+          fromAddress,
+          toAddress
+        }),
+        data: getInstructionData({
+          pair,
+          amountIn: stepAmountIn,
+          amountOutMin: stepAmountOutMin,
+          amountOut: stepAmountOut,
+          amountInMax: stepAmountInMax,
+          fix: stepFix
+        }),
+      })
+    );
   }));
+  
+  if(path[0] === CONSTANTS['solana'].NATIVE && fixedPath[0] === CONSTANTS['solana'].WRAPPED) {
+    instructions.push(
+      Token.solana.closeAccountInstruction({
+        account: wrappedAccount,
+        owner: fromAddress
+      })
+    );
+  }
 
+  // // for DEBUGGING:
+  // 
+  // let simulation = new Transaction({ feePayer: new PublicKey('2UgCJaHU5y8NC4uWQcZYeV9a5RyYLF7iKYCybCsdFFD1') })
+  // console.log('instructions.length', instructions.length)
+  // instructions.forEach((instruction)=>simulation.add(instruction))
+  // let result
+  // console.log('SIMULATE')
+  // try{ result = await provider('solana').simulateTransaction(simulation) } catch(e) { console.log('error', e) }
+  // console.log('SIMULATION RESULT', result)
+  // console.log('instructions.length', instructions.length)
+
+  transaction.instructions = instructions;
   return transaction
 };
 
@@ -1692,7 +1760,7 @@ let findPath = async ({ tokenIn, tokenOut }) => {
     path.splice(path.length-1, 0, CONSTANTS.ethereum.WRAPPED);
   }
 
-  return path
+  return { path, fixedPath: fixPath(path) }
 };
 
 let getAmountOut = ({ path, amountIn, tokenIn, tokenOut }) => {

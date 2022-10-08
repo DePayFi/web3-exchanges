@@ -73,7 +73,7 @@
     }
   };
 
-  const calculateAmountInWithSlippage = async ({ exchange, path, amountIn, amountOut })=>{
+  const calculateAmountInWithSlippage = async ({ exchange, fixedPath, amountIn, amountOut })=>{
 
     let defaultSlippage = getDefaultSlippage({ amountIn, amountOut });
 
@@ -92,7 +92,7 @@
 
     const lastAmountsIn = await Promise.all(blocks.map(async (block)=>{
       return await exchange.getAmountIn({
-        path: path,
+        fixedPath,
         amountOut,
         block
       })
@@ -160,7 +160,7 @@
     return newAmountInWithDefaultSlippageBN
   };
 
-  const calculateAmountOutLessSlippage = async ({ exchange, path, amountOut, amountIn })=>{
+  const calculateAmountOutLessSlippage = async ({ exchange, fixedPath, amountOut, amountIn })=>{
     let defaultSlippage = getDefaultSlippage({ amountIn, amountOut });
 
     let newAmountOutWithoutDefaultSlippageBN = amountOut.sub(amountOut.mul(parseFloat(defaultSlippage)*100).div(10000));
@@ -170,7 +170,7 @@
 
   const calculateAmountsWithSlippage = async ({
     exchange,
-    path,
+    fixedPath,
     amounts,
     tokenIn, tokenOut,
     amountIn, amountInMax, amountOut, amountOutMin,
@@ -178,12 +178,12 @@
   })=>{
     if(amountOutMinInput || amountOutInput) {
       if(supported.evm.includes(exchange.blockchain)) {
-        amountIn = amountInMax = await calculateAmountInWithSlippage({ exchange, path, amountIn, amountOut: (amountOutMinInput || amountOut) });
+        amountIn = amountInMax = await calculateAmountInWithSlippage({ exchange, fixedPath, amountIn, amountOut: (amountOutMinInput || amountOut) });
       } else if(supported.solana.includes(exchange.blockchain)){
         let amountsWithSlippage = [];
-        await Promise.all(path.map((step, index)=>{
+        await Promise.all(fixedPath.map((step, index)=>{
           if(index != 0) {
-            let amountWithSlippage = calculateAmountInWithSlippage({ exchange, path: [path[index-1], path[index]], amountIn: amounts[index-1], amountOut: amounts[index] });
+            let amountWithSlippage = calculateAmountInWithSlippage({ exchange, fixedPath: [fixedPath[index-1], fixedPath[index]], amountIn: amounts[index-1], amountOut: amounts[index] });
             amountWithSlippage.then((amount)=>amountsWithSlippage.push(amount));
             return amountWithSlippage
           }
@@ -195,11 +195,11 @@
     } else if(amountInMaxInput || amountInInput) {
       if(supported.solana.includes(exchange.blockchain)){
         let amountsWithSlippage = [];
-        await Promise.all(path.map((step, index)=>{
-          if(index !== 0 && index < path.length-1) {
+        await Promise.all(fixedPath.map((step, index)=>{
+          if(index !== 0 && index < fixedPath.length-1) {
             amountsWithSlippage.unshift(amounts[index]);
-          } else if(index === path.length-1) {
-            let amountWithSlippage = calculateAmountOutLessSlippage({ exchange, path: [path[index-1], path[index]], amountIn: amounts[index-1], amountOut: amounts[index] });
+          } else if(index === fixedPath.length-1) {
+            let amountWithSlippage = calculateAmountOutLessSlippage({ exchange, fixedPath: [fixedPath[index-1], fixedPath[index]], amountIn: amounts[index-1], amountOut: amounts[index] });
             amountWithSlippage.then((amount)=>{
               amountsWithSlippage.unshift(amount);
               return amount
@@ -325,7 +325,7 @@
     tokenIn = fixAddress(tokenIn);
     tokenOut = fixAddress(tokenOut);
     return new Promise(async (resolve)=> {
-      let path = await findPath({ tokenIn, tokenOut });
+      let { path, fixedPath } = await findPath({ tokenIn, tokenOut });
       if (path === undefined || path.length == 0) { return resolve() }
       let [amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput] = [amountIn, amountOut, amountInMax, amountOutMin];
 
@@ -335,7 +335,7 @@
 
       ({ amountIn, amountInMax, amountOut, amountOutMin, amounts } = await calculateAmountsWithSlippage({
         exchange,
-        path,
+        fixedPath,
         amounts,
         tokenIn, tokenOut,
         amountIn, amountInMax, amountOut, amountOutMin,
@@ -564,7 +564,7 @@
       path.splice(path.length-1, 0, web3Constants.CONSTANTS.bsc.WRAPPED);
     }
 
-    return path
+    return { path, fixedPath: fixPath$3(path) }
   };
 
   let getAmountOut$2 = ({ path, amountIn, tokenIn, tokenOut }) => {
@@ -846,7 +846,7 @@
       path.splice(path.length-1, 0, web3Constants.CONSTANTS.polygon.WRAPPED);
     }
 
-    return path
+    return { path, fixedPath: fixPath$2(path) }
   };
 
   let getAmountOut$1 = ({ path, amountIn, tokenIn, tokenOut }) => {
@@ -1113,6 +1113,7 @@
   const SWAP = 6;
 
   let getAccounts = async (base, quote) => {
+    console.log('get accounts');
     let accounts = await web3Client.request(`solana://${basics$1.pair.v4.address}/getProgramAccounts`, {
       params: { filters: [
         { dataSize: basics$1.pair.v4.api.span },
@@ -1122,6 +1123,7 @@
       api: basics$1.pair.v4.api,
       cache: 3600000,
     });
+    console.log('accounts');
     return accounts
   };
 
@@ -1169,6 +1171,7 @@
   // as they are not the same!
   //
   let fixPath$1 = (path) => {
+    if(!path) { return }
     let fixedPath = path.map((token, index) => {
       if (
         token === NATIVE && path[index+1] != WRAPPED &&
@@ -1190,11 +1193,14 @@
   };
 
   let pathExists$1 = async (path) => {
-    let fixedPath = fixPath$1(path);
-    if(fixedPath.length == 1) { return false }
-    if(await anyPairs(fixedPath[0], fixedPath[1]) || await anyPairs(fixedPath[1], fixedPath[0])) {
+    if(path.length == 1) { return false }
+    path = fixPath$1(path);
+    console.log('pathExists???', path);
+    if(await anyPairs(path[0], path[1]) || await anyPairs(path[1], path[0])) {
+      console.log('true');
       return true
     } else {
+      console.log('false');
       return false
     }
   };
@@ -1236,8 +1242,7 @@
     } else if(_optionalChain$1([path, 'optionalAccess', _2 => _2.length]) && path[path.length-1] == NATIVE) {
       path.splice(path.length-1, 0, WRAPPED);
     }
-
-    return path
+    return { path, fixedPath: fixPath$1(path) }
   };
 
   const getMarket = async (marketId)=> {
@@ -1363,6 +1368,7 @@
     amountInMax,
     amountOutMin
   }) => {
+    path = fixPath$1(path);
     let amounts;
     if (amountOut) {
       amounts = await getAmountsIn({ path, amountOut, tokenIn, tokenOut });
@@ -1436,18 +1442,20 @@
     return data
   };
 
-  const getInstructionKeys = async ({ tokenIn, tokenOut, pair, market, fromAddress, toAddress })=> {
+  const getInstructionKeys = async ({ tokenIn, tokenInAccount, tokenOut, tokenOutAccount, pair, market, fromAddress, toAddress })=> {
 
-    let tokenAccountIn;
-    tokenAccountIn = await web3Tokens.Token.solana.findAccount({ owner: fromAddress, token: tokenIn });
-    if(!tokenAccountIn) {
-      tokenAccountIn = await web3Tokens.Token.solana.findProgramAddress({ owner: fromAddress, token: tokenIn });
+    if(!tokenInAccount) {
+      tokenInAccount = await web3Tokens.Token.solana.findAccount({ owner: fromAddress, token: tokenIn });
+    }
+    if(!tokenInAccount) {
+      tokenInAccount = await web3Tokens.Token.solana.findProgramAddress({ owner: fromAddress, token: tokenIn });
     }
 
-    let tokenAccountOut;
-    tokenAccountOut = await web3Tokens.Token.solana.findAccount({ owner: toAddress, token: tokenOut });
-    if(!tokenAccountOut) {
-      tokenAccountOut = await web3Tokens.Token.solana.findProgramAddress({ owner: toAddress, token: tokenOut });
+    if(!tokenOutAccount) {
+      tokenOutAccount = await web3Tokens.Token.solana.findAccount({ owner: toAddress, token: tokenOut });
+    }
+    if(!tokenOutAccount) {
+      tokenOutAccount = await web3Tokens.Token.solana.findProgramAddress({ owner: toAddress, token: tokenOut });
     }
 
     let marketAuthority = await getMarketAuthority(pair.data.marketProgramId, pair.data.marketId);
@@ -1471,8 +1479,8 @@
       { pubkey: market.quoteVault, isWritable: true, isSigner: false },
       { pubkey: marketAuthority, isWritable: false, isSigner: false },
       // user
-      { pubkey: new solanaWeb3_js.PublicKey(tokenAccountIn), isWritable: true, isSigner: false },
-      { pubkey: new solanaWeb3_js.PublicKey(tokenAccountOut), isWritable: true, isSigner: false },
+      { pubkey: new solanaWeb3_js.PublicKey(tokenInAccount), isWritable: true, isSigner: false },
+      { pubkey: new solanaWeb3_js.PublicKey(tokenOutAccount), isWritable: true, isSigner: false },
       { pubkey: new solanaWeb3_js.PublicKey(fromAddress), isWritable: false, isSigner: true },
     ];
     return keys
@@ -1494,8 +1502,8 @@
     fromAddress
   }) => {
 
-
     let transaction = { blockchain: 'solana' };
+    let instructions = [];
 
     const fixedPath = fixPath$1(path);
     if(fixedPath.length > 3) { throw 'Raydium can only handle fixed paths with a max length of 3!' }
@@ -1513,7 +1521,31 @@
       amountMiddle = amounts[1];
     }
 
-    transaction.instructions = await Promise.all(pairs.map(async (pair, index)=>{
+    let startsWrapped = (path[0] === web3Constants.CONSTANTS.solana.NATIVE && fixedPath[0] === web3Constants.CONSTANTS.solana.WRAPPED);
+    let endsUnwrapped = (path[path.length-1] === web3Constants.CONSTANTS.solana.NATIVE && fixedPath[fixedPath.length-1] === web3Constants.CONSTANTS.solana.WRAPPED);
+    let wrappedAccount;
+    if(startsWrapped) {
+      const rent = await web3Client.provider('solana').getMinimumBalanceForRentExemption(web3Tokens.Token.solana.TOKEN_LAYOUT.span);
+      wrappedAccount = solanaWeb3_js.Keypair.generate().publicKey.toString();
+      instructions.push(
+        solanaWeb3_js.SystemProgram.createAccount({
+          fromPubkey: new solanaWeb3_js.PublicKey(fromAddress),
+          newAccountPubkey: new solanaWeb3_js.PublicKey(wrappedAccount),
+          programId: new solanaWeb3_js.PublicKey(web3Tokens.Token.solana.TOKEN_PROGRAM),
+          space: web3Tokens.Token.solana.TOKEN_LAYOUT.span,
+          lamports: new solanaWeb3_js.BN(amountIn.toString()).add(new solanaWeb3_js.BN(rent))
+        })
+      );
+      instructions.push(
+        web3Tokens.Token.solana.initializeAccountInstruction({
+          account: wrappedAccount,
+          token: web3Constants.CONSTANTS.solana.WRAPPED,
+          owner: fromAddress
+        })
+      );
+    }
+
+    await Promise.all(pairs.map(async (pair, index)=>{
       let market = markets[index];
       let stepTokenIn = tokenIn;
       let stepTokenOut = tokenOut;
@@ -1522,31 +1554,67 @@
       let stepAmountOut = amountOut || amountOutMin;
       let stepAmountOutMin = amountOutMin || amountOut;
       let stepFix = (amountInInput || amountOutMinInput) ? 'in' : 'out';
+      let stepTokenInAccount = startsWrapped ? wrappedAccount : undefined;
+      let stepTokenOutAccount = endsUnwrapped ? wrappedAccount : undefined;
       if(pairs.length === 2 && index === 0) {
         stepTokenIn = tokenIn;
         stepTokenOut = tokenMiddle;
         stepAmountOut = stepAmountOutMin = amountMiddle;
         stepFix = 'out';
+        if(wrappedAccount) { stepTokenOutAccount = wrappedAccount; }
       } else if(pairs.length === 2 && index === 1) {
         stepTokenIn = tokenMiddle;
         stepTokenOut = tokenOut;
         stepAmountIn = stepAmountInMax = amountMiddle;
         stepFix = 'in';
+        if(wrappedAccount) { stepTokenInAccount = wrappedAccount; }
       }
-      return new solanaWeb3_js.TransactionInstruction({
-        programId: new solanaWeb3_js.PublicKey(basics$1.pair.v4.address),
-        keys: await getInstructionKeys({ tokenIn: stepTokenIn, tokenOut: stepTokenOut, pair, market, fromAddress, toAddress }),
-        data: getInstructionData({
-          pair,
-          amountIn: stepAmountIn,
-          amountOutMin: stepAmountOutMin,
-          amountOut: stepAmountOut,
-          amountInMax: stepAmountInMax,
-          fix: stepFix
-        }),
-      })
+      instructions.push(
+        new solanaWeb3_js.TransactionInstruction({
+          programId: new solanaWeb3_js.PublicKey(basics$1.pair.v4.address),
+          keys: await getInstructionKeys({
+            tokenIn: stepTokenIn,
+            tokenInAccount: stepTokenInAccount,
+            tokenOut: stepTokenOut,
+            tokenOutAccount: stepTokenOutAccount,
+            pair,
+            market,
+            fromAddress,
+            toAddress
+          }),
+          data: getInstructionData({
+            pair,
+            amountIn: stepAmountIn,
+            amountOutMin: stepAmountOutMin,
+            amountOut: stepAmountOut,
+            amountInMax: stepAmountInMax,
+            fix: stepFix
+          }),
+        })
+      );
     }));
+    
+    if(path[0] === web3Constants.CONSTANTS['solana'].NATIVE && fixedPath[0] === web3Constants.CONSTANTS['solana'].WRAPPED) {
+      instructions.push(
+        web3Tokens.Token.solana.closeAccountInstruction({
+          account: wrappedAccount,
+          owner: fromAddress
+        })
+      );
+    }
 
+    // // for DEBUGGING:
+    // 
+    // let simulation = new Transaction({ feePayer: new PublicKey('2UgCJaHU5y8NC4uWQcZYeV9a5RyYLF7iKYCybCsdFFD1') })
+    // console.log('instructions.length', instructions.length)
+    // instructions.forEach((instruction)=>simulation.add(instruction))
+    // let result
+    // console.log('SIMULATE')
+    // try{ result = await provider('solana').simulateTransaction(simulation) } catch(e) { console.log('error', e) }
+    // console.log('SIMULATION RESULT', result)
+    // console.log('instructions.length', instructions.length)
+
+    transaction.instructions = instructions;
     return transaction
   };
 
@@ -1692,7 +1760,7 @@
       path.splice(path.length-1, 0, web3Constants.CONSTANTS.ethereum.WRAPPED);
     }
 
-    return path
+    return { path, fixedPath: fixPath(path) }
   };
 
   let getAmountOut = ({ path, amountIn, tokenIn, tokenOut }) => {

@@ -155,7 +155,7 @@ function mockPair({ tokenIn, tokenOut, pair, market, _return, baseReserve, quote
         { memcmp: { offset: 400, bytes: tokenIn }},
         { memcmp: { offset: 432, bytes: tokenOut }},
       ]},
-      return: [{ account: { data, executable: false, lamports: 2039280, owner: tokenIn, rentEpoch: 327 }, pubkey: pair }]
+      return: [{ account: { data, executable: false, lamports: 2039280, owner: tokenIn, rentEpoch: 327 }, pubkey: new PublicKey(pair) }]
     }
   })
   mock({

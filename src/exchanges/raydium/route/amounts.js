@@ -77,9 +77,7 @@ let getAmounts = async ({
       amountOutMin = amountOut
     }
   } else if(amountOutMin) {
-    console.log('if amountOutMin')
     amounts = await getAmountsIn({ path, amountOut: amountOutMin, tokenIn, tokenOut })
-    console.log('amounts', amounts)
     amountIn = amounts ? amounts[0] : undefined
     if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
       return {}

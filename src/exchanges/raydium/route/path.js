@@ -14,6 +14,7 @@ const USD = CONSTANTS.solana.USD
 // as they are not the same!
 //
 let fixPath = (path) => {
+  if(!path) { return }
   let fixedPath = path.map((token, index) => {
     if (
       token === NATIVE && path[index+1] != WRAPPED &&
@@ -38,9 +39,12 @@ let pathExists = async (path) => {
   if(path.length == 1) { return false }
   path = fixPath(path)
   let pairs = []
+  console.log('pathExists???', path)
   if(await anyPairs(path[0], path[1]) || await anyPairs(path[1], path[0])) {
+    console.log('true')
     return true
   } else {
+    console.log('false')
     return false
   }
 }

@@ -63,7 +63,7 @@ describe('raydium', () => {
     })
   })
 
-   describe('route token to token via 1 pool', ()=>{
+  describe('route token to token via 1 pool', ()=>{
 
     let tokenIn = CONSTANTS[blockchain].USD
     let decimalsIn = CONSTANTS[blockchain].USD_DECIMALS
@@ -71,7 +71,7 @@ describe('raydium', () => {
     let decimalsOut = CONSTANTS[blockchain].DECIMALS
     let path = [tokenIn, tokenOut]
 
-    it('routes a token to token swap via 1 pool for given amountOut on raydium', async ()=> {
+    it.only('routes a token to token swap via 1 pool for given amountOut on raydium', async ()=> {
 
       let amountOut = 1
       let amountOutBN = ethers.utils.parseUnits(amountOut.toString(), decimalsOut)
@@ -278,11 +278,11 @@ describe('raydium', () => {
 
     let tokenIn = CONSTANTS[blockchain].NATIVE
     let decimalsIn = CONSTANTS[blockchain].DECIMALS
-    let tokenOut = CONSTANTS[blockchain].WRAPPED
-    let decimalsOut = CONSTANTS[blockchain].DECIMALS
+    let tokenOut = CONSTANTS[blockchain].USD
+    let decimalsOut = CONSTANTS[blockchain].USD_DECIMALS
     let path = [tokenIn, tokenOut]
 
-    it.only('routes NATIVE to token swap via 1 pool for given amountOut on raydium', async ()=> {
+    it('routes NATIVE to token swap via 1 pool for given amountOut on raydium', async ()=> {
 
       let amountOut = 1
       let amountOutBN = ethers.utils.parseUnits(amountOut.toString(), decimalsOut)
