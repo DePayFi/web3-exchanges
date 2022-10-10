@@ -1,5 +1,5 @@
 import Raydium from 'src/exchanges/raydium'
-import { Buffer, PublicKey, BN } from '@depay/solana-web3.js'
+import { ACCOUNT_LAYOUT, Buffer, PublicKey, BN } from '@depay/solana-web3.js'
 import { mock } from '@depay/web3-mock'
 import { POOL_INFO } from 'src/exchanges/raydium/apis'
 import { provider } from '@depay/web3-client'
@@ -240,7 +240,26 @@ function mockTokenAccounts({ token, owner, accounts }) {
         { memcmp: { offset: 32, bytes: owner }},
         { memcmp: { offset: 0, bytes: token }},
       ]},
-      return: accounts
+      return: accounts.map((pubkey)=>{
+        let data = Buffer.alloc(ACCOUNT_LAYOUT.span)
+        ACCOUNT_LAYOUT.encode({
+          amount: new BN('6774847'),
+          mint: new PublicKey(token),
+          owner: new PublicKey(owner),
+          delegateOption: 0,
+          delegate: new PublicKey('11111111111111111111111111111111'),
+          state: 1,
+          isNativeOption: 0,
+          isNative: new BN('0'),
+          delegatedAmount: new BN('0'),
+          closeAuthorityOption: 0,
+          closeAuthority: new PublicKey('11111111111111111111111111111111')
+        }, data)
+        return({
+          account: { data, executable: false, lamports: 2039280, owner, rentEpoch: 327 },
+          pubkey
+        })
+      })
     }
   })
 }

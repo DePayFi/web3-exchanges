@@ -1443,6 +1443,7 @@
     if(!tokenInAccount) {
       tokenInAccount = await web3Tokens.Token.solana.findAccount({ owner: fromAddress, token: tokenIn });
     }
+    console.log('existing tokenInAccount', tokenInAccount);
     if(!tokenInAccount) {
       tokenInAccount = await web3Tokens.Token.solana.findProgramAddress({ owner: fromAddress, token: tokenIn });
     }
@@ -1450,6 +1451,7 @@
     if(!tokenOutAccount) {
       tokenOutAccount = await web3Tokens.Token.solana.findAccount({ owner: toAddress, token: tokenOut });
     }
+    console.log('existing tokenOutAccount', tokenOutAccount);
     if(!tokenOutAccount) {
       tokenOutAccount = await web3Tokens.Token.solana.findProgramAddress({ owner: toAddress, token: tokenOut });
     }
@@ -1520,16 +1522,17 @@
     let startsWrapped = (path[0] === web3Constants.CONSTANTS.solana.NATIVE && fixedPath[0] === web3Constants.CONSTANTS.solana.WRAPPED);
     let endsUnwrapped = (path[path.length-1] === web3Constants.CONSTANTS.solana.NATIVE && fixedPath[fixedPath.length-1] === web3Constants.CONSTANTS.solana.WRAPPED);
     let wrappedAccount;
-    if(startsWrapped) {
+    if(startsWrapped || endsUnwrapped) {
       const rent = await web3Client.provider('solana').getMinimumBalanceForRentExemption(web3Tokens.Token.solana.TOKEN_LAYOUT.span);
       wrappedAccount = solanaWeb3_js.Keypair.generate().publicKey.toString();
+      const lamports = startsWrapped ? new solanaWeb3_js.BN(amountIn.toString()).add(new solanaWeb3_js.BN(rent)) :  new solanaWeb3_js.BN(rent);
       instructions.push(
         solanaWeb3_js.SystemProgram.createAccount({
           fromPubkey: new solanaWeb3_js.PublicKey(fromAddress),
           newAccountPubkey: new solanaWeb3_js.PublicKey(wrappedAccount),
           programId: new solanaWeb3_js.PublicKey(web3Tokens.Token.solana.TOKEN_PROGRAM),
           space: web3Tokens.Token.solana.TOKEN_LAYOUT.span,
-          lamports: new solanaWeb3_js.BN(amountIn.toString()).add(new solanaWeb3_js.BN(rent))
+          lamports
         })
       );
       instructions.push(
@@ -1591,7 +1594,7 @@
     }));
     swapInstructions.forEach((instruction)=>instructions.push(instruction));
     
-    if(path[0] === web3Constants.CONSTANTS['solana'].NATIVE && fixedPath[0] === web3Constants.CONSTANTS['solana'].WRAPPED) {
+    if(startsWrapped || endsUnwrapped) {
       instructions.push(
         web3Tokens.Token.solana.closeAccountInstruction({
           account: wrappedAccount,

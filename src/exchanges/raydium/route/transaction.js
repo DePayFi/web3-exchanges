@@ -54,6 +54,7 @@ const getInstructionKeys = async ({ tokenIn, tokenInAccount, tokenOut, tokenOutA
   if(!tokenInAccount) {
     tokenInAccount = await Token.solana.findAccount({ owner: fromAddress, token: tokenIn })
   }
+  console.log('existing tokenInAccount', tokenInAccount)
   if(!tokenInAccount) {
     tokenInAccount = await Token.solana.findProgramAddress({ owner: fromAddress, token: tokenIn })
   }
@@ -61,6 +62,7 @@ const getInstructionKeys = async ({ tokenIn, tokenInAccount, tokenOut, tokenOutA
   if(!tokenOutAccount) {
     tokenOutAccount = await Token.solana.findAccount({ owner: toAddress, token: tokenOut })
   }
+  console.log('existing tokenOutAccount', tokenOutAccount)
   if(!tokenOutAccount) {
     tokenOutAccount = await Token.solana.findProgramAddress({ owner: toAddress, token: tokenOut })
   }
@@ -131,16 +133,17 @@ const getTransaction = async ({
   let startsWrapped = (path[0] === CONSTANTS.solana.NATIVE && fixedPath[0] === CONSTANTS.solana.WRAPPED)
   let endsUnwrapped = (path[path.length-1] === CONSTANTS.solana.NATIVE && fixedPath[fixedPath.length-1] === CONSTANTS.solana.WRAPPED)
   let wrappedAccount
-  if(startsWrapped) {
+  if(startsWrapped || endsUnwrapped) {
     const rent = await provider('solana').getMinimumBalanceForRentExemption(Token.solana.TOKEN_LAYOUT.span)
     wrappedAccount = Keypair.generate().publicKey.toString()
+    const lamports = startsWrapped ? new BN(amountIn.toString()).add(new BN(rent)) :  new BN(rent)
     instructions.push(
       SystemProgram.createAccount({
         fromPubkey: new PublicKey(fromAddress),
         newAccountPubkey: new PublicKey(wrappedAccount),
         programId: new PublicKey(Token.solana.TOKEN_PROGRAM),
         space: Token.solana.TOKEN_LAYOUT.span,
-        lamports: new BN(amountIn.toString()).add(new BN(rent))
+        lamports
       })
     )
     instructions.push(
@@ -202,7 +205,7 @@ const getTransaction = async ({
   }))
   swapInstructions.forEach((instruction)=>instructions.push(instruction))
   
-  if(path[0] === CONSTANTS['solana'].NATIVE && fixedPath[0] === CONSTANTS['solana'].WRAPPED) {
+  if(startsWrapped || endsUnwrapped) {
     instructions.push(
       Token.solana.closeAccountInstruction({
         account: wrappedAccount,
