@@ -7,6 +7,17 @@ import { Token } from '@depay/web3-tokens'
 
 let blockchain = 'solana'
 
+function mockRent({ rent }) {
+  mock({
+    blockchain,
+    provider: provider(blockchain),
+    request: {
+      method: 'getMinimumBalanceForRentExemption',
+      return: rent
+    }
+  })
+}
+
 function mockPair({ tokenIn, tokenOut, pair, market, _return, baseReserve, quoteReserve }) {
   if(baseReserve || quoteReserve) {
     mock({
@@ -155,7 +166,7 @@ function mockPair({ tokenIn, tokenOut, pair, market, _return, baseReserve, quote
         { memcmp: { offset: 400, bytes: tokenIn }},
         { memcmp: { offset: 432, bytes: tokenOut }},
       ]},
-      return: [{ account: { data, executable: false, lamports: 2039280, owner: tokenIn, rentEpoch: 327 }, pubkey: new PublicKey(pair) }]
+      return: [{ account: { data, executable: false, lamports: 2039280, owner: tokenIn, rentEpoch: 327 }, pubkey: pair }]
     }
   })
   mock({
@@ -296,4 +307,5 @@ export {
   mockTokenAccounts,
   mockMarket,
   mockTransactionKeys,
+  mockRent,
 }

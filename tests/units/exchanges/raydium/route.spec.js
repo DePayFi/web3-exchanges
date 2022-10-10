@@ -3,11 +3,12 @@ import Route from 'src/classes/Route'
 import { CONSTANTS } from '@depay/web3-constants'
 import { ethers } from 'ethers'
 import { find } from 'src'
-import { mock, resetMocks, anything } from '@depay/web3-mock'
-import { mockPair, mockToken, mockTokenAccounts, mockMarket, mockTransactionKeys } from 'tests/mocks/raydium'
+import { mock, anything, resetMocks } from '@depay/web3-mock'
+import { mockPair, mockToken, mockTokenAccounts, mockMarket, mockTransactionKeys, mockRent } from 'tests/mocks/raydium'
 import { resetCache, provider } from '@depay/web3-client'
-import { struct, u64, u8 } from '@depay/solana-web3.js'
+import { struct, u64, u32, u8, publicKey, BN } from '@depay/solana-web3.js'
 import { testRouting } from 'tests/helpers/testRouting'
+import { Token } from '@depay/web3-tokens'
 
 describe('raydium', () => {
   
@@ -71,7 +72,7 @@ describe('raydium', () => {
     let decimalsOut = CONSTANTS[blockchain].DECIMALS
     let path = [tokenIn, tokenOut]
 
-    it.only('routes a token to token swap via 1 pool for given amountOut on raydium', async ()=> {
+    it('routes a token to token swap via 1 pool for given amountOut on raydium', async ()=> {
 
       let amountOut = 1
       let amountOutBN = ethers.utils.parseUnits(amountOut.toString(), decimalsOut)
@@ -289,13 +290,14 @@ describe('raydium', () => {
       let pair = '58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2'
       let market = '9wFFyRfZBsuAha4YcuxcXLKwMxJR43S7fPfQLusDBzvT'
 
-      mockTokenAccounts({ owner: fromAddress, token: tokenIn, accounts: [] })
+      mockTokenAccounts({ owner: fromAddress, token: CONSTANTS.solana.WRAPPED, accounts: [] })
       mockTokenAccounts({ owner: fromAddress, token: tokenOut, accounts: [] })
-      mockPair({ tokenIn, tokenOut, pair, market, 
+      mockPair({ tokenIn: CONSTANTS.solana.WRAPPED, tokenOut, pair, market, 
         baseReserve: 300000000000000,
         quoteReserve: 10000000000000,
       })
       mockMarket({ market })
+      mockRent({ rent: 2039280 })
 
       await testRouting({
         provider: provider(blockchain),
@@ -311,23 +313,41 @@ describe('raydium', () => {
         toAddress,
         transaction: {
           blockchain,
-          instructions: [{
-            to: Raydium.pair.v4.address,
-            api: struct([u8("instruction"), u64("amountIn"), u64("amountOut")]),
-            params: {
-              instruction: 11,
-              amountIn: '33450402',
-              amountOut: '1000000000',
-            },
-            keys: mockTransactionKeys({
-              pair,
-              market,
-              marketAuthority: 'F8Vyqk3unwxkXukZFQeYyGmFfTG3CAX4v24iyrjEYBJV',
-              fromAddress,
-              tokenAccountIn: 'F7e4iBrxoSmHhEzhuBcXXs1KAknYvEoZWieiocPvrCD9',
-              tokenAccountOut: '5nrTLrjSCNQ4uTVr9BxBUcwf4G4Dwuo8H5wQAQgxand8'
-            })
-          }]
+          instructions: [
+            {
+              to: '11111111111111111111111111111111',
+              api: struct([u32("instruction"), u64("lamports"), u64("space"), publicKey("programId")]),
+              params: {
+                instruction: 0,
+                lamports: '32264845',
+                space: Token.solana.TOKEN_LAYOUT.span,
+                programId: Token.solana.TOKEN_PROGRAM
+              }
+            },{
+              to: Token.solana.TOKEN_PROGRAM,
+              api: struct([u8("instruction"), publicKey("owner")]),
+              params: {
+                instruction: 18,
+                owner: fromAddress,
+              }
+            },{
+              to: Raydium.pair.v4.address,
+              api: struct([u8("instruction"), u64("amountIn"), u64("amountOut")]),
+              params: {
+                instruction: 11,
+                amountIn: '30225565',
+                amountOut: '1000000',
+              },
+              keys: mockTransactionKeys({
+                pair,
+                market,
+                marketAuthority: 'F8Vyqk3unwxkXukZFQeYyGmFfTG3CAX4v24iyrjEYBJV',
+                fromAddress,
+                tokenAccountIn: anything,
+                tokenAccountOut: 'F7e4iBrxoSmHhEzhuBcXXs1KAknYvEoZWieiocPvrCD9'
+              })
+            }
+          ]
         }
       })
     })

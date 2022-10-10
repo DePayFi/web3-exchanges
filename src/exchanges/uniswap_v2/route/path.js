@@ -11,6 +11,7 @@ import { Token } from '@depay/web3-tokens'
 // as they are not the same!
 //
 let fixPath = (path) => {
+  if(!path) { return }
   let fixedPath = path.map((token, index) => {
     if (
       token === CONSTANTS.ethereum.NATIVE && path[index+1] != CONSTANTS.ethereum.WRAPPED &&

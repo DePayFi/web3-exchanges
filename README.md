@@ -262,14 +262,14 @@ let wallet = getWallets()[0]
 wallet.sendTransaction(route.transaction)
 ```
 
-### getAmountIn: gets the required amountIn for a specific block
+### getAmounts: gets the required amounts for the route
 
 ```javascript
 import { find } from '@depay/web3-exchanges'
 
 let exchange = find('ethereum', 'uniswap_v2')
 
-let amountIn = await exchange.getAmountIn({
+let { amountIn } = await exchange.getAmounts({
   path: ['0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb', '0xdAC17F958D2ee523a2206206994597C13D831ec7'],
   amountOut: '2111112220000000',
   block: 14904658

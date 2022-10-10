@@ -91,11 +91,12 @@ const calculateAmountInWithSlippage = async ({ exchange, fixedPath, amountIn, am
   }
 
   const lastAmountsIn = await Promise.all(blocks.map(async (block)=>{
-    return await exchange.getAmountIn({
-      fixedPath,
+    let { amountIn } = await exchange.getAmounts({
+      path: fixedPath,
       amountOut,
       block
-    })
+    });
+    return amountIn
   }));
 
   if(!lastAmountsIn[0] || !lastAmountsIn[1] || !lastAmountsIn[2]) { return newAmountInWithDefaultSlippageBN }
@@ -388,7 +389,6 @@ class Exchange {
     pair,
     market,
     findPath,
-    getAmountIn,
     getAmounts,
     getTransaction,
   }) {
@@ -402,7 +402,6 @@ class Exchange {
     this.pair = pair;
     this.market = market;
     this.findPath = findPath;
-    this.getAmountIn = getAmountIn;
     this.getAmounts = getAmounts;
     this.getTransaction = getTransaction;
   }
@@ -463,6 +462,7 @@ function _optionalChain$3(ops) { let lastAccessLHS = undefined; let value = ops[
 // as they are not the same!
 //
 let fixPath$3 = (path) => {
+  if(!path) { return }
   let fixedPath = path.map((token, index) => {
     if (
       token === CONSTANTS.bsc.NATIVE && path[index+1] != CONSTANTS.bsc.WRAPPED &&
@@ -606,6 +606,7 @@ let getAmountIn$2 = ({ path, amountOut, block }) => {
 
 let getAmounts$3 = async ({
   path,
+  block,
   tokenIn,
   tokenOut,
   amountOut,
@@ -614,7 +615,7 @@ let getAmounts$3 = async ({
   amountOutMin
 }) => {
   if (amountOut) {
-    amountIn = await getAmountIn$2({ path, amountOut, tokenIn, tokenOut });
+    amountIn = await getAmountIn$2({ block, path, amountOut, tokenIn, tokenOut });
     if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
       return {}
     } else if (amountInMax === undefined) {
@@ -628,7 +629,7 @@ let getAmounts$3 = async ({
       amountOutMin = amountOut;
     }
   } else if(amountOutMin) {
-    amountIn = await getAmountIn$2({ path, amountOut: amountOutMin, tokenIn, tokenOut });
+    amountIn = await getAmountIn$2({ block, path, amountOut: amountOutMin, tokenIn, tokenOut });
     if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
       return {}
     } else if (amountInMax === undefined) {
@@ -709,7 +710,6 @@ var pancakeswap = new Exchange(
   Object.assign(basics$3, {
     findPath: findPath$3,
     getAmounts: getAmounts$3,
-    getAmountIn: getAmountIn$2,
     getTransaction: getTransaction$3,
   })
 );
@@ -745,6 +745,7 @@ function _optionalChain$2(ops) { let lastAccessLHS = undefined; let value = ops[
 // as they are not the same!
 //
 let fixPath$2 = (path) => {
+  if(!path) { return }
   let fixedPath = path.map((token, index) => {
     if (
       token === CONSTANTS.polygon.NATIVE && path[index+1] != CONSTANTS.polygon.WRAPPED &&
@@ -888,6 +889,7 @@ let getAmountIn$1 = ({ path, amountOut, block }) => {
 
 let getAmounts$2 = async ({
   path,
+  block,
   tokenIn,
   tokenOut,
   amountOut,
@@ -896,7 +898,7 @@ let getAmounts$2 = async ({
   amountOutMin
 }) => {
   if (amountOut) {
-    amountIn = await getAmountIn$1({ path, amountOut, tokenIn, tokenOut });
+    amountIn = await getAmountIn$1({ block, path, amountOut, tokenIn, tokenOut });
     if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
       return {}
     } else if (amountInMax === undefined) {
@@ -910,7 +912,7 @@ let getAmounts$2 = async ({
       amountOutMin = amountOut;
     }
   } else if(amountOutMin) {
-    amountIn = await getAmountIn$1({ path, amountOut: amountOutMin, tokenIn, tokenOut });
+    amountIn = await getAmountIn$1({ block, path, amountOut: amountOutMin, tokenIn, tokenOut });
     if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
       return {}
     } else if (amountInMax === undefined) {
@@ -989,7 +991,6 @@ var quickswap = new Exchange(
   Object.assign(basics$2, {
     findPath: findPath$2,
     getAmounts: getAmounts$2,
-    getAmountIn: getAmountIn$1,
     getTransaction: getTransaction$2,
   })
 );
@@ -1113,7 +1114,6 @@ const INITIALIZED = 1;
 const SWAP = 6;
 
 let getAccounts = async (base, quote) => {
-  console.log('get accounts');
   let accounts = await request(`solana://${basics$1.pair.v4.address}/getProgramAccounts`, {
     params: { filters: [
       { dataSize: basics$1.pair.v4.api.span },
@@ -1123,7 +1123,6 @@ let getAccounts = async (base, quote) => {
     api: basics$1.pair.v4.api,
     cache: 3600000,
   });
-  console.log('accounts');
   return accounts
 };
 
@@ -1195,12 +1194,9 @@ let fixPath$1 = (path) => {
 let pathExists$1 = async (path) => {
   if(path.length == 1) { return false }
   path = fixPath$1(path);
-  console.log('pathExists???', path);
   if(await anyPairs(path[0], path[1]) || await anyPairs(path[1], path[0])) {
-    console.log('true');
     return true
   } else {
-    console.log('false');
     return false
   }
 };
@@ -1545,7 +1541,7 @@ const getTransaction$1 = async ({
     );
   }
 
-  await Promise.all(pairs.map(async (pair, index)=>{
+  let swapInstructions = await Promise.all(pairs.map(async (pair, index)=>{
     let market = markets[index];
     let stepTokenIn = tokenIn;
     let stepTokenOut = tokenOut;
@@ -1569,7 +1565,7 @@ const getTransaction$1 = async ({
       stepFix = 'in';
       if(wrappedAccount) { stepTokenInAccount = wrappedAccount; }
     }
-    instructions.push(
+    return(
       new TransactionInstruction({
         programId: new PublicKey(basics$1.pair.v4.address),
         keys: await getInstructionKeys({
@@ -1591,8 +1587,9 @@ const getTransaction$1 = async ({
           fix: stepFix
         }),
       })
-    );
+    )
   }));
+  swapInstructions.forEach((instruction)=>instructions.push(instruction));
   
   if(path[0] === CONSTANTS['solana'].NATIVE && fixedPath[0] === CONSTANTS['solana'].WRAPPED) {
     instructions.push(
@@ -1622,8 +1619,6 @@ var raydium = new Exchange(
   Object.assign(basics$1, {
     findPath: findPath$1,
     getAmounts: getAmounts$1,
-    getAmountsIn,
-    getAmountsOut,
     getTransaction: getTransaction$1,
   })
 );
@@ -1659,6 +1654,7 @@ function _optionalChain(ops) { let lastAccessLHS = undefined; let value = ops[0]
 // as they are not the same!
 //
 let fixPath = (path) => {
+  if(!path) { return }
   let fixedPath = path.map((token, index) => {
     if (
       token === CONSTANTS.ethereum.NATIVE && path[index+1] != CONSTANTS.ethereum.WRAPPED &&
@@ -1802,6 +1798,7 @@ let getAmountIn = ({ path, amountOut, block }) => {
 
 let getAmounts = async ({
   path,
+  block,
   tokenIn,
   tokenOut,
   amountOut,
@@ -1810,7 +1807,7 @@ let getAmounts = async ({
   amountOutMin
 }) => {
   if (amountOut) {
-    amountIn = await getAmountIn({ path, amountOut, tokenIn, tokenOut });
+    amountIn = await getAmountIn({ block, path, amountOut, tokenIn, tokenOut });
     if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
       return {}
     } else if (amountInMax === undefined) {
@@ -1824,7 +1821,7 @@ let getAmounts = async ({
       amountOutMin = amountOut;
     }
   } else if(amountOutMin) {
-    amountIn = await getAmountIn({ path, amountOut: amountOutMin, tokenIn, tokenOut });
+    amountIn = await getAmountIn({ block, path, amountOut: amountOutMin, tokenIn, tokenOut });
     if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
       return {}
     } else if (amountInMax === undefined) {
@@ -1903,7 +1900,6 @@ var uniswap_v2 = new Exchange(
   Object.assign(basics, {
     findPath,
     getAmounts,
-    getAmountIn,
     getTransaction,
   })
 );

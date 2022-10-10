@@ -5,7 +5,6 @@ const INITIALIZED = 1
 const SWAP = 6
 
 let getAccounts = async (base, quote) => {
-  console.log('get accounts')
   let accounts = await request(`solana://${Raydium.pair.v4.address}/getProgramAccounts`, {
     params: { filters: [
       { dataSize: Raydium.pair.v4.api.span },
@@ -15,7 +14,6 @@ let getAccounts = async (base, quote) => {
     api: Raydium.pair.v4.api,
     cache: 3600000,
   })
-  console.log('accounts')
   return accounts
 }
 

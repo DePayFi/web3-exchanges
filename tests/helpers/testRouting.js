@@ -1,6 +1,6 @@
 import { ethers } from 'ethers'
 import { getWallets } from '@depay/web3-wallets'
-import { mock, normalize } from '@depay/web3-mock'
+import { mock, normalize, anything } from '@depay/web3-mock'
 import { mockDecimals } from '../mocks/token'
 import { provider } from '@depay/web3-client'
 import { struct, u64, u8 } from '@depay/solana-web3.js'
@@ -42,17 +42,21 @@ function expectRoute({
   if(route.transaction.instructions) {
     expect(route.transaction.blockchain).toEqual(transaction.blockchain)
     route.transaction.instructions.forEach((instruction, index)=>{
-      expect(instruction.programId.toString()).toEqual(transaction.instructions[index].to)
-      let LAYOUT = struct([u8("instruction"), u64("amountIn"), u64("amountOut")])
-      let data = LAYOUT.decode(instruction.data)
-      expect(data.instruction).toEqual(transaction.instructions[index].params.instruction)
-      expect(data.amountIn.toString()).toEqual(transaction.instructions[index].params.amountIn)
-      expect(data.amountOut.toString()).toEqual(transaction.instructions[index].params.amountOut)
-      instruction.keys.forEach((key, keyIndex)=>{
-        expect(key.pubkey.toString()).toEqual(transaction.instructions[index].keys[keyIndex].pubkey)
-        expect(key.isWritable).toEqual(transaction.instructions[index].keys[keyIndex].isWritable)
-        expect(key.isSigner).toEqual(transaction.instructions[index].keys[keyIndex].isSigner)
-      })
+      if(transaction.instructions[index] && transaction.instructions[index].params && (transaction.instructions[index].params.amountIn || transaction.instructions[index].amountOut)) {
+        expect(instruction.programId.toString()).toEqual(transaction.instructions[index].to)
+        let LAYOUT = struct([u8("instruction"), u64("amountIn"), u64("amountOut")])
+        let data = LAYOUT.decode(instruction.data)
+        expect(data.instruction).toEqual(transaction.instructions[index].params.instruction)
+        expect(data.amountIn.toString()).toEqual(transaction.instructions[index].params.amountIn)
+        expect(data.amountOut.toString()).toEqual(transaction.instructions[index].params.amountOut)
+        instruction.keys.forEach((key, keyIndex)=>{
+          if(transaction.instructions[index].keys[keyIndex].pubkey != anything) {
+            expect(key.pubkey.toString()).toEqual(transaction.instructions[index].keys[keyIndex].pubkey)
+          }
+          expect(key.isWritable).toEqual(transaction.instructions[index].keys[keyIndex].isWritable)
+          expect(key.isSigner).toEqual(transaction.instructions[index].keys[keyIndex].isSigner)
+        })
+      }
     })
   } else {
     Object.keys(transaction.params).every((key)=>{

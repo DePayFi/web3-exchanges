@@ -29,7 +29,7 @@ describe('raydium', () => {
 
       mockPair({ tokenIn, tokenOut, pair: 'BcjFnHHzJ6Y1XzLcm3nfr6tP7TGHGh15bLZazP5dAy9p' })
 
-      let path = await findPath({ tokenIn, tokenOut })
+      let { path } = await findPath({ tokenIn, tokenOut })
       expect(path).toEqual[tokenIn, tokenOut]
     })
 
@@ -39,7 +39,7 @@ describe('raydium', () => {
 
       mockPair({ tokenIn: CONSTANTS[blockchain].WRAPPED, tokenOut, pair: 'BcjFnHHzJ6Y1XzLcm3nfr6tP7TGHGh15bLZazP5dAy9p' })
 
-      let path = await findPath({ tokenIn, tokenOut })
+      let { path } = await findPath({ tokenIn, tokenOut })
       expect(path).toEqual[tokenIn, CONSTANTS[blockchain].WRAPPED, tokenOut]
     })
 
@@ -52,7 +52,7 @@ describe('raydium', () => {
       mockPair({ tokenIn: CONSTANTS[blockchain].WRAPPED, tokenOut: RAY, pair: 'AVs9TA4nWDzfPJE9gGVNJMVhcQy3V9PGazuz33BfG2RA' })
       mockPair({ tokenIn: CONSTANTS[blockchain].WRAPPED, tokenOut: CONSTANTS[blockchain].USD, pair: '58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2' })
 
-      let path = await findPath({ tokenIn, tokenOut })
+      let { path } = await findPath({ tokenIn, tokenOut })
       expect(path).toEqual[tokenIn, CONSTANTS[blockchain].WRAPPED, tokenOut]
     })
 
@@ -68,7 +68,7 @@ describe('raydium', () => {
       mockPair({ tokenIn: CONSTANTS[blockchain].USD, tokenOut: RAY, pair: 'AVs9TA4nWDzfPJE9gGVNJMVhcQy3V9PGazuz33BfG2RA' })
       mockPair({ tokenIn: CONSTANTS[blockchain].USD, tokenOut: USDT, pair: '58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2' })
 
-      let path = await findPath({ tokenIn, tokenOut })
+      let { path } = await findPath({ tokenIn, tokenOut })
       expect(path).toEqual[tokenIn, CONSTANTS[blockchain].USD, tokenOut]
     })
   })

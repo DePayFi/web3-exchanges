@@ -41,6 +41,7 @@ let getAmountIn = ({ path, amountOut, block }) => {
 
 let getAmounts = async ({
   path,
+  block,
   tokenIn,
   tokenOut,
   amountOut,
@@ -49,7 +50,7 @@ let getAmounts = async ({
   amountOutMin
 }) => {
   if (amountOut) {
-    amountIn = await getAmountIn({ path, amountOut, tokenIn, tokenOut })
+    amountIn = await getAmountIn({ block, path, amountOut, tokenIn, tokenOut })
     if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
       return {}
     } else if (amountInMax === undefined) {
@@ -63,7 +64,7 @@ let getAmounts = async ({
       amountOutMin = amountOut
     }
   } else if(amountOutMin) {
-    amountIn = await getAmountIn({ path, amountOut: amountOutMin, tokenIn, tokenOut })
+    amountIn = await getAmountIn({ block, path, amountOut: amountOutMin, tokenIn, tokenOut })
     if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
       return {}
     } else if (amountInMax === undefined) {

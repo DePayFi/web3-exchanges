@@ -34,11 +34,12 @@ const calculateAmountInWithSlippage = async ({ exchange, fixedPath, amountIn, am
   }
 
   const lastAmountsIn = await Promise.all(blocks.map(async (block)=>{
-    return await exchange.getAmountIn({
-      fixedPath,
+    let { amountIn } = await exchange.getAmounts({
+      path: fixedPath,
       amountOut,
       block
     })
+    return amountIn
   }))
 
   if(!lastAmountsIn[0] || !lastAmountsIn[1] || !lastAmountsIn[2]) { return newAmountInWithDefaultSlippageBN }

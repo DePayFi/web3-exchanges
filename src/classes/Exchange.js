@@ -83,7 +83,6 @@ class Exchange {
     pair,
     market,
     findPath,
-    getAmountIn,
     getAmounts,
     getTransaction,
   }) {
@@ -97,7 +96,6 @@ class Exchange {
     this.pair = pair
     this.market = market
     this.findPath = findPath
-    this.getAmountIn = getAmountIn
     this.getAmounts = getAmounts
     this.getTransaction = getTransaction
   }

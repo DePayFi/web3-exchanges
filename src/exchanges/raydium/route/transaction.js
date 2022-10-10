@@ -152,7 +152,7 @@ const getTransaction = async ({
     )
   }
 
-  await Promise.all(pairs.map(async (pair, index)=>{
+  let swapInstructions = await Promise.all(pairs.map(async (pair, index)=>{
     let market = markets[index]
     let stepTokenIn = tokenIn
     let stepTokenOut = tokenOut
@@ -176,7 +176,7 @@ const getTransaction = async ({
       stepFix = 'in'
       if(wrappedAccount) { stepTokenInAccount = wrappedAccount }
     }
-    instructions.push(
+    return(
       new TransactionInstruction({
         programId: new PublicKey(Raydium.pair.v4.address),
         keys: await getInstructionKeys({
@@ -200,6 +200,7 @@ const getTransaction = async ({
       })
     )
   }))
+  swapInstructions.forEach((instruction)=>instructions.push(instruction))
   
   if(path[0] === CONSTANTS['solana'].NATIVE && fixedPath[0] === CONSTANTS['solana'].WRAPPED) {
     instructions.push(
