@@ -1,5 +1,5 @@
 import { CONSTANTS } from '@depay/web3-constants'
-import { findByName } from 'src'
+import { find } from 'src'
 import { mock, resetMocks } from '@depay/web3-mock'
 import { mockDecimals } from 'tests/mocks/token'
 import { mockPair } from 'tests/mocks/uniswap_v2'
@@ -9,7 +9,7 @@ import { Token } from '@depay/web3-tokens'
 
 describe('uniswap_v2', () => {
   
-  let exchange = findByName('uniswap_v2')
+  let exchange = find('ethereum', 'uniswap_v2')
   let blockchain = 'ethereum'
   const accounts = ['0xd8da6bf26964af9d7eed9e03e53415d37aa96045']
   beforeEach(resetMocks)
@@ -31,7 +31,7 @@ describe('uniswap_v2', () => {
       mockPair({ provider: provider(blockchain), tokenIn, tokenOut, pair: CONSTANTS[blockchain].ZERO })
       mockPair({ provider: provider(blockchain), tokenIn, tokenOut: CONSTANTS[blockchain].WRAPPED, pair: CONSTANTS[blockchain].ZERO })
       let USDtoUSDMock = mockPair({ provider: provider(blockchain), tokenIn: CONSTANTS[blockchain].USD, tokenOut: CONSTANTS[blockchain].USD, pair: CONSTANTS[blockchain].ZERO })
-      let path = await findPath({ tokenIn, tokenOut })
+      let { path } = await findPath({ tokenIn, tokenOut })
       expect(USDtoUSDMock.calls.count()).toEqual(0)
       expect(path).toEqual(undefined)
     })
@@ -43,7 +43,7 @@ describe('uniswap_v2', () => {
       mockPair({ provider: provider(blockchain), tokenIn: CONSTANTS[blockchain].USD, tokenOut: CONSTANTS[blockchain].WRAPPED, pair: CONSTANTS[blockchain].ZERO })
       mockPair({ provider: provider(blockchain), tokenIn, tokenOut: CONSTANTS[blockchain].WRAPPED, pair: '0x0ed7e52944161450477ee417de9cd3a859b14fd0' })
       let USDtoUSDMock = mockPair({ provider: provider(blockchain), tokenIn: CONSTANTS[blockchain].USD, tokenOut: CONSTANTS[blockchain].USD, pair: CONSTANTS[blockchain].ZERO })
-      let path = await findPath({ tokenIn, tokenOut })
+      let { path } = await findPath({ tokenIn, tokenOut })
       expect(USDtoUSDMock.calls.count()).toEqual(0)
       expect(path).toEqual(undefined)
     })
@@ -55,7 +55,7 @@ describe('uniswap_v2', () => {
       mockPair({ provider: provider(blockchain), tokenIn, tokenOut: CONSTANTS[blockchain].USD, pair: '0x804678fa97d91b974ec2af3c843270886528a9e6' })
       mockDecimals({ provider: provider(blockchain), blockchain, address: CONSTANTS[blockchain].USD, value: 18 })
       let WRAPPEDtoWRAPPEDMock = mockPair({ provider: provider(blockchain), tokenIn: CONSTANTS[blockchain].WRAPPED, tokenOut: CONSTANTS[blockchain].WRAPPED, pair: CONSTANTS[blockchain].ZERO })
-      let path = await findPath({ tokenIn, tokenOut })
+      let { path } = await findPath({ tokenIn, tokenOut })
       expect(WRAPPEDtoWRAPPEDMock.calls.count()).toEqual(0)
       expect(path).toEqual(undefined)
     })
@@ -67,7 +67,7 @@ describe('uniswap_v2', () => {
       mockPair({ provider: provider(blockchain), tokenIn, tokenOut: CONSTANTS[blockchain].USD, pair: '0x58f876857a02d6762e0101bb5c46a8c1ed44dc16' })
       mockDecimals({ provider: provider(blockchain), blockchain, address: CONSTANTS[blockchain].USD, value: 18 })
       let WRAPPEDtoWRAPPEDMock = mockPair({ provider: provider(blockchain), tokenIn: CONSTANTS[blockchain].WRAPPED, tokenOut: CONSTANTS[blockchain].WRAPPED, pair: CONSTANTS[blockchain].ZERO })
-      let path = await findPath({ tokenIn, tokenOut })
+      let { path } = await findPath({ tokenIn, tokenOut })
       expect(WRAPPEDtoWRAPPEDMock.calls.count()).toEqual(0)
       expect(path).toEqual(undefined)
     })
@@ -76,9 +76,9 @@ describe('uniswap_v2', () => {
       mock({
         blockchain,
         provider: provider(blockchain),
-        call: {
-          to: exchange.contracts.factory.address,
-          api: exchange.contracts.factory.api,
+        request: {
+          to: exchange.factory.address,
+          api: exchange.factory.api,
           method: 'getPair',
           params: ['0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a', CONSTANTS[blockchain].WRAPPED],
           return: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675'
@@ -87,9 +87,9 @@ describe('uniswap_v2', () => {
       mock({
         blockchain,
         provider: provider(blockchain),
-        call: {
+        request: {
           to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
-          api: exchange.contracts.pair.api,
+          api: exchange.pair.api,
           method: 'getReserves',
           return: ['1115408461069632429', '10031', '1617377350']
         }
@@ -97,9 +97,9 @@ describe('uniswap_v2', () => {
       mock({
         blockchain,
         provider: provider(blockchain),
-        call: {
+        request: {
           to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
-          api: exchange.contracts.pair.api,
+          api: exchange.pair.api,
           method: 'token0',
           return: '0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a'
         }
@@ -107,9 +107,9 @@ describe('uniswap_v2', () => {
       mock({
         blockchain,
         provider: provider(blockchain),
-        call: {
+        request: {
           to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
-          api: exchange.contracts.pair.api,
+          api: exchange.pair.api,
           method: 'token1',
           return: CONSTANTS[blockchain].WRAPPED
         }
@@ -122,9 +122,9 @@ describe('uniswap_v2', () => {
       mock({
         blockchain,
         provider: provider(blockchain),
-        call: {
-          to: exchange.contracts.factory.address,
-          api: exchange.contracts.factory.api,
+        request: {
+          to: exchange.factory.address,
+          api: exchange.factory.api,
           method: 'getPair',
           params: ['0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a', CONSTANTS[blockchain].WRAPPED],
           return: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675'
@@ -133,9 +133,9 @@ describe('uniswap_v2', () => {
       mock({
         blockchain,
         provider: provider(blockchain),
-        call: {
+        request: {
           to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
-          api: exchange.contracts.pair.api,
+          api: exchange.pair.api,
           method: 'getReserves',
           return: ['10031', '1115408461069632429', '1617377350']
         }
@@ -143,9 +143,9 @@ describe('uniswap_v2', () => {
       mock({
         blockchain,
         provider: provider(blockchain),
-        call: {
+        request: {
           to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
-          api: exchange.contracts.pair.api,
+          api: exchange.pair.api,
           method: 'token0',
           return: CONSTANTS[blockchain].WRAPPED
         }
@@ -153,9 +153,9 @@ describe('uniswap_v2', () => {
       mock({
         blockchain,
         provider: provider(blockchain),
-        call: {
+        request: {
           to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
-          api: exchange.contracts.pair.api,
+          api: exchange.pair.api,
           method: 'token1',
           return: '0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a'
         }
@@ -170,7 +170,7 @@ describe('uniswap_v2', () => {
         mock({
           blockchain,
           provider: provider(blockchain),
-          call: {
+          request: {
             to: CONSTANTS[blockchain].USD,
             api: Token.ethereum.DEFAULT,
             method: 'decimals',
@@ -183,9 +183,9 @@ describe('uniswap_v2', () => {
         mock({
           blockchain,
           provider: provider(blockchain),
-          call: {
-            to: exchange.contracts.factory.address,
-            api: exchange.contracts.factory.api,
+          request: {
+            to: exchange.factory.address,
+            api: exchange.factory.api,
             method: 'getPair',
             params: ['0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a', CONSTANTS[blockchain].USD],
             return: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675'
@@ -194,9 +194,9 @@ describe('uniswap_v2', () => {
         mock({
           blockchain,
           provider: provider(blockchain),
-          call: {
+          request: {
             to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
-            api: exchange.contracts.pair.api,
+            api: exchange.pair.api,
             method: 'getReserves',
             return: ['1115408461069632429', '10031', '1617377350']
           }
@@ -204,9 +204,9 @@ describe('uniswap_v2', () => {
         mock({
           blockchain,
           provider: provider(blockchain),
-          call: {
+          request: {
             to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
-            api: exchange.contracts.pair.api,
+            api: exchange.pair.api,
             method: 'token0',
             return: '0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a'
           }
@@ -214,9 +214,9 @@ describe('uniswap_v2', () => {
         mock({
           blockchain,
           provider: provider(blockchain),
-          call: {
+          request: {
             to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
-            api: exchange.contracts.pair.api,
+            api: exchange.pair.api,
             method: 'token1',
             return: CONSTANTS[blockchain].USD
           }
@@ -229,9 +229,9 @@ describe('uniswap_v2', () => {
         mock({
           blockchain,
           provider: provider(blockchain),
-          call: {
-            to: exchange.contracts.factory.address,
-            api: exchange.contracts.factory.api,
+          request: {
+            to: exchange.factory.address,
+            api: exchange.factory.api,
             method: 'getPair',
             params: ['0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a', CONSTANTS[blockchain].USD],
             return: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675'
@@ -240,9 +240,9 @@ describe('uniswap_v2', () => {
         mock({
           blockchain,
           provider: provider(blockchain),
-          call: {
+          request: {
             to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
-            api: exchange.contracts.pair.api,
+            api: exchange.pair.api,
             method: 'getReserves',
             return: ['10031', '1000000', '1617377350']
           }
@@ -250,9 +250,9 @@ describe('uniswap_v2', () => {
         mock({
           blockchain,
           provider: provider(blockchain),
-          call: {
+          request: {
             to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
-            api: exchange.contracts.pair.api,
+            api: exchange.pair.api,
             method: 'token0',
             return: CONSTANTS[blockchain].USD
           }
@@ -260,9 +260,9 @@ describe('uniswap_v2', () => {
         mock({
           blockchain,
           provider: provider(blockchain),
-          call: {
+          request: {
             to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
-            api: exchange.contracts.pair.api,
+            api: exchange.pair.api,
             method: 'token1',
             return: '0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a'
           }

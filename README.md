@@ -11,7 +11,7 @@ npm install --save @depay/web3-exchanges
 ```
 
 ```javascript
-import { all, findByName, route } from '@depay/web3-exchanges'
+import { all, find, route } from '@depay/web3-exchanges'
 
 all
 // [
@@ -20,22 +20,29 @@ all
 //   ...
 // ]
 
-let exchange = findByName('uniswap_v2')
+let exchange = find('ethereum', 'uniswap_v2')
 // { name: 'uniswap_v2', label: 'Uniswap v2', logo: '...' }
 
-let routes = await route({
+let routes
+
+routes = await route({
   blockchain: 'ethereum',
   tokenIn: '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb',
   tokenOut: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
-  amountIn: 1,
-  fromAddress: '0x5Af489c8786A018EC4814194dC8048be1007e390',
-  toAddress: '0x5Af489c8786A018EC4814194dC8048be1007e390'
-}) // returns routes sorted by cost-effectiveness (best first)
+  amountIn: 1
+})
+
+routes = await route({
+  blockchain: 'solana',
+  tokenIn: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
+  tokenOut: '4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R',
+  amountIn: 1
+})
 
 // use connected wallet to sign and send the swap transaction
-import { getWallet } from '@depay/web3-wallets'
+import { getWallets } from '@depay/web3-wallets'
 
-let wallet = getWallet()
+let wallet = getWallets()[0]
 
 wallet.sendTransaction(route.transaction)
 
@@ -48,12 +55,14 @@ This library supports the following blockchains:
 - [Ethereum](https://ethereum.org)
 - [BNB Smart Chain](https://www.binance.org/smartChain)
 - [Polygon](https://polygon.technology)
+- [Solana](https://solana.com)
 
 This library supports the following decentralized exchanges:
 
 - [Uniswap v2](https://uniswap.org)
 - [PancakeSwap v2](https://pancakeswap.info)
 - [Quickswap](https://quickswap.exchange)
+- [Raydium](https://raydium.io)
 
 ## Data Structures
 
@@ -67,8 +76,10 @@ Decentralized exchange data is provided in the following structure:
   name: String (e.g. uniswap_v2)
   alternativeNames: Array (e.g. ['pancake'])
   label: String (e.g. Uniswap v2)
-  logo: String (base64 encoded PNG),
-  contracts: Object (contains important contract addresses and apis to interact with the exchange)
+  logo: String (base64 encoded PNG)
+  router: Object (contains important addresses and apis to interact with the exchange router)
+  factory: Object (contains important addresses and apis to interact with the exchange factory)
+  pair: Object (contains important addresses and apis to interact with the exchange pair)
 }
 ```
 
@@ -84,20 +95,22 @@ A Swap configuration is fed into the `route` function:
   amountInMax: Human Readable Number (e.g. 1.2)
   amountOut: Human Readable Number (e.g. 1.2)
   amountOutMin: Human Readable Number (e.g. 1.2)
-  fromAddress: '0x5Af489c8786A018EC4814194dC8048be1007e390'
-  toAddress: '0x5Af489c8786A018EC4814194dC8048be1007e390'
 }
 ```
 
+- `tokenIn`: The token put into the swap (out of wallet)
+- `amountIn`: The amount of tokenIn put into the swap (out of wallet)
+- `amountInMax`: The max. amount of tokenIn put into the swap (out of wallet)
+- `tokenOut`: The token expected to come out of the swap (into wallet)
+- `amountOut`: The amount of tokenOut expected to come out of the swap (into wallet)
+- `amountOutMin`: The min. amount of tokenOut expected to come out of the swap (into wallet)
+
 The following combinations of provided amounts are possible:
 
-- Only `amountIn`, `amountOutMin` will be calculated automatically and can vary
-- Only `amountOut`, `amountInMax` will be calculated automatically and can vary
-- Only `amountInMax`, `amountOut` will be calculated automatically and can vary
-- Only `amountOutMin`, `amountIn` will be calculated automatically and can vary
-- `amountIn` and `amountOutMax` (routing will stick to both)
-- `amountOut` and `amountInMin` (routing will stick to both)
-
+- Pass `amountOutMin`. `amountIn` will be calculated automatically and can vary
+- Pass `amountInMax`. `amountOut` will be calculated automatically and can vary
+- Pass `amountOut`. `amountInMax` will be calculated automatically and can vary
+- Pass `amountIn`. `amountOutMin` will be calculated automatically and can vary
 
 ### Route
 
@@ -112,14 +125,74 @@ Routes are returned by calling `route`. A single Route has the following structu
   amountOutMin: BigNumber (e.g. '32000000000000000000')
   amountOut: BigNumber (e.g. '32000000000000000000')
   amountInMax: BigNumber (e.g. '1000000000000000000')
-  fromAddress: '0x5Af489c8786A018EC4814194dC8048be1007e390'
-  toAddress: '0x5Af489c8786A018EC4814194dC8048be1007e390'
   transaction: Transaction (see @depay/web3-wallets for details)
   exchange: Exchange (see [Exchange data structure](#exchange))
 }
 ```
 
 See [@depay/web3-wallets](https://github.com/DePayFi/@depay/web3-wallets#sendtransaction) for details about the transaction format.
+
+## Slippage
+
+This library applies slippage strategies to amounts for the following combinations:
+
+- If `amountOutMin` is provided, slippage is applied to `amountIn`.
+- If `amountOut` is provided, slippage is applied to `amountInMax`.
+
+### Auto Slippage
+
+Auto slippage applies `0.5%` default slippage.
+
+It applies only `0.1%` default slippage, if difference of amounts for tokenIn and tokenOut are `<1%`.
+
+For blockchains that allow to receive quotes for previous blocks (`EVM`), auto slippage additionally checks for:
+
+- Extreme Direction
+
+- Extreme Base Volatility
+
+And applies a higher than default slippage (`0.5%`) if required.
+
+#### Extreme Directional Price Change
+
+If there is a clear directional change of the price for the last 3 blocks,
+the target price will be projected according to the velocity of the last 3 blocks.
+
+##### Example Extreme Directional Price Change
+
+Current Price: $1'500
+
+Last 3 Blocks: $1'500, $1'530, $1'560
+
+Velocity: $30 per block
+
+Projection: $1'470
+
+Slippage 2%
+
+Slippage of `2%` will be applied, because it's higher than default slippage.
+
+#### Extreme Base Volatility
+
+If there is extreme base volatility in the last 3 blocks, 
+none-directional, 
+the target price will be the highest price over the last 3 blocks plus the smallest price change over the last 3 blocks.
+
+##### Example Extreme Base Volatility
+
+Current Price: $1'500
+
+Last 3 Blocks: $1'500, $1'490, $1'520
+
+Smallest Change: $10
+
+Highest Price: $1'520
+
+Projection: $1'530
+
+Slippage 2%
+
+Slippage of `2%` will be applied, because it's higher than default slippage.
 
 ## Functionalities
 
@@ -137,15 +210,15 @@ all
 
 ```
 
-### findByName: Get decentralized exchanged by name (name usually contains version, too)
+### find: Get decentralized exchanged by name (name usually contains version, too)
 
 ```javascript
-import { findByName } from '@depay/web3-exchanges'
+import { find } from '@depay/web3-exchanges'
 
-findByName('uniswap_v2')
+find('ethereum', 'uniswap_v2')
 // { name: 'uniswap_v2', label: 'Uniswap v2', logo: '...' }
 
-findByName('pancakeswap_v2')
+find('bsc', 'pancakeswap_v2')
 // { name: 'pancakeswap_v2', label: 'PancakeSwap v2', logo: '...' }
 ```
 
@@ -157,16 +230,13 @@ import { route } from '@depay/web3-exchanges'
 let routes = route {
   tokenIn: '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb',
   tokenOut: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
-  amountIn: 1,
-  amountOutMin: 2,
-  fromAddress: '0x5Af489c8786A018EC4814194dC8048be1007e390',
-  toAddress: '0x5Af489c8786A018EC4814194dC8048be1007e390'
+  amountOutMin: 2
 } // returns routes sorted by cost-effectiveness (best first)
 
 // use connected wallet to sign and send the swap transaction
-import { getWallet } from '@depay/web3-wallets'
+import { getWallets } from '@depay/web3-wallets'
 
-let wallet = getWallet()
+let wallet = getWallets()[0]
 
 wallet.sendTransaction(routes[0].transaction)
 ```
@@ -174,40 +244,36 @@ wallet.sendTransaction(routes[0].transaction)
 `route` can also be called on concrete exchanges: 
 
 ```javascript
-import { findByName } from '@depay/web3-exchanges'
+import { find } from '@depay/web3-exchanges'
 
-let exchange = findByName('uniswap_v2')
+let exchange = find('ethereum', 'uniswap_v2')
 
 let route = await exchange.route({
-  blockchain: 'ethereum',
   tokenIn: '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb',
   tokenOut: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
-  amountIn: 1,
-  amountOutMin: 2,
-  fromAddress: '0x5Af489c8786A018EC4814194dC8048be1007e390',
-  toAddress: '0x5Af489c8786A018EC4814194dC8048be1007e390'
+  amountIn: 1
 })
 
 // use connected wallet to sign and send the swap transaction
-import { getWallet } from '@depay/web3-wallets'
+import { getWallets } from '@depay/web3-wallets'
 
-let wallet = getWallet()
+let wallet = getWallets()[0]
 
 wallet.sendTransaction(route.transaction)
 ```
 
-### getAmountIn: gets the required amountIn for a specific block
+### getAmounts: gets the required amounts for the route
 
 ```javascript
-import { findByName } from '@depay/web3-exchanges'
+import { find } from '@depay/web3-exchanges'
 
-let exchange = findByName('uniswap_v2')
+let exchange = find('ethereum', 'uniswap_v2')
 
-let amountIn = await exchange.getAmountIn({
+let { amountIn } = await exchange.getAmounts({
   path: ['0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb', '0xdAC17F958D2ee523a2206206994597C13D831ec7'],
   amountOut: '2111112220000000',
   block: 14904658
-}) // 123222200000000000
+}) // '123222200000000000'
 ```
 
 ## Development

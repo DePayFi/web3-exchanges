@@ -6,9 +6,9 @@ function mockPair({ provider, tokenIn, tokenOut, pair }) {
   mock({
     provider: provider,
     blockchain: 'bsc',
-    call: {
+    request: {
       to: pair,
-      api: PancakeSwap.contracts.pair.api,
+      api: PancakeSwap.pair.api,
       method: 'getReserves',
       return: [ethers.utils.parseUnits('1000', 18), ethers.utils.parseUnits('1000', 18), '1629804922']
     }
@@ -16,9 +16,9 @@ function mockPair({ provider, tokenIn, tokenOut, pair }) {
   mock({
     provider: provider,
     blockchain: 'bsc',
-    call: {
+    request: {
       to: pair,
-      api: PancakeSwap.contracts.pair.api,
+      api: PancakeSwap.pair.api,
       method: 'token0',
       return: tokenIn
     }
@@ -26,9 +26,9 @@ function mockPair({ provider, tokenIn, tokenOut, pair }) {
   mock({
     provider: provider,
     blockchain: 'bsc',
-    call: {
+    request: {
       to: pair,
-      api: PancakeSwap.contracts.pair.api,
+      api: PancakeSwap.pair.api,
       method: 'token1',
       return: tokenOut
     }
@@ -36,9 +36,9 @@ function mockPair({ provider, tokenIn, tokenOut, pair }) {
   return mock({
     provider: provider,
     blockchain: 'bsc',
-    call: {
-      to: PancakeSwap.contracts.factory.address,
-      api: PancakeSwap.contracts.factory.api,
+    request: {
+      to: PancakeSwap.factory.address,
+      api: PancakeSwap.factory.api,
       method: 'getPair',
       params: [tokenIn, tokenOut],
       return: pair
@@ -50,9 +50,9 @@ function mockAmounts({ provider, method, params, amounts }){
   return mock({
     provider,
     blockchain: 'bsc',
-    call: {
-      to: PancakeSwap.contracts.router.address,
-      api: PancakeSwap.contracts.router.api,
+    request: {
+      to: PancakeSwap.router.address,
+      api: PancakeSwap.router.api,
       method: method,
       params: params,
       return: amounts

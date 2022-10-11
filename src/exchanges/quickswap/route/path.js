@@ -4,14 +4,14 @@ import { ethers } from 'ethers'
 import { request } from '@depay/web3-client'
 import { Token } from '@depay/web3-tokens'
 
-// Uniswap replaces 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE with
-// the wrapped token 0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2 and implies wrapping.
+// Replaces 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE with the wrapped token and implies wrapping.
 //
 // We keep 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE internally
 // to be able to differentiate between ETH<>Token and WETH<>Token swaps
 // as they are not the same!
 //
 let fixPath = (path) => {
+  if(!path) { return }
   let fixedPath = path.map((token, index) => {
     if (
       token === CONSTANTS.polygon.NATIVE && path[index+1] != CONSTANTS.polygon.WRAPPED &&
@@ -46,14 +46,17 @@ let pathExists = async (path) => {
   if(fixPath(path).length == 1) { return false }
   let pair = await request({
     blockchain: 'polygon',
-    address: QuickSwap.contracts.factory.address,
-    method: 'getPair'
-  }, { api: QuickSwap.contracts.factory.api, cache: 3600000, params: fixPath(path) })
+    address: QuickSwap.factory.address,
+    method: 'getPair',
+    api: QuickSwap.factory.api, 
+    cache: 3600000, 
+    params: fixPath(path) 
+  })
   if(pair == CONSTANTS.polygon.ZERO) { return false }
   let [reserves, token0, token1] = await Promise.all([
-    request({ blockchain: 'polygon', address: pair, method: 'getReserves' }, { api: QuickSwap.contracts.pair.api, cache: 3600000 }),
-    request({ blockchain: 'polygon', address: pair, method: 'token0' }, { api: QuickSwap.contracts.pair.api, cache: 3600000 }),
-    request({ blockchain: 'polygon', address: pair, method: 'token1' }, { api: QuickSwap.contracts.pair.api, cache: 3600000 })
+    request({ blockchain: 'polygon', address: pair, method: 'getReserves', api: QuickSwap.pair.api, cache: 3600000 }),
+    request({ blockchain: 'polygon', address: pair, method: 'token0', api: QuickSwap.pair.api, cache: 3600000 }),
+    request({ blockchain: 'polygon', address: pair, method: 'token1', api: QuickSwap.pair.api, cache: 3600000 })
   ])
   if(path.includes(CONSTANTS.polygon.WRAPPED)) {
     return minReserveRequirements({ min: 1, token: CONSTANTS.polygon.WRAPPED, decimals: CONSTANTS.polygon.DECIMALS, reserves, token0, token1 })
@@ -110,7 +113,7 @@ let findPath = async ({ tokenIn, tokenOut }) => {
     path.splice(path.length-1, 0, CONSTANTS.polygon.WRAPPED)
   }
 
-  return path
+  return { path, fixedPath: fixPath(path) }
 }
 
 export {

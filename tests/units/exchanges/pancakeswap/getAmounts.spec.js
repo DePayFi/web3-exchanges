@@ -1,6 +1,6 @@
 import PancakeSwap from 'src/exchanges/pancakeswap'
 import { ethers } from 'ethers'
-import { findByName } from 'src'
+import { find } from 'src'
 import { mock, resetMocks } from '@depay/web3-mock'
 import { provider, resetCache } from '@depay/web3-client'
 
@@ -12,14 +12,14 @@ describe('pancakeswap', () => {
   beforeEach(resetCache)
   beforeEach(()=>mock({ provider: provider(blockchain), blockchain, accounts: { return: accounts } }))
 
-  let exchange = findByName('pancakeswap')
+  let exchange = find('bsc', 'pancakeswap')
   let pair = '0xEF8cD6Cb5c841A4f02986e8A8ab3cC545d1B8B6d'
   let fromAddress = '0x5Af489c8786A018EC4814194dC8048be1007e390'
   let toAddress = '0x5Af489c8786A018EC4814194dC8048be1007e390'
 
-  describe('getAmountIn', ()=>{
+  describe('getAmounts', ()=>{
 
-    it('allows to pass the specific block you need to getAmountIn for', async ()=> {
+    it('allows to pass the specific block you need to getAmountsIn for', async ()=> {
 
       const path = ['0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb', '0xdAC17F958D2ee523a2206206994597C13D831ec7']
       const amountOut = '100000000000'
@@ -30,16 +30,16 @@ describe('pancakeswap', () => {
         provider: provider(blockchain),
         blockchain,
         block,
-        call: {
-          to: PancakeSwap.contracts.router.address,
-          api: PancakeSwap.contracts.router.api,
+        request: {
+          to: PancakeSwap.router.address,
+          api: PancakeSwap.router.api,
           method: 'getAmountsIn',
           params: { amountOut, path },
           return: amountsIn
         }
       })
 
-      let amountIn = await exchange.getAmountIn({
+      let { amountIn } = await exchange.getAmounts({
         path,
         amountOut,
         block

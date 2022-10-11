@@ -1,6 +1,6 @@
 import PancakeSwap from '../basics'
 import { CONSTANTS } from '@depay/web3-constants'
-import { fixUniswapPath } from './path'
+import { fixPath } from './path'
 
 let getTransaction = ({
   path,
@@ -21,8 +21,8 @@ let getTransaction = ({
   let transaction = {
     blockchain,
     from: fromAddress,
-    to: PancakeSwap.contracts.router.address,
-    api: PancakeSwap.contracts.router.api,
+    to: PancakeSwap.router.address,
+    api: PancakeSwap.router.api,
   }
 
   if (path[0] === CONSTANTS[blockchain].NATIVE) {
@@ -54,7 +54,7 @@ let getTransaction = ({
   }
 
   transaction.params = Object.assign({}, transaction.params, {
-    path: fixUniswapPath(path),
+    path: fixPath(path),
     to: toAddress,
     deadline: Math.round(Date.now() / 1000) + 30 * 60, // 30 minutes
   })

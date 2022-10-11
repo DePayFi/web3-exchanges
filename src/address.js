@@ -1,7 +1,11 @@
 import { ethers } from 'ethers'
 
-const fixCheckSum = (address)=>{
-  return ethers.utils.getAddress(address)
+const fixAddress = (address)=>{
+  if(address.match('0x')) {
+    return ethers.utils.getAddress(address)
+  } else {
+    return address
+  }
 }
 
-export { fixCheckSum }
+export { fixAddress }

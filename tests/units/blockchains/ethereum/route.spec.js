@@ -5,7 +5,7 @@ import { mock, resetMocks } from '@depay/web3-mock'
 import { mockDecimals } from 'tests/mocks/token'
 import { mockPair, mockAmounts } from 'tests/mocks/uniswap_v2'
 import { resetCache, provider } from '@depay/web3-client'
-import { route, findByName } from 'src'
+import { route, find } from 'src'
 
 describe('route', ()=> {
 
@@ -39,7 +39,6 @@ describe('route', ()=> {
       tokenIn: tokenIn,
       tokenOut: tokenOut,
       amountIn: amountIn,
-      amountOutMin: amountOutMin,
       fromAddress: wallet,
       toAddress: wallet
     });
@@ -47,12 +46,12 @@ describe('route', ()=> {
     expect(routes.length).toEqual(1)
     expect(routes[0].fromAddress).toEqual(wallet)
     expect(routes[0].toAddress).toEqual(wallet)
-    expect(routes[0].exchange).toEqual(findByName('uniswap_v2'))
+    expect(routes[0].exchange).toEqual(find('ethereum', 'uniswap_v2'))
     expect(routes[0].path).toEqual(path.map((address)=>ethers.utils.getAddress(address)))
     expect(routes[0].transaction.blockchain).toEqual('ethereum')
     expect(routes[0].transaction.from).toEqual(accounts[0])
-    expect(routes[0].transaction.to).toEqual(UniswapV2.contracts.router.address)
-    expect(routes[0].transaction.api).toEqual(UniswapV2.contracts.router.api)
+    expect(routes[0].transaction.to).toEqual(UniswapV2.router.address)
+    expect(routes[0].transaction.api).toEqual(UniswapV2.router.api)
     expect(routes[0].transaction.method).toEqual('swapExactTokensForTokens')
     expect(routes[0].transaction.params.amountIn).toEqual(amountInBN.toString())
     expect(routes[0].transaction.params.amountOutMin).toEqual(amountOutMinBN.toString())

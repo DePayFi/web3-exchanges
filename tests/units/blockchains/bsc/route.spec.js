@@ -5,7 +5,7 @@ import { mock, resetMocks } from '@depay/web3-mock'
 import { mockDecimals } from 'tests/mocks/token'
 import { mockPair, mockAmounts } from 'tests/mocks/pancakeswap'
 import { resetCache, provider } from '@depay/web3-client'
-import { route, findByName } from 'src'
+import { route, find } from 'src'
 
 describe('route', ()=> {
 
@@ -32,14 +32,13 @@ describe('route', ()=> {
     mockDecimals({ provider: provider(blockchain), blockchain, address: tokenIn, value: decimalsIn })
     mockDecimals({ provider: provider(blockchain), blockchain, address: tokenOut, value: decimalsOut })
     mockPair({ provider: provider(blockchain), tokenIn, tokenOut, pair })
-    mockAmounts({ provider: provider(blockchain), method: 'getAmountsOut', params: [amountInBN,path], amounts: [amountInBN, amountOutMinBN] })
+    mockAmounts({ provider: provider(blockchain), method: 'getAmountsOut', params: [amountInBN, path], amounts: [amountInBN, amountOutMinBN] })
 
     let routes = await route({
       blockchain,
       tokenIn: tokenIn,
       tokenOut: tokenOut,
       amountIn: amountIn,
-      amountOutMin: amountOutMin,
       fromAddress: wallet,
       toAddress: wallet
     });
@@ -47,12 +46,12 @@ describe('route', ()=> {
     expect(routes.length).toEqual(1)
     expect(routes[0].fromAddress).toEqual(wallet)
     expect(routes[0].toAddress).toEqual(wallet)
-    expect(routes[0].exchange).toEqual(findByName('pancakeswap'))
+    expect(routes[0].exchange).toEqual(find('bsc', 'pancakeswap'))
     expect(routes[0].path).toEqual(path.map((address)=>ethers.utils.getAddress(address)))
     expect(routes[0].transaction.blockchain).toEqual('bsc')
-    expect(routes[0].transaction.to).toEqual(PancakeSwap.contracts.router.address)
+    expect(routes[0].transaction.to).toEqual(PancakeSwap.router.address)
     expect(routes[0].transaction.from).toEqual(accounts[0])
-    expect(routes[0].transaction.api).toEqual(PancakeSwap.contracts.router.api)
+    expect(routes[0].transaction.api).toEqual(PancakeSwap.router.api)
     expect(routes[0].transaction.method).toEqual('swapExactTokensForTokens')
     expect(routes[0].transaction.params.amountIn).toEqual(amountInBN.toString())
     expect(routes[0].transaction.params.amountOutMin).toEqual(amountOutMinBN.toString())

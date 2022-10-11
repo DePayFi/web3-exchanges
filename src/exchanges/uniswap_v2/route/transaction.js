@@ -1,6 +1,6 @@
 import UniswapV2 from '../basics'
 import { CONSTANTS } from '@depay/web3-constants'
-import { fixUniswapPath } from './path'
+import { fixPath } from './path'
 
 let getTransaction = ({
   path,
@@ -19,8 +19,8 @@ let getTransaction = ({
   let transaction = {
     blockchain: 'ethereum',
     from: fromAddress,
-    to: UniswapV2.contracts.router.address,
-    api: UniswapV2.contracts.router.api,
+    to: UniswapV2.router.address,
+    api: UniswapV2.router.api,
   }
 
   if (path[0] === CONSTANTS.ethereum.NATIVE) {
@@ -52,7 +52,7 @@ let getTransaction = ({
   }
 
   transaction.params = Object.assign({}, transaction.params, {
-    path: fixUniswapPath(path),
+    path: fixPath(path),
     to: toAddress,
     deadline: Math.round(Date.now() / 1000) + 30 * 60, // 30 minutes
   })

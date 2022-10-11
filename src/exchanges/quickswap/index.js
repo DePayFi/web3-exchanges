@@ -1,9 +1,14 @@
 import basics from './basics'
 import Exchange from '../../classes/Exchange'
-import route from './route'
-import { getAmountIn } from './route/amounts'
+import { findPath } from './route/path'
+import { getAmounts } from './route/amounts'
+import { getTransaction } from './route/transaction'
 
 export default new Exchange(
-  Object.assign(basics, { route, getAmountIn })
+  Object.assign(basics, {
+    findPath,
+    getAmounts,
+    getTransaction,
+  })
 )
 

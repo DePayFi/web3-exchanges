@@ -2,14 +2,13 @@ import QuickSwap from '../basics'
 import { fixPath } from './path'
 import { request } from '@depay/web3-client'
 
-let getAmountsOut = ({ path, amountIn, tokenIn, tokenOut }) => {
+let getAmountOut = ({ path, amountIn, tokenIn, tokenOut }) => {
   return new Promise((resolve) => {
     request({
       blockchain: 'polygon',
-      address: QuickSwap.contracts.router.address,
-      method: 'getAmountsOut'
-    },{
-      api: QuickSwap.contracts.router.api,
+      address: QuickSwap.router.address,
+      method: 'getAmountsOut',
+      api: QuickSwap.router.api,
       params: {
         amountIn: amountIn,
         path: fixPath(path),
@@ -26,10 +25,9 @@ let getAmountIn = ({ path, amountOut, block }) => {
   return new Promise((resolve) => {
     request({
       blockchain: 'polygon',
-      address: QuickSwap.contracts.router.address,
-      method: 'getAmountsIn'
-    },{
-      api: QuickSwap.contracts.router.api,
+      address: QuickSwap.router.address,
+      method: 'getAmountsIn',
+      api: QuickSwap.router.api,
       params: {
         amountOut: amountOut,
         path: fixPath(path),
@@ -43,6 +41,7 @@ let getAmountIn = ({ path, amountOut, block }) => {
 
 let getAmounts = async ({
   path,
+  block,
   tokenIn,
   tokenOut,
   amountOut,
@@ -51,28 +50,28 @@ let getAmounts = async ({
   amountOutMin
 }) => {
   if (amountOut) {
-    amountIn = await getAmountIn({ path, amountOut, tokenIn, tokenOut })
+    amountIn = await getAmountIn({ block, path, amountOut, tokenIn, tokenOut })
     if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
       return {}
     } else if (amountInMax === undefined) {
       amountInMax = amountIn
     }
   } else if (amountIn) {
-    amountOut = await getAmountsOut({ path, amountIn, tokenIn, tokenOut })
+    amountOut = await getAmountOut({ path, amountIn, tokenIn, tokenOut })
     if (amountOut == undefined || amountOutMin && amountOut.lt(amountOutMin)) {
       return {}
     } else if (amountOutMin === undefined) {
       amountOutMin = amountOut
     }
   } else if(amountOutMin) {
-    amountIn = await getAmountIn({ path, amountOut: amountOutMin, tokenIn, tokenOut })
+    amountIn = await getAmountIn({ block, path, amountOut: amountOutMin, tokenIn, tokenOut })
     if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
       return {}
     } else if (amountInMax === undefined) {
       amountInMax = amountIn
     }
   } else if(amountInMax) {
-    amountOut = await getAmountsOut({ path, amountIn: amountInMax, tokenIn, tokenOut })
+    amountOut = await getAmountOut({ path, amountIn: amountInMax, tokenIn, tokenOut })
     if (amountOut == undefined ||amountOutMin && amountOut.lt(amountOutMin)) {
       return {}
     } else if (amountOutMin === undefined) {

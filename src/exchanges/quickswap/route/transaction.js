@@ -19,8 +19,8 @@ let getTransaction = ({
   let transaction = {
     blockchain: 'polygon',
     from: fromAddress,
-    to: QuickSwap.contracts.router.address,
-    api: QuickSwap.contracts.router.api,
+    to: QuickSwap.router.address,
+    api: QuickSwap.router.api,
   }
 
   if (path[0] === CONSTANTS.polygon.NATIVE) {
