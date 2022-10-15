@@ -112,12 +112,8 @@
       const difference1 = lastAmountsIn[0].sub(lastAmountsIn[1]);
       const difference2 = lastAmountsIn[1].sub(lastAmountsIn[2]);
 
-      let slippage;
-      if(difference1.lt(difference2)) {
-        slippage = difference2.add(difference2.sub(difference1));
-      } else {
-        slippage = difference1.add(difference1.sub(difference2));
-      }
+      // velocity (avg. step size)
+      const slippage = difference1.add(difference2).div(2);
 
       newAmountInWithExtremeSlippageBN = lastAmountsIn[0].add(slippage);
 

@@ -162,15 +162,17 @@ the target price will be projected according to the velocity of the last 3 block
 
 Current Price: $1'500
 
-Last 3 Blocks: $1'500, $1'530, $1'560
+Last 3 Blocks: $1'500, $1'470, $1'440
 
 Velocity: $30 per block
 
-Projection: $1'470
+Projection: $1'530
 
 Slippage 2%
 
 Slippage of `2%` will be applied, because it's higher than default slippage.
+
+_For downwards projections slippage is not required as the transaction would not fail._
 
 #### Extreme Base Volatility
 
@@ -188,7 +190,7 @@ Smallest Change: $10
 
 Highest Price: $1'520
 
-Projection: $1'530
+Projection: $1'530 ($1'520 + $10)
 
 Slippage 2%
 
