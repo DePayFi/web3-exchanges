@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import { request, provider } from '@depay/web3-client';
+import { request, getProvider } from '@depay/web3-client';
 import { Token } from '@depay/web3-tokens';
 import { CONSTANTS } from '@depay/web3-constants';
 import { struct, u64, u128, publicKey, seq, u8, blob, Buffer, PublicKey, TransactionInstruction, Transaction, Keypair, BN, SystemProgram } from '@depay/solana-web3.js';
@@ -1294,7 +1294,8 @@ const getInfo = async (pair)=>{
   transaction.add(instruction);
 
   let result;
-  try{ result = await provider('solana').simulateTransaction(transaction); } catch (e) {}
+  const provider = await getProvider('solana');
+  try{ result = await provider.simulateTransaction(transaction); } catch (e) {}
 
   let info;
   if(result && result.value && result.value.logs) {
@@ -1518,8 +1519,9 @@ const getTransaction$1 = async ({
   let startsWrapped = (path[0] === CONSTANTS.solana.NATIVE && fixedPath[0] === CONSTANTS.solana.WRAPPED);
   let endsUnwrapped = (path[path.length-1] === CONSTANTS.solana.NATIVE && fixedPath[fixedPath.length-1] === CONSTANTS.solana.WRAPPED);
   let wrappedAccount;
+  const provider = await getProvider('solana');
   if(startsWrapped || endsUnwrapped) {
-    const rent = await provider('solana').getMinimumBalanceForRentExemption(Token.solana.TOKEN_LAYOUT.span);
+    const rent = await provider.getMinimumBalanceForRentExemption(Token.solana.TOKEN_LAYOUT.span);
     wrappedAccount = Keypair.generate().publicKey.toString();
     const lamports = startsWrapped ? new BN(amountIn.toString()).add(new BN(rent)) :  new BN(rent);
     instructions.push(
@@ -1606,7 +1608,7 @@ const getTransaction$1 = async ({
   // instructions.forEach((instruction)=>simulation.add(instruction))
   // let result
   // console.log('SIMULATE')
-  // try{ result = await provider('solana').simulateTransaction(simulation) } catch(e) { console.log('error', e) }
+  // try{ result = await provider.simulateTransaction(simulation) } catch(e) { console.log('error', e) }
   // console.log('SIMULATION RESULT', result)
   // console.log('instructions.length', instructions.length)
 

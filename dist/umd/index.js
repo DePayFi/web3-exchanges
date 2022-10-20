@@ -1294,7 +1294,8 @@
     transaction.add(instruction);
 
     let result;
-    try{ result = await web3Client.provider('solana').simulateTransaction(transaction); } catch (e) {}
+    const provider = await web3Client.getProvider('solana');
+    try{ result = await provider.simulateTransaction(transaction); } catch (e) {}
 
     let info;
     if(result && result.value && result.value.logs) {
@@ -1518,8 +1519,9 @@
     let startsWrapped = (path[0] === web3Constants.CONSTANTS.solana.NATIVE && fixedPath[0] === web3Constants.CONSTANTS.solana.WRAPPED);
     let endsUnwrapped = (path[path.length-1] === web3Constants.CONSTANTS.solana.NATIVE && fixedPath[fixedPath.length-1] === web3Constants.CONSTANTS.solana.WRAPPED);
     let wrappedAccount;
+    const provider = await web3Client.getProvider('solana');
     if(startsWrapped || endsUnwrapped) {
-      const rent = await web3Client.provider('solana').getMinimumBalanceForRentExemption(web3Tokens.Token.solana.TOKEN_LAYOUT.span);
+      const rent = await provider.getMinimumBalanceForRentExemption(web3Tokens.Token.solana.TOKEN_LAYOUT.span);
       wrappedAccount = solanaWeb3_js.Keypair.generate().publicKey.toString();
       const lamports = startsWrapped ? new solanaWeb3_js.BN(amountIn.toString()).add(new solanaWeb3_js.BN(rent)) :  new solanaWeb3_js.BN(rent);
       instructions.push(
@@ -1606,7 +1608,7 @@
     // instructions.forEach((instruction)=>simulation.add(instruction))
     // let result
     // console.log('SIMULATE')
-    // try{ result = await provider('solana').simulateTransaction(simulation) } catch(e) { console.log('error', e) }
+    // try{ result = await provider.simulateTransaction(simulation) } catch(e) { console.log('error', e) }
     // console.log('SIMULATION RESULT', result)
     // console.log('instructions.length', instructions.length)
 
