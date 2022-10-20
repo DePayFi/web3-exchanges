@@ -4,16 +4,21 @@ import { ethers } from 'ethers'
 import { mock, resetMocks } from '@depay/web3-mock'
 import { mockDecimals } from 'tests/mocks/token'
 import { mockPair, mockAmounts } from 'tests/mocks/pancakeswap'
-import { resetCache, provider } from '@depay/web3-client'
+import { resetCache, getProvider } from '@depay/web3-client'
 import { route, find } from 'src'
 
 describe('route', ()=> {
 
   const blockchain = 'bsc'
   const accounts = ['0xd8da6bf26964af9d7eed9e03e53415d37aa96045']
-  beforeEach(resetMocks)
-  beforeEach(resetCache)
-  beforeEach(()=>mock({ blockchain, accounts: { return: accounts } }))
+
+  let provider
+  beforeEach(async ()=>{
+    resetMocks()
+    resetCache()
+    provider = await getProvider(blockchain)
+    mock({ blockchain, accounts: { return: accounts } })
+  })
 
   it('returns routes for all exchanges on the bsc blockchain', async ()=>{
 
@@ -29,10 +34,10 @@ describe('route', ()=> {
     let pair = '0x804678fa97d91B974ec2af3c843270886528a9E6'
     let wallet = accounts[0]
 
-    mockDecimals({ provider: provider(blockchain), blockchain, address: tokenIn, value: decimalsIn })
-    mockDecimals({ provider: provider(blockchain), blockchain, address: tokenOut, value: decimalsOut })
-    mockPair({ provider: provider(blockchain), tokenIn, tokenOut, pair })
-    mockAmounts({ provider: provider(blockchain), method: 'getAmountsOut', params: [amountInBN, path], amounts: [amountInBN, amountOutMinBN] })
+    mockDecimals({ provider, blockchain, address: tokenIn, value: decimalsIn })
+    mockDecimals({ provider, blockchain, address: tokenOut, value: decimalsOut })
+    mockPair({ provider, tokenIn, tokenOut, pair })
+    mockAmounts({ provider, method: 'getAmountsOut', params: [amountInBN, path], amounts: [amountInBN, amountOutMinBN] })
 
     let routes = await route({
       blockchain,

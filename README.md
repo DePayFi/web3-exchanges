@@ -56,13 +56,24 @@ This library supports the following blockchains:
 - [BNB Smart Chain](https://www.binance.org/smartChain)
 - [Polygon](https://polygon.technology)
 - [Solana](https://solana.com)
+- [Velas](https://velas.com)
 
 This library supports the following decentralized exchanges:
 
+Ethereum:
 - [Uniswap v2](https://uniswap.org)
+
+BNB Smart Chain:
 - [PancakeSwap v2](https://pancakeswap.info)
+
+Polygon:
 - [Quickswap](https://quickswap.exchange)
+
+Solana:
 - [Raydium](https://raydium.io)
+
+Velas:
+- [WagyuSwap](https://www.wagyuswap.app)
 
 ## Data Structures
 

@@ -4,17 +4,22 @@ import { mock, resetMocks } from '@depay/web3-mock'
 import { mockDecimals } from 'tests/mocks/token'
 import { mockPair } from 'tests/mocks/pancakeswap'
 import { pathExists, findPath } from 'src/exchanges/pancakeswap/route/path'
-import { provider, resetCache } from '@depay/web3-client'
+import { getProvider, resetCache } from '@depay/web3-client'
 import { Token } from '@depay/web3-tokens'
 
 describe('pancakeswap', () => {
   
-  let exchange = find('bsc', 'pancakeswap')
-  let blockchain = 'bsc'
+  const exchange = find('bsc', 'pancakeswap')
+  const blockchain = 'bsc'
   const accounts = ['0xd8da6bf26964af9d7eed9e03e53415d37aa96045']
-  beforeEach(resetMocks)
-  beforeEach(resetCache)
-  beforeEach(()=>mock({ blockchain, accounts: { return: accounts } }))
+  
+  let provider
+  beforeEach(async ()=>{
+    resetMocks()
+    resetCache()
+    provider = await getProvider(blockchain)
+    mock({ blockchain, accounts: { return: accounts } })
+  })
 
   describe('path exists', ()=>{
 
@@ -28,9 +33,9 @@ describe('pancakeswap', () => {
     it('does not route through USD->USD->WRAPPED->TOKENB', async()=>{
       let tokenIn = CONSTANTS[blockchain].USD
       let tokenOut = '0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82' // CAKE
-      mockPair({ provider: provider(blockchain), tokenIn, tokenOut, pair: CONSTANTS[blockchain].ZERO })
-      mockPair({ provider: provider(blockchain), tokenIn, tokenOut: CONSTANTS[blockchain].WRAPPED, pair: CONSTANTS[blockchain].ZERO })
-      let USDtoUSDMock = mockPair({ provider: provider(blockchain), tokenIn: CONSTANTS[blockchain].USD, tokenOut: CONSTANTS[blockchain].USD, pair: CONSTANTS[blockchain].ZERO })
+      mockPair({ provider, tokenIn, tokenOut, pair: CONSTANTS[blockchain].ZERO })
+      mockPair({ provider, tokenIn, tokenOut: CONSTANTS[blockchain].WRAPPED, pair: CONSTANTS[blockchain].ZERO })
+      let USDtoUSDMock = mockPair({ provider, tokenIn: CONSTANTS[blockchain].USD, tokenOut: CONSTANTS[blockchain].USD, pair: CONSTANTS[blockchain].ZERO })
       let { path } = await findPath({ tokenIn, tokenOut })
       expect(USDtoUSDMock.calls.count()).toEqual(0)
       expect(path).toEqual(undefined)
@@ -39,10 +44,10 @@ describe('pancakeswap', () => {
     it('does not route through TOKENA->WRAPPED->USD->USD', async()=>{
       let tokenIn = '0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82' // CAKE
       let tokenOut = CONSTANTS[blockchain].USD
-      mockPair({ provider: provider(blockchain), tokenIn, tokenOut, pair: CONSTANTS[blockchain].ZERO })
-      mockPair({ provider: provider(blockchain), tokenIn: CONSTANTS[blockchain].USD, tokenOut: CONSTANTS[blockchain].WRAPPED, pair: CONSTANTS[blockchain].ZERO })
-      mockPair({ provider: provider(blockchain), tokenIn, tokenOut: CONSTANTS[blockchain].WRAPPED, pair: '0x0ed7e52944161450477ee417de9cd3a859b14fd0' })
-      let USDtoUSDMock = mockPair({ provider: provider(blockchain), tokenIn: CONSTANTS[blockchain].USD, tokenOut: CONSTANTS[blockchain].USD, pair: CONSTANTS[blockchain].ZERO })
+      mockPair({ provider, tokenIn, tokenOut, pair: CONSTANTS[blockchain].ZERO })
+      mockPair({ provider, tokenIn: CONSTANTS[blockchain].USD, tokenOut: CONSTANTS[blockchain].WRAPPED, pair: CONSTANTS[blockchain].ZERO })
+      mockPair({ provider, tokenIn, tokenOut: CONSTANTS[blockchain].WRAPPED, pair: '0x0ed7e52944161450477ee417de9cd3a859b14fd0' })
+      let USDtoUSDMock = mockPair({ provider, tokenIn: CONSTANTS[blockchain].USD, tokenOut: CONSTANTS[blockchain].USD, pair: CONSTANTS[blockchain].ZERO })
       let { path } = await findPath({ tokenIn, tokenOut })
       expect(USDtoUSDMock.calls.count()).toEqual(0)
       expect(path).toEqual(undefined)
@@ -51,10 +56,10 @@ describe('pancakeswap', () => {
     it('does not route through TOKENA->USD->WRAPPED->WRAPPED', async()=>{
       let tokenIn = '0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82' // CAKE
       let tokenOut = CONSTANTS[blockchain].WRAPPED
-      mockPair({ provider: provider(blockchain), tokenIn, tokenOut, pair: CONSTANTS[blockchain].ZERO })
-      mockPair({ provider: provider(blockchain), tokenIn, tokenOut: CONSTANTS[blockchain].USD, pair: '0x804678fa97d91b974ec2af3c843270886528a9e6' })
-      mockDecimals({ provider: provider(blockchain), blockchain, address: CONSTANTS[blockchain].USD, value: 18 })
-      let WRAPPEDtoWRAPPEDMock = mockPair({ provider: provider(blockchain), tokenIn: CONSTANTS[blockchain].WRAPPED, tokenOut: CONSTANTS[blockchain].WRAPPED, pair: CONSTANTS[blockchain].ZERO })
+      mockPair({ provider, tokenIn, tokenOut, pair: CONSTANTS[blockchain].ZERO })
+      mockPair({ provider, tokenIn, tokenOut: CONSTANTS[blockchain].USD, pair: '0x804678fa97d91b974ec2af3c843270886528a9e6' })
+      mockDecimals({ provider, blockchain, address: CONSTANTS[blockchain].USD, value: 18 })
+      let WRAPPEDtoWRAPPEDMock = mockPair({ provider, tokenIn: CONSTANTS[blockchain].WRAPPED, tokenOut: CONSTANTS[blockchain].WRAPPED, pair: CONSTANTS[blockchain].ZERO })
       let { path } = await findPath({ tokenIn, tokenOut })
       expect(WRAPPEDtoWRAPPEDMock.calls.count()).toEqual(0)
       expect(path).toEqual(undefined)
@@ -63,10 +68,10 @@ describe('pancakeswap', () => {
     it('does not route through WRAPPED->WRAPPED->USD->TOKENB', async()=>{
       let tokenIn = CONSTANTS[blockchain].WRAPPED
       let tokenOut = '0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82' // CAKE
-      mockPair({ provider: provider(blockchain), tokenIn, tokenOut, pair: CONSTANTS[blockchain].ZERO })
-      mockPair({ provider: provider(blockchain), tokenIn, tokenOut: CONSTANTS[blockchain].USD, pair: '0x58f876857a02d6762e0101bb5c46a8c1ed44dc16' })
-      mockDecimals({ provider: provider(blockchain), blockchain, address: CONSTANTS[blockchain].USD, value: 18 })
-      let WRAPPEDtoWRAPPEDMock = mockPair({ provider: provider(blockchain), tokenIn: CONSTANTS[blockchain].WRAPPED, tokenOut: CONSTANTS[blockchain].WRAPPED, pair: CONSTANTS[blockchain].ZERO })
+      mockPair({ provider, tokenIn, tokenOut, pair: CONSTANTS[blockchain].ZERO })
+      mockPair({ provider, tokenIn, tokenOut: CONSTANTS[blockchain].USD, pair: '0x58f876857a02d6762e0101bb5c46a8c1ed44dc16' })
+      mockDecimals({ provider, blockchain, address: CONSTANTS[blockchain].USD, value: 18 })
+      let WRAPPEDtoWRAPPEDMock = mockPair({ provider, tokenIn: CONSTANTS[blockchain].WRAPPED, tokenOut: CONSTANTS[blockchain].WRAPPED, pair: CONSTANTS[blockchain].ZERO })
       let { path } = await findPath({ tokenIn, tokenOut })
       expect(WRAPPEDtoWRAPPEDMock.calls.count()).toEqual(0)
       expect(path).toEqual(undefined)
@@ -75,7 +80,7 @@ describe('pancakeswap', () => {
     it('does not consider path existing if pair does not have enough reserves for an WBNB pair with WBNB at index 1', async ()=> {
       mock({
         blockchain,
-        provider: provider(blockchain),
+        provider,
         request: {
           to: exchange.factory.address,
           api: exchange.factory.api,
@@ -86,7 +91,7 @@ describe('pancakeswap', () => {
       })
       mock({
         blockchain,
-        provider: provider(blockchain),
+        provider,
         request: {
           to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
           api: exchange.pair.api,
@@ -96,7 +101,7 @@ describe('pancakeswap', () => {
       })
       mock({
         blockchain,
-        provider: provider(blockchain),
+        provider,
         request: {
           to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
           api: exchange.pair.api,
@@ -106,7 +111,7 @@ describe('pancakeswap', () => {
       })
       mock({
         blockchain,
-        provider: provider(blockchain),
+        provider,
         request: {
           to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
           api: exchange.pair.api,
@@ -121,7 +126,7 @@ describe('pancakeswap', () => {
     it('does not consider path existing if pair does not have enough reserves for an WETH pair with WETH at index 0', async ()=> {
       mock({
         blockchain,
-        provider: provider(blockchain),
+        provider,
         request: {
           to: exchange.factory.address,
           api: exchange.factory.api,
@@ -132,7 +137,7 @@ describe('pancakeswap', () => {
       })
       mock({
         blockchain,
-        provider: provider(blockchain),
+        provider,
         request: {
           to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
           api: exchange.pair.api,
@@ -142,7 +147,7 @@ describe('pancakeswap', () => {
       })
       mock({
         blockchain,
-        provider: provider(blockchain),
+        provider,
         request: {
           to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
           api: exchange.pair.api,
@@ -152,7 +157,7 @@ describe('pancakeswap', () => {
       })
       mock({
         blockchain,
-        provider: provider(blockchain),
+        provider,
         request: {
           to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
           api: exchange.pair.api,
@@ -169,7 +174,7 @@ describe('pancakeswap', () => {
       beforeEach(()=>{
         mock({
           blockchain,
-          provider: provider(blockchain),
+          provider,
           request: {
             to: CONSTANTS[blockchain].USD,
             api: Token.ethereum.DEFAULT,
@@ -182,7 +187,7 @@ describe('pancakeswap', () => {
       it('does not consider path existing if pair does not have enough reserves for an USD pair with USD at index 1', async ()=> {
         mock({
           blockchain,
-          provider: provider(blockchain),
+          provider,
           request: {
             to: exchange.factory.address,
             api: exchange.factory.api,
@@ -193,7 +198,7 @@ describe('pancakeswap', () => {
         })
         mock({
           blockchain,
-          provider: provider(blockchain),
+          provider,
           request: {
             to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
             api: exchange.pair.api,
@@ -203,7 +208,7 @@ describe('pancakeswap', () => {
         })
         mock({
           blockchain,
-          provider: provider(blockchain),
+          provider,
           request: {
             to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
             api: exchange.pair.api,
@@ -213,7 +218,7 @@ describe('pancakeswap', () => {
         })
         mock({
           blockchain,
-          provider: provider(blockchain),
+          provider,
           request: {
             to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
             api: exchange.pair.api,
@@ -228,7 +233,7 @@ describe('pancakeswap', () => {
       it('does not consider path existing if pair does not have enough reserves for an USD pair with USD at index 0', async ()=> {
         mock({
           blockchain,
-          provider: provider(blockchain),
+          provider,
           request: {
             to: exchange.factory.address,
             api: exchange.factory.api,
@@ -239,7 +244,7 @@ describe('pancakeswap', () => {
         })
         mock({
           blockchain,
-          provider: provider(blockchain),
+          provider,
           request: {
             to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
             api: exchange.pair.api,
@@ -249,7 +254,7 @@ describe('pancakeswap', () => {
         })
         mock({
           blockchain,
-          provider: provider(blockchain),
+          provider,
           request: {
             to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
             api: exchange.pair.api,
@@ -259,7 +264,7 @@ describe('pancakeswap', () => {
         })
         mock({
           blockchain,
-          provider: provider(blockchain),
+          provider,
           request: {
             to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
             api: exchange.pair.api,

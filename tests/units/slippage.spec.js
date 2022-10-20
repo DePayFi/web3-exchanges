@@ -4,29 +4,28 @@ import { find } from 'src'
 import { mock, resetMocks, increaseBlock } from '@depay/web3-mock'
 import { mockDecimals } from 'tests/mocks/token'
 import { mockPair, mockAmounts } from 'tests/mocks/uniswap_v2'
-import { resetCache, provider as providerFor } from '@depay/web3-client'
+import { resetCache, getProvider } from '@depay/web3-client'
 
 describe('slippage', () => {
 
   const blockchain = 'ethereum'
   const exchange = find(blockchain, 'uniswap_v2')
   const accounts = ['0xd8da6bf26964af9d7eed9e03e53415d37aa96045']
-  let tokenOut = '0x6b175474e89094c44da98b954eedeac495271d0f'
-  let pair = '0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852'
-  let provider
-  let amountOut = 1
-  let amountIn = 5
-  let amountOutBN = ethers.utils.parseUnits(amountOut.toString())
-  let currentBlock = 11
-  let tokenIn, amountInBN, path
+  const tokenOut = '0x6b175474e89094c44da98b954eedeac495271d0f'
+  const pair = '0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852'
+  const amountOut = 1
+  const amountIn = 5
+  const amountOutBN = ethers.utils.parseUnits(amountOut.toString())
+  const currentBlock = 11
   
-  beforeEach(resetMocks)
-  beforeEach(resetCache)
-  beforeEach(()=>{
+  let provider, tokenIn, amountInBN, path
+  beforeEach(async()=>{
+    resetMocks()
+    resetCache()
     tokenIn = '0xa0bed124a09ac2bd941b10349d8d224fe3c955eb'
     amountInBN = ethers.utils.parseUnits(amountIn.toString())
     path = [tokenIn, tokenOut]
-    provider = providerFor(blockchain)
+    provider = await getProvider(blockchain)
     increaseBlock(currentBlock-1)
     mock({ blockchain, provider, accounts: { return: accounts } })
     mockDecimals({ provider, blockchain, address: tokenOut, value: 18 })

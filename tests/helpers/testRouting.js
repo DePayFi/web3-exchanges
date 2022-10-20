@@ -2,7 +2,6 @@ import { ethers } from 'ethers'
 import { getWallets } from '@depay/web3-wallets'
 import { mock, normalize, anything } from '@depay/web3-mock'
 import { mockDecimals } from '../mocks/token'
-import { provider } from '@depay/web3-client'
 import { struct, u64, u8 } from '@depay/solana-web3.js'
 import { supported } from 'src/blockchains'
 

@@ -5,22 +5,26 @@ import { ethers } from 'ethers'
 import { find } from 'src'
 import { mock, anything, resetMocks } from '@depay/web3-mock'
 import { mockPair, mockToken, mockTokenAccounts, mockMarket, mockTransactionKeys, mockRent } from 'tests/mocks/raydium'
-import { resetCache, provider } from '@depay/web3-client'
+import { resetCache, getProvider } from '@depay/web3-client'
 import { struct, u64, u32, u8, publicKey, BN } from '@depay/solana-web3.js'
 import { testRouting } from 'tests/helpers/testRouting'
 import { Token } from '@depay/web3-tokens'
 
 describe('raydium', () => {
   
-  let blockchain = 'solana'
+  const blockchain = 'solana'
   const accounts = ['2UgCJaHU5y8NC4uWQcZYeV9a5RyYLF7iKYCybCsdFFD1']
-  beforeEach(resetMocks)
-  beforeEach(resetCache)
-  beforeEach(()=>mock({ blockchain, provider: provider(blockchain), accounts: { return: accounts } }))
-
-  let exchange = find('solana', 'raydium')
-  let fromAddress = '2UgCJaHU5y8NC4uWQcZYeV9a5RyYLF7iKYCybCsdFFD1'
-  let toAddress = '2UgCJaHU5y8NC4uWQcZYeV9a5RyYLF7iKYCybCsdFFD1'
+  const exchange = find('solana', 'raydium')
+  const fromAddress = '2UgCJaHU5y8NC4uWQcZYeV9a5RyYLF7iKYCybCsdFFD1'
+  const toAddress = '2UgCJaHU5y8NC4uWQcZYeV9a5RyYLF7iKYCybCsdFFD1'
+  
+  let provider
+  beforeEach(async ()=>{
+    resetMocks()
+    resetCache()
+    provider = await getProvider(blockchain)
+    mock({ provider, blockchain, accounts: { return: accounts } })
+  })
 
   describe('basic routing', ()=>{
 
@@ -88,7 +92,7 @@ describe('raydium', () => {
       mockMarket({ market })
 
       await testRouting({
-        provider: provider(blockchain),
+        provider,
         blockchain,
         exchange,
         tokenIn,
@@ -138,7 +142,7 @@ describe('raydium', () => {
       mockMarket({ market })
 
       await testRouting({
-        provider: provider(blockchain),
+        provider,
         blockchain,
         exchange,
         tokenIn,
@@ -189,7 +193,7 @@ describe('raydium', () => {
       mockMarket({ market })
 
       await testRouting({
-        provider: provider(blockchain),
+        provider,
         blockchain,
         exchange,
         tokenIn,
@@ -240,7 +244,7 @@ describe('raydium', () => {
       mockMarket({ market })
 
       await testRouting({
-        provider: provider(blockchain),
+        provider,
         blockchain,
         exchange,
         tokenIn,
@@ -300,7 +304,7 @@ describe('raydium', () => {
       mockRent({ rent: 2039280 })
 
       await testRouting({
-        provider: provider(blockchain),
+        provider,
         blockchain,
         exchange,
         tokenIn,
@@ -382,7 +386,7 @@ describe('raydium', () => {
       mockRent({ rent: 2039280 })
 
       await testRouting({
-        provider: provider(blockchain),
+        provider,
         blockchain,
         exchange,
         tokenIn,
@@ -477,7 +481,7 @@ describe('raydium', () => {
       mockMarket({ market: markets[1] })
 
       await testRouting({
-        provider: provider(blockchain),
+        provider,
         blockchain,
         exchange,
         tokenIn,
@@ -558,7 +562,7 @@ describe('raydium', () => {
       mockMarket({ market: markets[1] })
 
       await testRouting({
-        provider: provider(blockchain),
+        provider,
         blockchain,
         exchange,
         tokenIn,
@@ -639,7 +643,7 @@ describe('raydium', () => {
       mockMarket({ market: markets[1] })
 
       await testRouting({
-        provider: provider(blockchain),
+        provider,
         blockchain,
         exchange,
         tokenIn,
@@ -720,7 +724,7 @@ describe('raydium', () => {
       mockMarket({ market: markets[1] })
 
       await testRouting({
-        provider: provider(blockchain),
+        provider,
         blockchain,
         exchange,
         tokenIn,
@@ -798,7 +802,7 @@ describe('raydium', () => {
       mockMarket({ market })
 
       await testRouting({
-        provider: provider(blockchain),
+        provider,
         blockchain,
         exchange,
         tokenIn,
@@ -858,7 +862,7 @@ describe('raydium', () => {
       mockRent({ rent: 2039280 })
 
       await testRouting({
-        provider: provider(blockchain),
+        provider,
         blockchain,
         exchange,
         tokenIn,

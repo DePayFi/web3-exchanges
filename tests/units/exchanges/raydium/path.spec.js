@@ -3,16 +3,21 @@ import { find } from 'src'
 import { mock, resetMocks } from '@depay/web3-mock'
 import { mockPair } from 'tests/mocks/raydium'
 import { pathExists, findPath } from 'src/exchanges/raydium/route/path'
-import { provider, resetCache } from '@depay/web3-client'
+import { getProvider, resetCache } from '@depay/web3-client'
 
 describe('raydium', () => {
   
-  let blockchain = 'solana'
-  let exchange = find(blockchain, 'uniswap_v2')
+  const blockchain = 'solana'
+  const exchange = find(blockchain, 'uniswap_v2')
   const accounts = ['2UgCJaHU5y8NC4uWQcZYeV9a5RyYLF7iKYCybCsdFFD1']
-  beforeEach(resetMocks)
-  beforeEach(resetCache)
-  beforeEach(()=>mock({ blockchain, provider: provider(blockchain), accounts: { return: accounts } }))
+  
+  let provider
+  beforeEach(async ()=>{
+    resetMocks()
+    resetCache()
+    provider = await getProvider(blockchain)
+    mock({ provider, blockchain, accounts: { return: accounts } })
+  })
 
   describe('path exists', ()=>{
 
