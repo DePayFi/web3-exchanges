@@ -8,7 +8,6 @@ const route = ({
   tokenIn,
   tokenOut,
   fromAddress,
-  toAddress,
   amountIn = undefined,
   amountOut = undefined,
   amountInMax = undefined,
@@ -49,7 +48,6 @@ const route = ({
       amountOutInput,
       amountInMaxInput,
       amountOutMinInput,
-      toAddress,
       fromAddress
     })
 
@@ -63,7 +61,6 @@ const route = ({
         amountOut,
         amountOutMin,
         fromAddress,
-        toAddress,
         exchange,
         transaction,
       })
@@ -102,7 +99,6 @@ class Exchange {
 
   async route({
     fromAddress,
-    toAddress,
     tokenIn,
     tokenOut,
     amountIn,
@@ -116,7 +112,6 @@ class Exchange {
     
     preflight({
       fromAddress,
-      toAddress,
       tokenIn,
       tokenOut,
       amountIn,
@@ -133,7 +128,6 @@ class Exchange {
         blockchain: this.blockchain,
         exchange: this,
         fromAddress,
-        toAddress,
         tokenIn,
         tokenOut,
         amountIn,

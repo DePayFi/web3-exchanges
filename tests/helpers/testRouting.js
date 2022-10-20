@@ -30,7 +30,6 @@ function expectRoute({
   if(typeof amountOutMinBN !== 'undefined') { expect(route.amountOutMin).toEqual(amountOutMinBN.toString()) }
   if(typeof amountInMaxBN !== 'undefined') { expect(route.amountInMax).toEqual(amountInMaxBN.toString()) }
   expect(route.fromAddress).toEqual(fromAddress)
-  expect(route.toAddress).toEqual(toAddress)
   expect(route.exchange).toEqual(exchange)
   expect(route.transaction.blockchain).toEqual(blockchain)
   expect(route.transaction.to).toEqual(transaction.to)

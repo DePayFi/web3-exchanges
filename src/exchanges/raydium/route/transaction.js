@@ -49,7 +49,7 @@ const getInstructionData = ({ pair, amountIn, amountOutMin, amountOut, amountInM
   return data
 }
 
-const getInstructionKeys = async ({ tokenIn, tokenInAccount, tokenOut, tokenOutAccount, pair, market, fromAddress, toAddress })=> {
+const getInstructionKeys = async ({ tokenIn, tokenInAccount, tokenOut, tokenOutAccount, pair, market, fromAddress })=> {
 
   if(!tokenInAccount) {
     tokenInAccount = await Token.solana.findAccount({ owner: fromAddress, token: tokenIn })
@@ -60,11 +60,11 @@ const getInstructionKeys = async ({ tokenIn, tokenInAccount, tokenOut, tokenOutA
   }
 
   if(!tokenOutAccount) {
-    tokenOutAccount = await Token.solana.findAccount({ owner: toAddress, token: tokenOut })
+    tokenOutAccount = await Token.solana.findAccount({ owner: fromAddress, token: tokenOut })
   }
   console.log('existing tokenOutAccount', tokenOutAccount)
   if(!tokenOutAccount) {
-    tokenOutAccount = await Token.solana.findProgramAddress({ owner: toAddress, token: tokenOut })
+    tokenOutAccount = await Token.solana.findProgramAddress({ owner: fromAddress, token: tokenOut })
   }
 
   let marketAuthority = await getMarketAuthority(pair.data.marketProgramId, pair.data.marketId)
@@ -107,7 +107,6 @@ const getTransaction = async ({
   amountOutInput,
   amountInMaxInput,
   amountOutMinInput,
-  toAddress,
   fromAddress
 }) => {
 
@@ -191,7 +190,6 @@ const getTransaction = async ({
           pair,
           market,
           fromAddress,
-          toAddress
         }),
         data: getInstructionData({
           pair,

@@ -37,7 +37,6 @@
       amountOut,
       amountOutMin,
       fromAddress,
-      toAddress,
       transaction,
       exchange,
     }) {
@@ -49,7 +48,6 @@
       this.amountOut = _optionalChain$4([amountOut, 'optionalAccess', _5 => _5.toString, 'call', _6 => _6()]);
       this.amountInMax = _optionalChain$4([amountInMax, 'optionalAccess', _7 => _7.toString, 'call', _8 => _8()]);
       this.fromAddress = fromAddress;
-      this.toAddress = toAddress;
       this.transaction = transaction;
       this.exchange = exchange;
     }
@@ -229,7 +227,6 @@
     blockchain,
     exchange,
     fromAddress,
-    toAddress,
     tokenIn,
     tokenOut,
     amountIn,
@@ -240,7 +237,6 @@
     let params = {
       exchange,
       fromAddress,
-      toAddress,
       tokenIn,
       tokenOut,
       amountIn,
@@ -270,7 +266,6 @@
 
   let preflight = ({
     fromAddress,
-    toAddress,
     tokenIn,
     tokenOut,
     amountIn,
@@ -310,7 +305,6 @@
     tokenIn,
     tokenOut,
     fromAddress,
-    toAddress,
     amountIn = undefined,
     amountOut = undefined,
     amountInMax = undefined,
@@ -351,7 +345,6 @@
         amountOutInput,
         amountInMaxInput,
         amountOutMinInput,
-        toAddress,
         fromAddress
       });
 
@@ -365,7 +358,6 @@
           amountOut,
           amountOutMin,
           fromAddress,
-          toAddress,
           exchange,
           transaction,
         })
@@ -404,7 +396,6 @@
 
     async route({
       fromAddress,
-      toAddress,
       tokenIn,
       tokenOut,
       amountIn,
@@ -418,7 +409,6 @@
       
       preflight({
         fromAddress,
-        toAddress,
         tokenIn,
         tokenOut,
         amountIn,
@@ -435,7 +425,6 @@
           blockchain: this.blockchain,
           exchange: this,
           fromAddress,
-          toAddress,
           tokenIn,
           tokenOut,
           amountIn,
@@ -652,7 +641,6 @@
     amountOutInput,
     amountInMaxInput,
     amountOutMinInput,
-    toAddress,
     fromAddress
   }) => {
 
@@ -695,7 +683,7 @@
 
     transaction.params = Object.assign({}, transaction.params, {
       path: fixPath$3(path),
-      to: toAddress,
+      to: fromAddress,
       deadline: Math.round(Date.now() / 1000) + 30 * 60, // 30 minutes
     });
 
@@ -935,7 +923,6 @@
     amountOutInput,
     amountInMaxInput,
     amountOutMinInput,
-    toAddress,
     fromAddress
   }) => {
     
@@ -976,7 +963,7 @@
 
     transaction.params = Object.assign({}, transaction.params, {
       path: fixPath$2(path),
-      to: toAddress,
+      to: fromAddress,
       deadline: Math.round(Date.now() / 1000) + 30 * 60, // 30 minutes
     });
 
@@ -1435,7 +1422,7 @@
     return data
   };
 
-  const getInstructionKeys = async ({ tokenIn, tokenInAccount, tokenOut, tokenOutAccount, pair, market, fromAddress, toAddress })=> {
+  const getInstructionKeys = async ({ tokenIn, tokenInAccount, tokenOut, tokenOutAccount, pair, market, fromAddress })=> {
 
     if(!tokenInAccount) {
       tokenInAccount = await web3Tokens.Token.solana.findAccount({ owner: fromAddress, token: tokenIn });
@@ -1446,11 +1433,11 @@
     }
 
     if(!tokenOutAccount) {
-      tokenOutAccount = await web3Tokens.Token.solana.findAccount({ owner: toAddress, token: tokenOut });
+      tokenOutAccount = await web3Tokens.Token.solana.findAccount({ owner: fromAddress, token: tokenOut });
     }
     console.log('existing tokenOutAccount', tokenOutAccount);
     if(!tokenOutAccount) {
-      tokenOutAccount = await web3Tokens.Token.solana.findProgramAddress({ owner: toAddress, token: tokenOut });
+      tokenOutAccount = await web3Tokens.Token.solana.findProgramAddress({ owner: fromAddress, token: tokenOut });
     }
 
     let marketAuthority = await getMarketAuthority(pair.data.marketProgramId, pair.data.marketId);
@@ -1493,7 +1480,6 @@
     amountOutInput,
     amountInMaxInput,
     amountOutMinInput,
-    toAddress,
     fromAddress
   }) => {
 
@@ -1577,7 +1563,6 @@
             pair,
             market,
             fromAddress,
-            toAddress
           }),
           data: getInstructionData({
             pair,
@@ -1849,7 +1834,6 @@
     amountOutInput,
     amountInMaxInput,
     amountOutMinInput,
-    toAddress,
     fromAddress
   }) => {
     
@@ -1890,7 +1874,7 @@
 
     transaction.params = Object.assign({}, transaction.params, {
       path: fixPath(path),
-      to: toAddress,
+      to: fromAddress,
       deadline: Math.round(Date.now() / 1000) + 30 * 60, // 30 minutes
     });
 
@@ -1921,7 +1905,6 @@
   let route = ({
     blockchain,
     fromAddress,
-    toAddress,
     tokenIn,
     tokenOut,
     amountIn,
@@ -1935,7 +1918,6 @@
       all[blockchain].map((exchange) => {
         return exchange.route({
           fromAddress,
-          toAddress,
           tokenIn,
           tokenOut,
           amountIn,

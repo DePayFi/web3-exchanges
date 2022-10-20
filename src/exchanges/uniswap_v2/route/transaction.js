@@ -12,7 +12,6 @@ let getTransaction = ({
   amountOutInput,
   amountInMaxInput,
   amountOutMinInput,
-  toAddress,
   fromAddress
 }) => {
   
@@ -53,7 +52,7 @@ let getTransaction = ({
 
   transaction.params = Object.assign({}, transaction.params, {
     path: fixPath(path),
-    to: toAddress,
+    to: fromAddress,
     deadline: Math.round(Date.now() / 1000) + 30 * 60, // 30 minutes
   })
 
