@@ -7,7 +7,6 @@ const route = ({
   exchange,
   tokenIn,
   tokenOut,
-  fromAddress,
   amountIn = undefined,
   amountOut = undefined,
   amountInMax = undefined,
@@ -36,21 +35,6 @@ const route = ({
       amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput,
     }))
 
-    let transaction = await getTransaction({
-      exchange,
-      path,
-      amountIn,
-      amountInMax,
-      amountOut,
-      amountOutMin,
-      amounts,
-      amountInInput,
-      amountOutInput,
-      amountInMaxInput,
-      amountOutMinInput,
-      fromAddress
-    })
-
     resolve(
       new Route({
         tokenIn,
@@ -60,9 +44,21 @@ const route = ({
         amountInMax,
         amountOut,
         amountOutMin,
-        fromAddress,
         exchange,
-        transaction,
+        getTransaction: async ({ from })=> await getTransaction({
+          exchange,
+          path,
+          amountIn,
+          amountInMax,
+          amountOut,
+          amountOutMin,
+          amounts,
+          amountInInput,
+          amountOutInput,
+          amountInMaxInput,
+          amountOutMinInput,
+          fromAddress: from
+        }),
       })
     )
   })
@@ -98,7 +94,6 @@ class Exchange {
   }
 
   async route({
-    fromAddress,
     tokenIn,
     tokenOut,
     amountIn,
@@ -111,7 +106,6 @@ class Exchange {
     if(tokenIn === tokenOut){ return Promise.resolve() }
     
     preflight({
-      fromAddress,
       tokenIn,
       tokenOut,
       amountIn,
@@ -127,7 +121,6 @@ class Exchange {
       await fixRouteParams({
         blockchain: this.blockchain,
         exchange: this,
-        fromAddress,
         tokenIn,
         tokenOut,
         amountIn,

@@ -3,7 +3,6 @@ import { fixRouteParams, preflight } from './params'
 
 let route = ({
   blockchain,
-  fromAddress,
   tokenIn,
   tokenOut,
   amountIn,
@@ -16,7 +15,6 @@ let route = ({
   return Promise.all(
     all[blockchain].map((exchange) => {
       return exchange.route({
-        fromAddress,
         tokenIn,
         tokenOut,
         amountIn,

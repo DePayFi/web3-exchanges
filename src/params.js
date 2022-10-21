@@ -7,7 +7,6 @@ let getAmount = async ({ amount, blockchain, address }) => {
 let fixRouteParams = async ({
   blockchain,
   exchange,
-  fromAddress,
   tokenIn,
   tokenOut,
   amountIn,
@@ -17,7 +16,6 @@ let fixRouteParams = async ({
 }) => {
   let params = {
     exchange,
-    fromAddress,
     tokenIn,
     tokenOut,
     amountIn,
@@ -46,7 +44,6 @@ let fixRouteParams = async ({
 }
 
 let preflight = ({
-  fromAddress,
   tokenIn,
   tokenOut,
   amountIn,

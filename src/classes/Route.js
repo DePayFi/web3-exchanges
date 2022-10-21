@@ -7,9 +7,8 @@ class Route {
     amountInMax,
     amountOut,
     amountOutMin,
-    fromAddress,
-    transaction,
     exchange,
+    getTransaction,
   }) {
     this.tokenIn = tokenIn
     this.tokenOut = tokenOut
@@ -18,9 +17,8 @@ class Route {
     this.amountOutMin = amountOutMin?.toString()
     this.amountOut = amountOut?.toString()
     this.amountInMax = amountInMax?.toString()
-    this.fromAddress = fromAddress
-    this.transaction = transaction
     this.exchange = exchange
+    this.getTransaction = getTransaction
   }
 }
 

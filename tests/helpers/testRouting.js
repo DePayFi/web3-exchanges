@@ -16,9 +16,9 @@ function expectRoute({
   amountOutMinBN,
   amountInMaxBN,
   fromAddress,
-  toAddress,
   exchange,
-  transaction
+  transaction,
+  routeTransaction
 }) {
   if(tokenIn.match('0x')) { expect(route.tokenIn).toEqual(ethers.utils.getAddress(tokenIn)) }
   if(tokenOut.match('0x')) { expect(route.tokenOut).toEqual(ethers.utils.getAddress(tokenOut)) }
@@ -29,17 +29,17 @@ function expectRoute({
   if(typeof amountInBN !== 'undefined') { expect(route.amountIn).toEqual(amountInBN.toString()) }
   if(typeof amountOutMinBN !== 'undefined') { expect(route.amountOutMin).toEqual(amountOutMinBN.toString()) }
   if(typeof amountInMaxBN !== 'undefined') { expect(route.amountInMax).toEqual(amountInMaxBN.toString()) }
-  expect(route.fromAddress).toEqual(fromAddress)
   expect(route.exchange).toEqual(exchange)
-  expect(route.transaction.blockchain).toEqual(blockchain)
-  expect(route.transaction.to).toEqual(transaction.to)
-  expect(route.transaction.api).toEqual(transaction.api)
-  expect(route.transaction.method).toEqual(transaction.method)
-  expect(route.transaction.value).toEqual(transaction.value?.toString())
 
-  if(route.transaction.instructions) {
-    expect(route.transaction.blockchain).toEqual(transaction.blockchain)
-    route.transaction.instructions.forEach((instruction, index)=>{
+  expect(routeTransaction.blockchain).toEqual(blockchain)
+  expect(routeTransaction.to).toEqual(transaction.to)
+  expect(routeTransaction.api).toEqual(transaction.api)
+  expect(routeTransaction.method).toEqual(transaction.method)
+  expect(routeTransaction.value).toEqual(transaction.value?.toString())
+
+  if(routeTransaction.instructions) {
+    expect(routeTransaction.blockchain).toEqual(transaction.blockchain)
+    routeTransaction.instructions.forEach((instruction, index)=>{
       if(transaction.instructions[index] && transaction.instructions[index].params && (transaction.instructions[index].params.amountIn || transaction.instructions[index].amountOut)) {
         expect(instruction.programId.toString()).toEqual(transaction.instructions[index].to)
         let LAYOUT = struct([u8("instruction"), u64("amountIn"), u64("amountOut")])
@@ -58,7 +58,7 @@ function expectRoute({
     })
   } else {
     Object.keys(transaction.params).every((key)=>{
-      expect(JSON.stringify(normalize(route.transaction.params[key])))
+      expect(JSON.stringify(normalize(routeTransaction.params[key])))
         .toEqual(JSON.stringify(normalize(transaction.params[key])))
     })
   }
@@ -78,7 +78,6 @@ async function testRouting({
   amountOut,
   amountOutMin,
   fromAddress,
-  toAddress,
   transaction
 }) {
   let amountInBN = typeof amountIn === 'undefined' ? undefined : ethers.utils.parseUnits(amountIn.toString(), decimalsIn)
@@ -91,7 +90,6 @@ async function testRouting({
 
   let route = await exchange.route({
     fromAddress,
-    toAddress,
     amountIn,
     amountInMax,
     amountOut,
@@ -99,6 +97,8 @@ async function testRouting({
     tokenIn,
     tokenOut
   })
+
+  const routeTransaction = await route.getTransaction({ from: fromAddress })
 
   expectRoute({
     blockchain,
@@ -111,15 +111,15 @@ async function testRouting({
     amountOutBN,
     amountOutMinBN,
     fromAddress,
-    toAddress, 
     exchange,
-    transaction
+    transaction,
+    routeTransaction
   })
 
   let transactionMock = mock({ blockchain, provider, transaction })
 
   let wallet = getWallets()[0]
-  await wallet.sendTransaction(route.transaction)
+  await wallet.sendTransaction(routeTransaction)
   expect(transactionMock).toHaveBeenCalled()
 }
 
