@@ -996,10 +996,10 @@
   resolved "https://registry.yarnpkg.com/@depay/web3-blockchains/-/web3-blockchains-6.2.0.tgz#5ab856ad1ed6aa153e9f25a89c6acb64017367ce"
   integrity sha512-giZCoTFjRBoVDZ9WA1tlTtVtw7Pc81E8krjTrErCyoc94avuFUjFRVSf8k/oUdaQ3Yvt+yLQp3cAovlWD9Gnfg==
 
-"@depay/web3-client@^10.1.3":
-  version "10.1.3"
-  resolved "https://registry.yarnpkg.com/@depay/web3-client/-/web3-client-10.1.3.tgz#26da3006ea418a2b8a4a7619dde43d72e6efeb86"
-  integrity sha512-VcZ0I0Nfo2R7lmihUKnIs/hmf//OfuFkVnvq8r2Vs0j0ybXL5ovOmXpiQQpTpw0VwrdD4if6hOBBSSNnCpisMw==
+"@depay/web3-client@^10.1.4":
+  version "10.1.4"
+  resolved "https://registry.yarnpkg.com/@depay/web3-client/-/web3-client-10.1.4.tgz#ccc5bec6ce3c7d78d48f455cf8f528a7c6cd87bd"
+  integrity sha512-uatkwmZF5joQsk8vOfqH3QvalCGNJa90ImOH5geqyEToiUcJ/JGXC0+G3mSZYEdrQh+rsA759nIeYQny5nMhdw==
 
 "@depay/web3-constants@^6.3.1":
   version "6.3.1"
@@ -1016,15 +1016,15 @@
     ethers "^5.7.1"
     xhr2 "^0.2.1"
 
-"@depay/web3-tokens@^9.11.1":
-  version "9.11.1"
-  resolved "https://registry.yarnpkg.com/@depay/web3-tokens/-/web3-tokens-9.11.1.tgz#3ff4f424bfb9d47efc78b7daede69a2fb14fea3d"
-  integrity sha512-Nyuk9JTmYqaTCqPhY96r7JYw4Ecu/9C/DgYlzXpm2ECkWpA05BZLc0TxyQWRBzr3vgQWdcLfoNvfWbZ3YX6diw==
+"@depay/web3-tokens@^9.11.2":
+  version "9.11.2"
+  resolved "https://registry.yarnpkg.com/@depay/web3-tokens/-/web3-tokens-9.11.2.tgz#153c3f9d772ad27f99c949e739e85f038134965e"
+  integrity sha512-D5WO28MVGzbw1NOvijG8NmJ94GDVd8MawowshYwJW8uaNbg/H4hSBw9hOJ7IOE2CpgZJua0Uho2+xcEq6cDB1A==
 
-"@depay/web3-wallets@^12.3.0":
-  version "12.3.0"
-  resolved "https://registry.yarnpkg.com/@depay/web3-wallets/-/web3-wallets-12.3.0.tgz#e29afddc58ec84d700f76b12fc9bb41275acc3cc"
-  integrity sha512-0p3PLIeJEy1OKBA5Rd3ivwq+4+x0ChcNoPM2qStwr7ULoi3AfT6slbKmeeCt4bgn7HEDu7zGU4bBZdkZ+2cZZA==
+"@depay/web3-wallets@^12.3.2":
+  version "12.3.2"
+  resolved "https://registry.yarnpkg.com/@depay/web3-wallets/-/web3-wallets-12.3.2.tgz#01c23da66ce266804f59112c5618ea89652a2a14"
+  integrity sha512-DEcy/t62CzIjN3ktgJL8Y6phh5Rt25yWu1iZFN4iNEDvHfQdkTJmSJEZtXwi9i9TCyGuo2lb554CJMfnh5DKew==
 
 "@eslint/eslintrc@^0.4.3":
   version "0.4.3"
