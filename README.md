@@ -156,8 +156,6 @@ This library applies slippage strategies to amounts for the following combinatio
 
 Auto slippage applies `0.5%` default slippage.
 
-It applies only `0.1%` default slippage, if difference of amounts for tokenIn and tokenOut are `<1%`.
-
 For blockchains that allow to receive quotes for previous blocks (`EVM`), auto slippage additionally checks for:
 
 - Extreme Direction

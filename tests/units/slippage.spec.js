@@ -50,27 +50,6 @@ describe('slippage', () => {
     })
   })
 
-  describe('stable coins', ()=>{
-
-    beforeEach(()=>{
-      tokenIn = '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'
-      amountInBN = ethers.utils.parseUnits(amountIn.toString(), 6)
-      path = [tokenIn, tokenOut]
-      mockDecimals({ provider, blockchain, address: tokenIn, value: 6 })
-      mockPair({ provider, tokenIn, tokenOut, pair })
-      mockAmounts({ provider, method: 'getAmountsIn', params: [amountOutBN, path], amounts: [amountInBN, amountOutBN] })
-      mockAmounts({ block: currentBlock, provider, method: 'getAmountsIn', params: [amountOutBN, path], amounts: [amountInBN, amountOutBN] })
-      mockAmounts({ block: currentBlock-1, provider, method: 'getAmountsIn', params: [amountOutBN, path], amounts: [amountInBN, amountOutBN] })
-      mockAmounts({ block: currentBlock-2, provider, method: 'getAmountsIn', params: [amountOutBN, path], amounts: [amountInBN, amountOutBN] })
-    })
-
-    it('uses 0.1% slippage for stable coins', async ()=>{
-      let route = await exchange.route({ amountOutMin: 1, tokenIn, tokenOut })
-      const transaction = await route.getTransaction({ from: accounts[0] })
-      expect(transaction.params.amountIn).toEqual(amountInBN.add('5000').toString())
-    })
-  })
-
   describe('extreme directional price change', ()=>{
 
     beforeEach(()=>{

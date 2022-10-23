@@ -56,17 +56,9 @@
   supported.solana = ['solana'];
 
   const DEFAULT_SLIPPAGE = '0.5'; // percent
-  const STABLECOIN_SLIPPAGE = '0.1'; // percent
 
   const getDefaultSlippage = ({ amountIn, amountOut })=>{
-    if(
-      parseInt(amountIn.mul(10000).div(amountOut).sub(10000).toString(), 10)
-      < 100
-    ) {
-      return STABLECOIN_SLIPPAGE
-    } else {
-      return DEFAULT_SLIPPAGE
-    }
+    return DEFAULT_SLIPPAGE
   };
 
   const calculateAmountInWithSlippage = async ({ exchange, fixedPath, amountIn, amountOut })=>{

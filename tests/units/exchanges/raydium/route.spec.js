@@ -110,7 +110,7 @@ describe('raydium', () => {
             api: struct([u8("instruction"), u64("amountIn"), u64("amountOut")]),
             params: {
               instruction: 11,
-              amountIn: '33450402',
+              amountIn: '33584070',
               amountOut: '1000000000',
             },
             keys: mockTransactionKeys({
@@ -160,7 +160,7 @@ describe('raydium', () => {
             api: struct([u8("instruction"), u64("amountIn"), u64("amountOut")]),
             params: {
               instruction: 9,
-              amountIn: '33450402',
+              amountIn: '33584070',
               amountOut: '1000000000',
             },
             keys: mockTransactionKeys({
@@ -212,7 +212,7 @@ describe('raydium', () => {
             params: {
               instruction: 9,
               amountIn: '43000000',
-              amountOut: '1285482711',
+              amountOut: '1280335633',
             },
             keys: mockTransactionKeys({
               pair,
@@ -263,7 +263,7 @@ describe('raydium', () => {
             params: {
               instruction: 11,
               amountIn: '43000000',
-              amountOut: '1285482711',
+              amountOut: '1280335633',
             },
             keys: mockTransactionKeys({
               pair,
@@ -421,7 +421,7 @@ describe('raydium', () => {
               api: struct([u8("instruction"), u64("amountIn"), u64("amountOut")]),
               params: {
                 instruction: 11,
-                amountIn: '33450402',
+                amountIn: '33584070',
                 amountOut: '1000000000',
               },
               keys: mockTransactionKeys({
@@ -501,7 +501,7 @@ describe('raydium', () => {
               api: struct([u8("instruction"), u64("amountIn"), u64("amountOut")]),
               params: {
                 instruction: 11,
-                amountIn: '740642659534923',
+                amountIn: '743602270562035',
                 amountOut: '3902251747122',
               },
               keys: mockTransactionKeys({
@@ -582,7 +582,7 @@ describe('raydium', () => {
               api: struct([u8("instruction"), u64("amountIn"), u64("amountOut")]),
               params: {
                 instruction: 11,
-                amountIn: '740642659534923',
+                amountIn: '743602270562035',
                 amountOut: '3902251747122',
               },
               keys: mockTransactionKeys({
@@ -680,7 +680,7 @@ describe('raydium', () => {
               params: {
                 instruction: 9,
                 amountIn: '384019134271',
-                amountOut: '475825776007818',
+                amountOut: '473920567695474',
               },
               keys: mockTransactionKeys({
                 pair: pairs[1],
@@ -761,7 +761,7 @@ describe('raydium', () => {
               params: {
                 instruction: 9,
                 amountIn: '384019134271',
-                amountOut: '475825776007818',
+                amountOut: '473920567695474',
               },
               keys: mockTransactionKeys({
                 pair: pairs[1],
@@ -820,7 +820,7 @@ describe('raydium', () => {
             api: struct([u8("instruction"), u64("amountIn"), u64("amountOut")]),
             params: {
               instruction: 11,
-              amountIn: '33450402',
+              amountIn: '33584070',
               amountOut: '1000000000',
             },
             keys: mockTransactionKeys({
