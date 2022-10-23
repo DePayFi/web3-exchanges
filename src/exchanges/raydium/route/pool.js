@@ -2,7 +2,7 @@ import Raydium from '../basics'
 import { Buffer, TransactionInstruction, PublicKey, Transaction } from '@depay/solana-web3.js'
 import { getMarket } from './markets'
 import { POOL_INFO } from '../apis'
-import { provider } from '@depay/web3-client'
+import { getProvider } from '@depay/web3-client'
 
 const getInfo = async (pair)=>{
   const data = Buffer.alloc(POOL_INFO.span)
@@ -32,7 +32,8 @@ const getInfo = async (pair)=>{
   transaction.add(instruction)
 
   let result
-  try{ result = await provider('solana').simulateTransaction(transaction) } catch {}
+  const provider = await getProvider('solana')
+  try{ result = await provider.simulateTransaction(transaction) } catch {}
 
   let info
   if(result && result.value && result.value.logs) {

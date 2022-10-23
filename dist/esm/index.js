@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import { request, provider } from '@depay/web3-client';
+import { request, getProvider } from '@depay/web3-client';
 import { Token } from '@depay/web3-tokens';
 import { CONSTANTS } from '@depay/web3-constants';
 import { struct, u64, u128, publicKey, seq, u8, blob, Buffer, PublicKey, TransactionInstruction, Transaction, Keypair, BN, SystemProgram } from '@depay/solana-web3.js';
@@ -36,10 +36,8 @@ function _optionalChain$4(ops) { let lastAccessLHS = undefined; let value = ops[
     amountInMax,
     amountOut,
     amountOutMin,
-    fromAddress,
-    toAddress,
-    transaction,
     exchange,
+    getTransaction,
   }) {
     this.tokenIn = tokenIn;
     this.tokenOut = tokenOut;
@@ -48,10 +46,8 @@ function _optionalChain$4(ops) { let lastAccessLHS = undefined; let value = ops[
     this.amountOutMin = _optionalChain$4([amountOutMin, 'optionalAccess', _3 => _3.toString, 'call', _4 => _4()]);
     this.amountOut = _optionalChain$4([amountOut, 'optionalAccess', _5 => _5.toString, 'call', _6 => _6()]);
     this.amountInMax = _optionalChain$4([amountInMax, 'optionalAccess', _7 => _7.toString, 'call', _8 => _8()]);
-    this.fromAddress = fromAddress;
-    this.toAddress = toAddress;
-    this.transaction = transaction;
     this.exchange = exchange;
+    this.getTransaction = getTransaction;
   }
 }
 
@@ -228,8 +224,6 @@ let getAmount = async ({ amount, blockchain, address }) => {
 let fixRouteParams = async ({
   blockchain,
   exchange,
-  fromAddress,
-  toAddress,
   tokenIn,
   tokenOut,
   amountIn,
@@ -239,8 +233,6 @@ let fixRouteParams = async ({
 }) => {
   let params = {
     exchange,
-    fromAddress,
-    toAddress,
     tokenIn,
     tokenOut,
     amountIn,
@@ -269,8 +261,6 @@ let fixRouteParams = async ({
 };
 
 let preflight = ({
-  fromAddress,
-  toAddress,
   tokenIn,
   tokenOut,
   amountIn,
@@ -309,8 +299,6 @@ const route$1 = ({
   exchange,
   tokenIn,
   tokenOut,
-  fromAddress,
-  toAddress,
   amountIn = undefined,
   amountOut = undefined,
   amountInMax = undefined,
@@ -339,22 +327,6 @@ const route$1 = ({
       amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput,
     }));
 
-    let transaction = await getTransaction({
-      exchange,
-      path,
-      amountIn,
-      amountInMax,
-      amountOut,
-      amountOutMin,
-      amounts,
-      amountInInput,
-      amountOutInput,
-      amountInMaxInput,
-      amountOutMinInput,
-      toAddress,
-      fromAddress
-    });
-
     resolve(
       new Route({
         tokenIn,
@@ -364,10 +336,21 @@ const route$1 = ({
         amountInMax,
         amountOut,
         amountOutMin,
-        fromAddress,
-        toAddress,
         exchange,
-        transaction,
+        getTransaction: async ({ from })=> await getTransaction({
+          exchange,
+          path,
+          amountIn,
+          amountInMax,
+          amountOut,
+          amountOutMin,
+          amounts,
+          amountInInput,
+          amountOutInput,
+          amountInMaxInput,
+          amountOutMinInput,
+          fromAddress: from
+        }),
       })
     );
   })
@@ -403,8 +386,6 @@ class Exchange {
   }
 
   async route({
-    fromAddress,
-    toAddress,
     tokenIn,
     tokenOut,
     amountIn,
@@ -417,8 +398,6 @@ class Exchange {
     if(tokenIn === tokenOut){ return Promise.resolve() }
     
     preflight({
-      fromAddress,
-      toAddress,
       tokenIn,
       tokenOut,
       amountIn,
@@ -434,8 +413,6 @@ class Exchange {
       await fixRouteParams({
         blockchain: this.blockchain,
         exchange: this,
-        fromAddress,
-        toAddress,
         tokenIn,
         tokenOut,
         amountIn,
@@ -652,7 +629,6 @@ let getTransaction$3 = ({
   amountOutInput,
   amountInMaxInput,
   amountOutMinInput,
-  toAddress,
   fromAddress
 }) => {
 
@@ -695,7 +671,7 @@ let getTransaction$3 = ({
 
   transaction.params = Object.assign({}, transaction.params, {
     path: fixPath$3(path),
-    to: toAddress,
+    to: fromAddress,
     deadline: Math.round(Date.now() / 1000) + 30 * 60, // 30 minutes
   });
 
@@ -935,7 +911,6 @@ let getTransaction$2 = ({
   amountOutInput,
   amountInMaxInput,
   amountOutMinInput,
-  toAddress,
   fromAddress
 }) => {
   
@@ -976,7 +951,7 @@ let getTransaction$2 = ({
 
   transaction.params = Object.assign({}, transaction.params, {
     path: fixPath$2(path),
-    to: toAddress,
+    to: fromAddress,
     deadline: Math.round(Date.now() / 1000) + 30 * 60, // 30 minutes
   });
 
@@ -1294,7 +1269,8 @@ const getInfo = async (pair)=>{
   transaction.add(instruction);
 
   let result;
-  try{ result = await provider('solana').simulateTransaction(transaction); } catch (e) {}
+  const provider = await getProvider('solana');
+  try{ result = await provider.simulateTransaction(transaction); } catch (e) {}
 
   let info;
   if(result && result.value && result.value.logs) {
@@ -1434,22 +1410,20 @@ const getInstructionData = ({ pair, amountIn, amountOutMin, amountOut, amountInM
   return data
 };
 
-const getInstructionKeys = async ({ tokenIn, tokenInAccount, tokenOut, tokenOutAccount, pair, market, fromAddress, toAddress })=> {
+const getInstructionKeys = async ({ tokenIn, tokenInAccount, tokenOut, tokenOutAccount, pair, market, fromAddress })=> {
 
   if(!tokenInAccount) {
     tokenInAccount = await Token.solana.findAccount({ owner: fromAddress, token: tokenIn });
   }
-  console.log('existing tokenInAccount', tokenInAccount);
   if(!tokenInAccount) {
     tokenInAccount = await Token.solana.findProgramAddress({ owner: fromAddress, token: tokenIn });
   }
 
   if(!tokenOutAccount) {
-    tokenOutAccount = await Token.solana.findAccount({ owner: toAddress, token: tokenOut });
+    tokenOutAccount = await Token.solana.findAccount({ owner: fromAddress, token: tokenOut });
   }
-  console.log('existing tokenOutAccount', tokenOutAccount);
   if(!tokenOutAccount) {
-    tokenOutAccount = await Token.solana.findProgramAddress({ owner: toAddress, token: tokenOut });
+    tokenOutAccount = await Token.solana.findProgramAddress({ owner: fromAddress, token: tokenOut });
   }
 
   let marketAuthority = await getMarketAuthority(pair.data.marketProgramId, pair.data.marketId);
@@ -1492,7 +1466,6 @@ const getTransaction$1 = async ({
   amountOutInput,
   amountInMaxInput,
   amountOutMinInput,
-  toAddress,
   fromAddress
 }) => {
 
@@ -1518,8 +1491,9 @@ const getTransaction$1 = async ({
   let startsWrapped = (path[0] === CONSTANTS.solana.NATIVE && fixedPath[0] === CONSTANTS.solana.WRAPPED);
   let endsUnwrapped = (path[path.length-1] === CONSTANTS.solana.NATIVE && fixedPath[fixedPath.length-1] === CONSTANTS.solana.WRAPPED);
   let wrappedAccount;
+  const provider = await getProvider('solana');
   if(startsWrapped || endsUnwrapped) {
-    const rent = await provider('solana').getMinimumBalanceForRentExemption(Token.solana.TOKEN_LAYOUT.span);
+    const rent = await provider.getMinimumBalanceForRentExemption(Token.solana.TOKEN_LAYOUT.span);
     wrappedAccount = Keypair.generate().publicKey.toString();
     const lamports = startsWrapped ? new BN(amountIn.toString()).add(new BN(rent)) :  new BN(rent);
     instructions.push(
@@ -1575,7 +1549,6 @@ const getTransaction$1 = async ({
           pair,
           market,
           fromAddress,
-          toAddress
         }),
         data: getInstructionData({
           pair,
@@ -1606,7 +1579,7 @@ const getTransaction$1 = async ({
   // instructions.forEach((instruction)=>simulation.add(instruction))
   // let result
   // console.log('SIMULATE')
-  // try{ result = await provider('solana').simulateTransaction(simulation) } catch(e) { console.log('error', e) }
+  // try{ result = await provider.simulateTransaction(simulation) } catch(e) { console.log('error', e) }
   // console.log('SIMULATION RESULT', result)
   // console.log('instructions.length', instructions.length)
 
@@ -1847,7 +1820,6 @@ let getTransaction = ({
   amountOutInput,
   amountInMaxInput,
   amountOutMinInput,
-  toAddress,
   fromAddress
 }) => {
   
@@ -1888,7 +1860,7 @@ let getTransaction = ({
 
   transaction.params = Object.assign({}, transaction.params, {
     path: fixPath(path),
-    to: toAddress,
+    to: fromAddress,
     deadline: Math.round(Date.now() / 1000) + 30 * 60, // 30 minutes
   });
 
@@ -1918,8 +1890,6 @@ var find = (blockchain, name) => {
 
 let route = ({
   blockchain,
-  fromAddress,
-  toAddress,
   tokenIn,
   tokenOut,
   amountIn,
@@ -1932,8 +1902,6 @@ let route = ({
   return Promise.all(
     all[blockchain].map((exchange) => {
       return exchange.route({
-        fromAddress,
-        toAddress,
         tokenIn,
         tokenOut,
         amountIn,

@@ -42,9 +42,11 @@ routes = await route({
 // use connected wallet to sign and send the swap transaction
 import { getWallets } from '@depay/web3-wallets'
 
-let wallet = getWallets()[0]
+const wallet = getWallets()[0]
+const account = await wallet.account()
+const transaction = await route.getTransaction({ from: account })
 
-wallet.sendTransaction(route.transaction)
+wallet.sendTransaction(transaction)
 
 ```
 
@@ -56,13 +58,24 @@ This library supports the following blockchains:
 - [BNB Smart Chain](https://www.binance.org/smartChain)
 - [Polygon](https://polygon.technology)
 - [Solana](https://solana.com)
+- [Velas](https://velas.com)
 
 This library supports the following decentralized exchanges:
 
+Ethereum:
 - [Uniswap v2](https://uniswap.org)
+
+BNB Smart Chain:
 - [PancakeSwap v2](https://pancakeswap.info)
+
+Polygon:
 - [Quickswap](https://quickswap.exchange)
+
+Solana:
 - [Raydium](https://raydium.io)
+
+Velas:
+- [WagyuSwap](https://www.wagyuswap.app)
 
 ## Data Structures
 
@@ -125,8 +138,8 @@ Routes are returned by calling `route`. A single Route has the following structu
   amountOutMin: BigNumber (e.g. '32000000000000000000')
   amountOut: BigNumber (e.g. '32000000000000000000')
   amountInMax: BigNumber (e.g. '1000000000000000000')
-  transaction: Transaction (see @depay/web3-wallets for details)
   exchange: Exchange (see [Exchange data structure](#exchange))
+  getTransaction: async function (returns transaction object –> see @depay/web3-wallets for details)
 }
 ```
 
@@ -238,9 +251,11 @@ let routes = route {
 // use connected wallet to sign and send the swap transaction
 import { getWallets } from '@depay/web3-wallets'
 
-let wallet = getWallets()[0]
+const wallet = getWallets()[0]
+const account = await wallet.account()
+const transaction = await routes[0].getTransaction({ from: account })
 
-wallet.sendTransaction(routes[0].transaction)
+wallet.sendTransaction(transaction)
 ```
 
 `route` can also be called on concrete exchanges: 
@@ -259,9 +274,11 @@ let route = await exchange.route({
 // use connected wallet to sign and send the swap transaction
 import { getWallets } from '@depay/web3-wallets'
 
-let wallet = getWallets()[0]
+const wallet = getWallets()[0]
+const account = await wallet.account()
+const transaction = await route.getTransaction({ from: account })
 
-wallet.sendTransaction(route.transaction)
+wallet.sendTransaction(transaction)
 ```
 
 ### getAmounts: gets the required amounts for the route
@@ -285,10 +302,4 @@ let { amountIn } = await exchange.getAmounts({
 ```
 yarn install
 yarn dev
-```
-
-### Release
-
-```
-npm publish
 ```

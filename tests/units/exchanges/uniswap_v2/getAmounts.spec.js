@@ -2,20 +2,24 @@ import UniswapV2 from 'src/exchanges/uniswap_v2'
 import { ethers } from 'ethers'
 import { find } from 'src'
 import { mock, resetMocks } from '@depay/web3-mock'
-import { provider, resetCache } from '@depay/web3-client'
+import { getProvider, resetCache } from '@depay/web3-client'
 
 describe('uniswap_v2', () => {
   
-  let blockchain = 'ethereum'
+  const blockchain = 'ethereum'
   const accounts = ['0xd8da6bf26964af9d7eed9e03e53415d37aa96045']
-  beforeEach(resetMocks)
-  beforeEach(resetCache)
-  beforeEach(()=>mock({ provider: provider(blockchain), blockchain, accounts: { return: accounts } }))
-
-  let exchange = find('ethereum', 'uniswap_v2')
-  let pair = '0xEF8cD6Cb5c841A4f02986e8A8ab3cC545d1B8B6d'
-  let fromAddress = '0x5Af489c8786A018EC4814194dC8048be1007e390'
-  let toAddress = '0x5Af489c8786A018EC4814194dC8048be1007e390'
+  const exchange = find('ethereum', 'uniswap_v2')
+  const pair = '0xEF8cD6Cb5c841A4f02986e8A8ab3cC545d1B8B6d'
+  const fromAddress = '0x5Af489c8786A018EC4814194dC8048be1007e390'
+  const toAddress = '0x5Af489c8786A018EC4814194dC8048be1007e390'
+  
+  let provider
+  beforeEach(async ()=>{
+    resetMocks()
+    resetCache()
+    provider = await getProvider(blockchain)
+    mock({ blockchain, accounts: { return: accounts } })
+  })
 
   describe('getAmounts', ()=>{
 
@@ -27,7 +31,7 @@ describe('uniswap_v2', () => {
       const amountsIn = ['222222222222', '100000000000']
       
       mock({
-        provider: provider(blockchain),
+        provider,
         blockchain,
         block,
         request: {

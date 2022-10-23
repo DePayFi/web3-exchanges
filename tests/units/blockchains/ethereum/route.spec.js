@@ -4,16 +4,21 @@ import { ethers } from 'ethers'
 import { mock, resetMocks } from '@depay/web3-mock'
 import { mockDecimals } from 'tests/mocks/token'
 import { mockPair, mockAmounts } from 'tests/mocks/uniswap_v2'
-import { resetCache, provider } from '@depay/web3-client'
+import { resetCache, getProvider } from '@depay/web3-client'
 import { route, find } from 'src'
 
 describe('route', ()=> {
 
   let blockchain = 'ethereum'
   const accounts = ['0xd8da6bf26964af9d7eed9e03e53415d37aa96045']
-  beforeEach(resetMocks)
-  beforeEach(resetCache)
-  beforeEach(()=>mock({ blockchain, accounts: { return: accounts } }))
+  
+  let provider
+  beforeEach(async ()=>{
+    resetMocks()
+    resetCache()
+    provider = await getProvider(blockchain)
+    mock({ blockchain, accounts: { return: accounts } })
+  })
   
   it('returns routes for all exchanges on the ethereum blockchain', async ()=>{
 
@@ -29,10 +34,10 @@ describe('route', ()=> {
     let pair = '0xEF8cD6Cb5c841A4f02986e8A8ab3cC545d1B8B6d'
     let wallet = accounts[0]
 
-    mockDecimals({ provider: provider(blockchain), blockchain, address: tokenIn, value: decimalsIn })
-    mockDecimals({ provider: provider(blockchain), blockchain, address: tokenOut, value: decimalsOut })
-    mockPair({ provider: provider(blockchain), tokenIn, tokenOut, pair })
-    mockAmounts({ provider: provider(blockchain), method: 'getAmountsOut', params: [amountInBN,path], amounts: [amountInBN, amountOutMinBN] })
+    mockDecimals({ provider, blockchain, address: tokenIn, value: decimalsIn })
+    mockDecimals({ provider, blockchain, address: tokenOut, value: decimalsOut })
+    mockPair({ provider, tokenIn, tokenOut, pair })
+    mockAmounts({ provider, method: 'getAmountsOut', params: [amountInBN,path], amounts: [amountInBN, amountOutMinBN] })
 
     let routes = await route({
       blockchain,
@@ -44,20 +49,20 @@ describe('route', ()=> {
     });
 
     expect(routes.length).toEqual(1)
-    expect(routes[0].fromAddress).toEqual(wallet)
-    expect(routes[0].toAddress).toEqual(wallet)
     expect(routes[0].exchange).toEqual(find('ethereum', 'uniswap_v2'))
     expect(routes[0].path).toEqual(path.map((address)=>ethers.utils.getAddress(address)))
-    expect(routes[0].transaction.blockchain).toEqual('ethereum')
-    expect(routes[0].transaction.from).toEqual(accounts[0])
-    expect(routes[0].transaction.to).toEqual(UniswapV2.router.address)
-    expect(routes[0].transaction.api).toEqual(UniswapV2.router.api)
-    expect(routes[0].transaction.method).toEqual('swapExactTokensForTokens')
-    expect(routes[0].transaction.params.amountIn).toEqual(amountInBN.toString())
-    expect(routes[0].transaction.params.amountOutMin).toEqual(amountOutMinBN.toString())
-    expect(routes[0].transaction.params.path).toEqual(path.map((address)=>ethers.utils.getAddress(address)))
-    expect(routes[0].transaction.params.to).toEqual(wallet)
-    expect(routes[0].transaction.params.deadline).toBeDefined()
+
+    const transaction = await routes[0].getTransaction({ from: accounts[0] })
+    expect(transaction.blockchain).toEqual('ethereum')
+    expect(transaction.from).toEqual(accounts[0])
+    expect(transaction.to).toEqual(UniswapV2.router.address)
+    expect(transaction.api).toEqual(UniswapV2.router.api)
+    expect(transaction.method).toEqual('swapExactTokensForTokens')
+    expect(transaction.params.amountIn).toEqual(amountInBN.toString())
+    expect(transaction.params.amountOutMin).toEqual(amountOutMinBN.toString())
+    expect(transaction.params.path).toEqual(path.map((address)=>ethers.utils.getAddress(address)))
+    expect(transaction.params.to).toEqual(wallet)
+    expect(transaction.params.deadline).toBeDefined()
 
     // TODO: sorts the routes by most cost-effective routes first (once support for multiple exchanges)
   })

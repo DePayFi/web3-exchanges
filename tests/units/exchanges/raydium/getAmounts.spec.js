@@ -3,15 +3,20 @@ import { ethers } from 'ethers'
 import { find } from 'src'
 import { mock, resetMocks } from '@depay/web3-mock'
 import { mockPair, mockToken, mockTokenAccounts, mockMarket, mockTransactionKeys } from 'tests/mocks/raydium'
-import { provider, resetCache } from '@depay/web3-client'
+import { getProvider, resetCache } from '@depay/web3-client'
 
 describe('raydium', () => {
   
-  let blockchain = 'solana'
+  let provider
+  const blockchain = 'solana'
   const accounts = ['2UgCJaHU5y8NC4uWQcZYeV9a5RyYLF7iKYCybCsdFFD1']
-  beforeEach(resetMocks)
-  beforeEach(resetCache)
-  beforeEach(()=>mock({ provider: provider(blockchain), blockchain, accounts: { return: accounts } }))
+
+  beforeEach(async()=>{
+    resetMocks()
+    resetCache()
+    provider = await getProvider(blockchain)
+    mock({ provider, blockchain, accounts: { return: accounts } })
+  })
 
   let exchange = find('solana', 'raydium')
   let fromAddress = '2UgCJaHU5y8NC4uWQcZYeV9a5RyYLF7iKYCybCsdFFD1'
@@ -31,13 +36,13 @@ describe('raydium', () => {
       let pair = '58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2'
       let market = '9wFFyRfZBsuAha4YcuxcXLKwMxJR43S7fPfQLusDBzvT'
 
-      mockTokenAccounts({ owner: fromAddress, token: tokenIn, accounts: [] })
-      mockTokenAccounts({ owner: fromAddress, token: tokenOut, accounts: [] })
-      mockPair({ tokenIn, tokenOut, pair, market, 
+      mockTokenAccounts({ provider, owner: fromAddress, token: tokenIn, accounts: [] })
+      mockTokenAccounts({ provider, owner: fromAddress, token: tokenOut, accounts: [] })
+      mockPair({ provider, tokenIn, tokenOut, pair, market, 
         baseReserve: 300000000000000,
         quoteReserve: 10000000000000,
       })
-      mockMarket({ market })
+      mockMarket({ provider, market })
       
       let { amountIn } = await exchange.getAmounts({ path, amountOut: amountOutBN.toString() })
 

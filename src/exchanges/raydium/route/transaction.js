@@ -4,7 +4,7 @@ import { CONSTANTS } from '@depay/web3-constants'
 import { fixPath } from './path'
 import { getBestPair } from './pairs'
 import { getMarket, getMarketAuthority } from './markets'
-import { provider } from '@depay/web3-client'
+import { getProvider } from '@depay/web3-client'
 import { Token } from '@depay/web3-tokens'
 
 const getAssociatedMiddleStatusAccount = async ({ fromPoolId, middleMint, owner })=> {
@@ -49,22 +49,20 @@ const getInstructionData = ({ pair, amountIn, amountOutMin, amountOut, amountInM
   return data
 }
 
-const getInstructionKeys = async ({ tokenIn, tokenInAccount, tokenOut, tokenOutAccount, pair, market, fromAddress, toAddress })=> {
+const getInstructionKeys = async ({ tokenIn, tokenInAccount, tokenOut, tokenOutAccount, pair, market, fromAddress })=> {
 
   if(!tokenInAccount) {
     tokenInAccount = await Token.solana.findAccount({ owner: fromAddress, token: tokenIn })
   }
-  console.log('existing tokenInAccount', tokenInAccount)
   if(!tokenInAccount) {
     tokenInAccount = await Token.solana.findProgramAddress({ owner: fromAddress, token: tokenIn })
   }
 
   if(!tokenOutAccount) {
-    tokenOutAccount = await Token.solana.findAccount({ owner: toAddress, token: tokenOut })
+    tokenOutAccount = await Token.solana.findAccount({ owner: fromAddress, token: tokenOut })
   }
-  console.log('existing tokenOutAccount', tokenOutAccount)
   if(!tokenOutAccount) {
-    tokenOutAccount = await Token.solana.findProgramAddress({ owner: toAddress, token: tokenOut })
+    tokenOutAccount = await Token.solana.findProgramAddress({ owner: fromAddress, token: tokenOut })
   }
 
   let marketAuthority = await getMarketAuthority(pair.data.marketProgramId, pair.data.marketId)
@@ -107,7 +105,6 @@ const getTransaction = async ({
   amountOutInput,
   amountInMaxInput,
   amountOutMinInput,
-  toAddress,
   fromAddress
 }) => {
 
@@ -133,8 +130,9 @@ const getTransaction = async ({
   let startsWrapped = (path[0] === CONSTANTS.solana.NATIVE && fixedPath[0] === CONSTANTS.solana.WRAPPED)
   let endsUnwrapped = (path[path.length-1] === CONSTANTS.solana.NATIVE && fixedPath[fixedPath.length-1] === CONSTANTS.solana.WRAPPED)
   let wrappedAccount
+  const provider = await getProvider('solana')
   if(startsWrapped || endsUnwrapped) {
-    const rent = await provider('solana').getMinimumBalanceForRentExemption(Token.solana.TOKEN_LAYOUT.span)
+    const rent = await provider.getMinimumBalanceForRentExemption(Token.solana.TOKEN_LAYOUT.span)
     wrappedAccount = Keypair.generate().publicKey.toString()
     const lamports = startsWrapped ? new BN(amountIn.toString()).add(new BN(rent)) :  new BN(rent)
     instructions.push(
@@ -190,7 +188,6 @@ const getTransaction = async ({
           pair,
           market,
           fromAddress,
-          toAddress
         }),
         data: getInstructionData({
           pair,
@@ -221,7 +218,7 @@ const getTransaction = async ({
   // instructions.forEach((instruction)=>simulation.add(instruction))
   // let result
   // console.log('SIMULATE')
-  // try{ result = await provider('solana').simulateTransaction(simulation) } catch(e) { console.log('error', e) }
+  // try{ result = await provider.simulateTransaction(simulation) } catch(e) { console.log('error', e) }
   // console.log('SIMULATION RESULT', result)
   // console.log('instructions.length', instructions.length)
 

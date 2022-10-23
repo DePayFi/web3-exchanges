@@ -2,15 +2,14 @@ import Raydium from 'src/exchanges/raydium'
 import { ACCOUNT_LAYOUT, Buffer, PublicKey, BN } from '@depay/solana-web3.js'
 import { mock } from '@depay/web3-mock'
 import { POOL_INFO } from 'src/exchanges/raydium/apis'
-import { provider } from '@depay/web3-client'
 import { Token } from '@depay/web3-tokens'
 
 let blockchain = 'solana'
 
-function mockRent({ rent }) {
+function mockRent({ provider, rent }) {
   mock({
     blockchain,
-    provider: provider(blockchain),
+    provider,
     request: {
       method: 'getMinimumBalanceForRentExemption',
       return: rent
@@ -18,11 +17,11 @@ function mockRent({ rent }) {
   })
 }
 
-function mockPair({ tokenIn, tokenOut, pair, market, _return, baseReserve, quoteReserve }) {
+function mockPair({ provider, tokenIn, tokenOut, pair, market, _return, baseReserve, quoteReserve }) {
   if(baseReserve || quoteReserve) {
     mock({
       blockchain,
-      provider: provider(blockchain),
+      provider,
       simulate: {
         from: 'RaydiumSimuLateTransaction11111111111111111',
         instructions: [{
@@ -44,7 +43,7 @@ function mockPair({ tokenIn, tokenOut, pair, market, _return, baseReserve, quote
   if(_return) {
     mock({
       blockchain,
-      provider: provider(blockchain),
+      provider,
       request: {
         method: 'getProgramAccounts',
         to: Raydium.pair.v4.address,
@@ -58,7 +57,7 @@ function mockPair({ tokenIn, tokenOut, pair, market, _return, baseReserve, quote
     })
     mock({
       blockchain,
-      provider: provider(blockchain),
+      provider,
       request: {
         method: 'getProgramAccounts',
         to: Raydium.pair.v4.address,
@@ -74,7 +73,7 @@ function mockPair({ tokenIn, tokenOut, pair, market, _return, baseReserve, quote
   if(!pair) {
     mock({
       blockchain,
-      provider: provider(blockchain),
+      provider,
       request: {
         method: 'getProgramAccounts',
         to: Raydium.pair.v4.address,
@@ -88,7 +87,7 @@ function mockPair({ tokenIn, tokenOut, pair, market, _return, baseReserve, quote
     })
     mock({
       blockchain,
-      provider: provider(blockchain),
+      provider,
       request: {
         method: 'getProgramAccounts',
         to: Raydium.pair.v4.address,
@@ -157,7 +156,7 @@ function mockPair({ tokenIn, tokenOut, pair, market, _return, baseReserve, quote
   }, data)
   mock({
     blockchain,
-    provider: provider(blockchain),
+    provider,
     request: {
       method: 'getProgramAccounts',
       to: Raydium.pair.v4.address,
@@ -171,7 +170,7 @@ function mockPair({ tokenIn, tokenOut, pair, market, _return, baseReserve, quote
   })
   mock({
     blockchain,
-    provider: provider(blockchain),
+    provider,
     request: {
       method: 'getProgramAccounts',
       to: Raydium.pair.v4.address,
@@ -185,10 +184,10 @@ function mockPair({ tokenIn, tokenOut, pair, market, _return, baseReserve, quote
   })
 }
 
-function mockToken({ symbol, name, mint, meta, decimals }) {
+function mockToken({ provider, symbol, name, mint, meta, decimals }) {
   mock({
     blockchain,
-    provider: provider(blockchain),
+    provider,
     request: {
       to: mint,
       api: Token[blockchain].MINT_LAYOUT,
@@ -205,7 +204,7 @@ function mockToken({ symbol, name, mint, meta, decimals }) {
   })
   mock({
     blockchain,
-    provider: provider(blockchain),
+    provider,
     request: {
       to: meta,
       api: Token[blockchain].METADATA_LAYOUT,
@@ -228,10 +227,10 @@ function mockToken({ symbol, name, mint, meta, decimals }) {
   })
 }
 
-function mockTokenAccounts({ token, owner, accounts }) {
+function mockTokenAccounts({ provider, token, owner, accounts }) {
   return mock({
     blockchain,
-    provider: provider(blockchain),
+    provider,
     request: {
       method: 'getProgramAccounts',
       to: Token.solana.TOKEN_PROGRAM,
@@ -264,10 +263,10 @@ function mockTokenAccounts({ token, owner, accounts }) {
   })
 }
 
-function mockMarket({ market }) {
+function mockMarket({ provider, market }) {
   return mock({
     blockchain,
-    provider: provider(blockchain),
+    provider,
     request: {
       method: 'getAccountInfo',
       to: market,
@@ -297,7 +296,7 @@ function mockMarket({ market }) {
   })
 }
 
-function mockTransactionKeys({ pair, market, marketAuthority, fromAddress, tokenAccountIn, tokenAccountOut }) {
+function mockTransactionKeys({ provider, pair, market, marketAuthority, fromAddress, tokenAccountIn, tokenAccountOut }) {
   return [
     { pubkey: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA', isWritable: false, isSigner: false },
     { pubkey: pair, isWritable: true, isSigner: false },
