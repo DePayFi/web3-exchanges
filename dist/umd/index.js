@@ -1415,7 +1415,6 @@
     if(!tokenInAccount) {
       tokenInAccount = await web3Tokens.Token.solana.findAccount({ owner: fromAddress, token: tokenIn });
     }
-    console.log('existing tokenInAccount', tokenInAccount);
     if(!tokenInAccount) {
       tokenInAccount = await web3Tokens.Token.solana.findProgramAddress({ owner: fromAddress, token: tokenIn });
     }
@@ -1423,7 +1422,6 @@
     if(!tokenOutAccount) {
       tokenOutAccount = await web3Tokens.Token.solana.findAccount({ owner: fromAddress, token: tokenOut });
     }
-    console.log('existing tokenOutAccount', tokenOutAccount);
     if(!tokenOutAccount) {
       tokenOutAccount = await web3Tokens.Token.solana.findProgramAddress({ owner: fromAddress, token: tokenOut });
     }

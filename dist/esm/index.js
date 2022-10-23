@@ -1415,7 +1415,6 @@ const getInstructionKeys = async ({ tokenIn, tokenInAccount, tokenOut, tokenOutA
   if(!tokenInAccount) {
     tokenInAccount = await Token.solana.findAccount({ owner: fromAddress, token: tokenIn });
   }
-  console.log('existing tokenInAccount', tokenInAccount);
   if(!tokenInAccount) {
     tokenInAccount = await Token.solana.findProgramAddress({ owner: fromAddress, token: tokenIn });
   }
@@ -1423,7 +1422,6 @@ const getInstructionKeys = async ({ tokenIn, tokenInAccount, tokenOut, tokenOutA
   if(!tokenOutAccount) {
     tokenOutAccount = await Token.solana.findAccount({ owner: fromAddress, token: tokenOut });
   }
-  console.log('existing tokenOutAccount', tokenOutAccount);
   if(!tokenOutAccount) {
     tokenOutAccount = await Token.solana.findProgramAddress({ owner: fromAddress, token: tokenOut });
   }
