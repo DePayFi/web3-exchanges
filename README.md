@@ -77,6 +77,14 @@ Solana:
 Velas:
 - [WagyuSwap](https://www.wagyuswap.app)
 
+## Platform specific packaging
+
+In case you want to use and package only specific platforms, use the platform-specific package:
+
+```javascript
+import { all, find, route } from '@depay/web3-exchanges-evm'
+```
+
 ## Data Structures
 
 ### Exchange
