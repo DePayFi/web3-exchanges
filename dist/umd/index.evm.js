@@ -157,10 +157,6 @@
       if(supported.evm.includes(exchange.blockchain)) {
         amountIn = amountInMax = await calculateAmountInWithSlippage({ exchange, fixedPath, amountIn, amountOut: (amountOutMinInput || amountOut) });
       }
-    } else if(amountInMaxInput || amountInInput) {
-      amountsWithSlippage.push(amounts[0]);
-      amounts = amountsWithSlippage.slice().reverse();
-      amountOut = amountOutMin = amounts[amounts.length-1];
     }
 
     return({ amountIn, amountInMax, amountOut, amountOutMin, amounts })
@@ -497,7 +493,7 @@
     return { path, fixedPath: fixPath$2(path) }
   };
 
-  let getAmountOut$1 = ({ path, amountIn, tokenIn, tokenOut }) => {
+  let getAmountOut$2 = ({ path, amountIn, tokenIn, tokenOut }) => {
     return new Promise((resolve) => {
       web3ClientEvm.request({
         blockchain: 'bsc',
@@ -516,7 +512,7 @@
     })
   };
 
-  let getAmountIn$1 = ({ path, amountOut, block }) => {
+  let getAmountIn$2 = ({ path, amountOut, block }) => {
     return new Promise((resolve) => {
       web3ClientEvm.request({
         blockchain: 'bsc',
@@ -534,7 +530,7 @@
     })
   };
 
-  let getAmounts$1 = async ({
+  let getAmounts$2 = async ({
     path,
     block,
     tokenIn,
@@ -545,28 +541,28 @@
     amountOutMin
   }) => {
     if (amountOut) {
-      amountIn = await getAmountIn$1({ block, path, amountOut, tokenIn, tokenOut });
+      amountIn = await getAmountIn$2({ block, path, amountOut, tokenIn, tokenOut });
       if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
         return {}
       } else if (amountInMax === undefined) {
         amountInMax = amountIn;
       }
     } else if (amountIn) {
-      amountOut = await getAmountOut$1({ path, amountIn, tokenIn, tokenOut });
+      amountOut = await getAmountOut$2({ path, amountIn, tokenIn, tokenOut });
       if (amountOut == undefined || amountOutMin && amountOut.lt(amountOutMin)) {
         return {}
       } else if (amountOutMin === undefined) {
         amountOutMin = amountOut;
       }
     } else if(amountOutMin) {
-      amountIn = await getAmountIn$1({ block, path, amountOut: amountOutMin, tokenIn, tokenOut });
+      amountIn = await getAmountIn$2({ block, path, amountOut: amountOutMin, tokenIn, tokenOut });
       if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
         return {}
       } else if (amountInMax === undefined) {
         amountInMax = amountIn;
       }
     } else if(amountInMax) {
-      amountOut = await getAmountOut$1({ path, amountIn: amountInMax, tokenIn, tokenOut });
+      amountOut = await getAmountOut$2({ path, amountIn: amountInMax, tokenIn, tokenOut });
       if (amountOut == undefined ||amountOutMin && amountOut.lt(amountOutMin)) {
         return {}
       } else if (amountOutMin === undefined) {
@@ -638,7 +634,7 @@
   var pancakeswap = new Exchange(
     Object.assign(basics$2, {
       findPath: findPath$2,
-      getAmounts: getAmounts$1,
+      getAmounts: getAmounts$2,
       getTransaction: getTransaction$2,
     })
   );
@@ -779,7 +775,7 @@
     return { path, fixedPath: fixPath$1(path) }
   };
 
-  let getAmountOut = ({ path, amountIn, tokenIn, tokenOut }) => {
+  let getAmountOut$1 = ({ path, amountIn, tokenIn, tokenOut }) => {
     return new Promise((resolve) => {
       web3ClientEvm.request({
         blockchain: 'polygon',
@@ -798,7 +794,7 @@
     })
   };
 
-  let getAmountIn = ({ path, amountOut, block }) => {
+  let getAmountIn$1 = ({ path, amountOut, block }) => {
     return new Promise((resolve) => {
       web3ClientEvm.request({
         blockchain: 'polygon',
@@ -816,7 +812,7 @@
     })
   };
 
-  let getAmounts = async ({
+  let getAmounts$1 = async ({
     path,
     block,
     tokenIn,
@@ -827,28 +823,28 @@
     amountOutMin
   }) => {
     if (amountOut) {
-      amountIn = await getAmountIn({ block, path, amountOut, tokenIn, tokenOut });
+      amountIn = await getAmountIn$1({ block, path, amountOut, tokenIn, tokenOut });
       if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
         return {}
       } else if (amountInMax === undefined) {
         amountInMax = amountIn;
       }
     } else if (amountIn) {
-      amountOut = await getAmountOut({ path, amountIn, tokenIn, tokenOut });
+      amountOut = await getAmountOut$1({ path, amountIn, tokenIn, tokenOut });
       if (amountOut == undefined || amountOutMin && amountOut.lt(amountOutMin)) {
         return {}
       } else if (amountOutMin === undefined) {
         amountOutMin = amountOut;
       }
     } else if(amountOutMin) {
-      amountIn = await getAmountIn({ block, path, amountOut: amountOutMin, tokenIn, tokenOut });
+      amountIn = await getAmountIn$1({ block, path, amountOut: amountOutMin, tokenIn, tokenOut });
       if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
         return {}
       } else if (amountInMax === undefined) {
         amountInMax = amountIn;
       }
     } else if(amountInMax) {
-      amountOut = await getAmountOut({ path, amountIn: amountInMax, tokenIn, tokenOut });
+      amountOut = await getAmountOut$1({ path, amountIn: amountInMax, tokenIn, tokenOut });
       if (amountOut == undefined ||amountOutMin && amountOut.lt(amountOutMin)) {
         return {}
       } else if (amountOutMin === undefined) {
@@ -918,7 +914,7 @@
   var quickswap = new Exchange(
     Object.assign(basics$1, {
       findPath: findPath$1,
-      getAmounts,
+      getAmounts: getAmounts$1,
       getTransaction: getTransaction$1,
     })
   );
@@ -1059,6 +1055,85 @@
     return { path, fixedPath: fixPath(path) }
   };
 
+  let getAmountOut = ({ path, amountIn, tokenIn, tokenOut }) => {
+    return new Promise((resolve) => {
+      web3ClientEvm.request({
+        blockchain: 'ethereum',
+        address: basics.router.address,
+        method: 'getAmountsOut',
+        api: basics.router.api,
+        params: {
+          amountIn: amountIn,
+          path: fixPath(path),
+        },
+      })
+      .then((amountsOut)=>{
+        resolve(amountsOut[amountsOut.length - 1]);
+      })
+      .catch(()=>resolve());
+    })
+  };
+
+  let getAmountIn = ({ path, amountOut, block }) => {
+    return new Promise((resolve) => {
+      web3ClientEvm.request({
+        blockchain: 'ethereum',
+        address: basics.router.address,
+        method: 'getAmountsIn',
+        api: basics.router.api,
+        params: {
+          amountOut: amountOut,
+          path: fixPath(path),
+        },
+        block
+      })
+      .then((amountsIn)=>resolve(amountsIn[0]))
+      .catch(()=>resolve());
+    })
+  };
+
+  let getAmounts = async ({
+    path,
+    block,
+    tokenIn,
+    tokenOut,
+    amountOut,
+    amountIn,
+    amountInMax,
+    amountOutMin
+  }) => {
+    if (amountOut) {
+      amountIn = await getAmountIn({ block, path, amountOut, tokenIn, tokenOut });
+      if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
+        return {}
+      } else if (amountInMax === undefined) {
+        amountInMax = amountIn;
+      }
+    } else if (amountIn) {
+      amountOut = await getAmountOut({ path, amountIn, tokenIn, tokenOut });
+      if (amountOut == undefined || amountOutMin && amountOut.lt(amountOutMin)) {
+        return {}
+      } else if (amountOutMin === undefined) {
+        amountOutMin = amountOut;
+      }
+    } else if(amountOutMin) {
+      amountIn = await getAmountIn({ block, path, amountOut: amountOutMin, tokenIn, tokenOut });
+      if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
+        return {}
+      } else if (amountInMax === undefined) {
+        amountInMax = amountIn;
+      }
+    } else if(amountInMax) {
+      amountOut = await getAmountOut({ path, amountIn: amountInMax, tokenIn, tokenOut });
+      if (amountOut == undefined ||amountOutMin && amountOut.lt(amountOutMin)) {
+        return {}
+      } else if (amountOutMin === undefined) {
+        amountOutMin = amountOut;
+      }
+    }
+    return { amountOut, amountIn, amountInMax, amountOutMin }
+  };
+
   let getTransaction = ({
     path,
     amountIn,
@@ -1116,11 +1191,13 @@
     return transaction
   };
 
-  var uniswap_v2 = Object.assign(basics, {
+  var uniswap_v2 = new Exchange(
+    Object.assign(basics, {
       findPath,
-      // getAmounts,
+      getAmounts,
       getTransaction,
-    });
+    })
+  );
 
   let all = {
     ethereum: [uniswap_v2],

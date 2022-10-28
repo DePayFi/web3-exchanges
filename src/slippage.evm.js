@@ -112,10 +112,6 @@ const calculateAmountsWithSlippage = async ({
     if(supported.evm.includes(exchange.blockchain)) {
       amountIn = amountInMax = await calculateAmountInWithSlippage({ exchange, fixedPath, amountIn, amountOut: (amountOutMinInput || amountOut) })
     }
-  } else if(amountInMaxInput || amountInInput) {
-    amountsWithSlippage.push(amounts[0])
-    amounts = amountsWithSlippage.slice().reverse()
-    amountOut = amountOutMin = amounts[amounts.length-1]
   }
 
   return({ amountIn, amountInMax, amountOut, amountOutMin, amounts })
