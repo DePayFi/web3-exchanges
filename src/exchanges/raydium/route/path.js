@@ -50,7 +50,7 @@ let findPath = async ({ tokenIn, tokenOut }) => {
   if(
     [tokenIn, tokenOut].includes(NATIVE) &&
     [tokenIn, tokenOut].includes(WRAPPED)
-  ) { return }
+  ) { return { path: undefined, fixedPath: undefined } }
 
   let path
   if (await pathExists([tokenIn, tokenOut])) {

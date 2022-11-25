@@ -489,7 +489,7 @@
     if(
       [tokenIn, tokenOut].includes(web3Constants.CONSTANTS.bsc.NATIVE) &&
       [tokenIn, tokenOut].includes(web3Constants.CONSTANTS.bsc.WRAPPED)
-    ) { return }
+    ) { return { path: undefined, fixedPath: undefined } }
 
     let path;
     if (await pathExists$4([tokenIn, tokenOut])) {
@@ -771,7 +771,7 @@
     if(
       [tokenIn, tokenOut].includes(web3Constants.CONSTANTS.polygon.NATIVE) &&
       [tokenIn, tokenOut].includes(web3Constants.CONSTANTS.polygon.WRAPPED)
-    ) { return }
+    ) { return { path: undefined, fixedPath: undefined } }
 
     let path;
     if (await pathExists$3([tokenIn, tokenOut])) {
@@ -1168,7 +1168,7 @@
     if(
       [tokenIn, tokenOut].includes(NATIVE) &&
       [tokenIn, tokenOut].includes(WRAPPED)
-    ) { return }
+    ) { return { path: undefined, fixedPath: undefined } }
 
     let path;
     if (await pathExists$2([tokenIn, tokenOut])) {
@@ -1680,7 +1680,7 @@
     if(
       [tokenIn, tokenOut].includes(web3Constants.CONSTANTS.ethereum.NATIVE) &&
       [tokenIn, tokenOut].includes(web3Constants.CONSTANTS.ethereum.WRAPPED)
-    ) { return }
+    ) { return { path: undefined, fixedPath: undefined } }
 
     let path;
     if (await pathExists$1([tokenIn, tokenOut])) {
@@ -1960,7 +1960,7 @@
     if(
       [tokenIn, tokenOut].includes(web3Constants.CONSTANTS.velas.NATIVE) &&
       [tokenIn, tokenOut].includes(web3Constants.CONSTANTS.velas.WRAPPED)
-    ) { return }
+    ) { return { path: undefined, fixedPath: undefined } }
 
     let path;
     if (await pathExists([tokenIn, tokenOut])) {
