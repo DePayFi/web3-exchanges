@@ -456,7 +456,7 @@ let findPath$7 = async ({ tokenIn, tokenOut }) => {
   if(
     [tokenIn, tokenOut].includes(CONSTANTS.bsc.NATIVE) &&
     [tokenIn, tokenOut].includes(CONSTANTS.bsc.WRAPPED)
-  ) { return }
+  ) { return { path: undefined, fixedPath: undefined } }
 
   let path;
   if (await pathExists$3([tokenIn, tokenOut])) {
@@ -739,7 +739,7 @@ let findPath$6 = async ({ tokenIn, tokenOut }) => {
   if(
     [tokenIn, tokenOut].includes(CONSTANTS.polygon.NATIVE) &&
     [tokenIn, tokenOut].includes(CONSTANTS.polygon.WRAPPED)
-  ) { return }
+  ) { return { path: undefined, fixedPath: undefined } }
 
   let path;
   if (await pathExists$2([tokenIn, tokenOut])) {
@@ -1020,7 +1020,7 @@ let findPath$5 = async ({ tokenIn, tokenOut }) => {
   if(
     [tokenIn, tokenOut].includes(CONSTANTS.ethereum.NATIVE) &&
     [tokenIn, tokenOut].includes(CONSTANTS.ethereum.WRAPPED)
-  ) { return }
+  ) { return { path: undefined, fixedPath: undefined } }
 
   let path;
   if (await pathExists$1([tokenIn, tokenOut])) {
@@ -1301,7 +1301,7 @@ let findPath$4 = async ({ tokenIn, tokenOut }) => {
   if(
     [tokenIn, tokenOut].includes(CONSTANTS.velas.NATIVE) &&
     [tokenIn, tokenOut].includes(CONSTANTS.velas.WRAPPED)
-  ) { return }
+  ) { return { path: undefined, fixedPath: undefined } }
 
   let path;
   if (await pathExists([tokenIn, tokenOut])) {
