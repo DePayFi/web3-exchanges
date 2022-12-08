@@ -64,18 +64,22 @@ This library supports the following decentralized exchanges:
 
 Ethereum:
 - [Uniswap v2](https://uniswap.org)
+- [WETH](https://etherscan.io/token/0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2)
 
 BNB Smart Chain:
 - [PancakeSwap v2](https://pancakeswap.info)
+- [WBNB](https://bscscan.com/address/0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c)
 
 Polygon:
 - [Quickswap](https://quickswap.exchange)
+- [WMATIC](https://polygonscan.com/token/0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270)
 
 Solana:
 - [Raydium](https://raydium.io)
 
 Velas:
 - [WagyuSwap](https://www.wagyuswap.app)
+- [WVLX](https://velascan.org/address/0xc579d1f3cf86749e05cd06f7ade17856c2ce3126)
 
 ## Platform specific packaging
 

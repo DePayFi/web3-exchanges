@@ -26,5 +26,6 @@ export default {
       address: '9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin',
       api: MARKET_LAYOUT_V3
     }
-  }
+  },
+  slippage: true,
 }
