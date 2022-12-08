@@ -13,28 +13,31 @@ describe('wmatic', () => {
 
     it('provides the same amounts (amountIn==amountOut) for ETH<>WETH', async ()=> {
 
-      const path = ['0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', CONSTANTS.polygon.WRAPPED]
-      const amountOut = '100000000000'
+      const path = [CONSTANTS[blockchain].NATIVE, CONSTANTS[blockchain].WRAPPED]
+      const amount = '100000000000'
       
-      let { amountIn } = await exchange.getAmounts({
+      let { amountIn, amountOut, amountInMax, amountOutMin } = await exchange.getAmounts({
         path,
-        amountOut
+        amountOut: amount
       })
 
-      expect(amountIn.toString()).toEqual(amountOut)
+      expect(amountIn.toString()).toEqual(amount)
+      expect(amountOut.toString()).toEqual(amount)
+      expect(amountInMax.toString()).toEqual(amount)
+      expect(amountOutMin.toString()).toEqual(amount)
     })
 
     it('provides the same amounts (amountIn==amountOut) for WETH<>ETH', async ()=> {
 
-      const path = [CONSTANTS.polygon.WRAPPED, '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE']
-      const amountOut = '100000000000'
+      const path = [CONSTANTS[blockchain].WRAPPED, CONSTANTS[blockchain].NATIVE]
+      const amount = '100000000000'
       
       let { amountIn } = await exchange.getAmounts({
         path,
-        amountOut
+        amountOut: amount
       })
 
-      expect(amountIn.toString()).toEqual(amountOut)
+      expect(amountIn.toString()).toEqual(amount)
     })
   })
 })

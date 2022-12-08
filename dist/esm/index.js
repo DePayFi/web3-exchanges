@@ -2197,13 +2197,13 @@ let getAmounts$3 = async ({
 }) => {
 
   if (amountOut) {
-    amountIn = amountInMax = amountOut;
+    amountIn = amountInMax = amountOutMin = amountOut;
   } else if (amountIn) {
-    amountOut = amountOutMin = amountIn;
+    amountOut = amountInMax = amountOutMin = amountIn;
   } else if(amountOutMin) {
-    amountIn = amountInMax = amountOut;
+    amountIn = amountInMax = amountOut = amountOutMin;
   } else if(amountInMax) {
-    amountOut = amountOutMin = amountIn;
+    amountOut = amountOutMin = amountIn = amountInMax;
   }
 
   return { amountOut, amountIn, amountInMax, amountOutMin }
@@ -2286,13 +2286,13 @@ let getAmounts$2 = async ({
 }) => {
 
   if (amountOut) {
-    amountIn = amountInMax = amountOut;
+    amountIn = amountInMax = amountOutMin = amountOut;
   } else if (amountIn) {
-    amountOut = amountOutMin = amountIn;
+    amountOut = amountInMax = amountOutMin = amountIn;
   } else if(amountOutMin) {
-    amountIn = amountInMax = amountOut;
+    amountIn = amountInMax = amountOut = amountOutMin;
   } else if(amountInMax) {
-    amountOut = amountOutMin = amountIn;
+    amountOut = amountOutMin = amountIn = amountInMax;
   }
 
   return { amountOut, amountIn, amountInMax, amountOutMin }
@@ -2375,13 +2375,13 @@ let getAmounts$1 = async ({
 }) => {
 
   if (amountOut) {
-    amountIn = amountInMax = amountOut;
+    amountIn = amountInMax = amountOutMin = amountOut;
   } else if (amountIn) {
-    amountOut = amountOutMin = amountIn;
+    amountOut = amountInMax = amountOutMin = amountIn;
   } else if(amountOutMin) {
-    amountIn = amountInMax = amountOut;
+    amountIn = amountInMax = amountOut = amountOutMin;
   } else if(amountInMax) {
-    amountOut = amountOutMin = amountIn;
+    amountOut = amountOutMin = amountIn = amountInMax;
   }
 
   return { amountOut, amountIn, amountInMax, amountOutMin }
@@ -2464,13 +2464,13 @@ let getAmounts = async ({
 }) => {
 
   if (amountOut) {
-    amountIn = amountInMax = amountOut;
+    amountIn = amountInMax = amountOutMin = amountOut;
   } else if (amountIn) {
-    amountOut = amountOutMin = amountIn;
+    amountOut = amountInMax = amountOutMin = amountIn;
   } else if(amountOutMin) {
-    amountIn = amountInMax = amountOut;
+    amountIn = amountInMax = amountOut = amountOutMin;
   } else if(amountInMax) {
-    amountOut = amountOutMin = amountIn;
+    amountOut = amountOutMin = amountIn = amountInMax;
   }
 
   return { amountOut, amountIn, amountInMax, amountOutMin }
