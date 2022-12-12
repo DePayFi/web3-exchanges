@@ -321,6 +321,7 @@ class Exchange {
     logo,
     router,
     factory,
+    wrapper,
     pair,
     market,
     findPath,
@@ -335,6 +336,7 @@ class Exchange {
     this.logo = logo;
     this.router = router;
     this.factory = factory;
+    this.wrapper = wrapper;
     this.pair = pair;
     this.market = market;
     this.findPath = findPath;
@@ -381,7 +383,7 @@ class Exchange {
       findPath: this.findPath,
       getAmounts: this.getAmounts,
       getTransaction: this.getTransaction,
-      slippage: this.slippage
+      slippage: this.slippage,
     })
   }
 }

@@ -322,6 +322,7 @@
       logo,
       router,
       factory,
+      wrapper,
       pair,
       market,
       findPath,
@@ -336,6 +337,7 @@
       this.logo = logo;
       this.router = router;
       this.factory = factory;
+      this.wrapper = wrapper;
       this.pair = pair;
       this.market = market;
       this.findPath = findPath;
@@ -382,7 +384,7 @@
         findPath: this.findPath,
         getAmounts: this.getAmounts,
         getTransaction: this.getTransaction,
-        slippage: this.slippage
+        slippage: this.slippage,
       })
     }
   }
