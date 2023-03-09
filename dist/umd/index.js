@@ -25,7 +25,6 @@
     pair: {
       api: PancakePair$1
     },
-    slippage: true,
   };
 
   function _optionalChain$5(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }class Route {
@@ -299,7 +298,6 @@
     findPath,
     getAmounts,
     getTransaction,
-    slippage,
   }) => {
     tokenIn = fixAddress(tokenIn);
     tokenOut = fixAddress(tokenOut);
@@ -312,16 +310,14 @@
       ({ amountIn, amountInMax, amountOut, amountOutMin, amounts } = await getAmounts({ path, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }));
       if([amountIn, amountInMax, amountOut, amountOutMin].every((amount)=>{ return amount == undefined })) { return resolve() }
 
-      if(slippage) {
-        ({ amountIn, amountInMax, amountOut, amountOutMin, amounts } = await calculateAmountsWithSlippage({
-          exchange,
-          fixedPath,
-          amounts,
-          tokenIn, tokenOut,
-          amountIn, amountInMax, amountOut, amountOutMin,
-          amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput,
-        }));
-      }
+      ({ amountIn, amountInMax, amountOut, amountOutMin, amounts } = await calculateAmountsWithSlippage({
+        exchange,
+        fixedPath,
+        amounts,
+        tokenIn, tokenOut,
+        amountIn, amountInMax, amountOut, amountOutMin,
+        amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput,
+      }));
 
       resolve(
         new Route({
@@ -367,7 +363,6 @@
       findPath,
       getAmounts,
       getTransaction,
-      slippage,
     }) {
       this.name = name;
       this.blockchain = blockchain;
@@ -382,7 +377,6 @@
       this.findPath = findPath;
       this.getAmounts = getAmounts;
       this.getTransaction = getTransaction;
-      this.slippage = slippage;
     }
 
     async route({
@@ -423,7 +417,6 @@
         findPath: this.findPath,
         getAmounts: this.getAmounts,
         getTransaction: this.getTransaction,
-        slippage: this.slippage,
       })
     }
   }
@@ -708,7 +701,6 @@
     pair: {
       api: UniswapV2Pair$1
     },
-    slippage: true,
   };
 
   function _optionalChain$3(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
@@ -1081,7 +1073,6 @@
         api: MARKET_LAYOUT_V3
       }
     },
-    slippage: true,
   };
 
   const INITIALIZED = 1;
@@ -1619,7 +1610,6 @@
     pair: {
       api: UniswapV2Pair
     },
-    slippage: true,
   };
 
   function _optionalChain$1(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
@@ -1900,7 +1890,6 @@
     pair: {
       api: PancakePair
     },
-    slippage: true,
   };
 
   function _optionalChain(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }

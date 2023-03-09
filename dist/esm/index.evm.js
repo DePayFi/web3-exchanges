@@ -24,7 +24,6 @@ var basics$7 = {
   pair: {
     api: PancakePair$1
   },
-  slippage: true,
 };
 
 function _optionalChain$4(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }class Route {
@@ -259,7 +258,6 @@ const route$1 = ({
   findPath,
   getAmounts,
   getTransaction,
-  slippage,
 }) => {
   tokenIn = fixAddress(tokenIn);
   tokenOut = fixAddress(tokenOut);
@@ -272,16 +270,14 @@ const route$1 = ({
     ({ amountIn, amountInMax, amountOut, amountOutMin, amounts } = await getAmounts({ path, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }));
     if([amountIn, amountInMax, amountOut, amountOutMin].every((amount)=>{ return amount == undefined })) { return resolve() }
 
-    if(slippage) {
-      ({ amountIn, amountInMax, amountOut, amountOutMin, amounts } = await calculateAmountsWithSlippage({
-        exchange,
-        fixedPath,
-        amounts,
-        tokenIn, tokenOut,
-        amountIn, amountInMax, amountOut, amountOutMin,
-        amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput,
-      }));
-    }
+    ({ amountIn, amountInMax, amountOut, amountOutMin, amounts } = await calculateAmountsWithSlippage({
+      exchange,
+      fixedPath,
+      amounts,
+      tokenIn, tokenOut,
+      amountIn, amountInMax, amountOut, amountOutMin,
+      amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput,
+    }));
 
     resolve(
       new Route({
@@ -327,7 +323,6 @@ class Exchange {
     findPath,
     getAmounts,
     getTransaction,
-    slippage,
   }) {
     this.name = name;
     this.blockchain = blockchain;
@@ -342,7 +337,6 @@ class Exchange {
     this.findPath = findPath;
     this.getAmounts = getAmounts;
     this.getTransaction = getTransaction;
-    this.slippage = slippage;
   }
 
   async route({
@@ -383,7 +377,6 @@ class Exchange {
       findPath: this.findPath,
       getAmounts: this.getAmounts,
       getTransaction: this.getTransaction,
-      slippage: this.slippage,
     })
   }
 }
@@ -668,7 +661,6 @@ var basics$6 = {
   pair: {
     api: UniswapV2Pair$1
   },
-  slippage: true,
 };
 
 function _optionalChain$2(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
@@ -949,7 +941,6 @@ var basics$5 = {
   pair: {
     api: UniswapV2Pair
   },
-  slippage: true,
 };
 
 function _optionalChain$1(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
@@ -1230,7 +1221,6 @@ var basics$4 = {
   pair: {
     api: PancakePair
   },
-  slippage: true,
 };
 
 function _optionalChain(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }

@@ -14,7 +14,6 @@ const route = ({
   findPath,
   getAmounts,
   getTransaction,
-  slippage,
 }) => {
   tokenIn = fixAddress(tokenIn)
   tokenOut = fixAddress(tokenOut)
@@ -27,16 +26,14 @@ const route = ({
     ({ amountIn, amountInMax, amountOut, amountOutMin, amounts } = await getAmounts({ path, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }))
     if([amountIn, amountInMax, amountOut, amountOutMin].every((amount)=>{ return amount == undefined })) { return resolve() }
 
-    if(slippage) {
-      ({ amountIn, amountInMax, amountOut, amountOutMin, amounts } = await calculateAmountsWithSlippage({
-        exchange,
-        fixedPath,
-        amounts,
-        tokenIn, tokenOut,
-        amountIn, amountInMax, amountOut, amountOutMin,
-        amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput,
-      }))
-    }
+    ({ amountIn, amountInMax, amountOut, amountOutMin, amounts } = await calculateAmountsWithSlippage({
+      exchange,
+      fixedPath,
+      amounts,
+      tokenIn, tokenOut,
+      amountIn, amountInMax, amountOut, amountOutMin,
+      amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput,
+    }))
 
     resolve(
       new Route({
@@ -82,7 +79,6 @@ class Exchange {
     findPath,
     getAmounts,
     getTransaction,
-    slippage,
   }) {
     this.name = name
     this.blockchain = blockchain
@@ -97,7 +93,6 @@ class Exchange {
     this.findPath = findPath
     this.getAmounts = getAmounts
     this.getTransaction = getTransaction
-    this.slippage = slippage
   }
 
   async route({
@@ -138,7 +133,6 @@ class Exchange {
       findPath: this.findPath,
       getAmounts: this.getAmounts,
       getTransaction: this.getTransaction,
-      slippage: this.slippage,
     })
   }
 }

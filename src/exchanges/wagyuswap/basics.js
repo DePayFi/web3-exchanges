@@ -17,5 +17,4 @@ export default {
   pair: {
     api: PancakePair
   },
-  slippage: true,
 }
