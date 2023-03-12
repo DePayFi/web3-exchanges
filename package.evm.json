@@ -25,7 +25,7 @@
   "homepage": "https://depay.com",
   "private": false,
   "peerDependencies": {
-    "@depay/web3-client-evm": "^10.2.1",
+    "@depay/web3-client-evm": "^10.4.1",
     "@depay/web3-constants": "^6.4.2",
     "@depay/web3-tokens-evm": "^9.12.8",
     "ethers": "^5.7.1"

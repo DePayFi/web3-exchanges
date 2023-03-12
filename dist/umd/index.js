@@ -1113,6 +1113,7 @@
 
   let getBestPair = async(base, quote) => {
     let accounts = await getPairs(base, quote);
+    console.log('getBestPair accounts', accounts);
     if(accounts.length == 1){ return accounts[0] }
     if(accounts.length < 1){ return null }
     let best = accounts.reduce((account, current) => {
@@ -1723,6 +1724,7 @@
       // path via tokenIn -> WRAPPED -> USD -> tokenOut
       path = [tokenIn, web3Constants.CONSTANTS.ethereum.WRAPPED, web3Constants.CONSTANTS.ethereum.USD, tokenOut];
     }
+
 
     // Add WRAPPED to route path if things start or end with NATIVE
     // because that actually reflects how things are routed in reality:

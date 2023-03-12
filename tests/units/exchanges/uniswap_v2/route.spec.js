@@ -55,7 +55,7 @@ describe('uniswap_v2', () => {
       let decimalsIn = 18
       let fetchedAmountIn = 43
       let fetchedAmountInBN = ethers.utils.parseUnits(fetchedAmountIn.toString(), decimalsIn)
-      let tokenOut = '0xdAC17F958D2ee523a2206206994597C13D831ec7'
+      let tokenOut = '0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984'
       let decimalsOut = 6
       let amountOut = 1
       let amountOutBN = ethers.utils.parseUnits(amountOut.toString(), decimalsOut)
@@ -93,7 +93,7 @@ describe('uniswap_v2', () => {
 
     let tokenIn = '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb'
     let decimalsIn = 18
-    let tokenOut = '0xdAC17F958D2ee523a2206206994597C13D831ec7'
+    let tokenOut = '0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984'
     let decimalsOut = 6
     let path = [tokenIn, tokenOut]
 
@@ -524,7 +524,7 @@ describe('uniswap_v2', () => {
 
     let tokenIn = CONSTANTS[blockchain].NATIVE
     let decimalsIn = CONSTANTS[blockchain].DECIMALS
-    let tokenOut = '0xdAC17F958D2ee523a2206206994597C13D831ec7'
+    let tokenOut = '0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984'
     let decimalsOut = 6
     let path = [tokenIn, CONSTANTS[blockchain].WRAPPED, tokenOut]
 

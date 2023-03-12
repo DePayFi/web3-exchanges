@@ -30,6 +30,7 @@ let getPairs = async(base, quote) => {
 
 let getBestPair = async(base, quote) => {
   let accounts = await getPairs(base, quote)
+  console.log('getBestPair accounts', accounts)
   if(accounts.length == 1){ return accounts[0] }
   if(accounts.length < 1){ return null }
   let best = accounts.reduce((account, current) => {

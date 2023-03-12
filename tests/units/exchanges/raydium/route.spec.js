@@ -34,8 +34,8 @@ describe('raydium', () => {
       let amountIn = 5
 
       let route = await exchange.route({
-        tokenIn: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
-        tokenOut: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
+        tokenIn: 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB',
+        tokenOut: 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB',
         amountInMax: amountIn,
         amountOut,
         fromAddress,
@@ -47,7 +47,7 @@ describe('raydium', () => {
 
     it('returns undefined and does not fail or reject in case an error happens during the routing', async ()=> {
 
-      let tokenIn = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'
+      let tokenIn = 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'
       let tokenOut = CONSTANTS[blockchain].WRAPPED
       let amountOut = 1
       let amountOutBN = ethers.utils.parseUnits(amountOut.toString(), CONSTANTS[blockchain].DECIMALS)
@@ -118,7 +118,7 @@ describe('raydium', () => {
               market,
               marketAuthority: 'F8Vyqk3unwxkXukZFQeYyGmFfTG3CAX4v24iyrjEYBJV',
               fromAddress,
-              tokenAccountIn: 'F7e4iBrxoSmHhEzhuBcXXs1KAknYvEoZWieiocPvrCD9',
+              tokenAccountIn: 'FjtHL8ki3GXMhCqY2Lum9CCAv5tSQMkhJEnXbEkajTrZ',
               tokenAccountOut: '5nrTLrjSCNQ4uTVr9BxBUcwf4G4Dwuo8H5wQAQgxand8'
             })
           }]
@@ -168,7 +168,7 @@ describe('raydium', () => {
               market,
               marketAuthority: 'F8Vyqk3unwxkXukZFQeYyGmFfTG3CAX4v24iyrjEYBJV',
               fromAddress,
-              tokenAccountIn: 'F7e4iBrxoSmHhEzhuBcXXs1KAknYvEoZWieiocPvrCD9',
+              tokenAccountIn: 'FjtHL8ki3GXMhCqY2Lum9CCAv5tSQMkhJEnXbEkajTrZ',
               tokenAccountOut: '5nrTLrjSCNQ4uTVr9BxBUcwf4G4Dwuo8H5wQAQgxand8'
             })
           }]
@@ -219,7 +219,7 @@ describe('raydium', () => {
               market,
               marketAuthority: 'F8Vyqk3unwxkXukZFQeYyGmFfTG3CAX4v24iyrjEYBJV',
               fromAddress,
-              tokenAccountIn: 'F7e4iBrxoSmHhEzhuBcXXs1KAknYvEoZWieiocPvrCD9',
+              tokenAccountIn: 'FjtHL8ki3GXMhCqY2Lum9CCAv5tSQMkhJEnXbEkajTrZ',
               tokenAccountOut: '5nrTLrjSCNQ4uTVr9BxBUcwf4G4Dwuo8H5wQAQgxand8'
             })
           }]
@@ -270,7 +270,7 @@ describe('raydium', () => {
               market,
               marketAuthority: 'F8Vyqk3unwxkXukZFQeYyGmFfTG3CAX4v24iyrjEYBJV',
               fromAddress,
-              tokenAccountIn: 'F7e4iBrxoSmHhEzhuBcXXs1KAknYvEoZWieiocPvrCD9',
+              tokenAccountIn: 'FjtHL8ki3GXMhCqY2Lum9CCAv5tSQMkhJEnXbEkajTrZ',
               tokenAccountOut: '5nrTLrjSCNQ4uTVr9BxBUcwf4G4Dwuo8H5wQAQgxand8'
             })
           }]
@@ -348,7 +348,7 @@ describe('raydium', () => {
                 marketAuthority: 'F8Vyqk3unwxkXukZFQeYyGmFfTG3CAX4v24iyrjEYBJV',
                 fromAddress,
                 tokenAccountIn: anything,
-                tokenAccountOut: 'F7e4iBrxoSmHhEzhuBcXXs1KAknYvEoZWieiocPvrCD9'
+                tokenAccountOut: 'FjtHL8ki3GXMhCqY2Lum9CCAv5tSQMkhJEnXbEkajTrZ'
               })
             }, {
               to: Token.solana.TOKEN_PROGRAM,
@@ -429,7 +429,7 @@ describe('raydium', () => {
                 market,
                 marketAuthority: 'F8Vyqk3unwxkXukZFQeYyGmFfTG3CAX4v24iyrjEYBJV',
                 fromAddress,
-                tokenAccountIn: 'F7e4iBrxoSmHhEzhuBcXXs1KAknYvEoZWieiocPvrCD9',
+                tokenAccountIn: 'FjtHL8ki3GXMhCqY2Lum9CCAv5tSQMkhJEnXbEkajTrZ',
                 tokenAccountOut: anything
               })
             },{
@@ -447,7 +447,7 @@ describe('raydium', () => {
 
     let tokenIn = '9LzCMqDgTKYz9Drzqnpgee3SGa89up3a247ypMj2xrqM' // AUDIUS
     let decimalsIn = 8
-    let tokenMiddle = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v' // USDC
+    let tokenMiddle = 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'
     let decimalsMiddle = 6
     let tokenOut = 'StepAscQoEioFxxWGnh2sLBDFp9d8rvKz2Yp39iDpyT' // STEPN
     let decimalsOut = 9
@@ -463,13 +463,13 @@ describe('raydium', () => {
       ]
       let markets = [ // Serum
         'FxquLRmVMPXiS84FFSp8q5fbVExhLkX85yiXucyu7xSC', // AUDIO-USDC
-        '97qCB4cAVSTthvJu3eNoEx6AY6DLuRDtCoPm5Tdyg77S', // STEP-USDC 
+        '97qCB4cAVSTthvJu3eNoEx6AY6DLuRDtCoPm5Tdyg77S', // STEP-USDC
       ]
 
       mockTokenAccounts({ owner: fromAddress, token: tokenIn, accounts: [] })
       mockTokenAccounts({ owner: fromAddress, token: tokenMiddle, accounts: [] })
       mockTokenAccounts({ owner: fromAddress, token: tokenOut, accounts: [] })
-      mockPair({ tokenIn, tokenOut: tokenMiddle, pair: pairs[0], market: markets[0], 
+      mockPair({ tokenIn, tokenOut: tokenMiddle, pair: pairs[0], market: markets[0],
         baseReserve: 9152000000000,
         quoteReserve: 16602000000,
       })
@@ -510,7 +510,7 @@ describe('raydium', () => {
                 marketAuthority: '6bhvdkoTfqfmLxiMhTBU9quSVDgRHYhmRbFBpTNQVvxF',
                 fromAddress, 
                 tokenAccountIn: '3VCor9E7BmH83jds6Nvwu2FNcjEZqgcocqAiyiB9dEG4',
-                tokenAccountOut: 'F7e4iBrxoSmHhEzhuBcXXs1KAknYvEoZWieiocPvrCD9',
+                tokenAccountOut: 'FjtHL8ki3GXMhCqY2Lum9CCAv5tSQMkhJEnXbEkajTrZ',
               })
             },{
               to: Raydium.pair.v4.address,
@@ -525,7 +525,7 @@ describe('raydium', () => {
                 market: markets[1],
                 marketAuthority: 'FbwU5U1Doj2PSKRJi7pnCny4dFPPJURwALkFhHwdHaMW',
                 fromAddress,
-                tokenAccountIn: 'F7e4iBrxoSmHhEzhuBcXXs1KAknYvEoZWieiocPvrCD9',
+                tokenAccountIn: 'FjtHL8ki3GXMhCqY2Lum9CCAv5tSQMkhJEnXbEkajTrZ',
                 tokenAccountOut: 'BKaytRHisVsQ4onoNGTw6JH8qv31aUHENGDEsXq8nEk9',
               })
             }
@@ -591,7 +591,7 @@ describe('raydium', () => {
                 marketAuthority: '6bhvdkoTfqfmLxiMhTBU9quSVDgRHYhmRbFBpTNQVvxF',
                 fromAddress, 
                 tokenAccountIn: '3VCor9E7BmH83jds6Nvwu2FNcjEZqgcocqAiyiB9dEG4',
-                tokenAccountOut: 'F7e4iBrxoSmHhEzhuBcXXs1KAknYvEoZWieiocPvrCD9',
+                tokenAccountOut: 'FjtHL8ki3GXMhCqY2Lum9CCAv5tSQMkhJEnXbEkajTrZ',
               })
             },{
               to: Raydium.pair.v4.address,
@@ -606,7 +606,7 @@ describe('raydium', () => {
                 market: markets[1],
                 marketAuthority: 'FbwU5U1Doj2PSKRJi7pnCny4dFPPJURwALkFhHwdHaMW',
                 fromAddress,
-                tokenAccountIn: 'F7e4iBrxoSmHhEzhuBcXXs1KAknYvEoZWieiocPvrCD9',
+                tokenAccountIn: 'FjtHL8ki3GXMhCqY2Lum9CCAv5tSQMkhJEnXbEkajTrZ',
                 tokenAccountOut: 'BKaytRHisVsQ4onoNGTw6JH8qv31aUHENGDEsXq8nEk9',
               })
             }
@@ -672,7 +672,7 @@ describe('raydium', () => {
                 marketAuthority: '6bhvdkoTfqfmLxiMhTBU9quSVDgRHYhmRbFBpTNQVvxF',
                 fromAddress, 
                 tokenAccountIn: '3VCor9E7BmH83jds6Nvwu2FNcjEZqgcocqAiyiB9dEG4',
-                tokenAccountOut: 'F7e4iBrxoSmHhEzhuBcXXs1KAknYvEoZWieiocPvrCD9',
+                tokenAccountOut: 'FjtHL8ki3GXMhCqY2Lum9CCAv5tSQMkhJEnXbEkajTrZ',
               })
             },{
               to: Raydium.pair.v4.address,
@@ -687,7 +687,7 @@ describe('raydium', () => {
                 market: markets[1],
                 marketAuthority: 'FbwU5U1Doj2PSKRJi7pnCny4dFPPJURwALkFhHwdHaMW',
                 fromAddress,
-                tokenAccountIn: 'F7e4iBrxoSmHhEzhuBcXXs1KAknYvEoZWieiocPvrCD9',
+                tokenAccountIn: 'FjtHL8ki3GXMhCqY2Lum9CCAv5tSQMkhJEnXbEkajTrZ',
                 tokenAccountOut: 'BKaytRHisVsQ4onoNGTw6JH8qv31aUHENGDEsXq8nEk9',
               })
             }
@@ -753,7 +753,7 @@ describe('raydium', () => {
                 marketAuthority: '6bhvdkoTfqfmLxiMhTBU9quSVDgRHYhmRbFBpTNQVvxF',
                 fromAddress, 
                 tokenAccountIn: '3VCor9E7BmH83jds6Nvwu2FNcjEZqgcocqAiyiB9dEG4',
-                tokenAccountOut: 'F7e4iBrxoSmHhEzhuBcXXs1KAknYvEoZWieiocPvrCD9',
+                tokenAccountOut: 'FjtHL8ki3GXMhCqY2Lum9CCAv5tSQMkhJEnXbEkajTrZ',
               })
             },{
               to: Raydium.pair.v4.address,
@@ -768,7 +768,7 @@ describe('raydium', () => {
                 market: markets[1],
                 marketAuthority: 'FbwU5U1Doj2PSKRJi7pnCny4dFPPJURwALkFhHwdHaMW',
                 fromAddress,
-                tokenAccountIn: 'F7e4iBrxoSmHhEzhuBcXXs1KAknYvEoZWieiocPvrCD9',
+                tokenAccountIn: 'FjtHL8ki3GXMhCqY2Lum9CCAv5tSQMkhJEnXbEkajTrZ',
                 tokenAccountOut: 'BKaytRHisVsQ4onoNGTw6JH8qv31aUHENGDEsXq8nEk9',
               })
             }
@@ -793,7 +793,7 @@ describe('raydium', () => {
       let pair = '58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2'
       let market = '9wFFyRfZBsuAha4YcuxcXLKwMxJR43S7fPfQLusDBzvT'
 
-      mockTokenAccounts({ owner: fromAddress, token: tokenIn, accounts: ['F7e4iBrxoSmHhEzhuBcXXs1KAknYvEoZWieiocPvrCD9'] })
+      mockTokenAccounts({ owner: fromAddress, token: tokenIn, accounts: ['FjtHL8ki3GXMhCqY2Lum9CCAv5tSQMkhJEnXbEkajTrZ'] })
       mockTokenAccounts({ owner: fromAddress, token: tokenOut, accounts: ['BKaytRHisVsQ4onoNGTw6JH8qv31aUHENGDEsXq8nEk9'] })
       mockPair({ tokenIn, tokenOut, pair, market, 
         baseReserve: 300000000000000,
@@ -828,7 +828,7 @@ describe('raydium', () => {
               market,
               marketAuthority: 'F8Vyqk3unwxkXukZFQeYyGmFfTG3CAX4v24iyrjEYBJV',
               fromAddress,
-              tokenAccountIn: 'F7e4iBrxoSmHhEzhuBcXXs1KAknYvEoZWieiocPvrCD9',
+              tokenAccountIn: 'FjtHL8ki3GXMhCqY2Lum9CCAv5tSQMkhJEnXbEkajTrZ',
               tokenAccountOut: 'BKaytRHisVsQ4onoNGTw6JH8qv31aUHENGDEsXq8nEk9'
             })
           }]
@@ -852,7 +852,7 @@ describe('raydium', () => {
       let pair = '58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2'
       let market = '9wFFyRfZBsuAha4YcuxcXLKwMxJR43S7fPfQLusDBzvT'
 
-      mockTokenAccounts({ owner: fromAddress, token: CONSTANTS.solana.WRAPPED, accounts: ['F7e4iBrxoSmHhEzhuBcXXs1KAknYvEoZWieiocPvrCD9'] })
+      mockTokenAccounts({ owner: fromAddress, token: CONSTANTS.solana.WRAPPED, accounts: ['FjtHL8ki3GXMhCqY2Lum9CCAv5tSQMkhJEnXbEkajTrZ'] })
       mockTokenAccounts({ owner: fromAddress, token: tokenOut, accounts: ['F8Vyqk3unwxkXukZFQeYyGmFfTG3CAX4v24iyrjEYBJV'] })
       mockPair({ tokenIn: CONSTANTS.solana.WRAPPED, tokenOut, pair, market, 
         baseReserve: 300000000000000,

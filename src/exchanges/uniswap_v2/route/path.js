@@ -105,6 +105,7 @@ let findPath = async ({ tokenIn, tokenOut }) => {
     path = [tokenIn, CONSTANTS.ethereum.WRAPPED, CONSTANTS.ethereum.USD, tokenOut]
   }
 
+
   // Add WRAPPED to route path if things start or end with NATIVE
   // because that actually reflects how things are routed in reality:
   if(path?.length && path[0] == CONSTANTS.ethereum.NATIVE) {

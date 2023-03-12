@@ -1055,6 +1055,7 @@
       path = [tokenIn, web3Constants.CONSTANTS.ethereum.WRAPPED, web3Constants.CONSTANTS.ethereum.USD, tokenOut];
     }
 
+
     // Add WRAPPED to route path if things start or end with NATIVE
     // because that actually reflects how things are routed in reality:
     if(_optionalChain$1([path, 'optionalAccess', _ => _.length]) && path[0] == web3Constants.CONSTANTS.ethereum.NATIVE) {
