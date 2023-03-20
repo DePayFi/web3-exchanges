@@ -1,5 +1,5 @@
 import basics from './basics'
-import Exchange from '../../classes/Exchange.evm'
+import Exchange from '../../classes/Exchange'
 import { findPath } from './route/path'
 import { getAmounts } from './route/amounts'
 import { getTransaction } from './route/transaction'

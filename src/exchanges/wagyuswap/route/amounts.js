@@ -1,6 +1,17 @@
+/*#if _EVM
+
+import { request } from '@depay/web3-client-evm'
+
+/*#elif _SOLANA
+
+//#else */
+
+import { request } from '@depay/web3-client'
+
+//#endif
+
 import WagyuSwap from '../basics'
 import { fixPath } from './path'
-import { request } from '@depay/web3-client'
 
 let getAmountOut = ({ path, amountIn, tokenIn, tokenOut }) => {
   return new Promise((resolve) => {

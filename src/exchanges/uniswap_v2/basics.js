@@ -17,5 +17,4 @@ export default {
   pair: {
     api: UniswapV2Pair
   },
-  slippage: true,
 }

@@ -1,11 +1,23 @@
+/*#if _EVM
+
+/*#elif _SOLANA
+
+import { getProvider } from '@depay/web3-client-solana'
+import { Token } from '@depay/web3-tokens-solana'
+
+//#else */
+
+import { getProvider } from '@depay/web3-client'
+import { Token } from '@depay/web3-tokens'
+
+//#endif
+
 import Raydium from '../basics'
 import { Buffer, BN, Transaction, TransactionInstruction, SystemProgram, PublicKey, Keypair, struct, u8, u64 } from '@depay/solana-web3.js'
 import { CONSTANTS } from '@depay/web3-constants'
 import { fixPath } from './path'
 import { getBestPair } from './pairs'
 import { getMarket, getMarketAuthority } from './markets'
-import { getProvider } from '@depay/web3-client'
-import { Token } from '@depay/web3-tokens'
 
 const getAssociatedMiddleStatusAccount = async ({ fromPoolId, middleMint, owner })=> {
   let result = await PublicKey.findProgramAddress(

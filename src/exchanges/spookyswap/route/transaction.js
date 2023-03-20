@@ -1,6 +1,6 @@
-import WagyuSwap from '../basics'
+import PancakeSwap from '../basics'
 import { CONSTANTS } from '@depay/web3-constants'
-import { fixPath } from './path.evm'
+import { fixPath } from './path'
 
 let getTransaction = ({
   path,
@@ -14,15 +14,17 @@ let getTransaction = ({
   amountOutMinInput,
   fromAddress
 }) => {
+
+  let blockchain = 'bsc'
   
   let transaction = {
-    blockchain: 'velas',
+    blockchain,
     from: fromAddress,
-    to: WagyuSwap.router.address,
-    api: WagyuSwap.router.api,
+    to: PancakeSwap.router.address,
+    api: PancakeSwap.router.api,
   }
 
-  if (path[0] === CONSTANTS.velas.NATIVE) {
+  if (path[0] === CONSTANTS[blockchain].NATIVE) {
     if (amountInInput || amountOutMinInput) {
       transaction.method = 'swapExactETHForTokens'
       transaction.value = amountIn.toString()
@@ -32,7 +34,7 @@ let getTransaction = ({
       transaction.value = amountInMax.toString()
       transaction.params = { amountOut: amountOut.toString() }
     }
-  } else if (path[path.length - 1] === CONSTANTS.velas.NATIVE) {
+  } else if (path[path.length - 1] === CONSTANTS[blockchain].NATIVE) {
     if (amountInInput || amountOutMinInput) {
       transaction.method = 'swapExactTokensForETH'
       transaction.params = { amountIn: amountIn.toString(), amountOutMin: amountOutMin.toString() }

@@ -1,12 +1,23 @@
+/*#if _EVM
+
+/*#elif _SOLANA
+
+import { request } from '@depay/web3-client-solana'
+
+//#else */
+
+import { request } from '@depay/web3-client'
+
+//#endif
+
 import Raydium from '../basics'
 import { ethers } from 'ethers'
 import { fixPath } from './path'
 import { getBestPair } from './pairs'
 import { getInfo } from './pool'
-import { request } from '@depay/web3-client'
 
 let getAmountsOut = async ({ path, amountIn }) => {
-  
+
   let amounts = [amountIn]  
   await Promise.all(path.map(async (step, i)=>{
     const nextStep = path[i+1]
@@ -14,7 +25,7 @@ let getAmountsOut = async ({ path, amountIn }) => {
     const pair = await getBestPair(step, nextStep)
     const info = await getInfo(pair)
     const baseMint = pair.data.baseMint.toString()
-    const reserves = [ethers.BigNumber.from(info.pool_coin_amount), ethers.BigNumber.from(info.pool_pc_amount)]
+    const reserves = [ethers.BigNumber.from(info.pool_coin_amount.toString()), ethers.BigNumber.from(info.pool_pc_amount.toString())]
     const [reserveIn, reserveOut] = baseMint == step ? [reserves[0], reserves[1]] : [reserves[1], reserves[0]]
     const feeRaw = amounts[i].mul(Raydium.pair.v4.LIQUIDITY_FEES_NUMERATOR).div(Raydium.pair.v4.LIQUIDITY_FEES_DENOMINATOR)
     const amountInWithFee = amounts[i].sub(feeRaw)
@@ -37,7 +48,7 @@ let getAmountsIn = async({ path, amountOut }) => {
     const poolId = pair.pubkey.toString()
     const baseMint = pair.data.baseMint.toString()
     const quoteMint = pair.data.quoteMint.toString()
-    const reserves = [ethers.BigNumber.from(info.pool_coin_amount), ethers.BigNumber.from(info.pool_pc_amount)]
+    const reserves = [ethers.BigNumber.from(info.pool_coin_amount.toString()), ethers.BigNumber.from(info.pool_pc_amount.toString())]
     const [reserveIn, reserveOut] = baseMint == step ? [reserves[1], reserves[0]] : [reserves[0], reserves[1]]
     const denominator = reserveOut.sub(amounts[i])
     const amountInWithoutFee = reserveIn.mul(amounts[i]).div(denominator)

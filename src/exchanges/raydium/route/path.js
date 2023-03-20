@@ -1,11 +1,23 @@
+/*#if _EVM
+
+/*#elif _SOLANA
+
+import { request } from '@depay/web3-client-solana'
+
+//#else */
+
+import { request } from '@depay/web3-client'
+
+//#endif
+
 import Raydium from '../basics'
 import { CONSTANTS } from '@depay/web3-constants'
-import { request } from '@depay/web3-client'
 import { anyPairs } from './pairs'
 
 const NATIVE = CONSTANTS.solana.NATIVE
 const WRAPPED = CONSTANTS.solana.WRAPPED
-const USD = CONSTANTS.solana.USD
+const USDC = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'
+const USDT = 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'
 
 // Replaces 11111111111111111111111111111111 with the wrapped token and implies wrapping.
 //
@@ -67,13 +79,21 @@ let findPath = async ({ tokenIn, tokenOut }) => {
     // path via WRAPPED
     path = [tokenIn, WRAPPED, tokenOut]
   } else if (
-    tokenIn != USD &&
-    await pathExists([tokenIn, USD]) &&
-    tokenOut != USD &&
-    await pathExists([tokenOut, USD])
+    tokenIn != USDC &&
+    await pathExists([tokenIn, USDC]) &&
+    tokenOut != USDC &&
+    await pathExists([tokenOut, USDC])
   ) {
-    // path via USD
-    path = [tokenIn, USD, tokenOut]
+    // path via USDC
+    path = [tokenIn, USDC, tokenOut]
+  } else if (
+    tokenIn != USDT &&
+    await pathExists([tokenIn, USDT]) &&
+    tokenOut != USDT &&
+    await pathExists([tokenOut, USDT])
+  ) {
+    // path via USDT
+    path = [tokenIn, USDT, tokenOut]
   }
 
   // Add WRAPPED to route path if things start or end with NATIVE

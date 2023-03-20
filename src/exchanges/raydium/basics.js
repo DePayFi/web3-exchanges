@@ -27,5 +27,4 @@ export default {
       api: MARKET_LAYOUT_V3
     }
   },
-  slippage: true,
 }
