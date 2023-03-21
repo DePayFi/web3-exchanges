@@ -1,4 +1,4 @@
-import { find } from 'src/index.evm'
+import { find } from 'dist/esm/index.evm'
 
 describe('find', () => {
   

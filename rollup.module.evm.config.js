@@ -1,5 +1,6 @@
 import commonjs from '@rollup/plugin-commonjs'
 import globals from './rollup.globals'
+import jscc from 'rollup-plugin-jscc'
 import pkg from './package.evm.json'
 import replace from '@rollup/plugin-replace'
 import resolve from '@rollup/plugin-node-resolve'
@@ -7,7 +8,7 @@ import sucrase from '@rollup/plugin-sucrase'
 import { nodeResolve } from '@rollup/plugin-node-resolve'
 
 export default {
-  input: 'src/index.evm.js',
+  input: 'src/index.js',
   output: [
     {
       format: 'es',
@@ -26,6 +27,7 @@ export default {
     ...Object.keys(pkg.peerDependencies || {}),
   ],
   plugins: [
+    jscc({ include: 'src/**', values: { _EVM: 1 }}),
     sucrase({
       exclude: ['node_modules/**'],
       transforms: ['jsx']

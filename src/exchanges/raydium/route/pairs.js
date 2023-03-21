@@ -1,5 +1,16 @@
-import Raydium from '../basics'
+/*#if _EVM
+
+/*#elif _SOLANA
+
+import { request } from '@depay/web3-client-solana'
+
+//#else */
+
 import { request } from '@depay/web3-client'
+
+//#endif
+
+import Raydium from '../basics'
 
 const INITIALIZED = 1
 const SWAP = 6
@@ -30,7 +41,6 @@ let getPairs = async(base, quote) => {
 
 let getBestPair = async(base, quote) => {
   let accounts = await getPairs(base, quote)
-  console.log('getBestPair accounts', accounts)
   if(accounts.length == 1){ return accounts[0] }
   if(accounts.length < 1){ return null }
   let best = accounts.reduce((account, current) => {

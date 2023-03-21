@@ -81,7 +81,7 @@ describe('raydium', () => {
       let amountOut = 1
       let amountOutBN = ethers.utils.parseUnits(amountOut.toString(), decimalsOut)
       let pair = '58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2'
-      let market = '9wFFyRfZBsuAha4YcuxcXLKwMxJR43S7fPfQLusDBzvT'
+      let market = '2ZUL8XdWPUE2dGM6CB3JU7Mu4jMWZJJmTHmrb9izmYV8'
 
       mockTokenAccounts({ owner: fromAddress, token: tokenIn, accounts: [] })
       mockTokenAccounts({ owner: fromAddress, token: tokenOut, accounts: [] })
@@ -116,7 +116,7 @@ describe('raydium', () => {
             keys: mockTransactionKeys({
               pair,
               market,
-              marketAuthority: 'F8Vyqk3unwxkXukZFQeYyGmFfTG3CAX4v24iyrjEYBJV',
+              marketAuthority: 'Hh95ekCna2kCuiGyTMrKJ9wjpP1uZsQPoUMqqYw1v4WT',
               fromAddress,
               tokenAccountIn: 'FjtHL8ki3GXMhCqY2Lum9CCAv5tSQMkhJEnXbEkajTrZ',
               tokenAccountOut: '5nrTLrjSCNQ4uTVr9BxBUcwf4G4Dwuo8H5wQAQgxand8'
@@ -166,7 +166,7 @@ describe('raydium', () => {
             keys: mockTransactionKeys({
               pair,
               market,
-              marketAuthority: 'F8Vyqk3unwxkXukZFQeYyGmFfTG3CAX4v24iyrjEYBJV',
+              marketAuthority: '2ZUL8XdWPUE2dGM6CB3JU7Mu4jMWZJJmTHmrb9izmYV8',
               fromAddress,
               tokenAccountIn: 'FjtHL8ki3GXMhCqY2Lum9CCAv5tSQMkhJEnXbEkajTrZ',
               tokenAccountOut: '5nrTLrjSCNQ4uTVr9BxBUcwf4G4Dwuo8H5wQAQgxand8'
@@ -217,7 +217,7 @@ describe('raydium', () => {
             keys: mockTransactionKeys({
               pair,
               market,
-              marketAuthority: 'F8Vyqk3unwxkXukZFQeYyGmFfTG3CAX4v24iyrjEYBJV',
+              marketAuthority: '2ZUL8XdWPUE2dGM6CB3JU7Mu4jMWZJJmTHmrb9izmYV8',
               fromAddress,
               tokenAccountIn: 'FjtHL8ki3GXMhCqY2Lum9CCAv5tSQMkhJEnXbEkajTrZ',
               tokenAccountOut: '5nrTLrjSCNQ4uTVr9BxBUcwf4G4Dwuo8H5wQAQgxand8'
@@ -268,7 +268,7 @@ describe('raydium', () => {
             keys: mockTransactionKeys({
               pair,
               market,
-              marketAuthority: 'F8Vyqk3unwxkXukZFQeYyGmFfTG3CAX4v24iyrjEYBJV',
+              marketAuthority: '2ZUL8XdWPUE2dGM6CB3JU7Mu4jMWZJJmTHmrb9izmYV8',
               fromAddress,
               tokenAccountIn: 'FjtHL8ki3GXMhCqY2Lum9CCAv5tSQMkhJEnXbEkajTrZ',
               tokenAccountOut: '5nrTLrjSCNQ4uTVr9BxBUcwf4G4Dwuo8H5wQAQgxand8'
@@ -345,7 +345,7 @@ describe('raydium', () => {
               keys: mockTransactionKeys({
                 pair,
                 market,
-                marketAuthority: 'F8Vyqk3unwxkXukZFQeYyGmFfTG3CAX4v24iyrjEYBJV',
+                marketAuthority: '2ZUL8XdWPUE2dGM6CB3JU7Mu4jMWZJJmTHmrb9izmYV8',
                 fromAddress,
                 tokenAccountIn: anything,
                 tokenAccountOut: 'FjtHL8ki3GXMhCqY2Lum9CCAv5tSQMkhJEnXbEkajTrZ'
@@ -427,7 +427,7 @@ describe('raydium', () => {
               keys: mockTransactionKeys({
                 pair,
                 market,
-                marketAuthority: 'F8Vyqk3unwxkXukZFQeYyGmFfTG3CAX4v24iyrjEYBJV',
+                marketAuthority: '2ZUL8XdWPUE2dGM6CB3JU7Mu4jMWZJJmTHmrb9izmYV8',
                 fromAddress,
                 tokenAccountIn: 'FjtHL8ki3GXMhCqY2Lum9CCAv5tSQMkhJEnXbEkajTrZ',
                 tokenAccountOut: anything
@@ -507,7 +507,7 @@ describe('raydium', () => {
               keys: mockTransactionKeys({
                 pair: pairs[0],
                 market: markets[0],
-                marketAuthority: '6bhvdkoTfqfmLxiMhTBU9quSVDgRHYhmRbFBpTNQVvxF',
+                marketAuthority: 'APAmEj2dJcn2q1hpPFTWXk9eK5F11rd3D58rUKEUpaej',
                 fromAddress, 
                 tokenAccountIn: '3VCor9E7BmH83jds6Nvwu2FNcjEZqgcocqAiyiB9dEG4',
                 tokenAccountOut: 'FjtHL8ki3GXMhCqY2Lum9CCAv5tSQMkhJEnXbEkajTrZ',
@@ -523,7 +523,7 @@ describe('raydium', () => {
               keys: mockTransactionKeys({
                 pair: pairs[1],
                 market: markets[1],
-                marketAuthority: 'FbwU5U1Doj2PSKRJi7pnCny4dFPPJURwALkFhHwdHaMW',
+                marketAuthority: 'DPnUbiD3M2EGVSqh2nLP2SNYLxKpu6p6TYjyAEmoN234',
                 fromAddress,
                 tokenAccountIn: 'FjtHL8ki3GXMhCqY2Lum9CCAv5tSQMkhJEnXbEkajTrZ',
                 tokenAccountOut: 'BKaytRHisVsQ4onoNGTw6JH8qv31aUHENGDEsXq8nEk9',
@@ -588,7 +588,7 @@ describe('raydium', () => {
               keys: mockTransactionKeys({
                 pair: pairs[0],
                 market: markets[0],
-                marketAuthority: '6bhvdkoTfqfmLxiMhTBU9quSVDgRHYhmRbFBpTNQVvxF',
+                marketAuthority: 'APAmEj2dJcn2q1hpPFTWXk9eK5F11rd3D58rUKEUpaej',
                 fromAddress, 
                 tokenAccountIn: '3VCor9E7BmH83jds6Nvwu2FNcjEZqgcocqAiyiB9dEG4',
                 tokenAccountOut: 'FjtHL8ki3GXMhCqY2Lum9CCAv5tSQMkhJEnXbEkajTrZ',
@@ -604,7 +604,7 @@ describe('raydium', () => {
               keys: mockTransactionKeys({
                 pair: pairs[1],
                 market: markets[1],
-                marketAuthority: 'FbwU5U1Doj2PSKRJi7pnCny4dFPPJURwALkFhHwdHaMW',
+                marketAuthority: 'DPnUbiD3M2EGVSqh2nLP2SNYLxKpu6p6TYjyAEmoN234',
                 fromAddress,
                 tokenAccountIn: 'FjtHL8ki3GXMhCqY2Lum9CCAv5tSQMkhJEnXbEkajTrZ',
                 tokenAccountOut: 'BKaytRHisVsQ4onoNGTw6JH8qv31aUHENGDEsXq8nEk9',
@@ -669,7 +669,7 @@ describe('raydium', () => {
               keys: mockTransactionKeys({
                 pair: pairs[0],
                 market: markets[0],
-                marketAuthority: '6bhvdkoTfqfmLxiMhTBU9quSVDgRHYhmRbFBpTNQVvxF',
+                marketAuthority: 'APAmEj2dJcn2q1hpPFTWXk9eK5F11rd3D58rUKEUpaej',
                 fromAddress, 
                 tokenAccountIn: '3VCor9E7BmH83jds6Nvwu2FNcjEZqgcocqAiyiB9dEG4',
                 tokenAccountOut: 'FjtHL8ki3GXMhCqY2Lum9CCAv5tSQMkhJEnXbEkajTrZ',
@@ -685,7 +685,7 @@ describe('raydium', () => {
               keys: mockTransactionKeys({
                 pair: pairs[1],
                 market: markets[1],
-                marketAuthority: 'FbwU5U1Doj2PSKRJi7pnCny4dFPPJURwALkFhHwdHaMW',
+                marketAuthority: 'DPnUbiD3M2EGVSqh2nLP2SNYLxKpu6p6TYjyAEmoN234',
                 fromAddress,
                 tokenAccountIn: 'FjtHL8ki3GXMhCqY2Lum9CCAv5tSQMkhJEnXbEkajTrZ',
                 tokenAccountOut: 'BKaytRHisVsQ4onoNGTw6JH8qv31aUHENGDEsXq8nEk9',
@@ -750,7 +750,7 @@ describe('raydium', () => {
               keys: mockTransactionKeys({
                 pair: pairs[0],
                 market: markets[0],
-                marketAuthority: '6bhvdkoTfqfmLxiMhTBU9quSVDgRHYhmRbFBpTNQVvxF',
+                marketAuthority: 'APAmEj2dJcn2q1hpPFTWXk9eK5F11rd3D58rUKEUpaej',
                 fromAddress, 
                 tokenAccountIn: '3VCor9E7BmH83jds6Nvwu2FNcjEZqgcocqAiyiB9dEG4',
                 tokenAccountOut: 'FjtHL8ki3GXMhCqY2Lum9CCAv5tSQMkhJEnXbEkajTrZ',
@@ -766,7 +766,7 @@ describe('raydium', () => {
               keys: mockTransactionKeys({
                 pair: pairs[1],
                 market: markets[1],
-                marketAuthority: 'FbwU5U1Doj2PSKRJi7pnCny4dFPPJURwALkFhHwdHaMW',
+                marketAuthority: 'DPnUbiD3M2EGVSqh2nLP2SNYLxKpu6p6TYjyAEmoN234',
                 fromAddress,
                 tokenAccountIn: 'FjtHL8ki3GXMhCqY2Lum9CCAv5tSQMkhJEnXbEkajTrZ',
                 tokenAccountOut: 'BKaytRHisVsQ4onoNGTw6JH8qv31aUHENGDEsXq8nEk9',
@@ -826,7 +826,7 @@ describe('raydium', () => {
             keys: mockTransactionKeys({
               pair,
               market,
-              marketAuthority: 'F8Vyqk3unwxkXukZFQeYyGmFfTG3CAX4v24iyrjEYBJV',
+              marketAuthority: '2ZUL8XdWPUE2dGM6CB3JU7Mu4jMWZJJmTHmrb9izmYV8',
               fromAddress,
               tokenAccountIn: 'FjtHL8ki3GXMhCqY2Lum9CCAv5tSQMkhJEnXbEkajTrZ',
               tokenAccountOut: 'BKaytRHisVsQ4onoNGTw6JH8qv31aUHENGDEsXq8nEk9'
@@ -853,7 +853,7 @@ describe('raydium', () => {
       let market = '9wFFyRfZBsuAha4YcuxcXLKwMxJR43S7fPfQLusDBzvT'
 
       mockTokenAccounts({ owner: fromAddress, token: CONSTANTS.solana.WRAPPED, accounts: ['FjtHL8ki3GXMhCqY2Lum9CCAv5tSQMkhJEnXbEkajTrZ'] })
-      mockTokenAccounts({ owner: fromAddress, token: tokenOut, accounts: ['F8Vyqk3unwxkXukZFQeYyGmFfTG3CAX4v24iyrjEYBJV'] })
+      mockTokenAccounts({ owner: fromAddress, token: tokenOut, accounts: ['2ZUL8XdWPUE2dGM6CB3JU7Mu4jMWZJJmTHmrb9izmYV8'] })
       mockPair({ tokenIn: CONSTANTS.solana.WRAPPED, tokenOut, pair, market, 
         baseReserve: 300000000000000,
         quoteReserve: 10000000000000,
@@ -903,10 +903,10 @@ describe('raydium', () => {
               keys: mockTransactionKeys({
                 pair,
                 market,
-                marketAuthority: 'F8Vyqk3unwxkXukZFQeYyGmFfTG3CAX4v24iyrjEYBJV',
+                marketAuthority: '2ZUL8XdWPUE2dGM6CB3JU7Mu4jMWZJJmTHmrb9izmYV8',
                 fromAddress,
                 tokenAccountIn: anything,
-                tokenAccountOut: 'F8Vyqk3unwxkXukZFQeYyGmFfTG3CAX4v24iyrjEYBJV'
+                tokenAccountOut: '2ZUL8XdWPUE2dGM6CB3JU7Mu4jMWZJJmTHmrb9izmYV8'
               })
             }, {
               to: Token.solana.TOKEN_PROGRAM,

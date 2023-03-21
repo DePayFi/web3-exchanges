@@ -1,16 +1,12 @@
 import { CONSTANTS } from '@depay/web3-constants'
-import Exchange from 'src/classes/Exchange.evm'
+import { find } from 'dist/esm/index.evm'
 
 describe('Exchange', () => {
 
   let tokenIn = '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb'
   let tokenOut = '0xdAC17F958D2ee523a2206206994597C13D831ec7'
   
-  let exchange = new Exchange({
-    name: 'uniswap_v2',
-    blockchain: 'ethereum',
-    lable: 'Uniswap v2'
-  })
+  let exchange = find('ethereum', 'uniswap_v2')
   
   it('asks you to set either amountIn or amountOut but not both', async ()=> {
     await expect(

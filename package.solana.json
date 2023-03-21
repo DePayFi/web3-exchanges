@@ -1,0 +1,36 @@
+{
+  "name": "@depay/web3-exchanges-solana",
+  "moduleName": "Web3Exchanges",
+  "version": "11.4.0",
+  "description": "JavaScript library simplifying decentralized web3 exchange routing for multiple blockchains and exchanges.",
+  "main": "dist/umd/index.solana.js",
+  "module": "dist/esm/index.solana.js",
+  "files": [
+    "dist"
+  ],
+  "repository": "git@github.com:DePayFi/web3-exchanges.git",
+  "keywords": [
+    "web3",
+    "decentralized exchanges",
+    "aggregator",
+    "swap",
+    "router"
+  ],
+  "author": "depay.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/DePayFi/web3-exchanges/issues"
+  },
+  "homepage": "https://depay.com",
+  "private": false,
+  "peerDependencies": {
+    "@depay/solana-web3.js": "^1.20.15",
+    "@depay/web3-client-solana": "^10.6.2",
+    "@depay/web3-constants": "^6.4.2",
+    "@depay/web3-tokens-solana": "^9.15.0",
+    "ethers": "^5.7.1"
+  },
+  "engines": {
+    "node": ">=14"
+  }
+}

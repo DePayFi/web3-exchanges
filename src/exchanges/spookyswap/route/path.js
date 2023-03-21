@@ -1,8 +1,20 @@
+/*#if _EVM
+
+import { request } from '@depay/web3-client-evm'
+import { Token } from '@depay/web3-tokens-evm'
+
+/*#elif _SOLANA
+
+//#else */
+
+import { request } from '@depay/web3-client'
+import { Token } from '@depay/web3-tokens'
+
+//#endif
+
 import QuickSwap from '../basics'
 import { CONSTANTS } from '@depay/web3-constants'
 import { ethers } from 'ethers'
-import { request } from '@depay/web3-client-evm'
-import { Token } from '@depay/web3-tokens-evm'
 
 // Replaces 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE with the wrapped token and implies wrapping.
 //

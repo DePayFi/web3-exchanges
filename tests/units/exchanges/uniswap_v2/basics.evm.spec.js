@@ -1,4 +1,4 @@
-import { find } from 'src/index.evm'
+import { find } from 'dist/esm/index.evm'
 import { UniswapV2Router02, UniswapV2Factory, UniswapV2Pair } from 'src/exchanges/uniswap_v2/apis'
 
 describe('uniswap_v2', () => {

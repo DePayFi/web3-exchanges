@@ -58,7 +58,7 @@ describe('wbnb', () => {
         method: 'deposit',
         value: amountIn
       }})
-      let wallet = getWallets()[0]
+      let wallet = (await getWallets())[0]
       await wallet.sendTransaction(routeTransaction)
       expect(transactionMock).toHaveBeenCalled()
     })
@@ -95,7 +95,7 @@ describe('wbnb', () => {
         method: 'withdraw',
         params: { wad: amountIn }
       }})
-      let wallet = getWallets()[0]
+      let wallet = (await getWallets())[0]
       await wallet.sendTransaction(routeTransaction)
       expect(transactionMock).toHaveBeenCalled()
     })

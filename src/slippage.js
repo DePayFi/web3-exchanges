@@ -1,5 +1,18 @@
-import { ethers } from 'ethers'
+/*#if _EVM
+
+import { request } from '@depay/web3-client-evm'
+
+/*#elif _SOLANA
+
+import { request } from '@depay/web3-client-solana'
+
+//#else */
+
 import { request } from '@depay/web3-client'
+
+//#endif
+
+import { ethers } from 'ethers'
 import { supported } from './blockchains'
 
 const DEFAULT_SLIPPAGE = '0.5' // percent

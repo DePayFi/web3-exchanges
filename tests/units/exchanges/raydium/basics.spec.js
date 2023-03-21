@@ -19,7 +19,7 @@ describe('raydium', () => {
       expect(exchange.pair.v4.LIQUIDITY_FEES_NUMERATOR).toEqual(ethers.BigNumber.from(25))
       expect(exchange.pair.v4.LIQUIDITY_FEES_DENOMINATOR).toEqual(ethers.BigNumber.from(10000))
       expect(exchange.router.v1.address).toEqual('routeUGWgWzqBWFcrCfv8tritsqukccJPu3q5GPP3xS')
-      expect(exchange.market.v3.address).toEqual('9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin')
+      expect(exchange.market.v3.address).toEqual('srmqPvymJeFKQ4zGQed1GFppgkRHL9kaELCbyksJtPX')
       expect(exchange.market.v3.api).toEqual(MARKET_LAYOUT_V3)
     })
   })

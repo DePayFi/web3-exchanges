@@ -23,7 +23,7 @@ export default {
   },
   market: {
     v3: {
-      address: '9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin',
+      address: 'srmqPvymJeFKQ4zGQed1GFppgkRHL9kaELCbyksJtPX',
       api: MARKET_LAYOUT_V3
     }
   },

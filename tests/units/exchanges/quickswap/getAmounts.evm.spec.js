@@ -1,6 +1,5 @@
-import Quickswap from 'src/exchanges/quickswap/index.evm'
 import { ethers } from 'ethers'
-import { find } from 'src/index.evm'
+import { find } from 'dist/esm/index.evm'
 import { mock, resetMocks } from '@depay/web3-mock'
 import { getProvider, resetCache } from '@depay/web3-client-evm'
 
@@ -36,8 +35,8 @@ describe('quickswap', () => {
         blockchain,
         block,
         request: {
-          to: Quickswap.router.address,
-          api: Quickswap.router.api,
+          to: exchange.router.address,
+          api: exchange.router.api,
           method: 'getAmountsIn',
           params: { amountOut, path },
           return: amountsIn

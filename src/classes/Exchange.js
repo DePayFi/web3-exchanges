@@ -80,6 +80,7 @@ class Exchange {
     pair,
     market,
     findPath,
+    pathExists,
     getAmounts,
     getTransaction,
     slippage,
@@ -95,6 +96,7 @@ class Exchange {
     this.pair = pair
     this.market = market
     this.findPath = findPath
+    this.pathExists = pathExists
     this.getAmounts = getAmounts
     this.getTransaction = getTransaction
     this.slippage = slippage

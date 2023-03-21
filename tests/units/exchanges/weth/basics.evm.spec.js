@@ -1,5 +1,5 @@
 import { CONSTANTS } from '@depay/web3-constants'
-import { find } from 'src/index.evm'
+import { find } from 'dist/esm/index.evm'
 import { WETH } from 'src/exchanges/weth/apis'
 
 describe('weth', () => {

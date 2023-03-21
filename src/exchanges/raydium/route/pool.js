@@ -1,8 +1,19 @@
+/*#if _EVM
+
+/*#elif _SOLANA
+
+import { getProvider } from '@depay/web3-client-solana'
+
+//#else */
+
+import { getProvider } from '@depay/web3-client'
+
+//#endif
+
 import Raydium from '../basics'
 import { Buffer, TransactionInstruction, PublicKey, Transaction } from '@depay/solana-web3.js'
 import { getMarket } from './markets'
 import { POOL_INFO } from '../apis'
-import { getProvider } from '@depay/web3-client'
 
 const getInfo = async (pair)=>{
   const data = Buffer.alloc(POOL_INFO.span)

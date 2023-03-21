@@ -1,6 +1,5 @@
-import UniswapV2 from 'src/exchanges/uniswap_v2/index.evm'
 import { ethers } from 'ethers'
-import { find } from 'src/index.evm'
+import { find } from 'dist/esm/index.evm'
 import { mock, resetMocks } from '@depay/web3-mock'
 import { getProvider, resetCache } from '@depay/web3-client-evm'
 
@@ -35,8 +34,8 @@ describe('uniswap_v2', () => {
         blockchain,
         block,
         request: {
-          to: UniswapV2.router.address,
-          api: UniswapV2.router.api,
+          to: exchange.router.address,
+          api: exchange.router.api,
           method: 'getAmountsIn',
           params: { amountOut, path },
           return: amountsIn

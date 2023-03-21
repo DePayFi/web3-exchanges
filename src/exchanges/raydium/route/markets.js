@@ -1,5 +1,16 @@
-import Raydium from './../basics'
+/*#if _EVM
+
+/*#elif _SOLANA
+
+import { request } from '@depay/web3-client-solana'
+
+//#else */
+
 import { request } from '@depay/web3-client'
+
+//#endif
+
+import Raydium from './../basics'
 import { Buffer, PublicKey } from '@depay/solana-web3.js'
 
 const getMarket = async (marketId)=> {
