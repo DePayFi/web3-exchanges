@@ -1,12 +1,12 @@
 import { CONSTANTS } from '@depay/web3-constants'
-import { find } from 'dist/esm/index.evm'
+import { find } from 'dist/esm/index.solana'
 
 describe('Exchange', () => {
 
-  let tokenIn = '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb'
-  let tokenOut = '0xdAC17F958D2ee523a2206206994597C13D831ec7'
+  let tokenIn = 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'
+  let tokenOut = '4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R'
   
-  let exchange = find('ethereum', 'uniswap_v2')
+  let exchange = find('solana', 'raydium')
   
   it('asks you to set either amountIn or amountOut but not both', async ()=> {
     await expect(

@@ -5,7 +5,7 @@ import { mock, resetMocks } from '@depay/web3-mock'
 import { mockDecimals } from 'tests/mocks/token'
 import { mockPair, mockAmounts } from 'tests/mocks/uniswap_v2'
 import { resetCache, getProvider } from '@depay/web3-client-evm'
-import { route, find } from 'src/index.evm'
+import { route, find } from 'dist/esm/index.evm'
 
 describe('route', ()=> {
 

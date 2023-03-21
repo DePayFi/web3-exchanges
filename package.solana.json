@@ -24,6 +24,7 @@
   "homepage": "https://depay.com",
   "private": false,
   "peerDependencies": {
+    "@depay/solana-web3.js": "^1.20.15",
     "@depay/web3-client-solana": "^10.6.2",
     "@depay/web3-constants": "^6.4.2",
     "@depay/web3-tokens-solana": "^9.15.0",

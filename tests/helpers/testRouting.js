@@ -118,7 +118,7 @@ async function testRouting({
 
   let transactionMock = mock({ blockchain, provider, transaction })
 
-  let wallet = getWallets()[0]
+  let wallet = (await getWallets())[0]
   await wallet.sendTransaction(routeTransaction)
   expect(transactionMock).toHaveBeenCalled()
 }

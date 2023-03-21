@@ -1,4 +1,4 @@
-import { all } from 'src/index.evm'
+import { all } from 'dist/esm/index.evm'
 
 describe('all', () => {
   

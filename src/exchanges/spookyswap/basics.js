@@ -17,4 +17,5 @@ export default {
   pair: {
     api: SpookySwapPair
   },
+  slippage: true,
 }

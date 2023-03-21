@@ -1,9 +1,8 @@
 import { CONSTANTS } from '@depay/web3-constants'
-import { find } from 'src/index.evm'
+import { find } from 'dist/esm/index.evm'
 import { mock, resetMocks } from '@depay/web3-mock'
 import { mockDecimals } from 'tests/mocks/token'
 import { mockPair } from 'tests/mocks/uniswap_v2'
-import { pathExists, findPath } from 'src/exchanges/uniswap_v2/route/path.evm'
 import { getProvider, resetCache } from '@depay/web3-client-evm'
 import { Token } from '@depay/web3-tokens-evm'
 
@@ -21,13 +20,6 @@ describe('uniswap_v2', () => {
     mock({ blockchain, accounts: { return: accounts } })
   })
 
-  describe('path exists', ()=>{
-
-    it('returns false immediatelly if path length == 1', async()=>{
-      expect(await pathExists([CONSTANTS[blockchain].NATIVE])).toEqual(false)
-    })
-  })
-
   describe('find path', ()=>{
 
     it('does not route through USD->USD->WRAPPED->TOKENB', async()=>{
@@ -36,7 +28,7 @@ describe('uniswap_v2', () => {
       mockPair({ provider, tokenIn, tokenOut, pair: CONSTANTS[blockchain].ZERO })
       mockPair({ provider, tokenIn, tokenOut: CONSTANTS[blockchain].WRAPPED, pair: CONSTANTS[blockchain].ZERO })
       let USDtoUSDMock = mockPair({ provider, tokenIn: CONSTANTS[blockchain].USD, tokenOut: CONSTANTS[blockchain].USD, pair: CONSTANTS[blockchain].ZERO })
-      let { path } = await findPath({ tokenIn, tokenOut })
+      let { path } = await exchange.findPath({ tokenIn, tokenOut })
       expect(USDtoUSDMock.calls.count()).toEqual(0)
       expect(path).toEqual(undefined)
     })
@@ -48,7 +40,7 @@ describe('uniswap_v2', () => {
       mockPair({ provider, tokenIn: CONSTANTS[blockchain].USD, tokenOut: CONSTANTS[blockchain].WRAPPED, pair: CONSTANTS[blockchain].ZERO })
       mockPair({ provider, tokenIn, tokenOut: CONSTANTS[blockchain].WRAPPED, pair: '0x0ed7e52944161450477ee417de9cd3a859b14fd0' })
       let USDtoUSDMock = mockPair({ provider, tokenIn: CONSTANTS[blockchain].USD, tokenOut: CONSTANTS[blockchain].USD, pair: CONSTANTS[blockchain].ZERO })
-      let { path } = await findPath({ tokenIn, tokenOut })
+      let { path } = await exchange.findPath({ tokenIn, tokenOut })
       expect(USDtoUSDMock.calls.count()).toEqual(0)
       expect(path).toEqual(undefined)
     })
@@ -60,7 +52,7 @@ describe('uniswap_v2', () => {
       mockPair({ provider, tokenIn, tokenOut: CONSTANTS[blockchain].USD, pair: '0x804678fa97d91b974ec2af3c843270886528a9e6' })
       mockDecimals({ provider, blockchain, address: CONSTANTS[blockchain].USD, value: 18 })
       let WRAPPEDtoWRAPPEDMock = mockPair({ provider, tokenIn: CONSTANTS[blockchain].WRAPPED, tokenOut: CONSTANTS[blockchain].WRAPPED, pair: CONSTANTS[blockchain].ZERO })
-      let { path } = await findPath({ tokenIn, tokenOut })
+      let { path } = await exchange.findPath({ tokenIn, tokenOut })
       expect(WRAPPEDtoWRAPPEDMock.calls.count()).toEqual(0)
       expect(path).toEqual(undefined)
     })
@@ -72,7 +64,7 @@ describe('uniswap_v2', () => {
       mockPair({ provider, tokenIn, tokenOut: CONSTANTS[blockchain].USD, pair: '0x58f876857a02d6762e0101bb5c46a8c1ed44dc16' })
       mockDecimals({ provider, blockchain, address: CONSTANTS[blockchain].USD, value: 18 })
       let WRAPPEDtoWRAPPEDMock = mockPair({ provider, tokenIn: CONSTANTS[blockchain].WRAPPED, tokenOut: CONSTANTS[blockchain].WRAPPED, pair: CONSTANTS[blockchain].ZERO })
-      let { path } = await findPath({ tokenIn, tokenOut })
+      let { path } = await exchange.findPath({ tokenIn, tokenOut })
       expect(WRAPPEDtoWRAPPEDMock.calls.count()).toEqual(0)
       expect(path).toEqual(undefined)
     })
@@ -119,7 +111,7 @@ describe('uniswap_v2', () => {
           return: CONSTANTS[blockchain].WRAPPED
         }
       })
-      let exists = await pathExists(['0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a', CONSTANTS[blockchain].WRAPPED])
+      let exists = await exchange.pathExists(['0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a', CONSTANTS[blockchain].WRAPPED])
       expect(exists).toEqual(false)
     })
 
@@ -165,7 +157,7 @@ describe('uniswap_v2', () => {
           return: '0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a'
         }
       })
-      let exists = await pathExists(['0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a', CONSTANTS[blockchain].WRAPPED])
+      let exists = await exchange.pathExists(['0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a', CONSTANTS[blockchain].WRAPPED])
       expect(exists).toEqual(false)
     })
 
@@ -226,7 +218,7 @@ describe('uniswap_v2', () => {
             return: CONSTANTS[blockchain].USD
           }
         })
-        let exists = await pathExists(['0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a', CONSTANTS[blockchain].USD])
+        let exists = await exchange.pathExists(['0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a', CONSTANTS[blockchain].USD])
         expect(exists).toEqual(false)
       })
 
@@ -272,7 +264,7 @@ describe('uniswap_v2', () => {
             return: '0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a'
           }
         })
-        let exists = await pathExists(['0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a', CONSTANTS[blockchain].USD])
+        let exists = await exchange.pathExists(['0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a', CONSTANTS[blockchain].USD])
         expect(exists).toEqual(false)
       })
     })

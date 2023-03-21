@@ -1,4 +1,16 @@
+/*#if _EVM
+
+import { Token } from '@depay/web3-tokens-evm'
+
+/*#elif _SOLANA
+
+import { Token } from '@depay/web3-tokens-solana'
+
+//#else */
+
 import { Token } from '@depay/web3-tokens'
+
+//#endif
 
 let getAmount = async ({ amount, blockchain, address }) => {
   return await Token.BigNumber({ amount, blockchain, address })
