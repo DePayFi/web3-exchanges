@@ -1305,11 +1305,13 @@
   let getAmountsOut = async ({ path, amountIn }) => {
 
     let amounts = [amountIn];  
-    await Promise.all(path.map(async (step, i)=>{
+
+    let computedAmounts = await Promise.all(path.map(async (step, i)=>{
       const nextStep = path[i+1];
       if(nextStep == undefined){ return }
       const pair = await getBestPair(step, nextStep);
       const info = await getInfo(pair);
+      if(!info){ return }
       const baseMint = pair.data.baseMint.toString();
       const reserves = [ethers.ethers.BigNumber.from(info.pool_coin_amount.toString()), ethers.ethers.BigNumber.from(info.pool_pc_amount.toString())];
       const [reserveIn, reserveOut] = baseMint == step ? [reserves[0], reserves[1]] : [reserves[1], reserves[0]];
@@ -1319,6 +1321,9 @@
       const amountOut = reserveOut.mul(amountInWithFee).div(denominator);
       amounts.push(amountOut);
     }));
+
+    if(computedAmounts.length != path.length) { return }
+
     return amounts
   };
 
@@ -1326,11 +1331,13 @@
 
     path = path.slice().reverse();
     let amounts = [amountOut];
-    await Promise.all(path.map(async (step, i)=>{
+    
+    let computedAmounts = await Promise.all(path.map(async (step, i)=>{
       const nextStep = path[i+1];
       if(nextStep == undefined){ return }
       const pair = await getBestPair(step, nextStep);
       const info = await getInfo(pair);
+      if(!info){ return }
       pair.pubkey.toString();
       const baseMint = pair.data.baseMint.toString();
       pair.data.quoteMint.toString();
@@ -1343,6 +1350,9 @@
         .div(basics$8.pair.v4.LIQUIDITY_FEES_DENOMINATOR.sub(basics$8.pair.v4.LIQUIDITY_FEES_NUMERATOR));
       amounts.push(amountIn);
     }));
+
+    if(computedAmounts.length != path.length) { return }
+
     return amounts.slice().reverse()
   };
 
