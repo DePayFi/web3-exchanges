@@ -39,7 +39,7 @@ let getPairs = async(base, quote) => {
   }
 }
 
-let getBestPair = async(base, quote) => {
+let getPair = async(base, quote) => {
   let accounts = await getPairs(base, quote)
   if(accounts.length == 1){ return accounts[0] }
   if(accounts.length < 1){ return null }
@@ -62,5 +62,5 @@ let anyPairs = async(base, quote) => {
 
 export {
   anyPairs,
-  getBestPair
+  getPair
 }

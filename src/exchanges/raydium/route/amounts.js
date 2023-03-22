@@ -13,7 +13,7 @@ import { request } from '@depay/web3-client'
 import Raydium from '../basics'
 import { ethers } from 'ethers'
 import { fixPath } from './path'
-import { getBestPair } from './pairs'
+import { getPair } from './pairs'
 import { getInfo } from './pool'
 
 let getAmountsOut = async ({ path, amountIn }) => {
@@ -23,7 +23,7 @@ let getAmountsOut = async ({ path, amountIn }) => {
   let computedAmounts = await Promise.all(path.map(async (step, i)=>{
     const nextStep = path[i+1]
     if(nextStep == undefined){ return }
-    const pair = await getBestPair(step, nextStep)
+    const pair = await getPair(step, nextStep)
     const info = await getInfo(pair)
     if(!info){ return }
     const baseMint = pair.data.baseMint.toString()
@@ -49,7 +49,7 @@ let getAmountsIn = async({ path, amountOut }) => {
   let computedAmounts = await Promise.all(path.map(async (step, i)=>{
     const nextStep = path[i+1]
     if(nextStep == undefined){ return }
-    const pair = await getBestPair(step, nextStep)
+    const pair = await getPair(step, nextStep)
     const info = await getInfo(pair)
     if(!info){ return }
     const poolId = pair.pubkey.toString()

@@ -305,6 +305,24 @@ let { amountIn } = await exchange.getAmounts({
 }) // '123222200000000000'
 ```
 
+### Exchange
+
+#### Solana Exchanges
+
+##### Get pair
+
+Provides pair/pool account for swap transactions:
+
+```javascript
+let exchange = find('solana', 'raydium')
+
+let pair = await exchange.getPair(tokenA, tokenB)
+// account {}
+
+pair.pubkey
+// 58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2
+```
+
 ## Development
 
 ### Get started

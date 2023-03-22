@@ -461,6 +461,7 @@ class Exchange {
     getAmounts,
     getTransaction,
     slippage,
+    getPair,
   }) {
     this.name = name;
     this.blockchain = blockchain;
@@ -477,6 +478,7 @@ class Exchange {
     this.getAmounts = getAmounts;
     this.getTransaction = getTransaction;
     this.slippage = slippage;
+    this.getPair = getPair;
   }
 
   async route({
@@ -549,7 +551,7 @@ let getPairs = async(base, quote) => {
   }
 };
 
-let getBestPair = async(base, quote) => {
+let getPair = async(base, quote) => {
   let accounts = await getPairs(base, quote);
   if(accounts.length == 1){ return accounts[0] }
   if(accounts.length < 1){ return null }
@@ -741,7 +743,7 @@ let getAmountsOut = async ({ path, amountIn }) => {
   let computedAmounts = await Promise.all(path.map(async (step, i)=>{
     const nextStep = path[i+1];
     if(nextStep == undefined){ return }
-    const pair = await getBestPair(step, nextStep);
+    const pair = await getPair(step, nextStep);
     const info = await getInfo(pair);
     if(!info){ return }
     const baseMint = pair.data.baseMint.toString();
@@ -767,7 +769,7 @@ let getAmountsIn = async({ path, amountOut }) => {
   let computedAmounts = await Promise.all(path.map(async (step, i)=>{
     const nextStep = path[i+1];
     if(nextStep == undefined){ return }
-    const pair = await getBestPair(step, nextStep);
+    const pair = await getPair(step, nextStep);
     const info = await getInfo(pair);
     if(!info){ return }
     pair.pubkey.toString();
@@ -941,10 +943,10 @@ const getTransaction = async ({
 
   let pairs, markets, amountMiddle;
   if(fixedPath.length == 2) {
-    pairs = [await getBestPair(tokenIn, tokenOut)];
+    pairs = [await getPair(tokenIn, tokenOut)];
     markets = [await getMarket(pairs[0].data.marketId.toString())];
   } else {
-    pairs = [await getBestPair(tokenIn, tokenMiddle), await getBestPair(tokenMiddle, tokenOut)];
+    pairs = [await getPair(tokenIn, tokenMiddle), await getPair(tokenMiddle, tokenOut)];
     markets = [await getMarket(pairs[0].data.marketId.toString()), await getMarket(pairs[1].data.marketId.toString())];
     amountMiddle = amounts[1];
   }
@@ -1051,6 +1053,7 @@ const getTransaction = async ({
 var raydium = new Exchange(
   Object.assign(basics, {
     findPath,
+    getPair,
     getAmounts,
     getTransaction,
   })

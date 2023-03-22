@@ -369,6 +369,7 @@
       getAmounts,
       getTransaction,
       slippage,
+      getPair,
     }) {
       this.name = name;
       this.blockchain = blockchain;
@@ -385,6 +386,7 @@
       this.getAmounts = getAmounts;
       this.getTransaction = getTransaction;
       this.slippage = slippage;
+      this.getPair = getPair;
     }
 
     async route({
@@ -1117,7 +1119,7 @@
     }
   };
 
-  let getBestPair = async(base, quote) => {
+  let getPair = async(base, quote) => {
     let accounts = await getPairs(base, quote);
     if(accounts.length == 1){ return accounts[0] }
     if(accounts.length < 1){ return null }
@@ -1309,7 +1311,7 @@
     let computedAmounts = await Promise.all(path.map(async (step, i)=>{
       const nextStep = path[i+1];
       if(nextStep == undefined){ return }
-      const pair = await getBestPair(step, nextStep);
+      const pair = await getPair(step, nextStep);
       const info = await getInfo(pair);
       if(!info){ return }
       const baseMint = pair.data.baseMint.toString();
@@ -1335,7 +1337,7 @@
     let computedAmounts = await Promise.all(path.map(async (step, i)=>{
       const nextStep = path[i+1];
       if(nextStep == undefined){ return }
-      const pair = await getBestPair(step, nextStep);
+      const pair = await getPair(step, nextStep);
       const info = await getInfo(pair);
       if(!info){ return }
       pair.pubkey.toString();
@@ -1509,10 +1511,10 @@
 
     let pairs, markets, amountMiddle;
     if(fixedPath.length == 2) {
-      pairs = [await getBestPair(tokenIn, tokenOut)];
+      pairs = [await getPair(tokenIn, tokenOut)];
       markets = [await getMarket(pairs[0].data.marketId.toString())];
     } else {
-      pairs = [await getBestPair(tokenIn, tokenMiddle), await getBestPair(tokenMiddle, tokenOut)];
+      pairs = [await getPair(tokenIn, tokenMiddle), await getPair(tokenMiddle, tokenOut)];
       markets = [await getMarket(pairs[0].data.marketId.toString()), await getMarket(pairs[1].data.marketId.toString())];
       amountMiddle = amounts[1];
     }
@@ -1619,6 +1621,7 @@
   var raydium = new Exchange(
     Object.assign(basics$8, {
       findPath: findPath$8,
+      getPair,
       getAmounts: getAmounts$8,
       getTransaction: getTransaction$8,
     })

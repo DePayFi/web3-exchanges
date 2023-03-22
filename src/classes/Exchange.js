@@ -84,6 +84,7 @@ class Exchange {
     getAmounts,
     getTransaction,
     slippage,
+    getPair,
   }) {
     this.name = name
     this.blockchain = blockchain
@@ -100,6 +101,7 @@ class Exchange {
     this.getAmounts = getAmounts
     this.getTransaction = getTransaction
     this.slippage = slippage
+    this.getPair = getPair
   }
 
   async route({

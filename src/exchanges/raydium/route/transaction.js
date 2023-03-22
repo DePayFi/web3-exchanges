@@ -16,7 +16,7 @@ import Raydium from '../basics'
 import { Buffer, BN, Transaction, TransactionInstruction, SystemProgram, PublicKey, Keypair, struct, u8, u64 } from '@depay/solana-web3.js'
 import { CONSTANTS } from '@depay/web3-constants'
 import { fixPath } from './path'
-import { getBestPair } from './pairs'
+import { getPair } from './pairs'
 import { getMarket, getMarketAuthority } from './markets'
 
 const getAssociatedMiddleStatusAccount = async ({ fromPoolId, middleMint, owner })=> {
@@ -131,10 +131,10 @@ const getTransaction = async ({
 
   let pairs, markets, amountMiddle
   if(fixedPath.length == 2) {
-    pairs = [await getBestPair(tokenIn, tokenOut)]
+    pairs = [await getPair(tokenIn, tokenOut)]
     markets = [await getMarket(pairs[0].data.marketId.toString())]
   } else {
-    pairs = [await getBestPair(tokenIn, tokenMiddle), await getBestPair(tokenMiddle, tokenOut)]
+    pairs = [await getPair(tokenIn, tokenMiddle), await getPair(tokenMiddle, tokenOut)]
     markets = [await getMarket(pairs[0].data.marketId.toString()), await getMarket(pairs[1].data.marketId.toString())]
     amountMiddle = amounts[1]
   }

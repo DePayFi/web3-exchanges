@@ -369,6 +369,7 @@
       getAmounts,
       getTransaction,
       slippage,
+      getPair,
     }) {
       this.name = name;
       this.blockchain = blockchain;
@@ -385,6 +386,7 @@
       this.getAmounts = getAmounts;
       this.getTransaction = getTransaction;
       this.slippage = slippage;
+      this.getPair = getPair;
     }
 
     async route({
