@@ -1,7 +1,7 @@
-import { CONSTANTS } from '@depay/web3-constants'
+import Blockchains from '@depay/web3-blockchains'
 import { find } from 'src'
 import { mock, resetMocks } from '@depay/web3-mock'
-import { mockPair } from 'tests/mocks/raydium'
+import { mockPair } from 'tests/mocks/solana/raydium'
 import { getProvider, resetCache } from '@depay/web3-client'
 
 describe('raydium', () => {
@@ -21,8 +21,8 @@ describe('raydium', () => {
   describe('find path', ()=>{
 
     it('does route direct pairs', async()=>{
-      let tokenIn = CONSTANTS[blockchain].WRAPPED
-      let tokenOut = CONSTANTS[blockchain].USD
+      let tokenIn = Blockchains[blockchain].wrapped.address
+      let tokenOut = Blockchains[blockchain].stables.usd[0]
 
       mockPair({ tokenIn, tokenOut, pair: 'BcjFnHHzJ6Y1XzLcm3nfr6tP7TGHGh15bLZazP5dAy9p' })
 
@@ -32,25 +32,25 @@ describe('raydium', () => {
 
     it('does route SOL via WSOL', async()=>{
       let tokenIn = CONSTANTS[blockchain].NATIVE
-      let tokenOut = CONSTANTS[blockchain].USD
+      let tokenOut = Blockchains[blockchain].stables.usd[0]
 
-      mockPair({ tokenIn: CONSTANTS[blockchain].WRAPPED, tokenOut, pair: 'BcjFnHHzJ6Y1XzLcm3nfr6tP7TGHGh15bLZazP5dAy9p' })
+      mockPair({ tokenIn: Blockchains[blockchain].wrapped.address, tokenOut, pair: 'BcjFnHHzJ6Y1XzLcm3nfr6tP7TGHGh15bLZazP5dAy9p' })
 
       let { path } = await exchange.findPath({ tokenIn, tokenOut })
-      expect(path).toEqual[tokenIn, CONSTANTS[blockchain].WRAPPED, tokenOut]
+      expect(path).toEqual[tokenIn, Blockchains[blockchain].wrapped.address, tokenOut]
     })
 
     it('does route 2 tokens via WSOL', async()=>{
       let RAY = "4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R"
       let tokenIn = RAY
-      let tokenOut = CONSTANTS[blockchain].USD
+      let tokenOut = Blockchains[blockchain].stables.usd[0]
 
-      mockPair({ tokenIn: CONSTANTS[blockchain].USD, tokenOut: RAY })
-      mockPair({ tokenIn: CONSTANTS[blockchain].WRAPPED, tokenOut: RAY, pair: 'AVs9TA4nWDzfPJE9gGVNJMVhcQy3V9PGazuz33BfG2RA' })
-      mockPair({ tokenIn: CONSTANTS[blockchain].WRAPPED, tokenOut: CONSTANTS[blockchain].USD, pair: '58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2' })
+      mockPair({ tokenIn: Blockchains[blockchain].stables.usd[0], tokenOut: RAY })
+      mockPair({ tokenIn: Blockchains[blockchain].wrapped.address, tokenOut: RAY, pair: 'AVs9TA4nWDzfPJE9gGVNJMVhcQy3V9PGazuz33BfG2RA' })
+      mockPair({ tokenIn: Blockchains[blockchain].wrapped.address, tokenOut: Blockchains[blockchain].stables.usd[0], pair: '58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2' })
 
       let { path } = await exchange.findPath({ tokenIn, tokenOut })
-      expect(path).toEqual[tokenIn, CONSTANTS[blockchain].WRAPPED, tokenOut]
+      expect(path).toEqual[tokenIn, Blockchains[blockchain].wrapped.address, tokenOut]
     })
 
     it('does route 2 tokens via USD', async()=>{
@@ -60,13 +60,13 @@ describe('raydium', () => {
       let tokenOut = USDT
 
       mockPair({ tokenIn: USDT, tokenOut: RAY })
-      mockPair({ tokenIn: CONSTANTS[blockchain].WRAPPED, tokenOut: RAY })
-      mockPair({ tokenIn: CONSTANTS[blockchain].WRAPPED, tokenOut: USDT })
-      mockPair({ tokenIn: CONSTANTS[blockchain].USD, tokenOut: RAY, pair: 'AVs9TA4nWDzfPJE9gGVNJMVhcQy3V9PGazuz33BfG2RA' })
-      mockPair({ tokenIn: CONSTANTS[blockchain].USD, tokenOut: USDT, pair: '58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2' })
+      mockPair({ tokenIn: Blockchains[blockchain].wrapped.address, tokenOut: RAY })
+      mockPair({ tokenIn: Blockchains[blockchain].wrapped.address, tokenOut: USDT })
+      mockPair({ tokenIn: Blockchains[blockchain].stables.usd[0], tokenOut: RAY, pair: 'AVs9TA4nWDzfPJE9gGVNJMVhcQy3V9PGazuz33BfG2RA' })
+      mockPair({ tokenIn: Blockchains[blockchain].stables.usd[0], tokenOut: USDT, pair: '58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2' })
 
       let { path } = await exchange.findPath({ tokenIn, tokenOut })
-      expect(path).toEqual[tokenIn, CONSTANTS[blockchain].USD, tokenOut]
+      expect(path).toEqual[tokenIn, Blockchains[blockchain].stables.usd[0], tokenOut]
     })
   })
 })

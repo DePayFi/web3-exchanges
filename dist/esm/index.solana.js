@@ -2,7 +2,7 @@ import { ethers } from 'ethers';
 import { struct, u64, u128, publicKey, seq, u8, blob, Buffer, PublicKey, TransactionInstruction, Transaction, Keypair, BN, SystemProgram } from '@depay/solana-web3.js';
 import { request, getProvider } from '@depay/web3-client-solana';
 import { Token } from '@depay/web3-tokens-solana';
-import { CONSTANTS } from '@depay/web3-constants';
+import Blockchains from '@depay/web3-blockchains';
 
 const LIQUIDITY_STATE_LAYOUT_V4 = struct([
   u64("status"),
@@ -574,8 +574,7 @@ let anyPairs = async(base, quote) => {
 
 function _optionalChain(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
 
-const NATIVE = CONSTANTS.solana.NATIVE;
-const WRAPPED = CONSTANTS.solana.WRAPPED;
+const blockchain$1 = Blockchains.solana;
 const USDC = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';
 const USDT = 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB';
 
@@ -589,18 +588,18 @@ let fixPath = (path) => {
   if(!path) { return }
   let fixedPath = path.map((token, index) => {
     if (
-      token === NATIVE && path[index+1] != WRAPPED &&
-      path[index-1] != WRAPPED
+      token === blockchain$1.currency.address && path[index+1] != blockchain$1.wrapped.address &&
+      path[index-1] != blockchain$1.wrapped.address
     ) {
-      return WRAPPED
+      return blockchain$1.wrapped.address
     } else {
       return token
     }
   });
 
-  if(fixedPath[0] == NATIVE && fixedPath[1] == WRAPPED) {
+  if(fixedPath[0] == blockchain$1.currency.address && fixedPath[1] == blockchain$1.wrapped.address) {
     fixedPath.splice(0, 1);
-  } else if(fixedPath[fixedPath.length-1] == NATIVE && fixedPath[fixedPath.length-2] == WRAPPED) {
+  } else if(fixedPath[fixedPath.length-1] == blockchain$1.currency.address && fixedPath[fixedPath.length-2] == blockchain$1.wrapped.address) {
     fixedPath.splice(fixedPath.length-1, 1);
   }
 
@@ -619,8 +618,8 @@ let pathExists = async (path) => {
 
 let findPath = async ({ tokenIn, tokenOut }) => {
   if(
-    [tokenIn, tokenOut].includes(NATIVE) &&
-    [tokenIn, tokenOut].includes(WRAPPED)
+    [tokenIn, tokenOut].includes(blockchain$1.currency.address) &&
+    [tokenIn, tokenOut].includes(blockchain$1.wrapped.address)
   ) { return { path: undefined, fixedPath: undefined } }
 
   let path;
@@ -628,15 +627,15 @@ let findPath = async ({ tokenIn, tokenOut }) => {
     // direct path
     path = [tokenIn, tokenOut];
   } else if (
-    tokenIn != WRAPPED &&
-    tokenIn != NATIVE &&
-    await pathExists([tokenIn, WRAPPED]) &&
-    tokenOut != WRAPPED &&
-    tokenOut != NATIVE &&
-    await pathExists([tokenOut, WRAPPED])
+    tokenIn != blockchain$1.wrapped.address &&
+    tokenIn != blockchain$1.currency.address &&
+    await pathExists([tokenIn, blockchain$1.wrapped.address]) &&
+    tokenOut != blockchain$1.wrapped.address &&
+    tokenOut != blockchain$1.currency.address &&
+    await pathExists([tokenOut, blockchain$1.wrapped.address])
   ) {
-    // path via WRAPPED
-    path = [tokenIn, WRAPPED, tokenOut];
+    // path via blockchain.wrapped.address
+    path = [tokenIn, blockchain$1.wrapped.address, tokenOut];
   } else if (
     tokenIn != USDC &&
     await pathExists([tokenIn, USDC]) &&
@@ -655,12 +654,12 @@ let findPath = async ({ tokenIn, tokenOut }) => {
     path = [tokenIn, USDT, tokenOut];
   }
 
-  // Add WRAPPED to route path if things start or end with NATIVE
+  // Add blockchain.wrapped.address to route path if things start or end with blockchain.currency.address
   // because that actually reflects how things are routed in reality:
-  if(_optionalChain([path, 'optionalAccess', _ => _.length]) && path[0] == NATIVE) {
-    path.splice(1, 0, WRAPPED);
-  } else if(_optionalChain([path, 'optionalAccess', _2 => _2.length]) && path[path.length-1] == NATIVE) {
-    path.splice(path.length-1, 0, WRAPPED);
+  if(_optionalChain([path, 'optionalAccess', _ => _.length]) && path[0] == blockchain$1.currency.address) {
+    path.splice(1, 0, blockchain$1.wrapped.address);
+  } else if(_optionalChain([path, 'optionalAccess', _2 => _2.length]) && path[path.length-1] == blockchain$1.currency.address) {
+    path.splice(path.length-1, 0, blockchain$1.wrapped.address);
   }
   return { path, fixedPath: fixPath(path) }
 };
@@ -843,6 +842,8 @@ let getAmounts = async ({
   }
 };
 
+const blockchain = Blockchains.solana;
+
 const getInstructionData = ({ pair, amountIn, amountOutMin, amountOut, amountInMax, fix })=> {
   let LAYOUT, data;
   
@@ -951,8 +952,8 @@ const getTransaction = async ({
     amountMiddle = amounts[1];
   }
 
-  let startsWrapped = (path[0] === CONSTANTS.solana.NATIVE && fixedPath[0] === CONSTANTS.solana.WRAPPED);
-  let endsUnwrapped = (path[path.length-1] === CONSTANTS.solana.NATIVE && fixedPath[fixedPath.length-1] === CONSTANTS.solana.WRAPPED);
+  let startsWrapped = (path[0] === blockchain.currency.address && fixedPath[0] === blockchain.wrapped.address);
+  let endsUnwrapped = (path[path.length-1] === blockchain.currency.address && fixedPath[fixedPath.length-1] === blockchain.wrapped.address);
   let wrappedAccount;
   const provider = await getProvider('solana');
   if(startsWrapped || endsUnwrapped) {
@@ -971,7 +972,7 @@ const getTransaction = async ({
     instructions.push(
       Token.solana.initializeAccountInstruction({
         account: wrappedAccount,
-        token: CONSTANTS.solana.WRAPPED,
+        token: blockchain.wrapped.address,
         owner: fromAddress
       })
     );
@@ -1047,6 +1048,10 @@ const getTransaction = async ({
   // console.log('instructions.length', instructions.length)
 
   transaction.instructions = instructions;
+  console.log('transaction.instructions[0]', transaction.instructions[0]);
+  console.log('transaction.instructions[1]', transaction.instructions[0]);
+  console.log('transaction.instructions[2]', transaction.instructions[2]);
+  console.log('transaction.instructions[3]', transaction.instructions[3]);
   return transaction
 };
 

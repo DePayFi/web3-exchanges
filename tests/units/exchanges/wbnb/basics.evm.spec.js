@@ -1,4 +1,4 @@
-import { CONSTANTS } from '@depay/web3-constants'
+import Blockchains from '@depay/web3-blockchains'
 import { find } from 'dist/esm/index.evm'
 import { WBNB } from 'src/exchanges/wbnb/apis'
 

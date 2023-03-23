@@ -1,8 +1,8 @@
-import { CONSTANTS } from '@depay/web3-constants'
+import Blockchains from '@depay/web3-blockchains'
 import { ethers } from 'ethers'
 import { find } from 'src'
 import { mock, resetMocks } from '@depay/web3-mock'
-import { mockPair, mockToken, mockTokenAccounts, mockMarket, mockTransactionKeys } from 'tests/mocks/raydium'
+import { mockPair, mockToken, mockTokenAccounts, mockMarket, mockTransactionKeys } from 'tests/mocks/solana/raydium'
 import { getProvider, resetCache } from '@depay/web3-client'
 
 describe('raydium', () => {
@@ -26,9 +26,9 @@ describe('raydium', () => {
 
     it('provides pair for 2 tokens', async ()=> {
 
-      let tokenIn = CONSTANTS[blockchain].USD
-      let decimalsIn = CONSTANTS[blockchain].USD_DECIMALS
-      let tokenOut = CONSTANTS[blockchain].WRAPPED
+      let tokenIn = Blockchains[blockchain].stables.usd[0]
+      let decimalsIn = Blockchains[blockchain].tokens.find((token)=>token.address == tokenIn).decimals
+      let tokenOut = Blockchains[blockchain].wrapped.address
       let decimalsOut = CONSTANTS[blockchain].DECIMALS
       let path = [tokenIn, tokenOut]
       let amountOut = 1

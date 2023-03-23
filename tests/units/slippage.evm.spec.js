@@ -1,4 +1,3 @@
-import { CONSTANTS } from '@depay/web3-constants'
 import { ethers } from 'ethers'
 import { find } from 'dist/esm/index.evm'
 import { mock, resetMocks, increaseBlock } from '@depay/web3-mock'

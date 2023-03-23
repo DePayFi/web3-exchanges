@@ -75,7 +75,7 @@ let routes = await Web3Exchanges.route({
   blockchain: 'solana',
   tokenIn: '4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R', // RAY
   tokenOut: '11111111111111111111111111111111', // SOl
-  amountOutMin: 1
+  amountOutMin: 0.01
 })
 
 let wallets = await Web3Wallets.getWallets()
@@ -93,7 +93,7 @@ let routes = await Web3Exchanges.route({
   blockchain: 'solana',
   tokenIn: '4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R', // RAY
   tokenOut: 'So11111111111111111111111111111111111111112', // WSOl
-  amountOutMin: 1
+  amountOutMin: 0.01
 })
 
 let wallets = await Web3Wallets.getWallets()
@@ -156,7 +156,7 @@ let transaction = await routes[0].getTransaction({ from })
 wallet.sendTransaction(transaction)
 ```
 
-## SOL<>WSOL
+## SOL<>WSOL (PENDING)
 
 ```javascript
 let routes = await Web3Exchanges.route({
@@ -174,7 +174,7 @@ let transaction = await routes[0].getTransaction({ from })
 wallet.sendTransaction(transaction)
 ```
 
-## WSOL<>SOL
+## WSOL<>SOL (PENDING)
 
 ```javascript
 let routes = await Web3Exchanges.route({

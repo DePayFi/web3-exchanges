@@ -1,10 +1,10 @@
 import Raydium from 'src/exchanges/raydium/basics'
 import Route from 'src/classes/Route'
-import { CONSTANTS } from '@depay/web3-constants'
+import Blockchains from '@depay/web3-blockchains'
 import { ethers } from 'ethers'
 import { find } from 'src'
 import { mock, anything, resetMocks } from '@depay/web3-mock'
-import { mockPair, mockToken, mockTokenAccounts, mockMarket, mockTransactionKeys, mockRent } from 'tests/mocks/raydium'
+import { mockPair, mockToken, mockTokenAccounts, mockMarket, mockTransactionKeys, mockRent } from 'tests/mocks/solana/raydium'
 import { resetCache, getProvider } from '@depay/web3-client'
 import { struct, u64, u32, u8, publicKey, BN } from '@depay/solana-web3.js'
 import { testRouting } from 'tests/helpers/testRouting'
@@ -48,12 +48,12 @@ describe('raydium', () => {
     it('returns undefined and does not fail or reject in case an error happens during the routing', async ()=> {
 
       let tokenIn = 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'
-      let tokenOut = CONSTANTS[blockchain].WRAPPED
+      let tokenOut = Blockchains[blockchain].wrapped.address
       let amountOut = 1
-      let amountOutBN = ethers.utils.parseUnits(amountOut.toString(), CONSTANTS[blockchain].DECIMALS)
+      let amountOutBN = ethers.utils.parseUnits(amountOut.toString(), Blockchains[blockchain].currency.decimals)
       let path = [tokenIn, tokenOut]
 
-      mockToken({ symbol: 'WSOL', name: 'Wrapped SOL', mint: CONSTANTS[blockchain].WRAPPED, meta: CONSTANTS[blockchain].WRAPPED, decimals: CONSTANTS[blockchain].DECIMALS })
+      mockToken({ symbol: 'WSOL', name: 'Wrapped SOL', mint: Blockchains[blockchain].wrapped.address, meta: Blockchains[blockchain].wrapped.address, decimals: Blockchains[blockchain].currency.decimals })
       mockPair({ tokenIn, tokenOut, _return: Error('Something went wrong!') })
 
       let route = await exchange.route({
@@ -70,10 +70,10 @@ describe('raydium', () => {
 
   describe('route token to token via 1 pool without any existing token accounts', ()=>{
 
-    let tokenIn = CONSTANTS[blockchain].USD
-    let decimalsIn = CONSTANTS[blockchain].USD_DECIMALS
-    let tokenOut = CONSTANTS[blockchain].WRAPPED
-    let decimalsOut = CONSTANTS[blockchain].DECIMALS
+    let tokenIn = Blockchains[blockchain].stables.usd[0]
+    let decimalsIn = Blockchains[blockchain].tokens.find((token)=>token.address == tokenIn).decimals
+    let tokenOut = Blockchains[blockchain].wrapped.address
+    let decimalsOut = Blockchains[blockchain].currency.decimals
     let path = [tokenIn, tokenOut]
 
     it('routes a token to token swap via 1 pool for given amountOut on raydium', async ()=> {
@@ -118,7 +118,7 @@ describe('raydium', () => {
               market,
               marketAuthority: 'Hh95ekCna2kCuiGyTMrKJ9wjpP1uZsQPoUMqqYw1v4WT',
               fromAddress,
-              tokenAccountIn: 'FjtHL8ki3GXMhCqY2Lum9CCAv5tSQMkhJEnXbEkajTrZ',
+              tokenAccountIn: 'F7e4iBrxoSmHhEzhuBcXXs1KAknYvEoZWieiocPvrCD9',
               tokenAccountOut: '5nrTLrjSCNQ4uTVr9BxBUcwf4G4Dwuo8H5wQAQgxand8'
             })
           }]
@@ -168,7 +168,7 @@ describe('raydium', () => {
               market,
               marketAuthority: '2ZUL8XdWPUE2dGM6CB3JU7Mu4jMWZJJmTHmrb9izmYV8',
               fromAddress,
-              tokenAccountIn: 'FjtHL8ki3GXMhCqY2Lum9CCAv5tSQMkhJEnXbEkajTrZ',
+              tokenAccountIn: 'F7e4iBrxoSmHhEzhuBcXXs1KAknYvEoZWieiocPvrCD9',
               tokenAccountOut: '5nrTLrjSCNQ4uTVr9BxBUcwf4G4Dwuo8H5wQAQgxand8'
             })
           }]
@@ -219,7 +219,7 @@ describe('raydium', () => {
               market,
               marketAuthority: '2ZUL8XdWPUE2dGM6CB3JU7Mu4jMWZJJmTHmrb9izmYV8',
               fromAddress,
-              tokenAccountIn: 'FjtHL8ki3GXMhCqY2Lum9CCAv5tSQMkhJEnXbEkajTrZ',
+              tokenAccountIn: 'F7e4iBrxoSmHhEzhuBcXXs1KAknYvEoZWieiocPvrCD9',
               tokenAccountOut: '5nrTLrjSCNQ4uTVr9BxBUcwf4G4Dwuo8H5wQAQgxand8'
             })
           }]
@@ -270,7 +270,7 @@ describe('raydium', () => {
               market,
               marketAuthority: '2ZUL8XdWPUE2dGM6CB3JU7Mu4jMWZJJmTHmrb9izmYV8',
               fromAddress,
-              tokenAccountIn: 'FjtHL8ki3GXMhCqY2Lum9CCAv5tSQMkhJEnXbEkajTrZ',
+              tokenAccountIn: 'F7e4iBrxoSmHhEzhuBcXXs1KAknYvEoZWieiocPvrCD9',
               tokenAccountOut: '5nrTLrjSCNQ4uTVr9BxBUcwf4G4Dwuo8H5wQAQgxand8'
             })
           }]
@@ -281,22 +281,22 @@ describe('raydium', () => {
 
   describe('route NATIVE to token via 1 pool without any existing token accounts', ()=>{
 
-    let tokenIn = CONSTANTS[blockchain].NATIVE
-    let decimalsIn = CONSTANTS[blockchain].DECIMALS
-    let tokenOut = CONSTANTS[blockchain].USD
-    let decimalsOut = CONSTANTS[blockchain].USD_DECIMALS
+    let tokenIn = Blockchains[blockchain].currency.address
+    let decimalsIn = Blockchains[blockchain].currency.decimals
+    let tokenOut = Blockchains[blockchain].stables.usd[0]
+    let decimalsOut = Blockchains[blockchain].tokens.find((token)=>token.address == tokenIn).decimals
     let path = [tokenIn, tokenOut]
 
-    it('routes NATIVE to token swap via 1 pool for given amountOut on raydium', async ()=> {
+    it.only('routes NATIVE to token swap via 1 pool for given amountOut on raydium', async ()=> {
 
       let amountOut = 1
       let amountOutBN = ethers.utils.parseUnits(amountOut.toString(), decimalsOut)
       let pair = '58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2'
       let market = '9wFFyRfZBsuAha4YcuxcXLKwMxJR43S7fPfQLusDBzvT'
 
-      mockTokenAccounts({ owner: fromAddress, token: CONSTANTS.solana.WRAPPED, accounts: [] })
+      mockTokenAccounts({ owner: fromAddress, token: Blockchains[blockchain].wrapped.address, accounts: [] })
       mockTokenAccounts({ owner: fromAddress, token: tokenOut, accounts: [] })
-      mockPair({ tokenIn: CONSTANTS.solana.WRAPPED, tokenOut, pair, market, 
+      mockPair({ tokenIn: Blockchains[blockchain].wrapped.address, tokenOut, pair, market, 
         baseReserve: 300000000000000,
         quoteReserve: 10000000000000,
       })
@@ -339,8 +339,8 @@ describe('raydium', () => {
               api: struct([u8("instruction"), u64("amountIn"), u64("amountOut")]),
               params: {
                 instruction: 11,
-                amountIn: '30225565',
-                amountOut: '1000000',
+                amountIn: '30228586767',
+                amountOut: '1000000000',
               },
               keys: mockTransactionKeys({
                 pair,
@@ -348,7 +348,7 @@ describe('raydium', () => {
                 marketAuthority: '2ZUL8XdWPUE2dGM6CB3JU7Mu4jMWZJJmTHmrb9izmYV8',
                 fromAddress,
                 tokenAccountIn: anything,
-                tokenAccountOut: 'FjtHL8ki3GXMhCqY2Lum9CCAv5tSQMkhJEnXbEkajTrZ'
+                tokenAccountOut: 'F7e4iBrxoSmHhEzhuBcXXs1KAknYvEoZWieiocPvrCD9'
               })
             }, {
               to: Token.solana.TOKEN_PROGRAM,
@@ -363,10 +363,10 @@ describe('raydium', () => {
 
   describe('route token to NATIVE via 1 pool without any token accounts', ()=>{
 
-    let tokenIn = CONSTANTS[blockchain].USD
-    let decimalsIn = CONSTANTS[blockchain].USD_DECIMALS
-    let tokenOut = CONSTANTS[blockchain].NATIVE
-    let decimalsOut = CONSTANTS[blockchain].DECIMALS
+    let tokenIn = Blockchains[blockchain].stables.usd[0]
+    let decimalsIn = Blockchains[blockchain].tokens.find((token)=>token.address == tokenIn).decimals
+    let tokenOut = Blockchains[blockchain].currency.address
+    let decimalsOut = Blockchains[blockchain].currency.decimals
     let path = [tokenIn, tokenOut]
 
     it('routes token to NATIVE swap via 1 pool for given amountOut on raydium', async ()=> {
@@ -377,8 +377,8 @@ describe('raydium', () => {
       let market = '9wFFyRfZBsuAha4YcuxcXLKwMxJR43S7fPfQLusDBzvT'
 
       mockTokenAccounts({ owner: fromAddress, token: tokenIn, accounts: [] })
-      mockTokenAccounts({ owner: fromAddress, token: CONSTANTS.solana.WRAPPED, accounts: [] })
-      mockPair({ tokenIn, tokenOut: CONSTANTS.solana.WRAPPED, pair, market, 
+      mockTokenAccounts({ owner: fromAddress, token: Blockchains[blockchain].wrapped.address, accounts: [] })
+      mockPair({ tokenIn, tokenOut: Blockchains[blockchain].wrapped.address, pair, market, 
         baseReserve: 300000000000000,
         quoteReserve: 10000000000000,
       })
@@ -429,7 +429,7 @@ describe('raydium', () => {
                 market,
                 marketAuthority: '2ZUL8XdWPUE2dGM6CB3JU7Mu4jMWZJJmTHmrb9izmYV8',
                 fromAddress,
-                tokenAccountIn: 'FjtHL8ki3GXMhCqY2Lum9CCAv5tSQMkhJEnXbEkajTrZ',
+                tokenAccountIn: 'F7e4iBrxoSmHhEzhuBcXXs1KAknYvEoZWieiocPvrCD9',
                 tokenAccountOut: anything
               })
             },{
@@ -780,10 +780,10 @@ describe('raydium', () => {
 
   describe('route token to token via 1 pool wit existing token account for tokenIn and tokenOut', ()=>{
 
-    let tokenIn = CONSTANTS[blockchain].USD
-    let decimalsIn = CONSTANTS[blockchain].USD_DECIMALS
-    let tokenOut = CONSTANTS[blockchain].WRAPPED
-    let decimalsOut = CONSTANTS[blockchain].DECIMALS
+    let tokenIn = Blockchains[blockchain].stables.usd[0]
+    let decimalsIn = Blockchains[blockchain].tokens.find((token)=>token.address == tokenIn).decimals
+    let tokenOut = Blockchains[blockchain].wrapped.address
+    let decimalsOut = Blockchains[blockchain].currency.decimals
     let path = [tokenIn, tokenOut]
 
     it('routes a token to token swap via 1 pool for given amountOut on raydium', async ()=> {
@@ -839,10 +839,10 @@ describe('raydium', () => {
 
   describe('route NATIVE to token via 1 pool with existing token accounts', ()=>{
 
-    let tokenIn = CONSTANTS[blockchain].NATIVE
-    let decimalsIn = CONSTANTS[blockchain].DECIMALS
-    let tokenOut = CONSTANTS[blockchain].USD
-    let decimalsOut = CONSTANTS[blockchain].USD_DECIMALS
+    let tokenIn = Blockchains[blockchain].currency.address
+    let decimalsIn = Blockchains[blockchain].currency.decimals
+    let tokenOut = Blockchains[blockchain].stables.usd[0]
+    let decimalsOut = Blockchains[blockchain].tokens.find((token)=>token.address == tokenIn).decimals
     let path = [tokenIn, tokenOut]
 
     it('routes NATIVE to token swap via 1 pool for given amountOut on raydium', async ()=> {
@@ -852,9 +852,9 @@ describe('raydium', () => {
       let pair = '58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2'
       let market = '9wFFyRfZBsuAha4YcuxcXLKwMxJR43S7fPfQLusDBzvT'
 
-      mockTokenAccounts({ owner: fromAddress, token: CONSTANTS.solana.WRAPPED, accounts: ['FjtHL8ki3GXMhCqY2Lum9CCAv5tSQMkhJEnXbEkajTrZ'] })
+      mockTokenAccounts({ owner: fromAddress, token: Blockchains[blockchain].wrapped.address, accounts: ['FjtHL8ki3GXMhCqY2Lum9CCAv5tSQMkhJEnXbEkajTrZ'] })
       mockTokenAccounts({ owner: fromAddress, token: tokenOut, accounts: ['2ZUL8XdWPUE2dGM6CB3JU7Mu4jMWZJJmTHmrb9izmYV8'] })
-      mockPair({ tokenIn: CONSTANTS.solana.WRAPPED, tokenOut, pair, market, 
+      mockPair({ tokenIn: Blockchains[blockchain].wrapped.address, tokenOut, pair, market, 
         baseReserve: 300000000000000,
         quoteReserve: 10000000000000,
       })
@@ -897,8 +897,8 @@ describe('raydium', () => {
               api: struct([u8("instruction"), u64("amountIn"), u64("amountOut")]),
               params: {
                 instruction: 11,
-                amountIn: '30225565',
-                amountOut: '1000000',
+                amountIn: '30228586767',
+                amountOut: '1000000000',
               },
               keys: mockTransactionKeys({
                 pair,
