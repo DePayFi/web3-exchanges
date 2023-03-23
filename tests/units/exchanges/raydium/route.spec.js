@@ -287,7 +287,7 @@ describe('raydium', () => {
     let decimalsOut = Blockchains[blockchain].tokens.find((token)=>token.address == tokenIn).decimals
     let path = [tokenIn, tokenOut]
 
-    it.only('routes NATIVE to token swap via 1 pool for given amountOut on raydium', async ()=> {
+    it('routes NATIVE to token swap via 1 pool for given amountOut on raydium', async ()=> {
 
       let amountOut = 1
       let amountOutBN = ethers.utils.parseUnits(amountOut.toString(), decimalsOut)
@@ -323,7 +323,7 @@ describe('raydium', () => {
               api: struct([u32("instruction"), u64("lamports"), u64("space"), publicKey("programId")]),
               params: {
                 instruction: 0,
-                lamports: '32264845',
+                lamports: '30230626047',
                 space: Token.solana.TOKEN_LAYOUT.span,
                 programId: Token.solana.TOKEN_PROGRAM
               }
@@ -881,7 +881,7 @@ describe('raydium', () => {
               api: struct([u32("instruction"), u64("lamports"), u64("space"), publicKey("programId")]),
               params: {
                 instruction: 0,
-                lamports: '32264845',
+                lamports: '30230626047',
                 space: Token.solana.TOKEN_LAYOUT.span,
                 programId: Token.solana.TOKEN_PROGRAM
               }

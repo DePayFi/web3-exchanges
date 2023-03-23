@@ -1048,10 +1048,6 @@ const getTransaction = async ({
   // console.log('instructions.length', instructions.length)
 
   transaction.instructions = instructions;
-  console.log('transaction.instructions[0]', transaction.instructions[0]);
-  console.log('transaction.instructions[1]', transaction.instructions[0]);
-  console.log('transaction.instructions[2]', transaction.instructions[2]);
-  console.log('transaction.instructions[3]', transaction.instructions[3]);
   return transaction
 };
 
