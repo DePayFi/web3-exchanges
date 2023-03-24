@@ -10,12 +10,11 @@ import { request } from '@depay/web3-client'
 
 //#endif
 
+import Blockchains from '@depay/web3-blockchains'
 import Raydium from '../basics'
-import { CONSTANTS } from '@depay/web3-constants'
 import { anyPairs } from './pairs'
 
-const NATIVE = CONSTANTS.solana.NATIVE
-const WRAPPED = CONSTANTS.solana.WRAPPED
+const blockchain = Blockchains.solana
 const USDC = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'
 const USDT = 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'
 
@@ -29,18 +28,18 @@ let fixPath = (path) => {
   if(!path) { return }
   let fixedPath = path.map((token, index) => {
     if (
-      token === NATIVE && path[index+1] != WRAPPED &&
-      path[index-1] != WRAPPED
+      token === blockchain.currency.address && path[index+1] != blockchain.wrapped.address &&
+      path[index-1] != blockchain.wrapped.address
     ) {
-      return WRAPPED
+      return blockchain.wrapped.address
     } else {
       return token
     }
   })
 
-  if(fixedPath[0] == NATIVE && fixedPath[1] == WRAPPED) {
+  if(fixedPath[0] == blockchain.currency.address && fixedPath[1] == blockchain.wrapped.address) {
     fixedPath.splice(0, 1)
-  } else if(fixedPath[fixedPath.length-1] == NATIVE && fixedPath[fixedPath.length-2] == WRAPPED) {
+  } else if(fixedPath[fixedPath.length-1] == blockchain.currency.address && fixedPath[fixedPath.length-2] == blockchain.wrapped.address) {
     fixedPath.splice(fixedPath.length-1, 1)
   }
 
@@ -60,8 +59,8 @@ let pathExists = async (path) => {
 
 let findPath = async ({ tokenIn, tokenOut }) => {
   if(
-    [tokenIn, tokenOut].includes(NATIVE) &&
-    [tokenIn, tokenOut].includes(WRAPPED)
+    [tokenIn, tokenOut].includes(blockchain.currency.address) &&
+    [tokenIn, tokenOut].includes(blockchain.wrapped.address)
   ) { return { path: undefined, fixedPath: undefined } }
 
   let path
@@ -69,15 +68,15 @@ let findPath = async ({ tokenIn, tokenOut }) => {
     // direct path
     path = [tokenIn, tokenOut]
   } else if (
-    tokenIn != WRAPPED &&
-    tokenIn != NATIVE &&
-    await pathExists([tokenIn, WRAPPED]) &&
-    tokenOut != WRAPPED &&
-    tokenOut != NATIVE &&
-    await pathExists([tokenOut, WRAPPED])
+    tokenIn != blockchain.wrapped.address &&
+    tokenIn != blockchain.currency.address &&
+    await pathExists([tokenIn, blockchain.wrapped.address]) &&
+    tokenOut != blockchain.wrapped.address &&
+    tokenOut != blockchain.currency.address &&
+    await pathExists([tokenOut, blockchain.wrapped.address])
   ) {
-    // path via WRAPPED
-    path = [tokenIn, WRAPPED, tokenOut]
+    // path via blockchain.wrapped.address
+    path = [tokenIn, blockchain.wrapped.address, tokenOut]
   } else if (
     tokenIn != USDC &&
     await pathExists([tokenIn, USDC]) &&
@@ -96,12 +95,12 @@ let findPath = async ({ tokenIn, tokenOut }) => {
     path = [tokenIn, USDT, tokenOut]
   }
 
-  // Add WRAPPED to route path if things start or end with NATIVE
+  // Add blockchain.wrapped.address to route path if things start or end with blockchain.currency.address
   // because that actually reflects how things are routed in reality:
-  if(path?.length && path[0] == NATIVE) {
-    path.splice(1, 0, WRAPPED)
-  } else if(path?.length && path[path.length-1] == NATIVE) {
-    path.splice(path.length-1, 0, WRAPPED)
+  if(path?.length && path[0] == blockchain.currency.address) {
+    path.splice(1, 0, blockchain.wrapped.address)
+  } else if(path?.length && path[path.length-1] == blockchain.currency.address) {
+    path.splice(path.length-1, 0, blockchain.wrapped.address)
   }
   return { path, fixedPath: fixPath(path) }
 }

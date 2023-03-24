@@ -24,7 +24,7 @@ const route = ({
     let [amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput] = [amountIn, amountOut, amountInMax, amountOutMin];
 
     let amounts // includes intermediary amounts for longer routes
-    ({ amountIn, amountInMax, amountOut, amountOutMin, amounts } = await getAmounts({ path, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }))
+    ({ amountIn, amountInMax, amountOut, amountOutMin, amounts } = await getAmounts({ path, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }));
     if([amountIn, amountInMax, amountOut, amountOutMin].every((amount)=>{ return amount == undefined })) { return resolve() }
 
     if(slippage) {
@@ -35,7 +35,7 @@ const route = ({
         tokenIn, tokenOut,
         amountIn, amountInMax, amountOut, amountOutMin,
         amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput,
-      }))
+      }));
     }
 
     resolve(

@@ -1,4 +1,4 @@
-import { CONSTANTS } from '@depay/web3-constants'
+import Blockchains from '@depay/web3-blockchains'
 import { find } from 'src'
 
 describe('wbnb', () => {
@@ -13,7 +13,7 @@ describe('wbnb', () => {
 
     it('provides the same amounts (amountIn==amountOut) for ETH<>WETH', async ()=> {
 
-      const path = [CONSTANTS[blockchain].NATIVE, CONSTANTS[blockchain].WRAPPED]
+      const path = [Blockchains[blockchain].currency.address, Blockchains[blockchain].wrapped.address]
       const amount = '100000000000'
       
       let { amountIn, amountOut, amountInMax, amountOutMin } = await exchange.getAmounts({
@@ -29,7 +29,7 @@ describe('wbnb', () => {
 
     it('provides the same amounts (amountIn==amountOut) for WETH<>ETH', async ()=> {
 
-      const path = [CONSTANTS[blockchain].WRAPPED, CONSTANTS[blockchain].NATIVE]
+      const path = [Blockchains[blockchain].wrapped.address, Blockchains[blockchain].currency.address]
       const amount = '100000000000'
       
       let { amountIn } = await exchange.getAmounts({

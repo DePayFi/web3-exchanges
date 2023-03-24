@@ -12,12 +12,14 @@ import { Token } from '@depay/web3-tokens'
 
 //#endif
 
+import Blockchains from '@depay/web3-blockchains'
 import Raydium from '../basics'
 import { Buffer, BN, Transaction, TransactionInstruction, SystemProgram, PublicKey, Keypair, struct, u8, u64 } from '@depay/solana-web3.js'
-import { CONSTANTS } from '@depay/web3-constants'
 import { fixPath } from './path'
-import { getPair } from './pairs'
 import { getMarket, getMarketAuthority } from './markets'
+import { getPair } from './pairs'
+
+const blockchain = Blockchains.solana
 
 const getAssociatedMiddleStatusAccount = async ({ fromPoolId, middleMint, owner })=> {
   let result = await PublicKey.findProgramAddress(
@@ -139,8 +141,8 @@ const getTransaction = async ({
     amountMiddle = amounts[1]
   }
 
-  let startsWrapped = (path[0] === CONSTANTS.solana.NATIVE && fixedPath[0] === CONSTANTS.solana.WRAPPED)
-  let endsUnwrapped = (path[path.length-1] === CONSTANTS.solana.NATIVE && fixedPath[fixedPath.length-1] === CONSTANTS.solana.WRAPPED)
+  let startsWrapped = (path[0] === blockchain.currency.address && fixedPath[0] === blockchain.wrapped.address)
+  let endsUnwrapped = (path[path.length-1] === blockchain.currency.address && fixedPath[fixedPath.length-1] === blockchain.wrapped.address)
   let wrappedAccount
   const provider = await getProvider('solana')
   if(startsWrapped || endsUnwrapped) {
@@ -159,7 +161,7 @@ const getTransaction = async ({
     instructions.push(
       Token.solana.initializeAccountInstruction({
         account: wrappedAccount,
-        token: CONSTANTS.solana.WRAPPED,
+        token: blockchain.wrapped.address,
         owner: fromAddress
       })
     )

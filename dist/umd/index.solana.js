@@ -1,8 +1,12 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('ethers'), require('@depay/solana-web3.js'), require('@depay/web3-client-solana'), require('@depay/web3-tokens-solana'), require('@depay/web3-constants')) :
-  typeof define === 'function' && define.amd ? define(['exports', 'ethers', '@depay/solana-web3.js', '@depay/web3-client-solana', '@depay/web3-tokens-solana', '@depay/web3-constants'], factory) :
-  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.Web3Exchanges = {}, global.ethers, global.SolanaWeb3js, global.Web3Client, global.Web3Tokens, global.Web3Constants));
-}(this, (function (exports, ethers, solanaWeb3_js, web3ClientSolana, web3TokensSolana, web3Constants) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('ethers'), require('@depay/solana-web3.js'), require('@depay/web3-client-solana'), require('@depay/web3-tokens-solana'), require('@depay/web3-blockchains')) :
+  typeof define === 'function' && define.amd ? define(['exports', 'ethers', '@depay/solana-web3.js', '@depay/web3-client-solana', '@depay/web3-tokens-solana', '@depay/web3-blockchains'], factory) :
+  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.Web3Exchanges = {}, global.ethers, global.SolanaWeb3js, global.Web3Client, global.Web3Tokens, global.Web3Blockchains));
+}(this, (function (exports, ethers, solanaWeb3_js, web3ClientSolana, web3TokensSolana, Blockchains) { 'use strict';
+
+  function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
+
+  var Blockchains__default = /*#__PURE__*/_interopDefaultLegacy(Blockchains);
 
   const LIQUIDITY_STATE_LAYOUT_V4 = solanaWeb3_js.struct([
     solanaWeb3_js.u64("status"),
@@ -574,8 +578,7 @@
 
   function _optionalChain(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
 
-  const NATIVE = web3Constants.CONSTANTS.solana.NATIVE;
-  const WRAPPED = web3Constants.CONSTANTS.solana.WRAPPED;
+  const blockchain$1 = Blockchains__default['default'].solana;
   const USDC = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';
   const USDT = 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB';
 
@@ -589,18 +592,18 @@
     if(!path) { return }
     let fixedPath = path.map((token, index) => {
       if (
-        token === NATIVE && path[index+1] != WRAPPED &&
-        path[index-1] != WRAPPED
+        token === blockchain$1.currency.address && path[index+1] != blockchain$1.wrapped.address &&
+        path[index-1] != blockchain$1.wrapped.address
       ) {
-        return WRAPPED
+        return blockchain$1.wrapped.address
       } else {
         return token
       }
     });
 
-    if(fixedPath[0] == NATIVE && fixedPath[1] == WRAPPED) {
+    if(fixedPath[0] == blockchain$1.currency.address && fixedPath[1] == blockchain$1.wrapped.address) {
       fixedPath.splice(0, 1);
-    } else if(fixedPath[fixedPath.length-1] == NATIVE && fixedPath[fixedPath.length-2] == WRAPPED) {
+    } else if(fixedPath[fixedPath.length-1] == blockchain$1.currency.address && fixedPath[fixedPath.length-2] == blockchain$1.wrapped.address) {
       fixedPath.splice(fixedPath.length-1, 1);
     }
 
@@ -619,8 +622,8 @@
 
   let findPath = async ({ tokenIn, tokenOut }) => {
     if(
-      [tokenIn, tokenOut].includes(NATIVE) &&
-      [tokenIn, tokenOut].includes(WRAPPED)
+      [tokenIn, tokenOut].includes(blockchain$1.currency.address) &&
+      [tokenIn, tokenOut].includes(blockchain$1.wrapped.address)
     ) { return { path: undefined, fixedPath: undefined } }
 
     let path;
@@ -628,15 +631,15 @@
       // direct path
       path = [tokenIn, tokenOut];
     } else if (
-      tokenIn != WRAPPED &&
-      tokenIn != NATIVE &&
-      await pathExists([tokenIn, WRAPPED]) &&
-      tokenOut != WRAPPED &&
-      tokenOut != NATIVE &&
-      await pathExists([tokenOut, WRAPPED])
+      tokenIn != blockchain$1.wrapped.address &&
+      tokenIn != blockchain$1.currency.address &&
+      await pathExists([tokenIn, blockchain$1.wrapped.address]) &&
+      tokenOut != blockchain$1.wrapped.address &&
+      tokenOut != blockchain$1.currency.address &&
+      await pathExists([tokenOut, blockchain$1.wrapped.address])
     ) {
-      // path via WRAPPED
-      path = [tokenIn, WRAPPED, tokenOut];
+      // path via blockchain.wrapped.address
+      path = [tokenIn, blockchain$1.wrapped.address, tokenOut];
     } else if (
       tokenIn != USDC &&
       await pathExists([tokenIn, USDC]) &&
@@ -655,12 +658,12 @@
       path = [tokenIn, USDT, tokenOut];
     }
 
-    // Add WRAPPED to route path if things start or end with NATIVE
+    // Add blockchain.wrapped.address to route path if things start or end with blockchain.currency.address
     // because that actually reflects how things are routed in reality:
-    if(_optionalChain([path, 'optionalAccess', _ => _.length]) && path[0] == NATIVE) {
-      path.splice(1, 0, WRAPPED);
-    } else if(_optionalChain([path, 'optionalAccess', _2 => _2.length]) && path[path.length-1] == NATIVE) {
-      path.splice(path.length-1, 0, WRAPPED);
+    if(_optionalChain([path, 'optionalAccess', _ => _.length]) && path[0] == blockchain$1.currency.address) {
+      path.splice(1, 0, blockchain$1.wrapped.address);
+    } else if(_optionalChain([path, 'optionalAccess', _2 => _2.length]) && path[path.length-1] == blockchain$1.currency.address) {
+      path.splice(path.length-1, 0, blockchain$1.wrapped.address);
     }
     return { path, fixedPath: fixPath(path) }
   };
@@ -843,6 +846,8 @@
     }
   };
 
+  const blockchain = Blockchains__default['default'].solana;
+
   const getInstructionData = ({ pair, amountIn, amountOutMin, amountOut, amountInMax, fix })=> {
     let LAYOUT, data;
     
@@ -951,8 +956,8 @@
       amountMiddle = amounts[1];
     }
 
-    let startsWrapped = (path[0] === web3Constants.CONSTANTS.solana.NATIVE && fixedPath[0] === web3Constants.CONSTANTS.solana.WRAPPED);
-    let endsUnwrapped = (path[path.length-1] === web3Constants.CONSTANTS.solana.NATIVE && fixedPath[fixedPath.length-1] === web3Constants.CONSTANTS.solana.WRAPPED);
+    let startsWrapped = (path[0] === blockchain.currency.address && fixedPath[0] === blockchain.wrapped.address);
+    let endsUnwrapped = (path[path.length-1] === blockchain.currency.address && fixedPath[fixedPath.length-1] === blockchain.wrapped.address);
     let wrappedAccount;
     const provider = await web3ClientSolana.getProvider('solana');
     if(startsWrapped || endsUnwrapped) {
@@ -971,7 +976,7 @@
       instructions.push(
         web3TokensSolana.Token.solana.initializeAccountInstruction({
           account: wrappedAccount,
-          token: web3Constants.CONSTANTS.solana.WRAPPED,
+          token: blockchain.wrapped.address,
           owner: fromAddress
         })
       );

@@ -1,4 +1,4 @@
-import WagyuSwap from 'src/exchanges/wagyuswap/index'
+import WagyuSwap from 'src/exchanges/wagyuswap'
 import { ethers } from 'ethers'
 import { find } from 'src/index'
 import { mock, resetMocks } from '@depay/web3-mock'

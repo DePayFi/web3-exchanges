@@ -1,5 +1,5 @@
 import Route from 'src/classes/Route'
-import { CONSTANTS } from '@depay/web3-constants'
+import Blockchains from '@depay/web3-blockchains'
 import { ethers } from 'ethers'
 import { find } from 'src'
 import { getWallets } from '@depay/web3-wallets'
@@ -34,17 +34,17 @@ describe('weth', () => {
       let amountOut = '100000000'
 
       let route = await exchange.route({
-        tokenIn: CONSTANTS[blockchain].NATIVE,
-        tokenOut: CONSTANTS[blockchain].WRAPPED,
+        tokenIn: Blockchains[blockchain].currency.address,
+        tokenOut: Blockchains[blockchain].wrapped.address,
         amountInMax: amountIn,
         amountOut,
         fromAddress,
         toAddress
       })
 
-      expect(route.tokenIn).toEqual(CONSTANTS[blockchain].NATIVE)
-      expect(route.tokenOut).toEqual(CONSTANTS[blockchain].WRAPPED)
-      expect(route.path).toEqual([CONSTANTS[blockchain].NATIVE, CONSTANTS[blockchain].WRAPPED])
+      expect(route.tokenIn).toEqual(Blockchains[blockchain].currency.address)
+      expect(route.tokenOut).toEqual(Blockchains[blockchain].wrapped.address)
+      expect(route.path).toEqual([Blockchains[blockchain].currency.address, Blockchains[blockchain].wrapped.address])
       expect(route.amountIn).toEqual(amountIn)
       expect(route.amountInMax).toEqual(amountIn)
       expect(route.amountOut).toEqual(amountOut)
@@ -71,17 +71,17 @@ describe('weth', () => {
       let amountOut = '100000000'
 
       let route = await exchange.route({
-        tokenIn: CONSTANTS[blockchain].WRAPPED,
-        tokenOut: CONSTANTS[blockchain].NATIVE,
+        tokenIn: Blockchains[blockchain].wrapped.address,
+        tokenOut: Blockchains[blockchain].currency.address,
         amountInMax: amountIn,
         amountOut,
         fromAddress,
         toAddress
       })
 
-      expect(route.tokenIn).toEqual(CONSTANTS[blockchain].WRAPPED)
-      expect(route.tokenOut).toEqual(CONSTANTS[blockchain].NATIVE)
-      expect(route.path).toEqual([CONSTANTS[blockchain].WRAPPED, CONSTANTS[blockchain].NATIVE])
+      expect(route.tokenIn).toEqual(Blockchains[blockchain].wrapped.address)
+      expect(route.tokenOut).toEqual(Blockchains[blockchain].currency.address)
+      expect(route.path).toEqual([Blockchains[blockchain].wrapped.address, Blockchains[blockchain].currency.address])
       expect(route.amountIn).toEqual(amountIn)
       expect(route.amountInMax).toEqual(amountIn)
       expect(route.amountOut).toEqual(amountOut)
