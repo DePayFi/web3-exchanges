@@ -29,7 +29,7 @@ describe('raydium', () => {
       let tokenIn = Blockchains[blockchain].stables.usd[0]
       let decimalsIn = Blockchains[blockchain].tokens.find((token)=>token.address == tokenIn).decimals
       let tokenOut = Blockchains[blockchain].wrapped.address
-      let decimalsOut = CONSTANTS[blockchain].DECIMALS
+      let decimalsOut = Blockchains[blockchain].currency.decimals
       let path = [tokenIn, tokenOut]
       let amountOut = 1
       let amountOutBN = ethers.utils.parseUnits(amountOut.toString(), decimalsOut)

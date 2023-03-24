@@ -476,7 +476,7 @@
       let decimals = await token.decimals();
       return minReserveRequirements({ min: 1000, token: address, decimals, reserves, token0, token1 })
     } else {
-      return true 
+      return true
     }
   };
 
@@ -505,7 +505,7 @@
       await pathExists$2(blockchain, exchange, [blockchain.wrapped.address, tokenOut])
     ) {
       // path via tokenIn -> USD -> WRAPPED -> tokenOut
-      let USD = (await Promise.all(blockchain.stables.usd.map(async (stable)=>{ await pathExists$2(blockchain, exchange, [tokenIn, stable]) ? stable : undefined; }))).find(Boolean);
+      let USD = (await Promise.all(blockchain.stables.usd.map(async (stable)=>{ return(await pathExists$2(blockchain, exchange, [tokenIn, stable]) ? stable : undefined) }))).find(Boolean);
       path = [tokenIn, USD, blockchain.wrapped.address, tokenOut];
     } else if (
       tokenIn != blockchain.wrapped.address &&
@@ -514,7 +514,7 @@
       (await Promise.all(blockchain.stables.usd.map((stable)=>pathExists$2(blockchain, exchange, [stable, tokenOut])))).filter(Boolean).length
     ) {
       // path via tokenIn -> WRAPPED -> USD -> tokenOut
-      let USD = (await Promise.all(blockchain.stables.usd.map(async (stable)=>{ await pathExists$2(blockchain, exchange, [stable, tokenOut]) ? stable : undefined; }))).find(Boolean);
+      let USD = (await Promise.all(blockchain.stables.usd.map(async (stable)=>{ return(await pathExists$2(blockchain, exchange, [stable, tokenOut]) ? stable : undefined) }))).find(Boolean);
       path = [tokenIn, blockchain.wrapped.address, USD, tokenOut];
     }
 

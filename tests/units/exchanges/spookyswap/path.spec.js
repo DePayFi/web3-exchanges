@@ -6,10 +6,10 @@ import { mockPair } from 'tests/mocks/evm/exchange'
 import { getProvider, resetCache } from '@depay/web3-client'
 import { Token } from '@depay/web3-tokens'
 
-describe('wagyuswap', () => {
+describe('spookyswap', () => {
   
-  const exchange = find('velas', 'wagyuswap')
-  const blockchain = 'velas'
+  const exchange = find('fantom', 'spookyswap')
+  const blockchain = 'fantom'
   const accounts = ['0xd8da6bf26964af9d7eed9e03e53415d37aa96045']
   
   let provider

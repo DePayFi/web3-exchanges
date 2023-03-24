@@ -1,15 +1,15 @@
 import Blockchains from '@depay/web3-blockchains'
-import { find } from 'src'
+import { find } from 'dist/esm/index.evm'
 import { mock, resetMocks } from '@depay/web3-mock'
 import { mockDecimals } from 'tests/mocks/token'
 import { mockPair } from 'tests/mocks/evm/exchange'
-import { getProvider, resetCache } from '@depay/web3-client'
-import { Token } from '@depay/web3-tokens'
+import { getProvider, resetCache } from '@depay/web3-client-evm'
+import { Token } from '@depay/web3-tokens-evm'
 
-describe('wagyuswap', () => {
+describe('spookyswap', () => {
   
-  const exchange = find('velas', 'wagyuswap')
-  const blockchain = 'velas'
+  const exchange = find('fantom', 'spookyswap')
+  const blockchain = 'fantom'
   const accounts = ['0xd8da6bf26964af9d7eed9e03e53415d37aa96045']
   
   let provider

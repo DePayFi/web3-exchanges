@@ -35,7 +35,7 @@ const route = ({
         tokenIn, tokenOut,
         amountIn, amountInMax, amountOut, amountOutMin,
         amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput,
-      }))
+      }));
     }
 
     resolve(

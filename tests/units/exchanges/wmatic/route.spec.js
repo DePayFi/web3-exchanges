@@ -34,7 +34,7 @@ describe('wmatic', () => {
       let amountOut = '100000000'
 
       let route = await exchange.route({
-        tokenIn: CONSTANTS[blockchain].NATIVE,
+        tokenIn: Blockchains[blockchain].currency.address,
         tokenOut: Blockchains[blockchain].wrapped.address,
         amountInMax: amountIn,
         amountOut,
@@ -42,9 +42,9 @@ describe('wmatic', () => {
         toAddress
       })
 
-      expect(route.tokenIn).toEqual(CONSTANTS[blockchain].NATIVE)
+      expect(route.tokenIn).toEqual(Blockchains[blockchain].currency.address)
       expect(route.tokenOut).toEqual(Blockchains[blockchain].wrapped.address)
-      expect(route.path).toEqual([CONSTANTS[blockchain].NATIVE, Blockchains[blockchain].wrapped.address])
+      expect(route.path).toEqual([Blockchains[blockchain].currency.address, Blockchains[blockchain].wrapped.address])
       expect(route.amountIn).toEqual(amountIn)
       expect(route.amountInMax).toEqual(amountIn)
       expect(route.amountOut).toEqual(amountOut)
@@ -72,7 +72,7 @@ describe('wmatic', () => {
 
       let route = await exchange.route({
         tokenIn: Blockchains[blockchain].wrapped.address,
-        tokenOut: CONSTANTS[blockchain].NATIVE,
+        tokenOut: Blockchains[blockchain].currency.address,
         amountInMax: amountIn,
         amountOut,
         fromAddress,
@@ -80,8 +80,8 @@ describe('wmatic', () => {
       })
 
       expect(route.tokenIn).toEqual(Blockchains[blockchain].wrapped.address)
-      expect(route.tokenOut).toEqual(CONSTANTS[blockchain].NATIVE)
-      expect(route.path).toEqual([Blockchains[blockchain].wrapped.address, CONSTANTS[blockchain].NATIVE])
+      expect(route.tokenOut).toEqual(Blockchains[blockchain].currency.address)
+      expect(route.path).toEqual([Blockchains[blockchain].wrapped.address, Blockchains[blockchain].currency.address])
       expect(route.amountIn).toEqual(amountIn)
       expect(route.amountInMax).toEqual(amountIn)
       expect(route.amountOut).toEqual(amountOut)

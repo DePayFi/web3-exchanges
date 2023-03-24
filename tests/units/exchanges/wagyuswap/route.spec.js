@@ -4,7 +4,7 @@ import { ethers } from 'ethers'
 import { find } from 'src'
 import { mock, resetMocks, anything } from '@depay/web3-mock'
 import { mockDecimals } from 'tests/mocks/token'
-import { mockPair, mockAmounts } from 'tests/mocks/wagyuswap'
+import { mockPair, mockAmounts } from 'tests/mocks/evm/exchange'
 import { resetCache, getProvider } from '@depay/web3-client'
 import { testRouting } from 'tests/helpers/testRouting'
 
@@ -63,7 +63,7 @@ describe('wagyuswap', () => {
 
       mockDecimals({ provider, blockchain, address: tokenIn, value: decimalsIn })
       mockDecimals({ provider, blockchain, address: tokenOut, value: decimalsOut })
-      mockPair({ provider, tokenIn, tokenOut, pair })
+      mockPair({ blockchain, exchange, provider, tokenIn, tokenOut, pair })
       mock({
         provider,
         blockchain,
@@ -105,8 +105,8 @@ describe('wagyuswap', () => {
       let fetchedAmountInBN = ethers.utils.parseUnits(fetchedAmountIn.toString(), decimalsIn)
       let slippage = ethers.BigNumber.from('215000000000000000')
 
-      mockPair({ provider, tokenIn, tokenOut, pair })
-      mockAmounts({ method: 'getAmountsIn', params: [amountOutBN,path], amounts: [fetchedAmountInBN, amountOutBN] })
+      mockPair({ blockchain, exchange, provider, tokenIn, tokenOut, pair })
+      mockAmounts({ blockchain, exchange, method: 'getAmountsIn', params: [amountOutBN,path], amounts: [fetchedAmountInBN, amountOutBN] })
 
       await testRouting({
         blockchain,
@@ -142,8 +142,8 @@ describe('wagyuswap', () => {
       let fetchedAmountInBN = ethers.utils.parseUnits(fetchedAmountIn.toString(), decimalsIn)
       let slippage = ethers.BigNumber.from('215000000000000000')
 
-      mockPair({ provider, tokenIn, tokenOut, pair })
-      mockAmounts({ provider, method: 'getAmountsIn', params: [amountOutBN,path], amounts: [fetchedAmountInBN, amountOutBN] })
+      mockPair({ blockchain, exchange, provider, tokenIn, tokenOut, pair })
+      mockAmounts({ blockchain, exchange, provider, method: 'getAmountsIn', params: [amountOutBN,path], amounts: [fetchedAmountInBN, amountOutBN] })
 
       await testRouting({
         blockchain,
@@ -178,8 +178,8 @@ describe('wagyuswap', () => {
       let fetchedAmountInBN = ethers.utils.parseUnits(fetchedAmountIn.toString(), decimalsIn)
       let slippage = ethers.BigNumber.from('215000000000000000')
 
-      mockPair({ provider, tokenIn, tokenOut, pair })
-      mockAmounts({ method: 'getAmountsIn', params: [amountOutMinBN, path], amounts: [fetchedAmountInBN, amountOutMinBN] })
+      mockPair({ blockchain, exchange, provider, tokenIn, tokenOut, pair })
+      mockAmounts({ blockchain, exchange, method: 'getAmountsIn', params: [amountOutMinBN, path], amounts: [fetchedAmountInBN, amountOutMinBN] })
 
       await testRouting({
         blockchain,
@@ -215,8 +215,8 @@ describe('wagyuswap', () => {
       let fetchedAmountOutBN = ethers.utils.parseUnits(fetchedAmountOut.toString(), decimalsOut)
       let path = [tokenIn, tokenOut]
 
-      mockPair({ provider, tokenIn, tokenOut, pair })
-      mockAmounts({ method: 'getAmountsOut', params: [amountInBN,path], amounts: [amountInBN, fetchedAmountOutBN] })
+      mockPair({ blockchain, exchange, provider, tokenIn, tokenOut, pair })
+      mockAmounts({ blockchain, exchange, method: 'getAmountsOut', params: [amountInBN,path], amounts: [amountInBN, fetchedAmountOutBN] })
 
       await testRouting({
         blockchain,
@@ -252,8 +252,8 @@ describe('wagyuswap', () => {
       let fetchedAmountOutBN = ethers.utils.parseUnits(fetchedAmountOut.toString(), decimalsOut)
       let path = [tokenIn, tokenOut]
 
-      mockPair({ provider, tokenIn, tokenOut, pair })
-      mockAmounts({ method: 'getAmountsOut', params: [amountInMaxBN, path], amounts: [amountInMaxBN, fetchedAmountOutBN] })
+      mockPair({ blockchain, exchange, provider, tokenIn, tokenOut, pair })
+      mockAmounts({ blockchain, exchange, method: 'getAmountsOut', params: [amountInMaxBN, path], amounts: [amountInMaxBN, fetchedAmountOutBN] })
 
       await testRouting({
         blockchain,
@@ -290,8 +290,8 @@ describe('wagyuswap', () => {
       let slippage = ethers.BigNumber.from('160000000000000000')
       let path = [tokenIn, tokenOut]
 
-      mockPair({ provider, tokenIn, tokenOut, pair })
-      mockAmounts({ method: 'getAmountsIn', params: [amountOutBN,path], amounts: [amountInMaxBN, amountOutBN] })
+      mockPair({ blockchain, exchange, provider, tokenIn, tokenOut, pair })
+      mockAmounts({ blockchain, exchange, method: 'getAmountsIn', params: [amountOutBN,path], amounts: [amountInMaxBN, amountOutBN] })
 
       await testRouting({
         blockchain,
@@ -327,8 +327,8 @@ describe('wagyuswap', () => {
       let slippage = ethers.BigNumber.from('160000000000000000')
       let path = [tokenIn, tokenOut]
 
-      mockPair({ provider, tokenIn, tokenOut, pair })
-      mockAmounts({ method: 'getAmountsIn', params: [amountOutMinBN, path], amounts: [fetchedAmountInBN, amountOutMinBN] })
+      mockPair({ blockchain, exchange, provider, tokenIn, tokenOut, pair })
+      mockAmounts({ blockchain, exchange, method: 'getAmountsIn', params: [amountOutMinBN, path], amounts: [fetchedAmountInBN, amountOutMinBN] })
 
       await testRouting({
         blockchain,
@@ -364,14 +364,14 @@ describe('wagyuswap', () => {
       let slippage = ethers.BigNumber.from('160000000000000000')
       let tokenVia = Blockchains[blockchain].wrapped.address
       let amountVia = 0.1
-      let amountViaBN = ethers.utils.parseUnits(amountVia.toString(), CONSTANTS[blockchain].DECIMALS)
+      let amountViaBN = ethers.utils.parseUnits(amountVia.toString(), Blockchains[blockchain].currency.decimals)
 
       path = [tokenIn, tokenVia, tokenOut]
 
-      mockPair({ provider, tokenIn, tokenOut, pair: Blockchains[blockchain].zero })
-      mockPair({ provider, tokenIn, tokenOut: tokenVia, pair: '0xef8cd6cb5c841a4f02986e8a8ab3cc545d1b8b6d' })
-      mockPair({ provider, tokenIn: tokenOut, tokenOut: tokenVia, pair: '0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852' })
-      mockAmounts({ method: 'getAmountsIn', params: [amountOutMinBN, path], amounts: [fetchedAmountInBN, amountViaBN, amountOutMinBN] })
+      mockPair({ blockchain, exchange, provider, tokenIn, tokenOut, pair: Blockchains[blockchain].zero })
+      mockPair({ blockchain, exchange, provider, tokenIn, tokenOut: tokenVia, pair: '0xef8cd6cb5c841a4f02986e8a8ab3cc545d1b8b6d' })
+      mockPair({ blockchain, exchange, provider, tokenIn: tokenOut, tokenOut: tokenVia, pair: '0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852' })
+      mockAmounts({ blockchain, exchange, method: 'getAmountsIn', params: [amountOutMinBN, path], amounts: [fetchedAmountInBN, amountViaBN, amountOutMinBN] })
 
       await testRouting({
         blockchain,
@@ -408,9 +408,11 @@ describe('wagyuswap', () => {
       mockDecimals({ provider, blockchain, address: tokenIn, value: decimalsIn })
       mockDecimals({ provider, blockchain, address: tokenOut, value: decimalsOut })
       
-      mockPair({ provider, tokenIn, tokenOut: Blockchains[blockchain].stables.usd[0], pair: Blockchains[blockchain].zero })
-      mockPair({ provider, tokenIn, tokenOut, pair: Blockchains[blockchain].zero })
-      mockPair({ provider, tokenIn, tokenOut: Blockchains[blockchain].wrapped.address, pair: Blockchains[blockchain].zero })
+      Blockchains[blockchain].stables.usd.forEach((stable)=>{
+        mockPair({ blockchain, exchange, provider, tokenIn, tokenOut: stable, pair: Blockchains[blockchain].zero })
+      })
+      mockPair({ blockchain, exchange, provider, tokenIn, tokenOut, pair: Blockchains[blockchain].zero })
+      mockPair({ blockchain, exchange, provider, tokenIn, tokenOut: Blockchains[blockchain].wrapped.address, pair: Blockchains[blockchain].zero })
 
       let route = await exchange.route({
         tokenIn,
@@ -431,18 +433,23 @@ describe('wagyuswap', () => {
       let fetchedAmountInBN = ethers.utils.parseUnits(fetchedAmountIn.toString(), decimalsIn)
       let slippage = ethers.BigNumber.from('160000000000000000')
       let amountWRAPPED = 0.1
-      let amountWRAPPEDBN = ethers.utils.parseUnits(amountWRAPPED.toString(), CONSTANTS[blockchain].DECIMALS)
+      let amountWRAPPEDBN = ethers.utils.parseUnits(amountWRAPPED.toString(), Blockchains[blockchain].currency.decimals)
       let amountUSD = 420
-      let amountUSDBN = ethers.utils.parseUnits(amountUSD.toString(), CONSTANTS[blockchain].DECIMALS)
+      let amountUSDBN = ethers.utils.parseUnits(amountUSD.toString(), Blockchains[blockchain].currency.decimals)
 
       path = [tokenIn, Blockchains[blockchain].stables.usd[0], Blockchains[blockchain].wrapped.address, tokenOut]
 
-      mockDecimals({ provider, blockchain, address: Blockchains[blockchain].stables.usd[0], value: CONSTANTS[blockchain].DECIMALS })
-      mockPair({ provider, tokenIn, tokenOut, pair: Blockchains[blockchain].zero })
-      mockPair({ provider, tokenIn, tokenOut: Blockchains[blockchain].wrapped.address, pair: Blockchains[blockchain].zero })
-      mockPair({ provider, tokenIn, tokenOut: Blockchains[blockchain].stables.usd[0], pair: '0xef8cd6cb5c841a4f02986e8a8ab3cc545d1b8b6d' })
-      mockPair({ provider, tokenIn: Blockchains[blockchain].wrapped.address, tokenOut , pair: '0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852' })
-      mockAmounts({ provider, method: 'getAmountsIn', params: [amountOutMinBN, path], amounts: [fetchedAmountInBN, amountUSDBN, amountWRAPPEDBN, amountOutMinBN] })
+      mockDecimals({ provider, blockchain, address: Blockchains[blockchain].stables.usd[0], value: Blockchains[blockchain].currency.decimals })
+      mockPair({ blockchain, exchange, provider, tokenIn, tokenOut, pair: Blockchains[blockchain].zero })
+      mockPair({ blockchain, exchange, provider, tokenIn, tokenOut: Blockchains[blockchain].wrapped.address, pair: Blockchains[blockchain].zero })
+      Blockchains[blockchain].stables.usd.forEach((stable)=>{
+        if(stable != Blockchains[blockchain].stables.usd[0]) {
+          mockPair({ blockchain, exchange, provider, tokenIn, tokenOut: stable, pair: Blockchains[blockchain].zero })
+        }
+      })
+      mockPair({ blockchain, exchange, provider, tokenIn, tokenOut: Blockchains[blockchain].stables.usd[0], pair: '0xef8cd6cb5c841a4f02986e8a8ab3cc545d1b8b6d' })
+      mockPair({ blockchain, exchange, provider, tokenIn: Blockchains[blockchain].wrapped.address, tokenOut , pair: '0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852' })
+      mockAmounts({ blockchain, exchange, provider, method: 'getAmountsIn', params: [amountOutMinBN, path], amounts: [fetchedAmountInBN, amountUSDBN, amountWRAPPEDBN, amountOutMinBN] })
 
       await testRouting({
         blockchain,
@@ -477,19 +484,27 @@ describe('wagyuswap', () => {
       let fetchedAmountInBN = ethers.utils.parseUnits(fetchedAmountIn.toString(), decimalsIn)
       let slippage = ethers.BigNumber.from('160000000000000000')
       let amountWRAPPED = 0.1
-      let amountWRAPPEDBN = ethers.utils.parseUnits(amountWRAPPED.toString(), CONSTANTS[blockchain].DECIMALS)
+      let amountWRAPPEDBN = ethers.utils.parseUnits(amountWRAPPED.toString(), Blockchains[blockchain].currency.decimals)
       let amountUSD = 420
-      let amountUSDBN = ethers.utils.parseUnits(amountUSD.toString(), CONSTANTS[blockchain].DECIMALS)
+      let amountUSDBN = ethers.utils.parseUnits(amountUSD.toString(), Blockchains[blockchain].currency.decimals)
 
       path = [tokenIn, Blockchains[blockchain].wrapped.address, Blockchains[blockchain].stables.usd[0], tokenOut]
 
-      mockDecimals({ provider, blockchain, address: Blockchains[blockchain].stables.usd[0], value: CONSTANTS[blockchain].DECIMALS })
-      mockPair({ provider, tokenIn, tokenOut, pair: Blockchains[blockchain].zero })
-      mockPair({ provider, tokenIn, tokenOut: Blockchains[blockchain].stables.usd[0], pair: Blockchains[blockchain].zero })
-      mockPair({ provider, tokenIn, tokenOut: Blockchains[blockchain].wrapped.address, pair: '0xef8cd6cb5c841a4f02986e8a8ab3cc545d1b8b6d' })
-      mockPair({ provider, tokenIn: tokenOut, tokenOut: Blockchains[blockchain].wrapped.address, pair: Blockchains[blockchain].zero })
-      mockPair({ provider, tokenIn: Blockchains[blockchain].stables.usd[0], tokenOut, pair: '0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852' })
-      mockAmounts({ provider, method: 'getAmountsIn', params: [amountOutMinBN, path], amounts: [fetchedAmountInBN, amountWRAPPEDBN, amountUSDBN, amountOutMinBN] })
+      mockDecimals({ provider, blockchain, address: Blockchains[blockchain].stables.usd[0], value: Blockchains[blockchain].currency.decimals })
+      mockPair({ blockchain, exchange, provider, tokenIn, tokenOut, pair: Blockchains[blockchain].zero })
+      mockPair({ blockchain, exchange, provider, tokenIn, tokenOut: Blockchains[blockchain].stables.usd[0], pair: Blockchains[blockchain].zero })
+      mockPair({ blockchain, exchange, provider, tokenIn, tokenOut: Blockchains[blockchain].wrapped.address, pair: '0xef8cd6cb5c841a4f02986e8a8ab3cc545d1b8b6d' })
+      mockPair({ blockchain, exchange, provider, tokenIn: tokenOut, tokenOut: Blockchains[blockchain].wrapped.address, pair: Blockchains[blockchain].zero })
+      Blockchains[blockchain].stables.usd.forEach((stable)=>{
+          mockPair({ blockchain, exchange, provider, tokenIn, tokenOut: stable, pair: Blockchains[blockchain].zero })
+      })
+      Blockchains[blockchain].stables.usd.forEach((stable)=>{
+        if(stable != Blockchains[blockchain].stables.usd[0]) {
+          mockPair({ blockchain, exchange, provider, tokenIn: stable, tokenOut, pair: Blockchains[blockchain].zero })
+        }
+      })
+      mockPair({ blockchain, exchange, provider, tokenIn: Blockchains[blockchain].stables.usd[0], tokenOut, pair: '0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852' })
+      mockAmounts({ blockchain, exchange, provider, method: 'getAmountsIn', params: [amountOutMinBN, path], amounts: [fetchedAmountInBN, amountWRAPPEDBN, amountUSDBN, amountOutMinBN] })
 
       await testRouting({
         blockchain,
@@ -520,8 +535,8 @@ describe('wagyuswap', () => {
 
   describe('route BNB to token', ()=>{
 
-    let tokenIn = CONSTANTS[blockchain].NATIVE
-    let decimalsIn = CONSTANTS[blockchain].DECIMALS
+    let tokenIn = Blockchains[blockchain].currency.address
+    let decimalsIn = Blockchains[blockchain].currency.decimals
     let tokenOut = '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56'
     let decimalsOut = 18
     let path = [tokenIn, Blockchains[blockchain].wrapped.address, tokenOut]
@@ -534,8 +549,8 @@ describe('wagyuswap', () => {
       let fetchedAmountInBN = ethers.utils.parseUnits(fetchedAmountIn.toString(), decimalsIn)
       let slippage = ethers.BigNumber.from('215000000000000000')
 
-      mockPair({ provider, tokenIn: Blockchains[blockchain].wrapped.address, tokenOut, pair })
-      mockAmounts({ method: 'getAmountsIn', params: [amountOutBN,[Blockchains[blockchain].wrapped.address,tokenOut]], amounts: [fetchedAmountInBN, amountOutBN] })
+      mockPair({ blockchain, exchange, provider, tokenIn: Blockchains[blockchain].wrapped.address, tokenOut, pair })
+      mockAmounts({ blockchain, exchange, method: 'getAmountsIn', params: [amountOutBN,[Blockchains[blockchain].wrapped.address,tokenOut]], amounts: [fetchedAmountInBN, amountOutBN] })
 
       await testRouting({
         blockchain,
@@ -571,8 +586,8 @@ describe('wagyuswap', () => {
       let fetchedAmountOutBN = ethers.utils.parseUnits(fetchedAmountOut.toString(), decimalsOut)
       let path = [tokenIn, Blockchains[blockchain].wrapped.address, tokenOut]
 
-      mockPair({ provider, tokenIn: Blockchains[blockchain].wrapped.address, tokenOut, pair })
-      mockAmounts({ method: 'getAmountsOut', params: [amountInBN,[Blockchains[blockchain].wrapped.address,tokenOut]], amounts: [amountInBN, fetchedAmountOutBN] })
+      mockPair({ blockchain, exchange, provider, tokenIn: Blockchains[blockchain].wrapped.address, tokenOut, pair })
+      mockAmounts({ blockchain, exchange, method: 'getAmountsOut', params: [amountInBN,[Blockchains[blockchain].wrapped.address,tokenOut]], amounts: [amountInBN, fetchedAmountOutBN] })
 
       await testRouting({
         blockchain,
@@ -609,8 +624,8 @@ describe('wagyuswap', () => {
       let slippage = ethers.BigNumber.from('160000000000000000')
       let path = [tokenIn, Blockchains[blockchain].wrapped.address, tokenOut]
 
-      mockPair({ provider, tokenIn: Blockchains[blockchain].wrapped.address, tokenOut, pair })
-      mockAmounts({ method: 'getAmountsIn', params: [amountOutBN,[Blockchains[blockchain].wrapped.address,tokenOut]], amounts: [amountInMaxBN, amountOutBN] })
+      mockPair({ blockchain, exchange, provider, tokenIn: Blockchains[blockchain].wrapped.address, tokenOut, pair })
+      mockAmounts({ blockchain, exchange, method: 'getAmountsIn', params: [amountOutBN,[Blockchains[blockchain].wrapped.address,tokenOut]], amounts: [amountInMaxBN, amountOutBN] })
 
       await testRouting({
         blockchain,
@@ -646,8 +661,8 @@ describe('wagyuswap', () => {
       let slippage = ethers.BigNumber.from('160000000000000000')
       let path = [tokenIn, Blockchains[blockchain].wrapped.address, tokenOut]
 
-      mockPair({ provider, tokenIn: Blockchains[blockchain].wrapped.address, tokenOut, pair })
-      mockAmounts({ method: 'getAmountsIn', params: [amountOutMinBN, [Blockchains[blockchain].wrapped.address,tokenOut]], amounts: [fetchedAmountInBN, amountOutMinBN] })
+      mockPair({ blockchain, exchange, provider, tokenIn: Blockchains[blockchain].wrapped.address, tokenOut, pair })
+      mockAmounts({ blockchain, exchange, method: 'getAmountsIn', params: [amountOutMinBN, [Blockchains[blockchain].wrapped.address,tokenOut]], amounts: [fetchedAmountInBN, amountOutMinBN] })
 
       await testRouting({
         blockchain,
@@ -680,8 +695,8 @@ describe('wagyuswap', () => {
 
     let tokenIn = '0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82'
     let decimalsIn = 18
-    let tokenOut = CONSTANTS[blockchain].NATIVE
-    let decimalsOut = CONSTANTS[blockchain].DECIMALS
+    let tokenOut = Blockchains[blockchain].currency.address
+    let decimalsOut = Blockchains[blockchain].currency.decimals
     let path = [tokenIn, Blockchains[blockchain].wrapped.address, tokenOut]
 
     it('routes a token to BNB swap for given amountOut without given amountInMax on wagyuswap', async ()=> {
@@ -692,8 +707,8 @@ describe('wagyuswap', () => {
       let fetchedAmountInBN = ethers.utils.parseUnits(fetchedAmountIn.toString(), decimalsIn)
       let slippage = ethers.BigNumber.from('215000000000000000')
 
-      mockPair({ provider, tokenIn, tokenOut: Blockchains[blockchain].wrapped.address, pair })
-      mockAmounts({ method: 'getAmountsIn', params: [amountOutBN,[tokenIn, Blockchains[blockchain].wrapped.address]], amounts: [fetchedAmountInBN, amountOutBN] })
+      mockPair({ blockchain, exchange, provider, tokenIn, tokenOut: Blockchains[blockchain].wrapped.address, pair })
+      mockAmounts({ blockchain, exchange, method: 'getAmountsIn', params: [amountOutBN,[tokenIn, Blockchains[blockchain].wrapped.address]], amounts: [fetchedAmountInBN, amountOutBN] })
 
       await testRouting({
         blockchain,
@@ -729,8 +744,8 @@ describe('wagyuswap', () => {
       let fetchedAmountOutBN = ethers.utils.parseUnits(fetchedAmountOut.toString(), decimalsOut)
       let path = [tokenIn, Blockchains[blockchain].wrapped.address, tokenOut]
 
-      mockPair({ provider, tokenIn, tokenOut: Blockchains[blockchain].wrapped.address, pair })
-      mockAmounts({ method: 'getAmountsOut', params: [amountInBN,[tokenIn, Blockchains[blockchain].wrapped.address]], amounts: [amountInBN, fetchedAmountOutBN] })
+      mockPair({ blockchain, exchange, provider, tokenIn, tokenOut: Blockchains[blockchain].wrapped.address, pair })
+      mockAmounts({ blockchain, exchange, method: 'getAmountsOut', params: [amountInBN,[tokenIn, Blockchains[blockchain].wrapped.address]], amounts: [amountInBN, fetchedAmountOutBN] })
 
       await testRouting({
         blockchain,
@@ -767,8 +782,8 @@ describe('wagyuswap', () => {
       let slippage = ethers.BigNumber.from('160000000000000000')
       let path = [tokenIn, Blockchains[blockchain].wrapped.address, tokenOut]
 
-      mockPair({ provider, tokenIn, tokenOut: Blockchains[blockchain].wrapped.address, pair })
-      mockAmounts({ method: 'getAmountsIn', params: [amountOutBN,[tokenIn, Blockchains[blockchain].wrapped.address]], amounts: [amountInMaxBN, amountOutBN] })
+      mockPair({ blockchain, exchange, provider, tokenIn, tokenOut: Blockchains[blockchain].wrapped.address, pair })
+      mockAmounts({ blockchain, exchange, method: 'getAmountsIn', params: [amountOutBN,[tokenIn, Blockchains[blockchain].wrapped.address]], amounts: [amountInMaxBN, amountOutBN] })
 
       await testRouting({
         blockchain,
@@ -804,8 +819,8 @@ describe('wagyuswap', () => {
       let slippage = ethers.BigNumber.from('160000000000000000')
       let path = [tokenIn, Blockchains[blockchain].wrapped.address, tokenOut]
 
-      mockPair({ provider, tokenIn, tokenOut: Blockchains[blockchain].wrapped.address, pair })
-      mockAmounts({ method: 'getAmountsIn', params: [amountOutMinBN, [tokenIn, Blockchains[blockchain].wrapped.address]], amounts: [fetchedAmountInBN, amountOutMinBN] })
+      mockPair({ blockchain, exchange, provider, tokenIn, tokenOut: Blockchains[blockchain].wrapped.address, pair })
+      mockAmounts({ blockchain, exchange, method: 'getAmountsIn', params: [amountOutMinBN, [tokenIn, Blockchains[blockchain].wrapped.address]], amounts: [fetchedAmountInBN, amountOutMinBN] })
 
       await testRouting({
         blockchain,

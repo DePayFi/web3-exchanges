@@ -45,10 +45,11 @@ function mockPair({ blockchain, exchange, provider, tokenIn, tokenOut, pair }) {
   })
 }
 
-function mockAmounts({ blockchain, exchange, provider, method, params, amounts }){
+function mockAmounts({ blockchain, exchange, block, provider, method, params, amounts }){
   return mock({
     provider,
     blockchain,
+    block,
     request: {
       to: exchange.router.address,
       api: exchange.router.api,

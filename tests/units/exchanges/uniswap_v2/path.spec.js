@@ -2,7 +2,7 @@ import Blockchains from '@depay/web3-blockchains'
 import { find } from 'src'
 import { mock, resetMocks } from '@depay/web3-mock'
 import { mockDecimals } from 'tests/mocks/token'
-import { mockPair } from 'tests/mocks/uniswap_v2'
+import { mockPair } from 'tests/mocks/evm/exchange'
 import { getProvider, resetCache } from '@depay/web3-client'
 import { Token } from '@depay/web3-tokens'
 
@@ -25,9 +25,9 @@ describe('uniswap_v2', () => {
     it('does not route through USD->USD->WRAPPED->TOKENB', async()=>{
       let tokenIn = Blockchains[blockchain].stables.usd[0]
       let tokenOut = '0x1f9840a85d5af5bf1d1762f925bdaddc4201f984' // UNI
-      mockPair({ provider, tokenIn, tokenOut, pair: Blockchains[blockchain].zero })
-      mockPair({ provider, tokenIn, tokenOut: Blockchains[blockchain].wrapped.address, pair: Blockchains[blockchain].zero })
-      let USDtoUSDMock = mockPair({ provider, tokenIn: Blockchains[blockchain].stables.usd[0], tokenOut: Blockchains[blockchain].stables.usd[0], pair: Blockchains[blockchain].zero })
+      mockPair({ blockchain, exchange, provider, tokenIn, tokenOut, pair: Blockchains[blockchain].zero })
+      mockPair({ blockchain, exchange, provider, tokenIn, tokenOut: Blockchains[blockchain].wrapped.address, pair: Blockchains[blockchain].zero })
+      let USDtoUSDMock = mockPair({ blockchain, exchange, provider, tokenIn: Blockchains[blockchain].stables.usd[0], tokenOut: Blockchains[blockchain].stables.usd[0], pair: Blockchains[blockchain].zero })
       let { path } = await exchange.findPath({ tokenIn, tokenOut })
       expect(USDtoUSDMock.calls.count()).toEqual(0)
       expect(path).toEqual(undefined)
@@ -36,10 +36,13 @@ describe('uniswap_v2', () => {
     it('does not route through TOKENA->WRAPPED->USD->USD', async()=>{
       let tokenIn = '0x1f9840a85d5af5bf1d1762f925bdaddc4201f984' // UNI
       let tokenOut = Blockchains[blockchain].stables.usd[0]
-      mockPair({ provider, tokenIn, tokenOut, pair: Blockchains[blockchain].zero })
-      mockPair({ provider, tokenIn: Blockchains[blockchain].stables.usd[0], tokenOut: Blockchains[blockchain].wrapped.address, pair: Blockchains[blockchain].zero })
-      mockPair({ provider, tokenIn, tokenOut: Blockchains[blockchain].wrapped.address, pair: '0x0ed7e52944161450477ee417de9cd3a859b14fd0' })
-      let USDtoUSDMock = mockPair({ provider, tokenIn: Blockchains[blockchain].stables.usd[0], tokenOut: Blockchains[blockchain].stables.usd[0], pair: Blockchains[blockchain].zero })
+      mockPair({ blockchain, exchange, provider, tokenIn, tokenOut, pair: Blockchains[blockchain].zero })
+      mockPair({ blockchain, exchange, provider, tokenIn: Blockchains[blockchain].stables.usd[0], tokenOut: Blockchains[blockchain].wrapped.address, pair: Blockchains[blockchain].zero })
+      mockPair({ blockchain, exchange, provider, tokenIn, tokenOut: Blockchains[blockchain].wrapped.address, pair: '0x0ed7e52944161450477ee417de9cd3a859b14fd0' })
+      Blockchains[blockchain].stables.usd.forEach((stable)=>{
+        mockPair({ blockchain, exchange, blockchain, exchange, provider, tokenIn, tokenOut: stable , pair: Blockchains[blockchain].zero })
+      })
+      let USDtoUSDMock = mockPair({ blockchain, exchange, provider, tokenIn: Blockchains[blockchain].stables.usd[0], tokenOut: Blockchains[blockchain].stables.usd[0], pair: Blockchains[blockchain].zero })
       let { path } = await exchange.findPath({ tokenIn, tokenOut })
       expect(USDtoUSDMock.calls.count()).toEqual(0)
       expect(path).toEqual(undefined)
@@ -48,10 +51,13 @@ describe('uniswap_v2', () => {
     it('does not route through TOKENA->USD->WRAPPED->WRAPPED', async()=>{
       let tokenIn = '0x1f9840a85d5af5bf1d1762f925bdaddc4201f984' // UNI
       let tokenOut = Blockchains[blockchain].wrapped.address
-      mockPair({ provider, tokenIn, tokenOut, pair: Blockchains[blockchain].zero })
-      mockPair({ provider, tokenIn, tokenOut: Blockchains[blockchain].stables.usd[0], pair: '0x804678fa97d91b974ec2af3c843270886528a9e6' })
+      mockPair({ blockchain, exchange, provider, tokenIn, tokenOut, pair: Blockchains[blockchain].zero })
+      mockPair({ blockchain, exchange, provider, tokenIn, tokenOut: Blockchains[blockchain].stables.usd[0], pair: '0x804678fa97d91b974ec2af3c843270886528a9e6' })
       mockDecimals({ provider, blockchain, address: Blockchains[blockchain].stables.usd[0], value: 18 })
-      let WRAPPEDtoWRAPPEDMock = mockPair({ provider, tokenIn: Blockchains[blockchain].wrapped.address, tokenOut: Blockchains[blockchain].wrapped.address, pair: Blockchains[blockchain].zero })
+      Blockchains[blockchain].stables.usd.forEach((stable)=>{
+        mockPair({ blockchain, exchange, blockchain, exchange, provider, tokenIn, tokenOut: stable , pair: Blockchains[blockchain].zero })
+      })
+      let WRAPPEDtoWRAPPEDMock = mockPair({ blockchain, exchange, provider, tokenIn: Blockchains[blockchain].wrapped.address, tokenOut: Blockchains[blockchain].wrapped.address, pair: Blockchains[blockchain].zero })
       let { path } = await exchange.findPath({ tokenIn, tokenOut })
       expect(WRAPPEDtoWRAPPEDMock.calls.count()).toEqual(0)
       expect(path).toEqual(undefined)
@@ -60,10 +66,13 @@ describe('uniswap_v2', () => {
     it('does not route through WRAPPED->WRAPPED->USD->TOKENB', async()=>{
       let tokenIn = Blockchains[blockchain].wrapped.address
       let tokenOut = '0x1f9840a85d5af5bf1d1762f925bdaddc4201f984' // UNI
-      mockPair({ provider, tokenIn, tokenOut, pair: Blockchains[blockchain].zero })
-      mockPair({ provider, tokenIn, tokenOut: Blockchains[blockchain].stables.usd[0], pair: '0x58f876857a02d6762e0101bb5c46a8c1ed44dc16' })
+      mockPair({ blockchain, exchange, provider, tokenIn, tokenOut, pair: Blockchains[blockchain].zero })
+      mockPair({ blockchain, exchange, provider, tokenIn, tokenOut: Blockchains[blockchain].stables.usd[0], pair: '0x58f876857a02d6762e0101bb5c46a8c1ed44dc16' })
       mockDecimals({ provider, blockchain, address: Blockchains[blockchain].stables.usd[0], value: 18 })
-      let WRAPPEDtoWRAPPEDMock = mockPair({ provider, tokenIn: Blockchains[blockchain].wrapped.address, tokenOut: Blockchains[blockchain].wrapped.address, pair: Blockchains[blockchain].zero })
+      Blockchains[blockchain].stables.usd.forEach((stable)=>{
+        mockPair({ blockchain, exchange, blockchain, exchange, provider, tokenIn, tokenOut: stable , pair: Blockchains[blockchain].zero })
+      })
+      let WRAPPEDtoWRAPPEDMock = mockPair({ blockchain, exchange, provider, tokenIn: Blockchains[blockchain].wrapped.address, tokenOut: Blockchains[blockchain].wrapped.address, pair: Blockchains[blockchain].zero })
       let { path } = await exchange.findPath({ tokenIn, tokenOut })
       expect(WRAPPEDtoWRAPPEDMock.calls.count()).toEqual(0)
       expect(path).toEqual(undefined)

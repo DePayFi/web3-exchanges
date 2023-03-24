@@ -31,7 +31,7 @@ describe('raydium', () => {
     })
 
     it('does route SOL via WSOL', async()=>{
-      let tokenIn = CONSTANTS[blockchain].NATIVE
+      let tokenIn = Blockchains[blockchain].currency.address
       let tokenOut = Blockchains[blockchain].stables.usd[0]
 
       mockPair({ tokenIn: Blockchains[blockchain].wrapped.address, tokenOut, pair: 'BcjFnHHzJ6Y1XzLcm3nfr6tP7TGHGh15bLZazP5dAy9p' })

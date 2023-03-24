@@ -2,7 +2,7 @@ import { ethers } from 'ethers'
 import { find } from 'dist/esm/index.evm'
 import { mock, resetMocks, increaseBlock } from '@depay/web3-mock'
 import { mockDecimals } from 'tests/mocks/token'
-import { mockPair, mockAmounts } from 'tests/mocks/uniswap_v2'
+import { mockPair, mockAmounts } from 'tests/mocks/evm/exchange'
 import { resetCache, getProvider } from '@depay/web3-client-evm'
 
 describe('slippage', () => {
@@ -35,11 +35,11 @@ describe('slippage', () => {
 
     beforeEach(()=>{
       mockDecimals({ provider, blockchain, address: tokenIn, value: 18 })
-      mockPair({ provider, tokenIn, tokenOut, pair })
-      mockAmounts({ provider, method: 'getAmountsIn', params: [amountOutBN, path], amounts: [amountInBN, amountOutBN] })
-      mockAmounts({ block: currentBlock, provider, method: 'getAmountsIn', params: [amountOutBN, path], amounts: [amountInBN, amountOutBN] })
-      mockAmounts({ block: currentBlock-1, provider, method: 'getAmountsIn', params: [amountOutBN, path], amounts: [amountInBN, amountOutBN] })
-      mockAmounts({ block: currentBlock-2, provider, method: 'getAmountsIn', params: [amountOutBN, path], amounts: [amountInBN, amountOutBN] })
+      mockPair({ blockchain, exchange, provider, tokenIn, tokenOut, pair })
+      mockAmounts({ blockchain, exchange, provider, method: 'getAmountsIn', params: [amountOutBN, path], amounts: [amountInBN, amountOutBN] })
+      mockAmounts({ blockchain, exchange, block: currentBlock, provider, method: 'getAmountsIn', params: [amountOutBN, path], amounts: [amountInBN, amountOutBN] })
+      mockAmounts({ blockchain, exchange, block: currentBlock-1, provider, method: 'getAmountsIn', params: [amountOutBN, path], amounts: [amountInBN, amountOutBN] })
+      mockAmounts({ blockchain, exchange, block: currentBlock-2, provider, method: 'getAmountsIn', params: [amountOutBN, path], amounts: [amountInBN, amountOutBN] })
     })
 
     it('uses default slippage of 0.5%', async ()=> {
@@ -53,11 +53,11 @@ describe('slippage', () => {
 
     beforeEach(()=>{
       mockDecimals({ provider, blockchain, address: tokenIn, value: 18 })
-      mockPair({ provider, tokenIn, tokenOut, pair })
-      mockAmounts({ provider, method: 'getAmountsIn', params: [amountOutBN, path], amounts: [amountInBN, amountOutBN] })
-      mockAmounts({ block: currentBlock, provider, method: 'getAmountsIn', params: [amountOutBN, path], amounts: [amountInBN.add('50000000000000000'), amountOutBN] })
-      mockAmounts({ block: currentBlock-1, provider, method: 'getAmountsIn', params: [amountOutBN, path], amounts: [amountInBN.add('40000000000000000'), amountOutBN] })
-      mockAmounts({ block: currentBlock-2, provider, method: 'getAmountsIn', params: [amountOutBN, path], amounts: [amountInBN.add('30000000000000000'), amountOutBN] })
+      mockPair({ blockchain, exchange, provider, tokenIn, tokenOut, pair })
+      mockAmounts({ blockchain, exchange, provider, method: 'getAmountsIn', params: [amountOutBN, path], amounts: [amountInBN, amountOutBN] })
+      mockAmounts({ blockchain, exchange, block: currentBlock, provider, method: 'getAmountsIn', params: [amountOutBN, path], amounts: [amountInBN.add('50000000000000000'), amountOutBN] })
+      mockAmounts({ blockchain, exchange, block: currentBlock-1, provider, method: 'getAmountsIn', params: [amountOutBN, path], amounts: [amountInBN.add('40000000000000000'), amountOutBN] })
+      mockAmounts({ blockchain, exchange, block: currentBlock-2, provider, method: 'getAmountsIn', params: [amountOutBN, path], amounts: [amountInBN.add('30000000000000000'), amountOutBN] })
     })
 
     it('projects price change to cover slippage', async ()=>{
@@ -71,11 +71,11 @@ describe('slippage', () => {
 
     beforeEach(()=>{
       mockDecimals({ provider, blockchain, address: tokenIn, value: 18 })
-      mockPair({ provider, tokenIn, tokenOut, pair })
-      mockAmounts({ provider, method: 'getAmountsIn', params: [amountOutBN, path], amounts: [amountInBN, amountOutBN] })
-      mockAmounts({ block: currentBlock, provider, method: 'getAmountsIn', params: [amountOutBN, path], amounts: [amountInBN, amountOutBN] })
-      mockAmounts({ block: currentBlock-1, provider, method: 'getAmountsIn', params: [amountOutBN, path], amounts: [amountInBN.add('40000000000000000'), amountOutBN] })
-      mockAmounts({ block: currentBlock-2, provider, method: 'getAmountsIn', params: [amountOutBN, path], amounts: [amountInBN.sub('40000000000000000'), amountOutBN] })
+      mockPair({ blockchain, exchange, provider, tokenIn, tokenOut, pair })
+      mockAmounts({ blockchain, exchange, provider, method: 'getAmountsIn', params: [amountOutBN, path], amounts: [amountInBN, amountOutBN] })
+      mockAmounts({ blockchain, exchange, block: currentBlock, provider, method: 'getAmountsIn', params: [amountOutBN, path], amounts: [amountInBN, amountOutBN] })
+      mockAmounts({ blockchain, exchange, block: currentBlock-1, provider, method: 'getAmountsIn', params: [amountOutBN, path], amounts: [amountInBN.add('40000000000000000'), amountOutBN] })
+      mockAmounts({ blockchain, exchange, block: currentBlock-2, provider, method: 'getAmountsIn', params: [amountOutBN, path], amounts: [amountInBN.sub('40000000000000000'), amountOutBN] })
     })
 
     it('projects extreme volatility to cover slippage', async ()=>{

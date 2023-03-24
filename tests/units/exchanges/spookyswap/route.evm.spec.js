@@ -1,18 +1,18 @@
 import Route from 'src/classes/Route'
 import Blockchains from '@depay/web3-blockchains'
 import { ethers } from 'ethers'
-import { find } from 'src'
+import { find } from 'dist/esm/index.evm'
 import { mock, resetMocks, anything } from '@depay/web3-mock'
 import { mockDecimals } from 'tests/mocks/token'
 import { mockPair, mockAmounts } from 'tests/mocks/evm/exchange'
-import { resetCache, getProvider } from '@depay/web3-client'
+import { resetCache, getProvider } from '@depay/web3-client-evm'
 import { testRouting } from 'tests/helpers/testRouting'
 
-describe('pancakeswap', () => {
+describe('spookyswap', () => {
   
-  const blockchain = 'bsc'
+  const blockchain = 'fantom'
   const accounts = ['0xd8da6bf26964af9d7eed9e03e53415d37aa96045']
-  const exchange = find('bsc', 'pancakeswap')
+  const exchange = find('fantom', 'spookyswap')
   const pair = '0x804678fa97d91B974ec2af3c843270886528a9E6'
   const fromAddress = '0x5Af489c8786A018EC4814194dC8048be1007e390'
   const toAddress = '0x5Af489c8786A018EC4814194dC8048be1007e390'
@@ -27,7 +27,7 @@ describe('pancakeswap', () => {
 
   describe('basic routing', ()=>{
 
-    it('does not try to find a route from and to the same token, as that doesnt make any sense on pancakeswap', async ()=> {
+    it('does not try to find a route from and to the same token, as that doesnt make any sense on spookyswap', async ()=> {
 
       mock(blockchain)
 
@@ -47,7 +47,7 @@ describe('pancakeswap', () => {
       expect(route).toEqual(undefined)
     })
 
-    it('returns undefined and does not fail or reject in case an error happens during the routing on pancakeswap', async ()=> {
+    it('returns undefined and does not fail or reject in case an error happens during the routing on spookyswap', async ()=> {
 
       mock(blockchain)
 
@@ -97,7 +97,7 @@ describe('pancakeswap', () => {
     let decimalsOut = 18
     let path = [tokenIn, tokenOut]
 
-    it('routes a token to token swap for given amountOut without given amountInMax on pancakeswap', async ()=> {
+    it('routes a token to token swap for given amountOut without given amountInMax on spookyswap', async ()=> {
 
       let amountOut = 1
       let amountOutBN = ethers.utils.parseUnits(amountOut.toString(), decimalsOut)
@@ -171,7 +171,7 @@ describe('pancakeswap', () => {
       })
     });
 
-    it('routes a token to token swap for given amountOutMin without given amountIn on pancakeswap', async ()=> {
+    it('routes a token to token swap for given amountOutMin without given amountIn on spookyswap', async ()=> {
       let amountOutMin = 1
       let amountOutMinBN = ethers.utils.parseUnits(amountOutMin.toString(), decimalsOut)
       let fetchedAmountIn = 43
@@ -207,7 +207,7 @@ describe('pancakeswap', () => {
       })
     });
 
-    it('routes a token to token swap for given amountIn on pancakeswap', async ()=> {
+    it('routes a token to token swap for given amountIn on spookyswap', async ()=> {
 
       let amountIn = 1
       let amountInBN = ethers.utils.parseUnits(amountIn.toString(), decimalsIn)
@@ -244,7 +244,7 @@ describe('pancakeswap', () => {
       })
     });
 
-    it('routes a token to token swap for given amountInMax without given amountOut on pancakeswap', async ()=> {
+    it('routes a token to token swap for given amountInMax without given amountOut on spookyswap', async ()=> {
 
       let amountInMax = 1
       let amountInMaxBN = ethers.utils.parseUnits(amountInMax.toString(), decimalsIn)
@@ -281,7 +281,7 @@ describe('pancakeswap', () => {
       })
     });
 
-    it('routes a token to token swap for given amountOut on pancakeswap', async ()=> {
+    it('routes a token to token swap for given amountOut on spookyswap', async ()=> {
 
       let amountOut = 1
       let amountOutBN = ethers.utils.parseUnits(amountOut.toString(), decimalsOut)
@@ -319,7 +319,7 @@ describe('pancakeswap', () => {
       })
     });
 
-    it('routes a token to token swap for given amountOutMin on pancakeswap', async ()=> {
+    it('routes a token to token swap for given amountOutMin on spookyswap', async ()=> {
       let amountOutMin = 1
       let amountOutMinBN = ethers.utils.parseUnits(amountOutMin.toString(), decimalsOut)
       let fetchedAmountIn = 32
@@ -356,7 +356,7 @@ describe('pancakeswap', () => {
       })
     });
 
-    it('routes a token to token swap on pancakeswap also if the routing path is via another token A->B->C', async ()=> {
+    it('routes a token to token swap on spookyswap also if the routing path is via another token A->B->C', async ()=> {
       let amountOutMin = 1
       let amountOutMinBN = ethers.utils.parseUnits(amountOutMin.toString(), decimalsOut)
       let fetchedAmountIn = 32
@@ -541,7 +541,7 @@ describe('pancakeswap', () => {
     let decimalsOut = 18
     let path = [tokenIn, Blockchains[blockchain].wrapped.address, tokenOut]
 
-    it('routes a BNB to token swap for given amountOut on pancakeswap', async ()=> {
+    it('routes a BNB to token swap for given amountOut on spookyswap', async ()=> {
 
       let amountOut = 1
       let amountOutBN = ethers.utils.parseUnits(amountOut.toString(), decimalsOut)
@@ -578,7 +578,7 @@ describe('pancakeswap', () => {
       })
     });
 
-    it('routes a BNB to token swap for given amountIn on pancakeswap', async ()=> {
+    it('routes a BNB to token swap for given amountIn on spookyswap', async ()=> {
 
       let amountIn = 1
       let amountInBN = ethers.utils.parseUnits(amountIn.toString(), decimalsIn)
@@ -615,7 +615,7 @@ describe('pancakeswap', () => {
       })
     });
 
-    it('routes a BNB to token swap for given amountOut on pancakeswap', async ()=> {
+    it('routes a BNB to token swap for given amountOut on spookyswap', async ()=> {
 
       let amountOut = 1
       let amountOutBN = ethers.utils.parseUnits(amountOut.toString(), decimalsOut)
@@ -653,7 +653,7 @@ describe('pancakeswap', () => {
       })
     });
 
-    it('routes a BNB to token swap for given amountOutMin on pancakeswap', async ()=> {
+    it('routes a BNB to token swap for given amountOutMin on spookyswap', async ()=> {
       let amountOutMin = 1
       let amountOutMinBN = ethers.utils.parseUnits(amountOutMin.toString(), decimalsOut)
       let fetchedAmountIn = 32
@@ -699,7 +699,7 @@ describe('pancakeswap', () => {
     let decimalsOut = Blockchains[blockchain].currency.decimals
     let path = [tokenIn, Blockchains[blockchain].wrapped.address, tokenOut]
 
-    it('routes a token to BNB swap for given amountOut without given amountInMax on pancakeswap', async ()=> {
+    it('routes a token to BNB swap for given amountOut without given amountInMax on spookyswap', async ()=> {
 
       let amountOut = 1
       let amountOutBN = ethers.utils.parseUnits(amountOut.toString(), decimalsOut)
@@ -736,7 +736,7 @@ describe('pancakeswap', () => {
       })
     });
 
-    it('routes a token to BNB swap for given amountIn on pancakeswap', async ()=> {
+    it('routes a token to BNB swap for given amountIn on spookyswap', async ()=> {
 
       let amountIn = 1
       let amountInBN = ethers.utils.parseUnits(amountIn.toString(), decimalsIn)
@@ -773,7 +773,7 @@ describe('pancakeswap', () => {
       })
     });
 
-    it('routes a token to BNB swap for given amountOut on pancakeswap', async ()=> {
+    it('routes a token to BNB swap for given amountOut on spookyswap', async ()=> {
 
       let amountOut = 1
       let amountOutBN = ethers.utils.parseUnits(amountOut.toString(), decimalsOut)
@@ -811,7 +811,7 @@ describe('pancakeswap', () => {
       })
     });
 
-    it('routes a token to BNB swap for given amountIn and amountOutMin on pancakeswap', async ()=> {
+    it('routes a token to BNB swap for given amountIn and amountOutMin on spookyswap', async ()=> {
       let amountOutMin = 1
       let amountOutMinBN = ethers.utils.parseUnits(amountOutMin.toString(), decimalsOut)
       let fetchedAmountIn = 32
