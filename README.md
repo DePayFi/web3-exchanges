@@ -58,6 +58,7 @@ This library supports the following blockchains:
 - [BNB Smart Chain](https://www.binance.org/smartChain)
 - [Polygon](https://polygon.technology)
 - [Solana](https://solana.com)
+- [Fantom](https://fantom.foundation)
 - [Velas](https://velas.com)
 
 This library supports the following decentralized exchanges:
@@ -77,6 +78,10 @@ Polygon:
 Solana:
 - [Raydium](https://raydium.io)
 
+Fantom:
+- [SpookySwap](https://spookyswap.fi)
+- [WFTM](https://ftmscan.com/token/0x21be370d5312f44cb42ce377bc9b8a0cef1a4c83)
+
 Velas:
 - [WagyuSwap](https://www.wagyuswap.app)
 - [WVLX](https://velascan.org/address/0xc579d1f3cf86749e05cd06f7ade17856c2ce3126)
@@ -85,8 +90,16 @@ Velas:
 
 In case you want to use and package only specific platforms, use the platform-specific package:
 
+### EVM platform specific packaging
+
 ```javascript
 import { all, find, route } from '@depay/web3-exchanges-evm'
+```
+
+### Solana platform specific packaging
+
+```javascript
+import { all, find, route } from '@depay/web3-exchanges-solana'
 ```
 
 ## Data Structures
