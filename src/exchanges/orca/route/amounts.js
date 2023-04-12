@@ -13,29 +13,19 @@ import { request } from '@depay/web3-client'
 import exchange from '../basics'
 import { ethers } from 'ethers'
 import { fixPath } from './path'
-import { getInfo, getPair } from './pairs'
+import { getBestPair } from './pairs'
 
 let getAmountsOut = async ({ path, amountIn }) => {
 
   let amounts = [amountIn]  
 
-  let computedAmounts = await Promise.all(path.map(async (step, i)=>{
-    const nextStep = path[i+1]
-    if(nextStep == undefined){ return }
-    const pair = await getPair(step, nextStep)
-    const info = await getInfo(pair)
-    if(!info){ return }
-    const baseMint = pair.data.baseMint.toString()
-    const reserves = [ethers.BigNumber.from(info.pool_coin_amount.toString()), ethers.BigNumber.from(info.pool_pc_amount.toString())]
-    const [reserveIn, reserveOut] = baseMint == step ? [reserves[0], reserves[1]] : [reserves[1], reserves[0]]
-    const feeRaw = amounts[i].mul(ethers.BigNumber.from(exchange.pair.v4.LIQUIDITY_FEES_NUMERATOR)).div(ethers.BigNumber.from(exchange.pair.v4.LIQUIDITY_FEES_DENOMINATOR))
-    const amountInWithFee = amounts[i].sub(feeRaw)
-    const denominator = reserveIn.add(amountInWithFee)
-    const amountOut = reserveOut.mul(amountInWithFee).div(denominator)
-    amounts.push(amountOut)
-  }))
+  amounts.push(ethers.BigNumber.from((await getBestPair({ tokenA: path[1], tokenB: path[0], amountIn })).price))
+  
+  if (path.length === 3) {
+    amounts.push(ethers.BigNumber.from((await getBestPair({ tokenA: path[2], tokenB: path[1], amountOut: amounts[1] })).price))
+  }
 
-  if(computedAmounts.length != path.length) { return }
+  if(amounts.length != path.length) { return }
 
   return amounts
 }
@@ -44,26 +34,14 @@ let getAmountsIn = async({ path, amountOut }) => {
 
   path = path.slice().reverse()
   let amounts = [amountOut]
-  
-  let computedAmounts = await Promise.all(path.map(async (step, i)=>{
-    const nextStep = path[i+1]
-    if(nextStep == undefined){ return }
-    const pair = await getPair(step, nextStep)
-    const info = await getInfo(pair)
-    if(!info){ return }
-    const baseMint = pair.data.baseMint.toString()
-    const quoteMint = pair.data.quoteMint.toString()
-    const reserves = [ethers.BigNumber.from(info.pool_coin_amount.toString()), ethers.BigNumber.from(info.pool_pc_amount.toString())]
-    const [reserveIn, reserveOut] = baseMint == step ? [reserves[1], reserves[0]] : [reserves[0], reserves[1]]
-    const denominator = reserveOut.sub(amounts[i])
-    const amountInWithoutFee = reserveIn.mul(amounts[i]).div(denominator)
-    const amountIn = amountInWithoutFee
-      .mul(ethers.BigNumber.from(exchange.pair.v4.LIQUIDITY_FEES_DENOMINATOR))
-      .div(ethers.BigNumber.from(exchange.pair.v4.LIQUIDITY_FEES_DENOMINATOR).sub(ethers.BigNumber.from(exchange.pair.v4.LIQUIDITY_FEES_NUMERATOR)))
-    amounts.push(amountIn)
-  }))
 
-  if(computedAmounts.length != path.length) { return }
+  amounts.push(ethers.BigNumber.from((await getBestPair({ tokenA: path[1], tokenB: path[0], amountOut })).price))
+  
+  if (path.length === 3) {
+    amounts.push(ethers.BigNumber.from((await getBestPair({ tokenA: path[2], tokenB: path[1], amountOut: amounts[1] })).price))
+  }
+  
+  if(amounts.length != path.length) { return }
 
   return amounts.slice().reverse()
 }

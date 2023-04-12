@@ -10,15 +10,15 @@ import { request } from '@depay/web3-client'
 
 //#endif
 
-import Raydium from './../basics'
+import exchange from './../basics'
 import { Buffer, PublicKey } from '@depay/solana-web3.js'
 
 const getMarket = async (marketId)=> {
   return await request({
     blockchain: 'solana',
     address: marketId,
-    api: Raydium.market.v3.api,
-    cache: 3600000
+    api: exchange.market.v3.api,
+    cache: 86400
   })
 }
 

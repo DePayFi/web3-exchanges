@@ -1,7 +1,7 @@
 import Raydium from 'src/exchanges/raydium'
 import { ACCOUNT_LAYOUT, Buffer, PublicKey, BN } from '@depay/solana-web3.js'
 import { mock } from '@depay/web3-mock'
-import { POOL_INFO } from 'src/exchanges/raydium/apis'
+import { PAIR_INFO } from 'src/exchanges/raydium/apis'
 import { Token } from '@depay/web3-tokens'
 
 let blockchain = 'solana'
@@ -26,7 +26,7 @@ function mockPair({ provider, tokenIn, tokenOut, pair, market, _return, baseRese
         from: 'RaydiumSimuLateTransaction11111111111111111',
         instructions: [{
           to: '675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8',
-          api: POOL_INFO
+          api: PAIR_INFO
         }],
         params: {
           instruction: 12,

@@ -22,22 +22,22 @@ let all = {
 
 /*#elif _SOLANA
 
-import raydium from './exchanges/raydium'
+import orca from './exchanges/orca'
 
 let all = {
   ethereum: [],
   bsc: [],
   polygon: [],
-  solana: [raydium],
+  solana: [orca],
   velas: [],
   fantom: [],
 }
 
 //#else */
 
+import orca from './exchanges/orca'
 import pancakeswap from './exchanges/pancakeswap'
 import quickswap from './exchanges/quickswap'
-import raydium from './exchanges/raydium'
 import spookyswap from './exchanges/spookyswap'
 import uniswap_v2 from './exchanges/uniswap_v2'
 import wagyuswap from './exchanges/wagyuswap'
@@ -51,7 +51,7 @@ let all = {
   ethereum: [uniswap_v2, weth],
   bsc: [pancakeswap, wbnb],
   polygon: [quickswap, wmatic],
-  solana: [raydium],
+  solana: [orca],
   fantom: [spookyswap, wftm],
   velas: [wagyuswap, wvlx],
 }

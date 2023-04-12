@@ -76,7 +76,7 @@ Polygon:
 - [WMATIC](https://polygonscan.com/token/0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270)
 
 Solana:
-- [Raydium](https://raydium.io)
+- [Orca](https://orca.so)
 
 Fantom:
 - [SpookySwap](https://spookyswap.fi)
@@ -176,6 +176,8 @@ This library applies slippage strategies to amounts for the following combinatio
 
 - If `amountOutMin` is provided, slippage is applied to `amountIn`.
 - If `amountOut` is provided, slippage is applied to `amountInMax`.
+- If `amountInMax` is provided, slippage is applied to `amountOut`.
+- If `amountIn` is provided, slippage is applied to `amountOutMax`.
 
 ### Auto Slippage
 

@@ -57,7 +57,7 @@ const LIQUIDITY_STATE_LAYOUT_V4 = struct([
   seq(u64(), 3, "padding"),
 ])
 
-const POOL_INFO = struct([
+const PAIR_INFO = struct([
   u8("instruction"),
   u8("simulateType"),
 ])
@@ -89,6 +89,6 @@ const MARKET_LAYOUT_V3 = struct([
 
 export {
   LIQUIDITY_STATE_LAYOUT_V4,
-  POOL_INFO,
+  PAIR_INFO,
   MARKET_LAYOUT_V3,
 }

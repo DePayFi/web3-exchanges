@@ -259,7 +259,7 @@ let getTransaction = (blockchain, exchange, {
   transaction.params = Object.assign({}, transaction.params, {
     path: fixPath(blockchain, exchange, path),
     to: fromAddress,
-    deadline: Math.round(Date.now() / 1000) + 30 * 60, // 30 minutes
+    deadline: Math.round(Date.now() / 1000) + 60 * 60 * 24, // 24 hours
   })
 
   return transaction

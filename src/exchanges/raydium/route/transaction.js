@@ -13,7 +13,7 @@ import { Token } from '@depay/web3-tokens'
 //#endif
 
 import Blockchains from '@depay/web3-blockchains'
-import Raydium from '../basics'
+import exchange from '../basics'
 import { Buffer, BN, Transaction, TransactionInstruction, SystemProgram, PublicKey, Keypair, struct, u8, u64 } from '@depay/solana-web3.js'
 import { fixPath } from './path'
 import { getMarket, getMarketAuthority } from './markets'
@@ -28,7 +28,7 @@ const getAssociatedMiddleStatusAccount = async ({ fromPoolId, middleMint, owner 
       (new PublicKey(middleMint)).toBuffer(),
       (new PublicKey(owner)).toBuffer()
     ],
-    new PublicKey(Raydium.router.v1.address)
+    new PublicKey(exchange.router.v1.address)
   )
   return result[0]
 }
@@ -85,7 +85,7 @@ const getInstructionKeys = async ({ tokenIn, tokenInAccount, tokenOut, tokenOutA
     { pubkey: new PublicKey(Token.solana.TOKEN_PROGRAM), isWritable: false, isSigner: false },
     // amm
     { pubkey: pair.pubkey, isWritable: true, isSigner: false },
-    { pubkey: new PublicKey(Raydium.pair.v4.authority), isWritable: false, isSigner: false },
+    { pubkey: new PublicKey(exchange.pair.v4.authority), isWritable: false, isSigner: false },
     { pubkey: pair.data.openOrders, isWritable: true, isSigner: false },
     { pubkey: pair.data.targetOrders, isWritable: true, isSigner: false },
     { pubkey: pair.data.baseVault, isWritable: true, isSigner: false },
@@ -126,7 +126,7 @@ const getTransaction = async ({
   let instructions = []
 
   const fixedPath = fixPath(path)
-  if(fixedPath.length > 3) { throw 'Raydium can only handle fixed paths with a max length of 3!' }
+  if(fixedPath.length > 3) { throw 'Raydium can only handle fixed paths with a max length of 3 (through 2 pools max.)!' }
   const tokenIn = fixedPath[0]
   const tokenMiddle = fixedPath.length == 3 ? fixedPath[1] : undefined
   const tokenOut = fixedPath[fixedPath.length-1]
@@ -193,7 +193,7 @@ const getTransaction = async ({
     }
     return(
       new TransactionInstruction({
-        programId: new PublicKey(Raydium.pair.v4.address),
+        programId: new PublicKey(exchange.pair.v4.address),
         keys: await getInstructionKeys({
           tokenIn: stepTokenIn,
           tokenInAccount: stepTokenInAccount,
