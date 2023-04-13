@@ -21,9 +21,9 @@ wallet.sendTransaction(transaction)
 let exchange = Web3Exchanges.find('solana', 'orca')
 let route = await exchange.route({
   blockchain: 'solana',
-  tokenIn: 'orcaEKTdK7LKz57vaAYr9QeNsVEPfiu6QeMU1kektZE', // ORCA
-  tokenOut: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', // USDC
-  amountOutMin: 1
+  tokenIn: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', // USDC
+  tokenOut: 'orcaEKTdK7LKz57vaAYr9QeNsVEPfiu6QeMU1kektZE', // ORCA
+  amountOut: 1
 })
 
 let wallets = await Web3Wallets.getWallets()
@@ -57,6 +57,57 @@ let route = await exchange.route({
   blockchain: 'solana',
   tokenIn: 'orcaEKTdK7LKz57vaAYr9QeNsVEPfiu6QeMU1kektZE', // ORCA
   tokenOut: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', // USDC
+  amountOutMin: 1
+})
+
+let wallets = await Web3Wallets.getWallets()
+let wallet = wallets[0]
+let from = await wallet.account()
+let transaction = await route.getTransaction({ from })
+
+wallet.sendTransaction(transaction)
+```
+
+```javascript
+let exchange = Web3Exchanges.find('solana', 'orca')
+let route = await exchange.route({
+  blockchain: 'solana',
+  tokenIn: 'orcaEKTdK7LKz57vaAYr9QeNsVEPfiu6QeMU1kektZE', // ORCA
+  tokenOut: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', // USDC
+  amountOutMin: 1
+})
+
+let wallets = await Web3Wallets.getWallets()
+let wallet = wallets[0]
+let from = await wallet.account()
+let transaction = await route.getTransaction({ from })
+
+wallet.sendTransaction(transaction)
+```
+
+```javascript
+let exchange = Web3Exchanges.find('solana', 'orca')
+let route = await exchange.route({
+  blockchain: 'solana',
+  tokenIn: 'orcaEKTdK7LKz57vaAYr9QeNsVEPfiu6QeMU1kektZE', // ORCA
+  tokenOut: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', // USDC
+  amountOut: 1
+})
+
+let wallets = await Web3Wallets.getWallets()
+let wallet = wallets[0]
+let from = await wallet.account()
+let transaction = await route.getTransaction({ from })
+
+wallet.sendTransaction(transaction)
+```
+
+```javascript
+let exchange = Web3Exchanges.find('solana', 'orca')
+let route = await exchange.route({
+  blockchain: 'solana',
+  tokenIn: 'orcaEKTdK7LKz57vaAYr9QeNsVEPfiu6QeMU1kektZE', // ORCA
+  tokenOut: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', // USDC
   amountIn: 1
 })
 
@@ -72,8 +123,8 @@ wallet.sendTransaction(transaction)
 let exchange = Web3Exchanges.find('solana', 'orca')
 let route = await exchange.route({
   blockchain: 'solana',
-  tokenIn: 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB', // USDT
-  tokenOut: 'orcaEKTdK7LKz57vaAYr9QeNsVEPfiu6QeMU1kektZE', // ORCA
+  tokenIn: 'orcaEKTdK7LKz57vaAYr9QeNsVEPfiu6QeMU1kektZE', // ORCA
+  tokenOut: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', // USDC
   amountOutMin: 1
 })
 
@@ -92,8 +143,27 @@ let exchange = Web3Exchanges.find('solana', 'orca')
 let route = await exchange.route({
   blockchain: 'solana',
   tokenIn: '11111111111111111111111111111111', // SOL
-  tokenOut: '4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R', // RAY
+  tokenOut: 'orcaEKTdK7LKz57vaAYr9QeNsVEPfiu6QeMU1kektZE', // ORCA
   amountOutMin: 1
+})
+
+let wallets = await Web3Wallets.getWallets()
+let wallet = wallets[0]
+let from = await wallet.account()
+let transaction = await route.getTransaction({ from })
+
+wallet.sendTransaction(transaction)
+```
+
+## TOKEN<>SOL
+
+```javascript
+let exchange = Web3Exchanges.find('solana', 'orca')
+let route = await exchange.route({
+  blockchain: 'solana',
+  tokenIn: 'orcaEKTdK7LKz57vaAYr9QeNsVEPfiu6QeMU1kektZE', // ORCA
+  tokenOut: '11111111111111111111111111111111', // SOl
+  amountOutMin: 0.01
 })
 
 let wallets = await Web3Wallets.getWallets()
@@ -111,27 +181,8 @@ let exchange = Web3Exchanges.find('solana', 'orca')
 let route = await exchange.route({
   blockchain: 'solana',
   tokenIn: 'So11111111111111111111111111111111111111112', // WSOL
-  tokenOut: '4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R', // RAY
-  amountOutMin: 0.1
-})
-
-let wallets = await Web3Wallets.getWallets()
-let wallet = wallets[0]
-let from = await wallet.account()
-let transaction = await route.getTransaction({ from })
-
-wallet.sendTransaction(transaction)
-```
-
-## TOKEN<>SOL
-
-```javascript
-let exchange = Web3Exchanges.find('solana', 'orca')
-let route = await exchange.route({
-  blockchain: 'solana',
-  tokenIn: '4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R', // RAY
-  tokenOut: '11111111111111111111111111111111', // SOl
-  amountOutMin: 0.01
+  tokenOut: 'orcaEKTdK7LKz57vaAYr9QeNsVEPfiu6QeMU1kektZE', // ORCA
+  amountOutMin: 0.001
 })
 
 let wallets = await Web3Wallets.getWallets()

@@ -19,17 +19,19 @@ import { TickArraySequence } from './tick-sequence'
 
 const getPrice = async ({
   account, // stale whirlpool account
-  tokenA,
-  tokenB,
+  tokenIn,
+  tokenOut,
   amountIn,
+  amountInMax,
   amountOut,
+  amountOutMin,
 })=>{
 
   try {
 
     const freshWhirlpoolData = await request({ blockchain: 'solana' , address: account.pubkey.toString(), api: exchange.router.v1.api, cache: 10 })
 
-    const aToB = !!(account.data.tokenMintA.toString() === tokenA)
+    const aToB = (account.data.tokenMintA.toString() === tokenIn)
 
     const tickArrays = await getTickArrays({ account, freshWhirlpoolData, aToB })
 
@@ -37,15 +39,19 @@ const getPrice = async ({
 
     const sqrtPriceLimit = new BN(aToB ? MIN_SQRT_PRICE : MAX_SQRT_PRICE)
 
+    const amount = amountIn || amountInMax || amountOut || amountOutMin
+
+    const amountSpecifiedIsInput = !!(amountIn || amountInMax)
+
     const amountCalculated = compute({
-      tokenAmount: new BN((amountIn || amountOut).toString()),
+      tokenAmount: new BN(amount.toString()),
       aToB,
       freshWhirlpoolData,
       tickSequence,
       sqrtPriceLimit,
+      amountSpecifiedIsInput,
     })
 
-    console.log('amountCalculated.toString()', amountCalculated.toString())
     return {
       price: amountCalculated.toString(),
       tickArrays,
@@ -53,7 +59,14 @@ const getPrice = async ({
       sqrtPriceLimit,
     }
 
-  } catch {}
+  } catch {
+    return {
+      price: undefined,
+      tickArrays: undefined,
+      aToB: undefined,
+      sqrtPriceLimit: undefined,
+    }
+  }
 }
 
 export {

@@ -31,13 +31,13 @@ let getAccounts = async (base, quote) => {
   return accounts
 }
 
-let getPairsWithPrice = async({ tokenA, tokenB, amountIn, amountOut }) => {
+let getPairsWithPrice = async({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }) => {
   try {
-    let accounts = await getAccounts(tokenA, tokenB)
-    if(accounts.length === 0) { accounts = await getAccounts(tokenB, tokenA) }
+    let accounts = await getAccounts(tokenIn, tokenOut)
+    if(accounts.length === 0) { accounts = await getAccounts(tokenOut, tokenIn) }
     accounts = accounts.filter((account)=>account.data.liquidity.toString() !== '0')
     accounts = (await Promise.all(accounts.map(async(account)=>{
-      const { price, tickArrays, sqrtPriceLimit, aToB } = await getPrice({ account, tokenA, tokenB, amountIn, amountOut })
+      const { price, tickArrays, sqrtPriceLimit, aToB } = await getPrice({ account, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin })
       if(price === undefined) { return false }
       account.price = price
       account.tickArrays = tickArrays
@@ -51,8 +51,8 @@ let getPairsWithPrice = async({ tokenA, tokenB, amountIn, amountOut }) => {
   }
 }
 
-let getBestPair = async({ tokenA, tokenB, amountIn, amountOut }) => {
-  const pairs = await getPairsWithPrice({ tokenA, tokenB, amountIn, amountOut })
+let getBestPair = async({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }) => {
+  const pairs = await getPairsWithPrice({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin })
 
   let bestPair
 

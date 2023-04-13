@@ -15,14 +15,14 @@ import { ethers } from 'ethers'
 import { fixPath } from './path'
 import { getBestPair } from './pairs'
 
-let getAmountsOut = async ({ path, amountIn }) => {
+let getAmountsOut = async ({ path, amountIn, amountInMax }) => {
 
-  let amounts = [amountIn]  
+  let amounts = [amountIn]
 
-  amounts.push(ethers.BigNumber.from((await getBestPair({ tokenA: path[1], tokenB: path[0], amountIn })).price))
+  amounts.push(ethers.BigNumber.from((await getBestPair({ tokenIn: path[0], tokenOut: path[1], amountIn, amountInMax })).price))
   
   if (path.length === 3) {
-    amounts.push(ethers.BigNumber.from((await getBestPair({ tokenA: path[2], tokenB: path[1], amountOut: amounts[1] })).price))
+    throw('INTEGRATE!')
   }
 
   if(amounts.length != path.length) { return }
@@ -30,15 +30,15 @@ let getAmountsOut = async ({ path, amountIn }) => {
   return amounts
 }
 
-let getAmountsIn = async({ path, amountOut }) => {
+let getAmountsIn = async({ path, amountOut, amountOutMin }) => {
 
   path = path.slice().reverse()
   let amounts = [amountOut]
 
-  amounts.push(ethers.BigNumber.from((await getBestPair({ tokenA: path[1], tokenB: path[0], amountOut })).price))
+  amounts.push(ethers.BigNumber.from((await getBestPair({ tokenIn: path[1], tokenOut: path[0], amountOut, amountOutMin })).price))
   
   if (path.length === 3) {
-    amounts.push(ethers.BigNumber.from((await getBestPair({ tokenA: path[2], tokenB: path[1], amountOut: amounts[1] })).price))
+    throw('INTEGRATE!')
   }
   
   if(amounts.length != path.length) { return }
@@ -74,7 +74,7 @@ let getAmounts = async ({
       amountOutMin = amountOut
     }
   } else if(amountOutMin) {
-    amounts = await getAmountsIn({ path, amountOut: amountOutMin, tokenIn, tokenOut })
+    amounts = await getAmountsIn({ path, amountOutMin, tokenIn, tokenOut })
     amountIn = amounts ? amounts[0] : undefined
     if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
       return {}
@@ -82,7 +82,7 @@ let getAmounts = async ({
       amountInMax = amountIn
     }
   } else if(amountInMax) {
-    amounts = await getAmountsOut({ path, amountIn: amountInMax, tokenIn, tokenOut })
+    amounts = await getAmountsOut({ path, amountInMax, tokenIn, tokenOut })
     amountOut = amounts ? amounts[amounts.length-1] : undefined
     if (amountOut == undefined ||amountOutMin && amountOut.lt(amountOutMin)) {
       return {}

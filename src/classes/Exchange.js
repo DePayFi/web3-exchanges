@@ -16,8 +16,13 @@ const route = ({
   getTransaction,
   slippage,
 }) => {
+  
   tokenIn = fixAddress(tokenIn)
   tokenOut = fixAddress(tokenOut)
+
+  if([amountIn, amountOut, amountInMax, amountOutMin].filter(Boolean).length > 1) { throw('You can only pass one: amountIn, amountOut, amountInMax or amountOutMin') }
+  if([amountIn, amountOut, amountInMax, amountOutMin].filter(Boolean).length < 1) { throw('You need to pass exactly one: amountIn, amountOut, amountInMax or amountOutMin') }
+
   return new Promise(async (resolve)=> {
     let { path, fixedPath } = await findPath({ tokenIn, tokenOut, amountIn, amountOut, amountInMax, amountOutMin })
     if (path === undefined || path.length == 0) { return resolve() }

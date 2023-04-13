@@ -145,10 +145,10 @@ A Swap configuration is fed into the `route` function:
 
 The following combinations of provided amounts are possible:
 
-- Pass `amountOutMin`. `amountIn` will be calculated automatically and can vary
-- Pass `amountInMax`. `amountOut` will be calculated automatically and can vary
-- Pass `amountOut`. `amountInMax` will be calculated automatically and can vary
-- Pass `amountIn`. `amountOutMin` will be calculated automatically and can vary
+- Pass `amountOutMin`. Swap will return at least `amountOutMin` into the wallet. `amountIn` will be calculated automatically and can vary.
+- Pass `amountOut`. Swap will take at max `amountInMax` out of the wallet (calculated based on provided `amountOut`). `amountInMax` will be calculated automatically and can vary.
+- Pass `amountInMax`. Swap will take at max `amountInMax` out of the wallet. `amountOut` will be calculated automatically and can vary.
+- Pass `amountIn`. Swap will return at least `amountOutMin` into the the wallet (calculated based on provided `amountIn`). `amountOutMin` will be calculated automatically and can vary.
 
 ### Route
 
