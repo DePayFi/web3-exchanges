@@ -8,6 +8,6 @@ export default {
   '@depay/web3-tokens': 'Web3Tokens',
   '@depay/web3-tokens-evm': 'Web3Tokens',
   '@depay/web3-tokens-solana': 'Web3Tokens',
-  'decimals.js': 'Decimal',
+  'decimal.js': 'Decimal',
   'ethers': 'ethers'
 }

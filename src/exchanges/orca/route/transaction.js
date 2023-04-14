@@ -2,12 +2,12 @@
 
 /*#elif _SOLANA
 
-import { getProvider } from '@depay/web3-client-solana'
+import { request, getProvider } from '@depay/web3-client-solana'
 import { Token } from '@depay/web3-tokens-solana'
 
 //#else */
 
-import { getProvider } from '@depay/web3-client'
+import { request, getProvider } from '@depay/web3-client'
 import { Token } from '@depay/web3-tokens'
 
 //#endif
@@ -20,8 +20,126 @@ import { getBestPair } from './pairs'
 
 const blockchain = Blockchains.solana
 const SWAP_FUNCTION = new BN("14449647541112719096")
+const TWO_HOP_SWAP_FUNCTION = new BN("16635068063392030915")
 
-const getInstructionData = ({ amount, otherAmountThreshold, sqrtPriceLimit, amountSpecifiedIsInput, aToB })=> {
+const createTokenAccountIfNotExisting = async ({ instructions, owner, token, account })=>{
+  let outAccountExists
+  try{ outAccountExists = !!(await request({ blockchain: 'solana', address: account.toString() })) } catch {}
+  if(!outAccountExists) {
+    instructions.push(
+      await Token.solana.createAssociatedTokenAccountInstruction({
+        token,
+        owner,
+        payer: owner,
+      })
+    )
+  }
+}
+
+const getTwoHopSwapInstructionKeys = async ({ fromAddress, poolOne, tokenAccountOneA, tokenAccountOneB, poolTwo, tokenAccountTwoA, tokenAccountTwoB })=> {
+  return [
+    // token_program
+    { pubkey: new PublicKey(Token.solana.TOKEN_PROGRAM), isWritable: false, isSigner: false },
+    // token_authority
+    { pubkey: new PublicKey(fromAddress), isWritable: false, isSigner: true },
+    // whirlpool_one
+    { pubkey: poolOne.pubkey, isWritable: true, isSigner: false },
+    // whirlpool_two
+    { pubkey: poolTwo.pubkey, isWritable: true, isSigner: false },
+    // token_owner_account_one_a
+    { pubkey: tokenAccountOneA, isWritable: true, isSigner: false },
+    // token_vault_one_a
+    { pubkey: poolOne.data.tokenVaultA, isWritable: true, isSigner: false },
+    // token_owner_account_one_b
+    { pubkey: tokenAccountOneB, isWritable: true, isSigner: false },
+    // token_vault_one_b
+    { pubkey: poolOne.data.tokenVaultB, isWritable: true, isSigner: false },
+    // token_owner_account_two_a
+    { pubkey: tokenAccountTwoA, isWritable: true, isSigner: false },
+    // token_vault_two_a
+    { pubkey: poolTwo.data.tokenVaultA, isWritable: true, isSigner: false },
+    // token_owner_account_two_b
+    { pubkey: tokenAccountTwoB, isWritable: true, isSigner: false },
+    // token_vault_two_b
+    { pubkey: poolTwo.data.tokenVaultB, isWritable: true, isSigner: false },
+    // tick_array_one_0
+    { pubkey: poolOne.tickArrays[0].address, isWritable: true, isSigner: false },
+    // tick_array_one_1
+    { pubkey: poolOne.tickArrays[1].address, isWritable: true, isSigner: false },
+    // tick_array_one_2
+    { pubkey: poolOne.tickArrays[2].address, isWritable: true, isSigner: false },
+    // tick_array_two_0
+    { pubkey: poolTwo.tickArrays[0].address, isWritable: true, isSigner: false },
+    // tick_array_two_1
+    { pubkey: poolTwo.tickArrays[1].address, isWritable: true, isSigner: false },
+    // tick_array_two_2
+    { pubkey: poolTwo.tickArrays[2].address, isWritable: true, isSigner: false },
+    // oracle_one
+    { pubkey: (await PublicKey.findProgramAddress([ Buffer.from('oracle'), poolOne.pubkey.toBuffer() ], new PublicKey(exchange.router.v1.address)))[0], isWritable: false, isSigner: false },
+    // oracle_two
+    { pubkey: (await PublicKey.findProgramAddress([ Buffer.from('oracle'), poolTwo.pubkey.toBuffer() ], new PublicKey(exchange.router.v1.address)))[0], isWritable: false, isSigner: false },
+  ]
+}
+
+const getTwoHopSwapInstructionData = ({ amount, otherAmountThreshold, amountSpecifiedIsInput, aToBOne, aToBTwo, sqrtPriceLimitOne, sqrtPriceLimitTwo })=> {
+  let LAYOUT, data
+  
+  LAYOUT = struct([
+    u64("anchorDiscriminator"),
+    u64("amount"),
+    u64("otherAmountThreshold"),
+    bool("amountSpecifiedIsInput"),
+    bool("aToBOne"),
+    bool("aToBTwo"),
+    u128("sqrtPriceLimitOne"),
+    u128("sqrtPriceLimitTwo"),
+  ])
+  data = Buffer.alloc(LAYOUT.span)
+  LAYOUT.encode(
+    {
+      anchorDiscriminator: TWO_HOP_SWAP_FUNCTION,
+      amount: new BN(amount.toString()),
+      otherAmountThreshold: new BN(otherAmountThreshold.toString()),
+      amountSpecifiedIsInput,
+      aToBOne,
+      aToBTwo,
+      sqrtPriceLimitOne,
+      sqrtPriceLimitTwo,
+    },
+    data,
+  )
+
+  return data
+}
+
+const getSwapInstructionKeys = async ({ fromAddress, pool, tokenAccountA, tokenAccountB })=> {
+  return [
+    // token_program
+    { pubkey: new PublicKey(Token.solana.TOKEN_PROGRAM), isWritable: false, isSigner: false },
+    // token_authority
+    { pubkey: new PublicKey(fromAddress), isWritable: false, isSigner: true },
+    // whirlpool
+    { pubkey: pool.pubkey, isWritable: true, isSigner: false },
+    // token_owner_account_a
+    { pubkey: tokenAccountA, isWritable: true, isSigner: false },
+    // token_vault_a
+    { pubkey: pool.data.tokenVaultA, isWritable: true, isSigner: false },
+    // token_owner_account_b
+    { pubkey: tokenAccountB, isWritable: true, isSigner: false },
+    // token_vault_b
+    { pubkey: pool.data.tokenVaultB, isWritable: true, isSigner: false },
+    // tick_array_0
+    { pubkey: pool.tickArrays[0].address, isWritable: true, isSigner: false },
+    // tick_array_1
+    { pubkey: pool.tickArrays[1].address, isWritable: true, isSigner: false },
+    // tick_array_2
+    { pubkey: pool.tickArrays[2].address, isWritable: true, isSigner: false },
+    // oracle
+    { pubkey: (await PublicKey.findProgramAddress([ Buffer.from('oracle'), pool.pubkey.toBuffer() ], new PublicKey(exchange.router.v1.address)))[0], isWritable: false, isSigner: false },
+  ]
+}
+
+const getSwapInstructionData = ({ amount, otherAmountThreshold, sqrtPriceLimit, amountSpecifiedIsInput, aToB })=> {
   let LAYOUT, data
   
   LAYOUT = struct([
@@ -63,12 +181,6 @@ const getTransaction = async ({
   fromAddress
 }) => {
 
-  console.log('getTransaction =======')
-  console.log('amountIn', amountIn.toString())
-  console.log('amountInMax', amountInMax.toString())
-  console.log('amountOut', amountOut.toString())
-  console.log('amountOutMin', amountOutMin.toString())
-
   let transaction = { blockchain: 'solana' }
   let instructions = []
 
@@ -108,96 +220,118 @@ const getTransaction = async ({
       space: Token.solana.TOKEN_LAYOUT.span,
       lamports
     })
-    createAccountInstruction.signer = keypair
+    createAccountInstruction.signers = [keypair]
     instructions.push(createAccountInstruction)
-    // instructions.push(
-    //   Token.solana.initializeAccountInstruction({
-    //     account: wrappedAccount,
-    //     token: blockchain.wrapped.address,
-    //     owner: fromAddress
-    //   })
-    // )
+    instructions.push(
+      Token.solana.initializeAccountInstruction({
+        account: wrappedAccount,
+        token: blockchain.wrapped.address,
+        owner: fromAddress
+      })
+    )
   }
 
-  // if(pairs.length === 1) {
-  //   let aToB = pairs[0].aToB
-  //   // amount is NOT the precise part of the swap (otherAmountThreshold is)
-  //   let amountSpecifiedIsInput = !!(amountInInput || amountOutMinInput)
-  //   let amount = amountSpecifiedIsInput ? amountIn : amountOut
-  //   let otherAmountThreshold = amountSpecifiedIsInput ? amountOutMin : amountInMax    
-  //   let tokenAccountIn = startsWrapped ? wrappedAccount : new PublicKey(await Token.solana.findProgramAddress({ owner: fromAddress, token: tokenIn }))
-  //   let tokenAccountOut = endsUnwrapped ? wrappedAccount : new PublicKey(await Token.solana.findProgramAddress({ owner: fromAddress, token: tokenOut }))
-  //   instructions.push(
-  //     new TransactionInstruction({
-  //       programId: new PublicKey(exchange.router.v1.address),
-  //       keys: [
-  //         // token_program
-  //         { pubkey: new PublicKey(Token.solana.TOKEN_PROGRAM), isWritable: false, isSigner: false },
-  //         // token_authority
-  //         { pubkey: new PublicKey(fromAddress), isWritable: false, isSigner: true },
-  //         // whirlpool
-  //         { pubkey: pairs[0].pubkey, isWritable: true, isSigner: false },
-  //         // token_owner_account_a
-  //         { pubkey: aToB ? tokenAccountIn : tokenAccountOut, isWritable: true, isSigner: false },
-  //         // token_vault_a
-  //         { pubkey: pairs[0].data.tokenVaultA, isWritable: true, isSigner: false },
-  //         // token_owner_account_b
-  //         { pubkey: aToB ? tokenAccountOut : tokenAccountIn, isWritable: true, isSigner: false },
-  //         // token_vault_b
-  //         { pubkey: pairs[0].data.tokenVaultB, isWritable: true, isSigner: false },
-  //         // tick_array_0
-  //         { pubkey: pairs[0].tickArrays[0].address, isWritable: true, isSigner: false },
-  //         // tick_array_1
-  //         { pubkey: pairs[0].tickArrays[1].address, isWritable: true, isSigner: false },
-  //         // tick_array_2
-  //         { pubkey: pairs[0].tickArrays[2].address, isWritable: true, isSigner: false },
-  //         // oracle
-  //         { pubkey: (await PublicKey.findProgramAddress([ Buffer.from('oracle'), pairs[0].pubkey.toBuffer() ], new PublicKey(exchange.router.v1.address)))[0], isWritable: false, isSigner: false },
-  //       ],
-  //       data: getInstructionData({
-  //         amount,
-  //         otherAmountThreshold,
-  //         sqrtPriceLimit: pairs[0].sqrtPriceLimit,
-  //         amountSpecifiedIsInput,
-  //         aToB: pairs[0].aToB
-  //       }),
-  //     })
-  //   )
-  // }
+  if(pairs.length === 1) {
+    // amount is NOT the precise part of the swap (otherAmountThreshold is)
+    let amountSpecifiedIsInput = !!(amountInInput || amountOutMinInput)
+    let amount = amountSpecifiedIsInput ? amountIn : amountOut
+    let otherAmountThreshold = amountSpecifiedIsInput ? amountOutMin : amountInMax
+    let tokenAccountIn = startsWrapped ? new PublicKey(wrappedAccount) : new PublicKey(await Token.solana.findProgramAddress({ owner: fromAddress, token: tokenIn }))
+    let tokenAccountOut = endsUnwrapped ? new PublicKey(wrappedAccount) : new PublicKey(await Token.solana.findProgramAddress({ owner: fromAddress, token: tokenOut }))
+    await createTokenAccountIfNotExisting({ instructions, owner: fromAddress, token: tokenOut, account: tokenAccountOut })
+    instructions.push(
+      new TransactionInstruction({
+        programId: new PublicKey(exchange.router.v1.address),
+        keys: await getSwapInstructionKeys({
+          fromAddress,
+          pool: pairs[0],
+          tokenAccountA: pairs[0].aToB ? tokenAccountIn : tokenAccountOut,
+          tokenAccountB: pairs[0].aToB ? tokenAccountOut : tokenAccountIn,
+        }),
+        data: getSwapInstructionData({
+          amount,
+          otherAmountThreshold,
+          sqrtPriceLimit: pairs[0].sqrtPriceLimit,
+          amountSpecifiedIsInput,
+          aToB: pairs[0].aToB
+        }),
+      })
+    )
+  } else if (pairs.length === 2) {
+    // amount is NOT the precise part of the swap (otherAmountThreshold is)
+    let amountSpecifiedIsInput = !!(amountInInput || amountOutMinInput)
+    let amount = amountSpecifiedIsInput ? amountIn : amountOut
+    let otherAmountThreshold = amountSpecifiedIsInput ? amountOutMin : amountInMax
+    let tokenAccountIn = startsWrapped ? new PublicKey(wrappedAccount) : new PublicKey(await Token.solana.findProgramAddress({ owner: fromAddress, token: tokenIn }))
+    let tokenMiddle = path[1]
+    let tokenAccountMiddle = new PublicKey(await Token.solana.findProgramAddress({ owner: fromAddress, token: tokenMiddle }))
+    await createTokenAccountIfNotExisting({ instructions, owner: fromAddress, token: tokenMiddle, account: tokenAccountMiddle })
+    let tokenAccountOut = endsUnwrapped ? new PublicKey(wrappedAccount) : new PublicKey(await Token.solana.findProgramAddress({ owner: fromAddress, token: tokenOut }))
+    await createTokenAccountIfNotExisting({ instructions, owner: fromAddress, token: tokenOut, account: tokenAccountOut })
+    instructions.push(
+      new TransactionInstruction({
+        programId: new PublicKey(exchange.router.v1.address),
+        keys: await getTwoHopSwapInstructionKeys({
+          fromAddress,
+          poolOne: pairs[0],
+          tokenAccountOneA: pairs[0].aToB ? tokenAccountIn : tokenAccountMiddle,
+          tokenAccountOneB: pairs[0].aToB ? tokenAccountMiddle : tokenAccountIn,
+          poolTwo: pairs[1],
+          tokenAccountTwoA: pairs[1].aToB ? tokenAccountMiddle : tokenAccountOut,
+          tokenAccountTwoB: pairs[1].aToB ? tokenAccountOut : tokenAccountMiddle,
+        }),
+        data: getTwoHopSwapInstructionData({
+          amount,
+          otherAmountThreshold,
+          amountSpecifiedIsInput,
+          aToBOne: pairs[0].aToB,
+          aToBTwo: pairs[1].aToB,
+          sqrtPriceLimitOne: pairs[0].sqrtPriceLimit,
+          sqrtPriceLimitTwo: pairs[1].sqrtPriceLimit,
+        }),
+      })
+    )
+  }
   
   if(startsWrapped || endsUnwrapped) {
-    // instructions.push(
-    //   Token.solana.closeAccountInstruction({
-    //     account: wrappedAccount,
-    //     owner: fromAddress
-    //   })
-    // )
+    instructions.push(
+      Token.solana.closeAccountInstruction({
+        account: wrappedAccount,
+        owner: fromAddress
+      })
+    )
   }
 
-  // await debug(instructions)
+  // await debug(instructions, provider)
 
   transaction.instructions = instructions
   return transaction
 }
 
-const debug = async(instructions)=>{
+const debug = async(instructions, provider)=>{
   console.log('instructions.length', instructions.length)
-  let ix = instructions.length == 4 ? instructions[2] : instructions[0]
-  console.log('INSTRUCTION.programId', ix.programId.toString())
-  console.log('INSTRUCTION.keys', ix.keys.map((k)=>k.pubkey.toString()))
-  const LAYOUT = struct([
-    u64("anchorDiscriminator"),
-    u64("amount"),
-    u64("otherAmountThreshold"),
-    u128("sqrtPriceLimit"),
-    bool("amountSpecifiedIsInput"),
-    bool("aToB"),
-  ])
-  let data = LAYOUT.decode(ix.data)
-  console.log('INSTRUCTION.data', data)
-  console.log('amount', data.amount.toString())
-  console.log('otherAmountThreshold', data.otherAmountThreshold.toString())
-  console.log('sqrtPriceLimit', data.sqrtPriceLimit.toString())
+  let data
+  instructions.forEach((instruction)=>{
+    console.log('INSTRUCTION.programId', instruction.programId.toString())
+    console.log('INSTRUCTION.keys', instruction.keys)
+    try {
+      const LAYOUT = struct([
+        u64("anchorDiscriminator"),
+        u64("amount"),
+        u64("otherAmountThreshold"),
+        u128("sqrtPriceLimit"),
+        bool("amountSpecifiedIsInput"),
+        bool("aToB"),
+      ])
+      data = LAYOUT.decode(instruction.data)
+    } catch {}
+  })
+  if(data) {
+    console.log('INSTRUCTION.data', data)
+    console.log('amount', data.amount.toString())
+    console.log('otherAmountThreshold', data.otherAmountThreshold.toString())
+    console.log('sqrtPriceLimit', data.sqrtPriceLimit.toString())
+  }
   let simulation = new Transaction({ feePayer: new PublicKey('2UgCJaHU5y8NC4uWQcZYeV9a5RyYLF7iKYCybCsdFFD1') })
   instructions.forEach((instruction)=>simulation.add(instruction))
   let result

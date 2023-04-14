@@ -17,12 +17,12 @@ import { getBestPair } from './pairs'
 
 let getAmountsOut = async ({ path, amountIn, amountInMax }) => {
 
-  let amounts = [amountIn]
+  let amounts = [(amountIn || amountInMax)]
 
   amounts.push(ethers.BigNumber.from((await getBestPair({ tokenIn: path[0], tokenOut: path[1], amountIn, amountInMax })).price))
   
   if (path.length === 3) {
-    throw('INTEGRATE!')
+    amounts.push(ethers.BigNumber.from((await getBestPair({ tokenIn: path[1], tokenOut: path[2], amountIn: amountIn ? amounts[1] : undefined, amountInMax: amountInMax ? amounts[1] : undefined })).price))
   }
 
   if(amounts.length != path.length) { return }
@@ -33,12 +33,12 @@ let getAmountsOut = async ({ path, amountIn, amountInMax }) => {
 let getAmountsIn = async({ path, amountOut, amountOutMin }) => {
 
   path = path.slice().reverse()
-  let amounts = [amountOut]
+  let amounts = [(amountOut || amountOutMin)]
 
   amounts.push(ethers.BigNumber.from((await getBestPair({ tokenIn: path[1], tokenOut: path[0], amountOut, amountOutMin })).price))
   
   if (path.length === 3) {
-    throw('INTEGRATE!')
+    amounts.push(ethers.BigNumber.from((await getBestPair({ tokenIn: path[2], tokenOut: path[1], amountOut: amountOut ? amounts[1] : undefined, amountOutMin: amountOutMin ? amounts[1] : undefined })).price))
   }
   
   if(amounts.length != path.length) { return }

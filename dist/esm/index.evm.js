@@ -276,10 +276,15 @@ const route$1 = ({
   getTransaction,
   slippage,
 }) => {
+  
   tokenIn = fixAddress(tokenIn);
   tokenOut = fixAddress(tokenOut);
+
+  if([amountIn, amountOut, amountInMax, amountOutMin].filter(Boolean).length > 1) { throw('You can only pass one: amountIn, amountOut, amountInMax or amountOutMin') }
+  if([amountIn, amountOut, amountInMax, amountOutMin].filter(Boolean).length < 1) { throw('You need to pass exactly one: amountIn, amountOut, amountInMax or amountOutMin') }
+
   return new Promise(async (resolve)=> {
-    let { path, fixedPath } = await findPath({ tokenIn, tokenOut });
+    let { path, fixedPath } = await findPath({ tokenIn, tokenOut, amountIn, amountOut, amountInMax, amountOutMin });
     if (path === undefined || path.length == 0) { return resolve() }
     let [amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput] = [amountIn, amountOut, amountInMax, amountOutMin];
 
@@ -344,7 +349,6 @@ class Exchange {
     getAmounts,
     getTransaction,
     slippage,
-    getPair,
   }) {
     this.name = name;
     this.blockchain = blockchain;
@@ -361,7 +365,6 @@ class Exchange {
     this.getAmounts = getAmounts;
     this.getTransaction = getTransaction;
     this.slippage = slippage;
-    this.getPair = getPair;
   }
 
   async route({
@@ -654,7 +657,7 @@ let getTransaction$1 = (blockchain, exchange, {
   transaction.params = Object.assign({}, transaction.params, {
     path: fixPath$1(blockchain, exchange, path),
     to: fromAddress,
-    deadline: Math.round(Date.now() / 1000) + 30 * 60, // 30 minutes
+    deadline: Math.round(Date.now() / 1000) + 60 * 60 * 24, // 24 hours
   });
 
   return transaction
@@ -1093,7 +1096,7 @@ let all = {
 
 var find = (blockchain, name) => {
   return all[blockchain].find((exchange) => {
-    return exchange.name == name || exchange.alternativeNames.includes(name)
+    return exchange.name === name || exchange.alternativeNames.includes(name)
   })
 };
 
