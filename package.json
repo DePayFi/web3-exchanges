@@ -54,7 +54,7 @@
     "@depay/web3-client": "^10.7.0",
     "@depay/web3-client-evm": "^10.7.0",
     "@depay/web3-client-solana": "^10.7.0",
-    "@depay/web3-mock": "^14.0.0",
+    "@depay/web3-mock": "^14.1.0",
     "@depay/web3-tokens": "^9.17.0",
     "@depay/web3-tokens-evm": "^9.17.0",
     "@depay/web3-tokens-solana": "^9.17.0",

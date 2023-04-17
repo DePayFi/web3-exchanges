@@ -46,7 +46,7 @@ let getPairsWithPrice = async({ tokenIn, tokenOut, amountIn, amountInMax, amount
       return account
     }))).filter(Boolean)
     return accounts
-  } catch {
+  } catch (e) {
     return []
   }
 }
@@ -62,6 +62,8 @@ let getLowestPrice = (pairs)=>{
 let getBestPair = async({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }) => {
   const pairs = await getPairsWithPrice({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin })
 
+  if(!pairs || pairs.length === 0) { return }
+
   let bestPair
 
   if(amountIn || amountInMax) {
@@ -69,7 +71,7 @@ let getBestPair = async({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, a
   } else { // amount out
     bestPair = getLowestPrice(pairs)
   }
-  
+
   return bestPair
 }
 

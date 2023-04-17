@@ -212,7 +212,7 @@ let transaction = await route.getTransaction({ from })
 wallet.sendTransaction(transaction)
 ```
 
-## TOKEN<>USDC<>TOKEN (2 Pools) (PENDING)
+## TOKEN<>USDC<>TOKEN (2 Pools)
 
 ```javascript
 let exchange = Web3Exchanges.find('solana', 'orca')

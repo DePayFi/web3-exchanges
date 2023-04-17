@@ -1,15 +1,3 @@
-/*#if _EVM
-
-/*#elif _SOLANA
-
-import { request } from '@depay/web3-client-solana'
-
-//#else */
-
-import { request } from '@depay/web3-client'
-
-//#endif
-
 import exchange from '../basics'
 import { ethers } from 'ethers'
 import { fixPath } from './path'
@@ -17,7 +5,7 @@ import { getBestPair } from './pairs'
 
 let getAmountsOut = async ({ path, amountIn, amountInMax }) => {
 
-  let amounts = [(amountIn || amountInMax)]
+  let amounts = [ethers.BigNumber.from(amountIn || amountInMax)]
 
   amounts.push(ethers.BigNumber.from((await getBestPair({ tokenIn: path[0], tokenOut: path[1], amountIn, amountInMax })).price))
   
@@ -33,7 +21,7 @@ let getAmountsOut = async ({ path, amountIn, amountInMax }) => {
 let getAmountsIn = async({ path, amountOut, amountOutMin }) => {
 
   path = path.slice().reverse()
-  let amounts = [(amountOut || amountOutMin)]
+  let amounts = [ethers.BigNumber.from(amountOut || amountOutMin)]
 
   amounts.push(ethers.BigNumber.from((await getBestPair({ tokenIn: path[1], tokenOut: path[0], amountOut, amountOutMin })).price))
   

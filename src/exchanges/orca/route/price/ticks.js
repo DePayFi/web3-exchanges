@@ -30,16 +30,8 @@ const getStartTickIndex = (tickIndex, tickSpacing, offset) => {
   return startTickIndex
 }
 
-const getTickArrays = async ({ 
-  account, // stale whirlpool account
-  freshWhirlpoolData, // fresh whirlpool account data
-  aToB, // direction
-})=>{
-
-  const tickSpacing = freshWhirlpoolData.tickSpacing
-  const tickCurrentIndex = freshWhirlpoolData.tickCurrentIndex
+const getTickArrayAddresses = async({ aToB, pool, tickSpacing, tickCurrentIndex })=>{
   const shift = aToB ? 0 : tickSpacing
-
   let offset = 0
   let tickArrayAddresses = []
   for (let i = 0; i < MAX_SWAP_TICK_ARRAYS; i++) {
@@ -53,7 +45,7 @@ const getTickArrays = async ({
     const pda = (
       await PublicKey.findProgramAddress([
           Buffer.from('tick_array'),
-          account.pubkey.toBuffer(),
+          new PublicKey(pool.toString()).toBuffer(),
           Buffer.from(startIndex.toString())
         ],
         new PublicKey(exchange.router.v1.address)
@@ -62,6 +54,17 @@ const getTickArrays = async ({
     tickArrayAddresses.push(pda)
     offset = aToB ? offset - 1 : offset + 1
   }
+
+  return tickArrayAddresses
+}
+
+const getTickArrays = async ({ 
+  pool, // stale whirlpool pubkey
+  freshWhirlpoolData, // fresh whirlpool account data
+  aToB, // direction
+})=>{
+
+  const tickArrayAddresses = await getTickArrayAddresses({ aToB, pool, tickSpacing: freshWhirlpoolData.tickSpacing, tickCurrentIndex: freshWhirlpoolData.tickCurrentIndex })
 
   return await Promise.all(tickArrayAddresses.map(async(address, index) => {
 
@@ -75,6 +78,7 @@ const getTickArrays = async ({
 }
 
 export {
+  getTickArrayAddresses,
   getTickArrays,
   MAX_SWAP_TICK_ARRAYS,
   MAX_TICK_INDEX,

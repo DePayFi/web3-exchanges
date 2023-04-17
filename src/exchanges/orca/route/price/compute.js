@@ -1,8 +1,8 @@
 import { BN } from '@depay/solana-web3.js'
 import { PriceMath, MIN_SQRT_PRICE, MAX_SQRT_PRICE } from './math'
 
-const PROTOCOL_FEE_RATE_MUL_VALUE = new BN(10_000)
-const FEE_RATE_MUL_VALUE = new BN(1_000_000)
+const PROTOCOL_FEE_RATE_MUL_VALUE = new BN(10000)
+const FEE_RATE_MUL_VALUE = new BN(1000000)
 const ZERO = new BN(0)
 const ONE = new BN(1)
 const TWO = new BN(2)

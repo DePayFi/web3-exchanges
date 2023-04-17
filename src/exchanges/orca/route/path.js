@@ -1,15 +1,3 @@
-/*#if _EVM
-
-/*#elif _SOLANA
-
-import { request } from '@depay/web3-client-solana'
-
-//#else */
-
-import { request } from '@depay/web3-client'
-
-//#endif
-
 import Blockchains from '@depay/web3-blockchains'
 import { getPairsWithPrice } from './pairs'
 

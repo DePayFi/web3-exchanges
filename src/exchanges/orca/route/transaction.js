@@ -19,8 +19,8 @@ import { fixPath } from './path'
 import { getBestPair } from './pairs'
 
 const blockchain = Blockchains.solana
-const SWAP_FUNCTION = new BN("14449647541112719096")
-const TWO_HOP_SWAP_FUNCTION = new BN("16635068063392030915")
+const SWAP_INSTRUCTION = new BN("14449647541112719096")
+const TWO_HOP_SWAP_INSTRUCTION = new BN("16635068063392030915")
 
 const createTokenAccountIfNotExisting = async ({ instructions, owner, token, account })=>{
   let outAccountExists
@@ -36,52 +36,74 @@ const createTokenAccountIfNotExisting = async ({ instructions, owner, token, acc
   }
 }
 
-const getTwoHopSwapInstructionKeys = async ({ fromAddress, poolOne, tokenAccountOneA, tokenAccountOneB, poolTwo, tokenAccountTwoA, tokenAccountTwoB })=> {
+const getTwoHopSwapInstructionKeys = async ({
+  fromAddress,
+  poolOne,
+  tickArraysOne,
+  tokenAccountOneA,
+  tokenVaultOneA,
+  tokenAccountOneB,
+  tokenVaultOneB,
+  poolTwo,
+  tickArraysTwo,
+  tokenAccountTwoA,
+  tokenVaultTwoA,
+  tokenAccountTwoB,
+  tokenVaultTwoB,
+})=> {
+
   return [
     // token_program
     { pubkey: new PublicKey(Token.solana.TOKEN_PROGRAM), isWritable: false, isSigner: false },
     // token_authority
     { pubkey: new PublicKey(fromAddress), isWritable: false, isSigner: true },
     // whirlpool_one
-    { pubkey: poolOne.pubkey, isWritable: true, isSigner: false },
+    { pubkey: new PublicKey(poolOne.toString()), isWritable: true, isSigner: false },
     // whirlpool_two
-    { pubkey: poolTwo.pubkey, isWritable: true, isSigner: false },
+    { pubkey: new PublicKey(poolTwo.toString()), isWritable: true, isSigner: false },
     // token_owner_account_one_a
-    { pubkey: tokenAccountOneA, isWritable: true, isSigner: false },
+    { pubkey: new PublicKey(tokenAccountOneA.toString()), isWritable: true, isSigner: false },
     // token_vault_one_a
-    { pubkey: poolOne.data.tokenVaultA, isWritable: true, isSigner: false },
+    { pubkey: new PublicKey(tokenVaultOneA.toString()), isWritable: true, isSigner: false },
     // token_owner_account_one_b
-    { pubkey: tokenAccountOneB, isWritable: true, isSigner: false },
+    { pubkey: new PublicKey(tokenAccountOneB.toString()), isWritable: true, isSigner: false },
     // token_vault_one_b
-    { pubkey: poolOne.data.tokenVaultB, isWritable: true, isSigner: false },
+    { pubkey: new PublicKey(tokenVaultOneB.toString()), isWritable: true, isSigner: false },
     // token_owner_account_two_a
-    { pubkey: tokenAccountTwoA, isWritable: true, isSigner: false },
+    { pubkey: new PublicKey(tokenAccountTwoA.toString()), isWritable: true, isSigner: false },
     // token_vault_two_a
-    { pubkey: poolTwo.data.tokenVaultA, isWritable: true, isSigner: false },
+    { pubkey: new PublicKey(tokenVaultTwoA.toString()), isWritable: true, isSigner: false },
     // token_owner_account_two_b
-    { pubkey: tokenAccountTwoB, isWritable: true, isSigner: false },
+    { pubkey: new PublicKey(tokenAccountTwoB.toString()), isWritable: true, isSigner: false },
     // token_vault_two_b
-    { pubkey: poolTwo.data.tokenVaultB, isWritable: true, isSigner: false },
+    { pubkey: new PublicKey(tokenVaultTwoB.toString()), isWritable: true, isSigner: false },
     // tick_array_one_0
-    { pubkey: poolOne.tickArrays[0].address, isWritable: true, isSigner: false },
+    { pubkey: tickArraysOne[0].address, isWritable: true, isSigner: false },
     // tick_array_one_1
-    { pubkey: poolOne.tickArrays[1].address, isWritable: true, isSigner: false },
+    { pubkey: tickArraysOne[1].address, isWritable: true, isSigner: false },
     // tick_array_one_2
-    { pubkey: poolOne.tickArrays[2].address, isWritable: true, isSigner: false },
+    { pubkey: tickArraysOne[2].address, isWritable: true, isSigner: false },
     // tick_array_two_0
-    { pubkey: poolTwo.tickArrays[0].address, isWritable: true, isSigner: false },
+    { pubkey: tickArraysTwo[0].address, isWritable: true, isSigner: false },
     // tick_array_two_1
-    { pubkey: poolTwo.tickArrays[1].address, isWritable: true, isSigner: false },
+    { pubkey: tickArraysTwo[1].address, isWritable: true, isSigner: false },
     // tick_array_two_2
-    { pubkey: poolTwo.tickArrays[2].address, isWritable: true, isSigner: false },
+    { pubkey: tickArraysTwo[2].address, isWritable: true, isSigner: false },
     // oracle_one
-    { pubkey: (await PublicKey.findProgramAddress([ Buffer.from('oracle'), poolOne.pubkey.toBuffer() ], new PublicKey(exchange.router.v1.address)))[0], isWritable: false, isSigner: false },
+    { pubkey: (await PublicKey.findProgramAddress([ Buffer.from('oracle'), new PublicKey(poolOne.toString()).toBuffer() ], new PublicKey(exchange.router.v1.address)))[0], isWritable: false, isSigner: false },
     // oracle_two
-    { pubkey: (await PublicKey.findProgramAddress([ Buffer.from('oracle'), poolTwo.pubkey.toBuffer() ], new PublicKey(exchange.router.v1.address)))[0], isWritable: false, isSigner: false },
+    { pubkey: (await PublicKey.findProgramAddress([ Buffer.from('oracle'), new PublicKey(poolTwo.toString()).toBuffer() ], new PublicKey(exchange.router.v1.address)))[0], isWritable: false, isSigner: false },
   ]
 }
-
-const getTwoHopSwapInstructionData = ({ amount, otherAmountThreshold, amountSpecifiedIsInput, aToBOne, aToBTwo, sqrtPriceLimitOne, sqrtPriceLimitTwo })=> {
+const getTwoHopSwapInstructionData = ({
+  amount,
+  otherAmountThreshold,
+  amountSpecifiedIsInput,
+  aToBOne,
+  aToBTwo,
+  sqrtPriceLimitOne,
+  sqrtPriceLimitTwo,
+})=> {
   let LAYOUT, data
   
   LAYOUT = struct([
@@ -97,7 +119,7 @@ const getTwoHopSwapInstructionData = ({ amount, otherAmountThreshold, amountSpec
   data = Buffer.alloc(LAYOUT.span)
   LAYOUT.encode(
     {
-      anchorDiscriminator: TWO_HOP_SWAP_FUNCTION,
+      anchorDiscriminator: TWO_HOP_SWAP_INSTRUCTION,
       amount: new BN(amount.toString()),
       otherAmountThreshold: new BN(otherAmountThreshold.toString()),
       amountSpecifiedIsInput,
@@ -112,30 +134,39 @@ const getTwoHopSwapInstructionData = ({ amount, otherAmountThreshold, amountSpec
   return data
 }
 
-const getSwapInstructionKeys = async ({ fromAddress, pool, tokenAccountA, tokenAccountB })=> {
+const getSwapInstructionKeys = async ({
+  fromAddress,
+  pool,
+  tokenAccountA,
+  tokenVaultA,
+  tokenAccountB,
+  tokenVaultB,
+  tickArrays,
+})=> {
+
   return [
     // token_program
     { pubkey: new PublicKey(Token.solana.TOKEN_PROGRAM), isWritable: false, isSigner: false },
     // token_authority
     { pubkey: new PublicKey(fromAddress), isWritable: false, isSigner: true },
     // whirlpool
-    { pubkey: pool.pubkey, isWritable: true, isSigner: false },
+    { pubkey: new PublicKey(pool.toString()), isWritable: true, isSigner: false },
     // token_owner_account_a
-    { pubkey: tokenAccountA, isWritable: true, isSigner: false },
+    { pubkey: new PublicKey(tokenAccountA.toString()), isWritable: true, isSigner: false },
     // token_vault_a
-    { pubkey: pool.data.tokenVaultA, isWritable: true, isSigner: false },
+    { pubkey: new PublicKey(tokenVaultA.toString()), isWritable: true, isSigner: false },
     // token_owner_account_b
-    { pubkey: tokenAccountB, isWritable: true, isSigner: false },
+    { pubkey: new PublicKey(tokenAccountB.toString()), isWritable: true, isSigner: false },
     // token_vault_b
-    { pubkey: pool.data.tokenVaultB, isWritable: true, isSigner: false },
+    { pubkey: new PublicKey(tokenVaultB.toString()), isWritable: true, isSigner: false },
     // tick_array_0
-    { pubkey: pool.tickArrays[0].address, isWritable: true, isSigner: false },
+    { pubkey: tickArrays[0].address, isWritable: true, isSigner: false },
     // tick_array_1
-    { pubkey: pool.tickArrays[1].address, isWritable: true, isSigner: false },
+    { pubkey: tickArrays[1].address, isWritable: true, isSigner: false },
     // tick_array_2
-    { pubkey: pool.tickArrays[2].address, isWritable: true, isSigner: false },
+    { pubkey: tickArrays[2].address, isWritable: true, isSigner: false },
     // oracle
-    { pubkey: (await PublicKey.findProgramAddress([ Buffer.from('oracle'), pool.pubkey.toBuffer() ], new PublicKey(exchange.router.v1.address)))[0], isWritable: false, isSigner: false },
+    { pubkey: (await PublicKey.findProgramAddress([ Buffer.from('oracle'), new PublicKey(pool.toString()).toBuffer() ], new PublicKey(exchange.router.v1.address)))[0], isWritable: false, isSigner: false },
   ]
 }
 
@@ -153,7 +184,7 @@ const getSwapInstructionData = ({ amount, otherAmountThreshold, sqrtPriceLimit, 
   data = Buffer.alloc(LAYOUT.span)
   LAYOUT.encode(
     {
-      anchorDiscriminator: SWAP_FUNCTION,
+      anchorDiscriminator: SWAP_INSTRUCTION,
       amount: new BN(amount.toString()),
       otherAmountThreshold: new BN(otherAmountThreshold.toString()),
       sqrtPriceLimit,
@@ -180,7 +211,6 @@ const getTransaction = async ({
   amountOutMinInput,
   fromAddress
 }) => {
-
   let transaction = { blockchain: 'solana' }
   let instructions = []
 
@@ -244,9 +274,12 @@ const getTransaction = async ({
         programId: new PublicKey(exchange.router.v1.address),
         keys: await getSwapInstructionKeys({
           fromAddress,
-          pool: pairs[0],
+          pool: pairs[0].pubkey,
           tokenAccountA: pairs[0].aToB ? tokenAccountIn : tokenAccountOut,
+          tokenVaultA: pairs[0].data.tokenVaultA,
           tokenAccountB: pairs[0].aToB ? tokenAccountOut : tokenAccountIn,
+          tokenVaultB: pairs[0].data.tokenVaultB,
+          tickArrays: pairs[0].tickArrays,
         }),
         data: getSwapInstructionData({
           amount,
@@ -273,12 +306,18 @@ const getTransaction = async ({
         programId: new PublicKey(exchange.router.v1.address),
         keys: await getTwoHopSwapInstructionKeys({
           fromAddress,
-          poolOne: pairs[0],
+          poolOne: pairs[0].pubkey,
+          tickArraysOne: pairs[0].tickArrays,
           tokenAccountOneA: pairs[0].aToB ? tokenAccountIn : tokenAccountMiddle,
+          tokenVaultOneA: pairs[0].data.tokenVaultA,
           tokenAccountOneB: pairs[0].aToB ? tokenAccountMiddle : tokenAccountIn,
-          poolTwo: pairs[1],
+          tokenVaultOneB: pairs[0].data.tokenVaultB,
+          poolTwo: pairs[1].pubkey,
+          tickArraysTwo: pairs[1].tickArrays,
           tokenAccountTwoA: pairs[1].aToB ? tokenAccountMiddle : tokenAccountOut,
+          tokenVaultTwoA: pairs[1].data.tokenVaultA,
           tokenAccountTwoB: pairs[1].aToB ? tokenAccountOut : tokenAccountMiddle,
+          tokenVaultTwoB: pairs[1].data.tokenVaultB,
         }),
         data: getTwoHopSwapInstructionData({
           amount,
@@ -341,5 +380,9 @@ const debug = async(instructions, provider)=>{
 }
 
 export {
-  getTransaction
+  getTransaction,
+  SWAP_INSTRUCTION,
+  TWO_HOP_SWAP_INSTRUCTION,
+  getSwapInstructionKeys,
+  getTwoHopSwapInstructionKeys,
 }
