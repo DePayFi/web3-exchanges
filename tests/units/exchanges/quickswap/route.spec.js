@@ -39,7 +39,6 @@ describe('quickswap', () => {
         tokenIn: '0xa0bed124a09ac2bd941b10349d8d224fe3c955eb',
         tokenOut: '0xa0bed124a09ac2bd941b10349d8d224fe3c955eb',
         amountInMax: amountIn,
-        amountOut,
         fromAddress,
         toAddress
       })
@@ -79,7 +78,6 @@ describe('quickswap', () => {
       let route = await exchange.route({
         tokenIn: tokenIn,
         tokenOut: tokenOut,
-        amountOut,
         amountInMax: fetchedAmountIn,
         fromAddress,
         toAddress
@@ -420,7 +418,6 @@ describe('quickswap', () => {
       let route = await exchange.route({
         tokenIn,
         tokenOut,
-        amountIn,
         amountOutMin,
         fromAddress,
         toAddress

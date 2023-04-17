@@ -37,7 +37,6 @@ describe('weth', () => {
         tokenIn: Blockchains[blockchain].currency.address,
         tokenOut: Blockchains[blockchain].wrapped.address,
         amountInMax: amountIn,
-        amountOut,
         fromAddress,
         toAddress
       })
@@ -74,7 +73,6 @@ describe('weth', () => {
         tokenIn: Blockchains[blockchain].wrapped.address,
         tokenOut: Blockchains[blockchain].currency.address,
         amountInMax: amountIn,
-        amountOut,
         fromAddress,
         toAddress
       })
