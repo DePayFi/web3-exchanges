@@ -1,7 +1,7 @@
 {
   "name": "@depay/web3-exchanges-solana",
   "moduleName": "Web3Exchanges",
-  "version": "11.6.1",
+  "version": "12.0.0",
   "description": "JavaScript library simplifying decentralized web3 exchange routing for multiple blockchains and exchanges.",
   "main": "dist/umd/index.solana.js",
   "module": "dist/esm/index.solana.js",
@@ -24,10 +24,11 @@
   "homepage": "https://depay.com",
   "private": false,
   "peerDependencies": {
-    "@depay/solana-web3.js": "^1.20.15",
+    "@depay/solana-web3.js": "^1.21.2",
     "@depay/web3-blockchains": "^7.1.0",
     "@depay/web3-client-solana": "^10.7.0",
-    "@depay/web3-tokens-solana": "^9.16.0",
+    "@depay/web3-tokens-solana": "^9.17.0",
+    "decimal.js": "^10.4.3",
     "ethers": "^5.7.1"
   },
   "engines": {

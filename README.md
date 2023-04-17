@@ -76,7 +76,7 @@ Polygon:
 - [WMATIC](https://polygonscan.com/token/0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270)
 
 Solana:
-- [Raydium](https://raydium.io)
+- [Orca](https://orca.so)
 
 Fantom:
 - [SpookySwap](https://spookyswap.fi)
@@ -145,10 +145,10 @@ A Swap configuration is fed into the `route` function:
 
 The following combinations of provided amounts are possible:
 
-- Pass `amountOutMin`. `amountIn` will be calculated automatically and can vary
-- Pass `amountInMax`. `amountOut` will be calculated automatically and can vary
-- Pass `amountOut`. `amountInMax` will be calculated automatically and can vary
-- Pass `amountIn`. `amountOutMin` will be calculated automatically and can vary
+- Pass `amountOutMin`. Swap will return at least `amountOutMin` into the wallet. `amountIn` will be calculated automatically and can vary.
+- Pass `amountOut`. Swap will take at max `amountInMax` out of the wallet (calculated based on provided `amountOut`). `amountInMax` will be calculated automatically and can vary.
+- Pass `amountInMax`. Swap will take at max `amountInMax` out of the wallet. `amountOut` will be calculated automatically and can vary.
+- Pass `amountIn`. Swap will return at least `amountOutMin` into the the wallet (calculated based on provided `amountIn`). `amountOutMin` will be calculated automatically and can vary.
 
 ### Route
 
@@ -176,6 +176,8 @@ This library applies slippage strategies to amounts for the following combinatio
 
 - If `amountOutMin` is provided, slippage is applied to `amountIn`.
 - If `amountOut` is provided, slippage is applied to `amountInMax`.
+- If `amountInMax` is provided, slippage is applied to `amountOut`.
+- If `amountIn` is provided, slippage is applied to `amountOutMax`.
 
 ### Auto Slippage
 

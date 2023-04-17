@@ -16,10 +16,15 @@ const route = ({
   getTransaction,
   slippage,
 }) => {
+  
   tokenIn = fixAddress(tokenIn)
   tokenOut = fixAddress(tokenOut)
+
+  if([amountIn, amountOut, amountInMax, amountOutMin].filter(Boolean).length > 1) { throw('You can only pass one: amountIn, amountOut, amountInMax or amountOutMin') }
+  if([amountIn, amountOut, amountInMax, amountOutMin].filter(Boolean).length < 1) { throw('You need to pass exactly one: amountIn, amountOut, amountInMax or amountOutMin') }
+
   return new Promise(async (resolve)=> {
-    let { path, fixedPath } = await findPath({ tokenIn, tokenOut })
+    let { path, fixedPath } = await findPath({ tokenIn, tokenOut, amountIn, amountOut, amountInMax, amountOutMin })
     if (path === undefined || path.length == 0) { return resolve() }
     let [amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput] = [amountIn, amountOut, amountInMax, amountOutMin];
 
@@ -84,7 +89,6 @@ class Exchange {
     getAmounts,
     getTransaction,
     slippage,
-    getPair,
   }) {
     this.name = name
     this.blockchain = blockchain
@@ -101,7 +105,6 @@ class Exchange {
     this.getAmounts = getAmounts
     this.getTransaction = getTransaction
     this.slippage = slippage
-    this.getPair = getPair
   }
 
   async route({

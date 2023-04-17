@@ -1,22 +1,7 @@
-/*#if _EVM
-
-/*#elif _SOLANA
-
-import { request } from '@depay/web3-client-solana'
-
-//#else */
-
-import { request } from '@depay/web3-client'
-
-//#endif
-
 import Blockchains from '@depay/web3-blockchains'
-import Raydium from '../basics'
-import { anyPairs } from './pairs'
+import { getPairsWithPrice } from './pairs'
 
 const blockchain = Blockchains.solana
-const USDC = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'
-const USDT = 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'
 
 // Replaces 11111111111111111111111111111111 with the wrapped token and implies wrapping.
 //
@@ -46,53 +31,47 @@ let fixPath = (path) => {
   return fixedPath
 }
 
-let pathExists = async (path) => {
+let pathExists = async ({ path, amountIn, amountInMax, amountOut, amountOutMin }) => {
   if(path.length == 1) { return false }
   path = fixPath(path)
   let pairs = []
-  if(await anyPairs(path[0], path[1]) || await anyPairs(path[1], path[0])) {
+  if((await getPairsWithPrice({ tokenIn: path[0], tokenOut: path[1], amountIn, amountInMax, amountOut, amountOutMin })).length > 0) {
     return true
   } else {
     return false
   }
 }
 
-let findPath = async ({ tokenIn, tokenOut }) => {
+let findPath = async ({ tokenIn, tokenOut, amountIn, amountOut, amountInMax, amountOutMin }) => {
   if(
     [tokenIn, tokenOut].includes(blockchain.currency.address) &&
     [tokenIn, tokenOut].includes(blockchain.wrapped.address)
   ) { return { path: undefined, fixedPath: undefined } }
 
-  let path
-  if (await pathExists([tokenIn, tokenOut])) {
+  let path, stablesIn, stablesOut, stable
+
+  if (await pathExists({ path: [tokenIn, tokenOut], amountIn, amountInMax, amountOut, amountOutMin })) {
     // direct path
     path = [tokenIn, tokenOut]
   } else if (
     tokenIn != blockchain.wrapped.address &&
     tokenIn != blockchain.currency.address &&
-    await pathExists([tokenIn, blockchain.wrapped.address]) &&
+    await pathExists({ path: [tokenIn, blockchain.wrapped.address], amountIn, amountInMax, amountOut, amountOutMin }) &&
     tokenOut != blockchain.wrapped.address &&
     tokenOut != blockchain.currency.address &&
-    await pathExists([tokenOut, blockchain.wrapped.address])
+    await pathExists({ path: [tokenOut, blockchain.wrapped.address], amountIn, amountInMax, amountOut, amountOutMin })
   ) {
     // path via blockchain.wrapped.address
     path = [tokenIn, blockchain.wrapped.address, tokenOut]
   } else if (
-    tokenIn != USDC &&
-    await pathExists([tokenIn, USDC]) &&
-    tokenOut != USDC &&
-    await pathExists([tokenOut, USDC])
+    !blockchain.stables.usd.includes(tokenIn) &&
+    (stablesIn = (await Promise.all(blockchain.stables.usd.map((stable)=>pathExists({ path: [tokenIn, stable], amountIn, amountInMax, amountOut, amountOutMin }) ? stable : undefined))).filter(Boolean)) &&
+    !blockchain.stables.usd.includes(tokenOut) &&
+    (stablesOut = (await Promise.all(blockchain.stables.usd.map((stable)=>pathExists({ path: [tokenOut, stable], amountIn, amountInMax, amountOut, amountOutMin })  ? stable : undefined))).filter(Boolean)) &&
+    (stable = stablesIn.filter((stable)=> stablesOut.includes(stable))[0])
   ) {
-    // path via USDC
-    path = [tokenIn, USDC, tokenOut]
-  } else if (
-    tokenIn != USDT &&
-    await pathExists([tokenIn, USDT]) &&
-    tokenOut != USDT &&
-    await pathExists([tokenOut, USDT])
-  ) {
-    // path via USDT
-    path = [tokenIn, USDT, tokenOut]
+    // path via TOKEN_IN <> STABLE <> TOKEN_OUT
+    path = [tokenIn, stable, tokenOut]
   }
 
   // Add blockchain.wrapped.address to route path if things start or end with blockchain.currency.address

@@ -39,7 +39,6 @@ describe('pancakeswap', () => {
         tokenIn: '0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82',
         tokenOut: '0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82',
         amountInMax: amountIn,
-        amountOut,
         fromAddress,
         toAddress
       })
@@ -79,7 +78,6 @@ describe('pancakeswap', () => {
       let route = await exchange.route({
         tokenIn: tokenIn,
         tokenOut: tokenOut,
-        amountOut,
         amountInMax: fetchedAmountIn,
         fromAddress,
         toAddress
@@ -417,7 +415,6 @@ describe('pancakeswap', () => {
       let route = await exchange.route({
         tokenIn,
         tokenOut,
-        amountIn,
         amountOutMin,
         fromAddress,
         toAddress
