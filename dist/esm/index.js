@@ -1298,15 +1298,17 @@ const getTickArrays = async ({
 
   const tickArrayAddresses = await getTickArrayAddresses({ aToB, pool, tickSpacing: freshWhirlpoolData.tickSpacing, tickCurrentIndex: freshWhirlpoolData.tickCurrentIndex });
 
-  return await Promise.all(tickArrayAddresses.map(async(address, index) => {
+  return (
+    await Promise.all(tickArrayAddresses.map(async(address, index) => {
 
-    const data = await request({ blockchain: 'solana' , address: address.toString(), api: TICK_ARRAY_LAYOUT, cache: 10 });
+      let data;
+      try {
+        data = await web3Client.request({ blockchain: 'solana' , address: address.toString(), api: TICK_ARRAY_LAYOUT, cache: 10 });
+      } catch (e2) {}
 
-    return {
-      address,
-      data
-    }
-  }))
+      return { address, data }
+    }))
+  )
 };
 
 class TickArrayIndex {
