@@ -2,7 +2,7 @@
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@depay/solana-web3.js'), require('@depay/web3-client'), require('ethers'), require('@depay/web3-tokens'), require('@depay/web3-blockchains'), require('decimal.js')) :
   typeof define === 'function' && define.amd ? define(['exports', '@depay/solana-web3.js', '@depay/web3-client', 'ethers', '@depay/web3-tokens', '@depay/web3-blockchains', 'decimal.js'], factory) :
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.Web3Exchanges = {}, global.SolanaWeb3js, global.Web3Client, global.ethers, global.Web3Tokens, global.Web3Blockchains, global.Decimal));
-}(this, (function (exports, solanaWeb3_js, web3Client$1, ethers$1, web3Tokens, Blockchains, Decimal) { 'use strict';
+}(this, (function (exports, solanaWeb3_js, web3Client, ethers$1, web3Tokens, Blockchains, Decimal) { 'use strict';
 
   function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
@@ -115,7 +115,7 @@
       return newAmountInWithDefaultSlippageBN
     }
 
-    const currentBlock = await web3Client$1.request({ blockchain: exchange.blockchain, method: 'latestBlockNumber' });
+    const currentBlock = await web3Client.request({ blockchain: exchange.blockchain, method: 'latestBlockNumber' });
 
     let blocks = [];
     for(var i = 0; i <= 2; i++){
@@ -1520,7 +1520,7 @@
 
     try {
       
-      const freshWhirlpoolData = await web3Client$1.request({ blockchain: 'solana' , address: account.pubkey.toString(), api: basics.router.v1.api, cache: 10 });
+      const freshWhirlpoolData = await web3Client.request({ blockchain: 'solana' , address: account.pubkey.toString(), api: basics.router.v1.api, cache: 10 });
 
       const aToB = (account.data.tokenMintA.toString() === tokenIn);
 
@@ -1563,7 +1563,7 @@
   // This method is cached dan is only to be used to generally existing pools every 24h
   // Do not use for price calulations, fetch accounts for pools individually in order to calculate price 
   let getAccounts = async (base, quote) => {
-    let accounts = await web3Client$1.request(`solana://${basics.router.v1.address}/getProgramAccounts`, {
+    let accounts = await web3Client.request(`solana://${basics.router.v1.address}/getProgramAccounts`, {
       params: { filters: [
         { dataSize: basics.router.v1.api.span },
         { memcmp: { offset: 101, bytes: base }},
@@ -1792,7 +1792,7 @@
 
   const createTokenAccountIfNotExisting = async ({ instructions, owner, token, account })=>{
     let outAccountExists;
-    try{ outAccountExists = !!(await web3Client$1.request({ blockchain: 'solana', address: account.toString() })); } catch (e2) {}
+    try{ outAccountExists = !!(await web3Client.request({ blockchain: 'solana', address: account.toString() })); } catch (e2) {}
     if(!outAccountExists) {
       instructions.push(
         await web3Tokens.Token.solana.createAssociatedTokenAccountInstruction({
@@ -2004,7 +2004,7 @@
     let startsWrapped = (path[0] === blockchain$a.currency.address && fixedPath[0] === blockchain$a.wrapped.address);
     let endsUnwrapped = (path[path.length-1] === blockchain$a.currency.address && fixedPath[fixedPath.length-1] === blockchain$a.wrapped.address);
     let wrappedAccount;
-    const provider = await web3Client$1.getProvider('solana');
+    const provider = await web3Client.getProvider('solana');
     
     if(startsWrapped || endsUnwrapped) {
       const rent = await provider.getMinimumBalanceForRentExemption(web3Tokens.Token.solana.TOKEN_LAYOUT.span);
@@ -2166,7 +2166,7 @@
 
   const pathExists$1 = async (blockchain, exchange, path) => {
     if(fixPath$1(blockchain, exchange, path).length == 1) { return false }
-    let pair = await web3Client$1.request({
+    let pair = await web3Client.request({
       blockchain: blockchain.name,
       address: exchange.factory.address,
       method: 'getPair',
@@ -2176,9 +2176,9 @@
     });
     if(pair == blockchain.zero) { return false }
     let [reserves, token0, token1] = await Promise.all([
-      web3Client$1.request({ blockchain: blockchain.name, address: pair, method: 'getReserves', api: exchange.pair.api, cache: 3600000 }),
-      web3Client$1.request({ blockchain: blockchain.name, address: pair, method: 'token0', api: exchange.pair.api, cache: 3600000 }),
-      web3Client$1.request({ blockchain: blockchain.name, address: pair, method: 'token1', api: exchange.pair.api, cache: 3600000 })
+      web3Client.request({ blockchain: blockchain.name, address: pair, method: 'getReserves', api: exchange.pair.api, cache: 3600000 }),
+      web3Client.request({ blockchain: blockchain.name, address: pair, method: 'token0', api: exchange.pair.api, cache: 3600000 }),
+      web3Client.request({ blockchain: blockchain.name, address: pair, method: 'token1', api: exchange.pair.api, cache: 3600000 })
     ]);
     if(path.includes(blockchain.wrapped.address)) {
       return minReserveRequirements({ min: 1, token: blockchain.wrapped.address, decimals: blockchain.currency.decimals, reserves, token0, token1 })
@@ -2243,7 +2243,7 @@
 
   let getAmountOut = (blockchain, exchange, { path, amountIn, tokenIn, tokenOut }) => {
     return new Promise((resolve) => {
-      web3Client$1.request({
+      web3Client.request({
         blockchain: blockchain.name,
         address: exchange.router.address,
         method: 'getAmountsOut',
@@ -2262,7 +2262,7 @@
 
   let getAmountIn = (blockchain, exchange, { path, amountOut, block }) => {
     return new Promise((resolve) => {
-      web3Client$1.request({
+      web3Client.request({
         blockchain: blockchain.name,
         address: exchange.router.address,
         method: 'getAmountsIn',

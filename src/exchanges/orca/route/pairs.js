@@ -46,7 +46,7 @@ let getPairsWithPrice = async({ tokenIn, tokenOut, amountIn, amountInMax, amount
       return account
     }))).filter(Boolean)
     return accounts
-  } catch (e) {
+  } catch {
     return []
   }
 }

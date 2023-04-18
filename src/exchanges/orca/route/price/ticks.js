@@ -71,7 +71,7 @@ const getTickArrays = async ({
 
       let data
       try {
-        data = await web3Client.request({ blockchain: 'solana' , address: address.toString(), api: TICK_ARRAY_LAYOUT, cache: 10 });
+        data = await request({ blockchain: 'solana' , address: address.toString(), api: TICK_ARRAY_LAYOUT, cache: 10 });
       } catch {}
 
       return { address, data }
