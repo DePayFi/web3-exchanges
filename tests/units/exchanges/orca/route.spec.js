@@ -61,6 +61,57 @@ describe('orca', () => {
     })
   })
 
+  describe('no route found', ()=>{
+
+    it('resolves and returns no route', async()=>{
+
+      const tokenIn = 'orcaEKTdK7LKz57vaAYr9QeNsVEPfiu6QeMU1kektZE'
+      const tokenAccountB = '9XW6nQe2k65YYdkhMk5JCe24aDC4y1wdpWm2VbKuKsY5'
+      const tokenVaultB = '9RfZwn2Prux6QesG1Noo4HzMEBv3rPndJ2bN2Wwd6a7p'
+      const tokenOut = 'HxhWkVpk5NS4Ltg5nij2G671CKXFRKPK8vy271Ub4uEK'
+      const tokenAccountA = 'F7e4iBrxoSmHhEzhuBcXXs1KAknYvEoZWieiocPvrCD9'
+      const tokenVaultA = 'BVNo8ftg2LkkssnWT4ZWdtoFaevnfD6ExYeramwM27pe'
+      const path = [tokenIn, tokenOut]
+      const pool = '58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2'
+      const amount = 1
+      const amountBN = ethers.utils.parseUnits(amount.toString(), decimalsIn)
+      const tokenAccountOut = 'F7e4iBrxoSmHhEzhuBcXXs1KAknYvEoZWieiocPvrCD9'
+
+      await mockPool({
+        provider,
+        tokenA: tokenOut,
+        tokenVaultA,
+        tokenB: tokenIn,
+        tokenVaultB,
+        aToB,
+        pool,
+      })
+
+      mock({
+        blockchain,
+        provider,
+        request: {
+          method: 'getProgramAccounts',
+          to: exchange.router.v1.address,
+          params: { filters: [
+            { dataSize: exchange.router.v1.api.span },
+            { memcmp: { offset: 101, bytes: tokenOut }},
+            { memcmp: { offset: 181, bytes: tokenIn }},
+          ]},
+          return: []
+        }
+      })
+
+      let route = await exchange.route({
+        tokenIn: tokenIn,
+        tokenOut: tokenOut,
+        amountOut: amount
+      })
+
+      expect(route).toEqual(undefined)
+    })
+  })
+
   describe('route token to token via 1 pool', ()=>{
 
     const tokenIn = 'orcaEKTdK7LKz57vaAYr9QeNsVEPfiu6QeMU1kektZE'

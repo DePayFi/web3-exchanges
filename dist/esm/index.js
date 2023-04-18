@@ -1677,9 +1677,9 @@ let findPath$2 = async ({ tokenIn, tokenOut, amountIn, amountOut, amountInMax, a
     path = [tokenIn, blockchain$b.wrapped.address, tokenOut];
   } else if (
     !blockchain$b.stables.usd.includes(tokenIn) &&
-    (stablesIn = (await Promise.all(blockchain$b.stables.usd.map((stable)=>pathExists$2({ path: [tokenIn, stable], amountIn, amountInMax, amountOut, amountOutMin }) ? stable : undefined))).filter(Boolean)) &&
+    (stablesIn = (await Promise.all(blockchain$b.stables.usd.map(async(stable)=>await pathExists$2({ path: [tokenIn, stable], amountIn, amountInMax, amountOut, amountOutMin }) ? stable : undefined))).filter(Boolean)) &&
     !blockchain$b.stables.usd.includes(tokenOut) &&
-    (stablesOut = (await Promise.all(blockchain$b.stables.usd.map((stable)=>pathExists$2({ path: [tokenOut, stable], amountIn, amountInMax, amountOut, amountOutMin })  ? stable : undefined))).filter(Boolean)) &&
+    (stablesOut = (await Promise.all(blockchain$b.stables.usd.map(async(stable)=>await pathExists$2({ path: [tokenOut, stable], amountIn, amountInMax, amountOut, amountOutMin })  ? stable : undefined))).filter(Boolean)) &&
     (stable = stablesIn.filter((stable)=> stablesOut.includes(stable))[0])
   ) {
     // path via TOKEN_IN <> STABLE <> TOKEN_OUT
