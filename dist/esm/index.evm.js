@@ -452,30 +452,32 @@ const minReserveRequirements = ({ reserves, min, token, token0, token1, decimals
 
 const pathExists$1 = async (blockchain, exchange, path) => {
   if(fixPath$1(blockchain, exchange, path).length == 1) { return false }
-  let pair = await request({
-    blockchain: blockchain.name,
-    address: exchange.factory.address,
-    method: 'getPair',
-    api: exchange.factory.api,
-    cache: 3600000,
-    params: fixPath$1(blockchain, exchange, path),
-  });
-  if(pair == blockchain.zero) { return false }
-  let [reserves, token0, token1] = await Promise.all([
-    request({ blockchain: blockchain.name, address: pair, method: 'getReserves', api: exchange.pair.api, cache: 3600000 }),
-    request({ blockchain: blockchain.name, address: pair, method: 'token0', api: exchange.pair.api, cache: 3600000 }),
-    request({ blockchain: blockchain.name, address: pair, method: 'token1', api: exchange.pair.api, cache: 3600000 })
-  ]);
-  if(path.includes(blockchain.wrapped.address)) {
-    return minReserveRequirements({ min: 1, token: blockchain.wrapped.address, decimals: blockchain.currency.decimals, reserves, token0, token1 })
-  } else if (path.find((step)=>blockchain.stables.usd.includes(step))) {
-    let address = path.find((step)=>blockchain.stables.usd.includes(step));
-    let token = new Token({ blockchain: blockchain.name, address });
-    let decimals = await token.decimals();
-    return minReserveRequirements({ min: 1000, token: address, decimals, reserves, token0, token1 })
-  } else {
-    return true
-  }
+  try {
+    let pair = await request({
+      blockchain: blockchain.name,
+      address: exchange.factory.address,
+      method: 'getPair',
+      api: exchange.factory.api,
+      cache: 3600000,
+      params: fixPath$1(blockchain, exchange, path),
+    });
+    if(!pair || pair == blockchain.zero) { return false }
+    let [reserves, token0, token1] = await Promise.all([
+      request({ blockchain: blockchain.name, address: pair, method: 'getReserves', api: exchange.pair.api, cache: 3600000 }),
+      request({ blockchain: blockchain.name, address: pair, method: 'token0', api: exchange.pair.api, cache: 3600000 }),
+      request({ blockchain: blockchain.name, address: pair, method: 'token1', api: exchange.pair.api, cache: 3600000 })
+    ]);
+    if(path.includes(blockchain.wrapped.address)) {
+      return minReserveRequirements({ min: 1, token: blockchain.wrapped.address, decimals: blockchain.currency.decimals, reserves, token0, token1 })
+    } else if (path.find((step)=>blockchain.stables.usd.includes(step))) {
+      let address = path.find((step)=>blockchain.stables.usd.includes(step));
+      let token = new Token({ blockchain: blockchain.name, address });
+      let decimals = await token.decimals();
+      return minReserveRequirements({ min: 1000, token: address, decimals, reserves, token0, token1 })
+    } else {
+      return true
+    }
+  } catch (e) { return false }
 };
 
 const findPath$1 = async (blockchain, exchange, { tokenIn, tokenOut }) => {
