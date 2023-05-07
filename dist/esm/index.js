@@ -2032,7 +2032,9 @@ const getTransaction$2 = async ({
     let otherAmountThreshold = amountSpecifiedIsInput ? amountOutMin : amountInMax;
     let tokenAccountIn = startsWrapped ? new PublicKey(wrappedAccount) : new PublicKey(await Token.solana.findProgramAddress({ owner: fromAddress, token: tokenIn }));
     let tokenAccountOut = endsUnwrapped ? new PublicKey(wrappedAccount) : new PublicKey(await Token.solana.findProgramAddress({ owner: fromAddress, token: tokenOut }));
-    await createTokenAccountIfNotExisting({ instructions, owner: fromAddress, token: tokenOut, account: tokenAccountOut });
+    if(!endsUnwrapped) {
+      await createTokenAccountIfNotExisting({ instructions, owner: fromAddress, token: tokenOut, account: tokenAccountOut });
+    }
     instructions.push(
       new TransactionInstruction({
         programId: new PublicKey(exchange.router.v1.address),
@@ -2060,11 +2062,13 @@ const getTransaction$2 = async ({
     let amount = amountSpecifiedIsInput ? amountIn : amountOut;
     let otherAmountThreshold = amountSpecifiedIsInput ? amountOutMin : amountInMax;
     let tokenAccountIn = startsWrapped ? new PublicKey(wrappedAccount) : new PublicKey(await Token.solana.findProgramAddress({ owner: fromAddress, token: tokenIn }));
-    let tokenMiddle = path[1];
+    let tokenMiddle = fixedPath[1];
     let tokenAccountMiddle = new PublicKey(await Token.solana.findProgramAddress({ owner: fromAddress, token: tokenMiddle }));
     await createTokenAccountIfNotExisting({ instructions, owner: fromAddress, token: tokenMiddle, account: tokenAccountMiddle });
     let tokenAccountOut = endsUnwrapped ? new PublicKey(wrappedAccount) : new PublicKey(await Token.solana.findProgramAddress({ owner: fromAddress, token: tokenOut }));
-    await createTokenAccountIfNotExisting({ instructions, owner: fromAddress, token: tokenOut, account: tokenAccountOut });
+    if(!endsUnwrapped) {
+      await createTokenAccountIfNotExisting({ instructions, owner: fromAddress, token: tokenOut, account: tokenAccountOut });
+    }
     instructions.push(
       new TransactionInstruction({
         programId: new PublicKey(exchange.router.v1.address),

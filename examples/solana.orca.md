@@ -248,6 +248,44 @@ let transaction = await route.getTransaction({ from })
 wallet.sendTransaction(transaction)
 ```
 
+## SOL<>USDC<>TOKEN (2 Pools)
+
+```javascript
+let exchange = Web3Exchanges.find('solana', 'orca')
+let route = await exchange.route({
+  blockchain: 'solana',
+  tokenIn: '11111111111111111111111111111111', // SOL
+  tokenOut: 'Saber2gLauYim4Mvftnrasomsv6NvAuncvMEZwcLpD1', // SBR
+  amountInMax: 0.01
+})
+
+let wallets = await Web3Wallets.getWallets()
+let wallet = wallets[0]
+let from = await wallet.account()
+let transaction = await route.getTransaction({ from })
+
+wallet.sendTransaction(transaction)
+```
+
+## TOKEN<>USDC<>SOL (2 Pools)
+
+```javascript
+let exchange = Web3Exchanges.find('solana', 'orca')
+let route = await exchange.route({
+  blockchain: 'solana',
+  tokenIn: 'Saber2gLauYim4Mvftnrasomsv6NvAuncvMEZwcLpD1', // SBR
+  tokenOut: '11111111111111111111111111111111', // SOL
+  amountInMax: 200
+})
+
+let wallets = await Web3Wallets.getWallets()
+let wallet = wallets[0]
+let from = await wallet.account()
+let transaction = await route.getTransaction({ from })
+
+wallet.sendTransaction(transaction)
+```
+
 ## TOKEN<>WSOL<>TOKEN
 
 ```javascript

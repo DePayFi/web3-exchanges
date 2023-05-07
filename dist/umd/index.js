@@ -2036,7 +2036,9 @@
       let otherAmountThreshold = amountSpecifiedIsInput ? amountOutMin : amountInMax;
       let tokenAccountIn = startsWrapped ? new solanaWeb3_js.PublicKey(wrappedAccount) : new solanaWeb3_js.PublicKey(await web3Tokens.Token.solana.findProgramAddress({ owner: fromAddress, token: tokenIn }));
       let tokenAccountOut = endsUnwrapped ? new solanaWeb3_js.PublicKey(wrappedAccount) : new solanaWeb3_js.PublicKey(await web3Tokens.Token.solana.findProgramAddress({ owner: fromAddress, token: tokenOut }));
-      await createTokenAccountIfNotExisting({ instructions, owner: fromAddress, token: tokenOut, account: tokenAccountOut });
+      if(!endsUnwrapped) {
+        await createTokenAccountIfNotExisting({ instructions, owner: fromAddress, token: tokenOut, account: tokenAccountOut });
+      }
       instructions.push(
         new solanaWeb3_js.TransactionInstruction({
           programId: new solanaWeb3_js.PublicKey(exchange.router.v1.address),
@@ -2064,11 +2066,13 @@
       let amount = amountSpecifiedIsInput ? amountIn : amountOut;
       let otherAmountThreshold = amountSpecifiedIsInput ? amountOutMin : amountInMax;
       let tokenAccountIn = startsWrapped ? new solanaWeb3_js.PublicKey(wrappedAccount) : new solanaWeb3_js.PublicKey(await web3Tokens.Token.solana.findProgramAddress({ owner: fromAddress, token: tokenIn }));
-      let tokenMiddle = path[1];
+      let tokenMiddle = fixedPath[1];
       let tokenAccountMiddle = new solanaWeb3_js.PublicKey(await web3Tokens.Token.solana.findProgramAddress({ owner: fromAddress, token: tokenMiddle }));
       await createTokenAccountIfNotExisting({ instructions, owner: fromAddress, token: tokenMiddle, account: tokenAccountMiddle });
       let tokenAccountOut = endsUnwrapped ? new solanaWeb3_js.PublicKey(wrappedAccount) : new solanaWeb3_js.PublicKey(await web3Tokens.Token.solana.findProgramAddress({ owner: fromAddress, token: tokenOut }));
-      await createTokenAccountIfNotExisting({ instructions, owner: fromAddress, token: tokenOut, account: tokenAccountOut });
+      if(!endsUnwrapped) {
+        await createTokenAccountIfNotExisting({ instructions, owner: fromAddress, token: tokenOut, account: tokenAccountOut });
+      }
       instructions.push(
         new solanaWeb3_js.TransactionInstruction({
           programId: new solanaWeb3_js.PublicKey(exchange.router.v1.address),
