@@ -1,6 +1,6 @@
 import { struct, publicKey, u128, u64 as u64$1, seq, u8, u16, i32, bool, i128, BN, PublicKey, Buffer, Keypair, SystemProgram, TransactionInstruction } from '@depay/solana-web3.js';
 import { request, getProvider } from '@depay/web3-client';
-import { ethers as ethers$1 } from 'ethers';
+import { ethers } from 'ethers';
 import { Token } from '@depay/web3-tokens';
 import Blockchains from '@depay/web3-blockchains';
 import Decimal from 'decimal.js';
@@ -243,7 +243,7 @@ const calculateAmountsWithSlippage = async ({
 
 const fixAddress = (address)=>{
   if(address.match('0x')) {
-    return ethers$1.utils.getAddress(address)
+    return ethers.utils.getAddress(address)
   } else {
     return address
   }
@@ -1700,12 +1700,12 @@ let findPath$2 = async ({ tokenIn, tokenOut, amountIn, amountOut, amountInMax, a
 
 let getAmountsOut = async ({ path, amountIn, amountInMax }) => {
 
-  let amounts = [ethers$1.BigNumber.from(amountIn || amountInMax)];
+  let amounts = [ethers.BigNumber.from(amountIn || amountInMax)];
 
-  amounts.push(ethers$1.BigNumber.from((await getBestPair({ tokenIn: path[0], tokenOut: path[1], amountIn, amountInMax })).price));
+  amounts.push(ethers.BigNumber.from((await getBestPair({ tokenIn: path[0], tokenOut: path[1], amountIn, amountInMax })).price));
   
   if (path.length === 3) {
-    amounts.push(ethers$1.BigNumber.from((await getBestPair({ tokenIn: path[1], tokenOut: path[2], amountIn: amountIn ? amounts[1] : undefined, amountInMax: amountInMax ? amounts[1] : undefined })).price));
+    amounts.push(ethers.BigNumber.from((await getBestPair({ tokenIn: path[1], tokenOut: path[2], amountIn: amountIn ? amounts[1] : undefined, amountInMax: amountInMax ? amounts[1] : undefined })).price));
   }
 
   if(amounts.length != path.length) { return }
@@ -1716,12 +1716,12 @@ let getAmountsOut = async ({ path, amountIn, amountInMax }) => {
 let getAmountsIn = async({ path, amountOut, amountOutMin }) => {
 
   path = path.slice().reverse();
-  let amounts = [ethers$1.BigNumber.from(amountOut || amountOutMin)];
+  let amounts = [ethers.BigNumber.from(amountOut || amountOutMin)];
 
-  amounts.push(ethers$1.BigNumber.from((await getBestPair({ tokenIn: path[1], tokenOut: path[0], amountOut, amountOutMin })).price));
+  amounts.push(ethers.BigNumber.from((await getBestPair({ tokenIn: path[1], tokenOut: path[0], amountOut, amountOutMin })).price));
   
   if (path.length === 3) {
-    amounts.push(ethers$1.BigNumber.from((await getBestPair({ tokenIn: path[2], tokenOut: path[1], amountOut: amountOut ? amounts[1] : undefined, amountOutMin: amountOutMin ? amounts[1] : undefined })).price));
+    amounts.push(ethers.BigNumber.from((await getBestPair({ tokenIn: path[2], tokenOut: path[1], amountOut: amountOut ? amounts[1] : undefined, amountOutMin: amountOutMin ? amounts[1] : undefined })).price));
   }
   
   if(amounts.length != path.length) { return }
@@ -2156,9 +2156,9 @@ const fixPath$1 = (blockchain, exchange, path) => {
 
 const minReserveRequirements = ({ reserves, min, token, token0, token1, decimals }) => {
   if(token0.toLowerCase() == token.toLowerCase()) {
-    return reserves[0].gte(ethers$1.utils.parseUnits(min.toString(), decimals))
+    return reserves[0].gte(ethers.utils.parseUnits(min.toString(), decimals))
   } else if (token1.toLowerCase() == token.toLowerCase()) {
-    return reserves[1].gte(ethers$1.utils.parseUnits(min.toString(), decimals))
+    return reserves[1].gte(ethers.utils.parseUnits(min.toString(), decimals))
   } else {
     return false
   }

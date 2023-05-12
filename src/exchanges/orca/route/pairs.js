@@ -14,6 +14,7 @@ import { Token } from '@depay/web3-tokens'
 //#endif
 
 import exchange from '../basics'
+import { ethers } from 'ethers'
 import { getPrice } from './price'
 
 // This method is cached dan is only to be used to generally existing pools every 24h
