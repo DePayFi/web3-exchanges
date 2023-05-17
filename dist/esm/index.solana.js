@@ -1518,7 +1518,7 @@ const getPrice = async ({
     
     const freshWhirlpoolData = await request({ blockchain: 'solana' , address: account.pubkey.toString(), api: basics.router.v1.api, cache: 10 });
 
-    const aToB = (account.data.tokenMintA.toString() === tokenIn);
+    const aToB = (freshWhirlpoolData.tokenMintA.toString() === tokenIn);
 
     const tickArrays = await getTickArrays({ pool: account.pubkey, freshWhirlpoolData, aToB });
 
@@ -1556,7 +1556,7 @@ const getPrice = async ({
   }
 };
 
-// This method is cached dan is only to be used to generally existing pools every 24h
+// This method is cached and is only to be used to generally existing pools every 24h
 // Do not use for price calulations, fetch accounts for pools individually in order to calculate price 
 let getAccounts = async (base, quote) => {
   let accounts = await request(`solana://${basics.router.v1.address}/getProgramAccounts`, {
@@ -1566,7 +1566,8 @@ let getAccounts = async (base, quote) => {
       { memcmp: { offset: 181, bytes: quote }}
     ]},
     api: basics.router.v1.api,
-    cache: 86400, // 24h
+    cache: 86400, // 24h,
+    cacheKey: ['whirlpool', base.toString(), quote.toString()].join('-')
   });
   return accounts
 };
@@ -1575,7 +1576,6 @@ let getPairsWithPrice = async({ tokenIn, tokenOut, amountIn, amountInMax, amount
   try {
     let accounts = await getAccounts(tokenIn, tokenOut);
     if(accounts.length === 0) { accounts = await getAccounts(tokenOut, tokenIn); }
-    accounts = accounts.filter((account)=>account.data.liquidity.toString() !== '0');
     accounts = (await Promise.all(accounts.map(async(account)=>{
       const { price, tickArrays, sqrtPriceLimit, aToB } = await getPrice({ account, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin });
       if(price === undefined) { return false }

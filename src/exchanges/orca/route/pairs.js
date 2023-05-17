@@ -17,7 +17,7 @@ import exchange from '../basics'
 import { ethers } from 'ethers'
 import { getPrice } from './price'
 
-// This method is cached dan is only to be used to generally existing pools every 24h
+// This method is cached and is only to be used to generally existing pools every 24h
 // Do not use for price calulations, fetch accounts for pools individually in order to calculate price 
 let getAccounts = async (base, quote) => {
   let accounts = await request(`solana://${exchange.router.v1.address}/getProgramAccounts`, {
@@ -27,7 +27,8 @@ let getAccounts = async (base, quote) => {
       { memcmp: { offset: 181, bytes: quote }}
     ]},
     api: exchange.router.v1.api,
-    cache: 86400, // 24h
+    cache: 86400, // 24h,
+    cacheKey: ['whirlpool', base.toString(), quote.toString()].join('-')
   })
   return accounts
 }
@@ -36,7 +37,6 @@ let getPairsWithPrice = async({ tokenIn, tokenOut, amountIn, amountInMax, amount
   try {
     let accounts = await getAccounts(tokenIn, tokenOut)
     if(accounts.length === 0) { accounts = await getAccounts(tokenOut, tokenIn) }
-    accounts = accounts.filter((account)=>account.data.liquidity.toString() !== '0')
     accounts = (await Promise.all(accounts.map(async(account)=>{
       const { price, tickArrays, sqrtPriceLimit, aToB } = await getPrice({ account, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin })
       if(price === undefined) { return false }
