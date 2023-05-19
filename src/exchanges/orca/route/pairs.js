@@ -28,6 +28,8 @@ let getAccounts = async (base, quote) => {
       { memcmp: { offset: 181, bytes: quote }} // tokenMintB
     ]},
     api: exchange.router.v1.api,
+    cache: 86400, // 24h,
+    cacheKey: ['whirlpool', base.toString(), quote.toString()].join('-')
   })
   return accounts
 }

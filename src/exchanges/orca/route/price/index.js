@@ -29,7 +29,7 @@ const getPrice = async ({
 
   try {
     
-    const freshWhirlpoolData = await request({ blockchain: 'solana' , address: account.pubkey.toString(), api: exchange.router.v1.api })
+    const freshWhirlpoolData = await request({ blockchain: 'solana' , address: account.pubkey.toString(), api: exchange.router.v1.api, cache: 10 })
 
     const aToB = (freshWhirlpoolData.tokenMintA.toString() === tokenIn)
 
