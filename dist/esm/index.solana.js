@@ -1572,6 +1572,8 @@ let getAccounts = async (base, quote) => {
       { memcmp: { offset: 181, bytes: quote }} // tokenMintB
     ]},
     api: basics.router.v1.api,
+    cache: 86400, // 24h,
+    cacheKey: ['whirlpool', base.toString(), quote.toString()].join('-')
   });
   return accounts
 };
@@ -1584,11 +1586,18 @@ let getPairsWithPrice = async({ tokenIn, tokenOut, amountIn, amountInMax, amount
     accounts = (await Promise.all(accounts.map(async(account)=>{
       const { price, tickArrays, sqrtPriceLimit, aToB } = await getPrice({ account, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin });
       if(price === undefined) { return false }
-      account.price = price;
-      account.tickArrays = tickArrays;
-      account.sqrtPriceLimit = sqrtPriceLimit;
-      account.aToB = aToB;
-      return account
+
+      return { // return a copy, do not mutate accounts
+        pubkey: account.pubkey,
+        price: price,
+        tickArrays: tickArrays,
+        sqrtPriceLimit: sqrtPriceLimit,
+        aToB: aToB,
+        data: {
+          tokenVaultA: account.data.tokenVaultA, 
+          tokenVaultB: account.data.tokenVaultB
+        }
+      }
     }))).filter(Boolean);
     return accounts
   } catch (e) {
