@@ -1303,7 +1303,7 @@ const getTickArrays = async ({
 
       let data;
       try {
-        data = await request({ blockchain: 'solana' , address: address.toString(), api: TICK_ARRAY_LAYOUT, cache: 10 });
+        data = await request({ blockchain: 'solana' , address: address.toString(), api: TICK_ARRAY_LAYOUT, cache: 10, cacheKey: ['tick', address.toString()].join('-') });
       } catch (e2) {}
 
       return { address, data }
@@ -1516,7 +1516,13 @@ const getPrice = async ({
 
   try {
     
-    const freshWhirlpoolData = await request({ blockchain: 'solana' , address: account.pubkey.toString(), api: basics.router.v1.api, cache: 10 });
+    const freshWhirlpoolData = await request({
+      blockchain: 'solana',
+      address: account.pubkey.toString(),
+      api: basics.router.v1.api,
+      cache: 10,
+      cacheKey: ['whirlpool', account.pubkey.toString()].join('-')
+    });
 
     const aToB = (freshWhirlpoolData.tokenMintA.toString() === tokenIn);
 

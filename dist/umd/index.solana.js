@@ -1307,7 +1307,7 @@
 
         let data;
         try {
-          data = await web3ClientSolana.request({ blockchain: 'solana' , address: address.toString(), api: TICK_ARRAY_LAYOUT, cache: 10 });
+          data = await web3ClientSolana.request({ blockchain: 'solana' , address: address.toString(), api: TICK_ARRAY_LAYOUT, cache: 10, cacheKey: ['tick', address.toString()].join('-') });
         } catch (e2) {}
 
         return { address, data }
@@ -1520,7 +1520,13 @@
 
     try {
       
-      const freshWhirlpoolData = await web3ClientSolana.request({ blockchain: 'solana' , address: account.pubkey.toString(), api: basics.router.v1.api, cache: 10 });
+      const freshWhirlpoolData = await web3ClientSolana.request({
+        blockchain: 'solana',
+        address: account.pubkey.toString(),
+        api: basics.router.v1.api,
+        cache: 10,
+        cacheKey: ['whirlpool', account.pubkey.toString()].join('-')
+      });
 
       const aToB = (freshWhirlpoolData.tokenMintA.toString() === tokenIn);
 
