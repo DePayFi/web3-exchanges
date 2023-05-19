@@ -34,7 +34,6 @@ const getPrice = async ({
       address: account.pubkey.toString(),
       api: exchange.router.v1.api,
       cache: 10,
-      cacheKey: ['whirlpool', account.pubkey.toString()].join('-')
     })
 
     const aToB = (freshWhirlpoolData.tokenMintA.toString() === tokenIn)

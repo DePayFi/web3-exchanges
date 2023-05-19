@@ -1307,7 +1307,7 @@
 
         let data;
         try {
-          data = await web3Client.request({ blockchain: 'solana' , address: address.toString(), api: TICK_ARRAY_LAYOUT, cache: 10, cacheKey: ['tick', address.toString()].join('-') });
+          data = await web3Client.request({ blockchain: 'solana' , address: address.toString(), api: TICK_ARRAY_LAYOUT, cache: 10 });
         } catch (e2) {}
 
         return { address, data }
@@ -1525,7 +1525,6 @@
         address: account.pubkey.toString(),
         api: basics.router.v1.api,
         cache: 10,
-        cacheKey: ['whirlpool', account.pubkey.toString()].join('-')
       });
 
       const aToB = (freshWhirlpoolData.tokenMintA.toString() === tokenIn);
@@ -1577,8 +1576,6 @@
         { memcmp: { offset: 181, bytes: quote }} // tokenMintB
       ]},
       api: basics.router.v1.api,
-      cache: 86400, // 24h,
-      cacheKey: ['whirlpool', base.toString(), quote.toString()].join('-')
     });
     return accounts
   };
