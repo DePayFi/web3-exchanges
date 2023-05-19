@@ -1303,7 +1303,7 @@ const getTickArrays = async ({
 
       let data;
       try {
-        data = await request({ blockchain: 'solana' , address: address.toString(), api: TICK_ARRAY_LAYOUT, cache: 10 });
+        data = await request({ blockchain: 'solana' , address: address.toString(), api: TICK_ARRAY_LAYOUT });
       } catch (e2) {}
 
       return { address, data }
@@ -1516,7 +1516,7 @@ const getPrice = async ({
 
   try {
     
-    const freshWhirlpoolData = await request({ blockchain: 'solana' , address: account.pubkey.toString(), api: basics.router.v1.api, cache: 10 });
+    const freshWhirlpoolData = await request({ blockchain: 'solana' , address: account.pubkey.toString(), api: basics.router.v1.api });
 
     const aToB = (freshWhirlpoolData.tokenMintA.toString() === tokenIn);
 
@@ -1562,12 +1562,11 @@ let getAccounts = async (base, quote) => {
   let accounts = await request(`solana://${basics.router.v1.address}/getProgramAccounts`, {
     params: { filters: [
       { dataSize: basics.router.v1.api.span },
-      { memcmp: { offset: 101, bytes: base }},
-      { memcmp: { offset: 181, bytes: quote }}
+      { memcmp: { offset: 8, bytes: '2LecshUwdy9xi7meFgHtFJQNSKk4KdTrcpvaB56dP2NQ' }}, // whirlpoolsConfig
+      { memcmp: { offset: 101, bytes: base }}, // tokenMintA
+      { memcmp: { offset: 181, bytes: quote }} // tokenMintB
     ]},
     api: basics.router.v1.api,
-    cache: 86400, // 24h,
-    cacheKey: ['whirlpool', base.toString(), quote.toString()].join('-')
   });
   return accounts
 };
@@ -1576,6 +1575,7 @@ let getPairsWithPrice = async({ tokenIn, tokenOut, amountIn, amountInMax, amount
   try {
     let accounts = await getAccounts(tokenIn, tokenOut);
     if(accounts.length === 0) { accounts = await getAccounts(tokenOut, tokenIn); }
+    accounts = accounts.filter((account)=>account.data.liquidity.gt(1));
     accounts = (await Promise.all(accounts.map(async(account)=>{
       const { price, tickArrays, sqrtPriceLimit, aToB } = await getPrice({ account, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin });
       if(price === undefined) { return false }

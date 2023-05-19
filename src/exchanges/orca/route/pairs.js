@@ -23,12 +23,11 @@ let getAccounts = async (base, quote) => {
   let accounts = await request(`solana://${exchange.router.v1.address}/getProgramAccounts`, {
     params: { filters: [
       { dataSize: exchange.router.v1.api.span },
-      { memcmp: { offset: 101, bytes: base }},
-      { memcmp: { offset: 181, bytes: quote }}
+      { memcmp: { offset: 8, bytes: '2LecshUwdy9xi7meFgHtFJQNSKk4KdTrcpvaB56dP2NQ' }}, // whirlpoolsConfig
+      { memcmp: { offset: 101, bytes: base }}, // tokenMintA
+      { memcmp: { offset: 181, bytes: quote }} // tokenMintB
     ]},
     api: exchange.router.v1.api,
-    cache: 86400, // 24h,
-    cacheKey: ['whirlpool', base.toString(), quote.toString()].join('-')
   })
   return accounts
 }
@@ -37,6 +36,7 @@ let getPairsWithPrice = async({ tokenIn, tokenOut, amountIn, amountInMax, amount
   try {
     let accounts = await getAccounts(tokenIn, tokenOut)
     if(accounts.length === 0) { accounts = await getAccounts(tokenOut, tokenIn) }
+    accounts = accounts.filter((account)=>account.data.liquidity.gt(1))
     accounts = (await Promise.all(accounts.map(async(account)=>{
       const { price, tickArrays, sqrtPriceLimit, aToB } = await getPrice({ account, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin })
       if(price === undefined) { return false }
