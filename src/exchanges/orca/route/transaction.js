@@ -52,6 +52,30 @@ const getTwoHopSwapInstructionKeys = async ({
   tokenVaultTwoB,
 })=> {
 
+  let lastInitializedTickOne = false
+  const onlyInitializedTicksOne = tickArraysOne.map((tickArray, index)=>{
+    if(lastInitializedTickOne !== false) {
+      return tickArraysOne[lastInitializedTickOne]
+    } else if(tickArray.data){
+      return tickArray
+    } else {
+      lastInitializedTickOne = index-1
+      return tickArraysOne[index-1]
+    }
+  })
+
+  let lastInitializedTickTwo = false
+  const onlyInitializedTicksTwo = tickArraysTwo.map((tickArray, index)=>{
+    if(lastInitializedTickTwo !== false) {
+      return tickArraysTwo[lastInitializedTickTwo]
+    } else if(tickArray.data){
+      return tickArray
+    } else {
+      lastInitializedTickTwo = index-1
+      return tickArraysTwo[index-1]
+    }
+  })
+
   return [
     // token_program
     { pubkey: new PublicKey(Token.solana.TOKEN_PROGRAM), isWritable: false, isSigner: false },
@@ -78,17 +102,17 @@ const getTwoHopSwapInstructionKeys = async ({
     // token_vault_two_b
     { pubkey: new PublicKey(tokenVaultTwoB.toString()), isWritable: true, isSigner: false },
     // tick_array_one_0
-    { pubkey: tickArraysOne[0].address, isWritable: true, isSigner: false },
+    { pubkey: onlyInitializedTicksOne[0].address, isWritable: true, isSigner: false },
     // tick_array_one_1
-    { pubkey: tickArraysOne[1].address, isWritable: true, isSigner: false },
+    { pubkey: onlyInitializedTicksOne[1].address, isWritable: true, isSigner: false },
     // tick_array_one_2
-    { pubkey: tickArraysOne[2].address, isWritable: true, isSigner: false },
+    { pubkey: onlyInitializedTicksOne[2].address, isWritable: true, isSigner: false },
     // tick_array_two_0
-    { pubkey: tickArraysTwo[0].address, isWritable: true, isSigner: false },
+    { pubkey: onlyInitializedTicksTwo[0].address, isWritable: true, isSigner: false },
     // tick_array_two_1
-    { pubkey: tickArraysTwo[1].address, isWritable: true, isSigner: false },
+    { pubkey: onlyInitializedTicksTwo[1].address, isWritable: true, isSigner: false },
     // tick_array_two_2
-    { pubkey: tickArraysTwo[2].address, isWritable: true, isSigner: false },
+    { pubkey: onlyInitializedTicksTwo[2].address, isWritable: true, isSigner: false },
     // oracle_one
     { pubkey: (await PublicKey.findProgramAddress([ Buffer.from('oracle'), new PublicKey(poolOne.toString()).toBuffer() ], new PublicKey(exchange.router.v1.address)))[0], isWritable: false, isSigner: false },
     // oracle_two
@@ -144,6 +168,18 @@ const getSwapInstructionKeys = async ({
   tickArrays,
 })=> {
 
+  let lastInitializedTick = false
+  const onlyInitializedTicks = tickArrays.map((tickArray, index)=>{
+    if(lastInitializedTick !== false) {
+      return tickArrays[lastInitializedTick]
+    } else if(tickArray.data){
+      return tickArray
+    } else {
+      lastInitializedTick = index-1
+      return tickArrays[index-1]
+    }
+  })
+
   return [
     // token_program
     { pubkey: new PublicKey(Token.solana.TOKEN_PROGRAM), isWritable: false, isSigner: false },
@@ -160,11 +196,11 @@ const getSwapInstructionKeys = async ({
     // token_vault_b
     { pubkey: new PublicKey(tokenVaultB.toString()), isWritable: true, isSigner: false },
     // tick_array_0
-    { pubkey: tickArrays[0].address, isWritable: true, isSigner: false },
+    { pubkey: onlyInitializedTicks[0].address, isWritable: true, isSigner: false },
     // tick_array_1
-    { pubkey: tickArrays[1].address, isWritable: true, isSigner: false },
+    { pubkey: onlyInitializedTicks[1].address, isWritable: true, isSigner: false },
     // tick_array_2
-    { pubkey: tickArrays[2].address, isWritable: true, isSigner: false },
+    { pubkey: onlyInitializedTicks[2].address, isWritable: true, isSigner: false },
     // oracle
     { pubkey: (await PublicKey.findProgramAddress([ Buffer.from('oracle'), new PublicKey(pool.toString()).toBuffer() ], new PublicKey(exchange.router.v1.address)))[0], isWritable: false, isSigner: false },
   ]

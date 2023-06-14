@@ -59,7 +59,7 @@ let findPath = async ({ tokenIn, tokenOut, amountIn, amountOut, amountInMax, amo
     await pathExists({ path: [tokenIn, blockchain.wrapped.address], amountIn, amountInMax, amountOut, amountOutMin }) &&
     tokenOut != blockchain.wrapped.address &&
     tokenOut != blockchain.currency.address &&
-    await pathExists({ path: [tokenOut, blockchain.wrapped.address], amountIn, amountInMax, amountOut, amountOutMin })
+    await pathExists({ path: [tokenOut, blockchain.wrapped.address], amountIn: (amountOut||amountOutMin), amountInMax: (amountOut||amountOutMin), amountOut: (amountIn||amountInMax), amountOutMin: (amountIn||amountInMax) })
   ) {
     // path via blockchain.wrapped.address
     path = [tokenIn, blockchain.wrapped.address, tokenOut]
@@ -67,7 +67,7 @@ let findPath = async ({ tokenIn, tokenOut, amountIn, amountOut, amountInMax, amo
     !blockchain.stables.usd.includes(tokenIn) &&
     (stablesIn = (await Promise.all(blockchain.stables.usd.map(async(stable)=>await pathExists({ path: [tokenIn, stable], amountIn, amountInMax, amountOut, amountOutMin }) ? stable : undefined))).filter(Boolean)) &&
     !blockchain.stables.usd.includes(tokenOut) &&
-    (stablesOut = (await Promise.all(blockchain.stables.usd.map(async(stable)=>await pathExists({ path: [tokenOut, stable], amountIn, amountInMax, amountOut, amountOutMin })  ? stable : undefined))).filter(Boolean)) &&
+    (stablesOut = (await Promise.all(blockchain.stables.usd.map(async(stable)=>await pathExists({ path: [tokenOut, stable], amountIn: (amountOut||amountOutMin), amountInMax: (amountOut||amountOutMin), amountOut: (amountIn||amountInMax), amountOutMin: (amountIn||amountInMax) })  ? stable : undefined))).filter(Boolean)) &&
     (stable = stablesIn.filter((stable)=> stablesOut.includes(stable))[0])
   ) {
     // path via TOKEN_IN <> STABLE <> TOKEN_OUT
