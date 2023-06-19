@@ -1,6 +1,6 @@
 import { mock } from '@depay/web3-mock'
 import { supported } from 'src/blockchains'
-import { Token } from '@depay/web3-tokens'
+import Token from '@depay/web3-tokens'
 
 function mockDecimals({ provider, blockchain, address, value }) {
 

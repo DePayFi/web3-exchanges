@@ -3,12 +3,12 @@
 /*#elif _SOLANA
 
 import { request, getProvider } from '@depay/web3-client-solana'
-import { Token } from '@depay/web3-tokens-solana'
+import Token from '@depay/web3-tokens-solana'
 
 //#else */
 
 import { request, getProvider } from '@depay/web3-client'
-import { Token } from '@depay/web3-tokens'
+import Token from '@depay/web3-tokens'
 
 //#endif
 

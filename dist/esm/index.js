@@ -1,7 +1,7 @@
 import { struct, publicKey, u128, u64 as u64$1, seq, u8, u16, i32, bool, i128, BN, PublicKey, Buffer, Keypair, SystemProgram, TransactionInstruction } from '@depay/solana-web3.js';
 import { request, getProvider } from '@depay/web3-client';
 import { ethers } from 'ethers';
-import { Token } from '@depay/web3-tokens';
+import Token from '@depay/web3-tokens';
 import Blockchains from '@depay/web3-blockchains';
 import Decimal from 'decimal.js';
 
@@ -91,8 +91,8 @@ function _optionalChain$2(ops) { let lastAccessLHS = undefined; let value = ops[
   }
 }
 
-let supported = ['ethereum', 'bsc', 'polygon', 'solana', 'fantom', 'velas'];
-supported.evm = ['ethereum', 'bsc', 'polygon', 'fantom', 'velas'];
+let supported = ['ethereum', 'bsc', 'polygon', 'solana', 'fantom'];
+supported.evm = ['ethereum', 'bsc', 'polygon', 'fantom'];
 supported.solana = ['solana'];
 
 const DEFAULT_SLIPPAGE = '0.5'; // percent

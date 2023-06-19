@@ -2,11 +2,12 @@
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@depay/web3-blockchains'), require('@depay/web3-client-evm'), require('ethers'), require('@depay/web3-tokens-evm')) :
   typeof define === 'function' && define.amd ? define(['exports', '@depay/web3-blockchains', '@depay/web3-client-evm', 'ethers', '@depay/web3-tokens-evm'], factory) :
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.Web3Exchanges = {}, global.Web3Blockchains, global.Web3Client, global.ethers, global.Web3Tokens));
-}(this, (function (exports, Blockchains, web3ClientEvm, ethers, web3TokensEvm) { 'use strict';
+}(this, (function (exports, Blockchains, web3ClientEvm, ethers, Token) { 'use strict';
 
   function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
   var Blockchains__default = /*#__PURE__*/_interopDefaultLegacy(Blockchains);
+  var Token__default = /*#__PURE__*/_interopDefaultLegacy(Token);
 
   function _optionalChain$1(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }class Route {
     constructor({
@@ -32,8 +33,8 @@
     }
   }
 
-  let supported = ['ethereum', 'bsc', 'polygon', 'fantom', 'velas'];
-  supported.evm = ['ethereum', 'bsc', 'polygon', 'fantom', 'velas'];
+  let supported = ['ethereum', 'bsc', 'polygon', 'fantom'];
+  supported.evm = ['ethereum', 'bsc', 'polygon', 'fantom'];
   supported.solana = [];
 
   const DEFAULT_SLIPPAGE = '0.5'; // percent
@@ -191,7 +192,7 @@
   };
 
   let getAmount = async ({ amount, blockchain, address }) => {
-    return await web3TokensEvm.Token.BigNumber({ amount, blockchain, address })
+    return await Token__default['default'].BigNumber({ amount, blockchain, address })
   };
 
   let fixRouteParams = async ({
@@ -476,7 +477,7 @@
         return minReserveRequirements({ min: 1, token: blockchain.wrapped.address, decimals: blockchain.currency.decimals, reserves, token0, token1 })
       } else if (path.find((step)=>blockchain.stables.usd.includes(step))) {
         let address = path.find((step)=>blockchain.stables.usd.includes(step));
-        let token = new web3TokensEvm.Token({ blockchain: blockchain.name, address });
+        let token = new Token__default['default']({ blockchain: blockchain.name, address });
         let decimals = await token.decimals();
         return minReserveRequirements({ min: 1000, token: address, decimals, reserves, token0, token1 })
       } else {
