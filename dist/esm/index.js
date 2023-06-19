@@ -1630,7 +1630,7 @@ let getBestPair = async({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, a
 };
 
 function _optionalChain$1(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
-const blockchain$b = Blockchains.solana;
+const blockchain$9 = Blockchains.solana;
 
 // Replaces 11111111111111111111111111111111 with the wrapped token and implies wrapping.
 //
@@ -1642,18 +1642,18 @@ let fixPath$2 = (path) => {
   if(!path) { return }
   let fixedPath = path.map((token, index) => {
     if (
-      token === blockchain$b.currency.address && path[index+1] != blockchain$b.wrapped.address &&
-      path[index-1] != blockchain$b.wrapped.address
+      token === blockchain$9.currency.address && path[index+1] != blockchain$9.wrapped.address &&
+      path[index-1] != blockchain$9.wrapped.address
     ) {
-      return blockchain$b.wrapped.address
+      return blockchain$9.wrapped.address
     } else {
       return token
     }
   });
 
-  if(fixedPath[0] == blockchain$b.currency.address && fixedPath[1] == blockchain$b.wrapped.address) {
+  if(fixedPath[0] == blockchain$9.currency.address && fixedPath[1] == blockchain$9.wrapped.address) {
     fixedPath.splice(0, 1);
-  } else if(fixedPath[fixedPath.length-1] == blockchain$b.currency.address && fixedPath[fixedPath.length-2] == blockchain$b.wrapped.address) {
+  } else if(fixedPath[fixedPath.length-1] == blockchain$9.currency.address && fixedPath[fixedPath.length-2] == blockchain$9.wrapped.address) {
     fixedPath.splice(fixedPath.length-1, 1);
   }
 
@@ -1672,8 +1672,8 @@ let pathExists$2 = async ({ path, amountIn, amountInMax, amountOut, amountOutMin
 
 let findPath$2 = async ({ tokenIn, tokenOut, amountIn, amountOut, amountInMax, amountOutMin }) => {
   if(
-    [tokenIn, tokenOut].includes(blockchain$b.currency.address) &&
-    [tokenIn, tokenOut].includes(blockchain$b.wrapped.address)
+    [tokenIn, tokenOut].includes(blockchain$9.currency.address) &&
+    [tokenIn, tokenOut].includes(blockchain$9.wrapped.address)
   ) { return { path: undefined, fixedPath: undefined } }
 
   let path, stablesIn, stablesOut, stable;
@@ -1682,20 +1682,20 @@ let findPath$2 = async ({ tokenIn, tokenOut, amountIn, amountOut, amountInMax, a
     // direct path
     path = [tokenIn, tokenOut];
   } else if (
-    tokenIn != blockchain$b.wrapped.address &&
-    tokenIn != blockchain$b.currency.address &&
-    await pathExists$2({ path: [tokenIn, blockchain$b.wrapped.address], amountIn, amountInMax, amountOut, amountOutMin }) &&
-    tokenOut != blockchain$b.wrapped.address &&
-    tokenOut != blockchain$b.currency.address &&
-    await pathExists$2({ path: [tokenOut, blockchain$b.wrapped.address], amountIn: (amountOut||amountOutMin), amountInMax: (amountOut||amountOutMin), amountOut: (amountIn||amountInMax), amountOutMin: (amountIn||amountInMax) })
+    tokenIn != blockchain$9.wrapped.address &&
+    tokenIn != blockchain$9.currency.address &&
+    await pathExists$2({ path: [tokenIn, blockchain$9.wrapped.address], amountIn, amountInMax, amountOut, amountOutMin }) &&
+    tokenOut != blockchain$9.wrapped.address &&
+    tokenOut != blockchain$9.currency.address &&
+    await pathExists$2({ path: [tokenOut, blockchain$9.wrapped.address], amountIn: (amountOut||amountOutMin), amountInMax: (amountOut||amountOutMin), amountOut: (amountIn||amountInMax), amountOutMin: (amountIn||amountInMax) })
   ) {
     // path via blockchain.wrapped.address
-    path = [tokenIn, blockchain$b.wrapped.address, tokenOut];
+    path = [tokenIn, blockchain$9.wrapped.address, tokenOut];
   } else if (
-    !blockchain$b.stables.usd.includes(tokenIn) &&
-    (stablesIn = (await Promise.all(blockchain$b.stables.usd.map(async(stable)=>await pathExists$2({ path: [tokenIn, stable], amountIn, amountInMax, amountOut, amountOutMin }) ? stable : undefined))).filter(Boolean)) &&
-    !blockchain$b.stables.usd.includes(tokenOut) &&
-    (stablesOut = (await Promise.all(blockchain$b.stables.usd.map(async(stable)=>await pathExists$2({ path: [tokenOut, stable], amountIn: (amountOut||amountOutMin), amountInMax: (amountOut||amountOutMin), amountOut: (amountIn||amountInMax), amountOutMin: (amountIn||amountInMax) })  ? stable : undefined))).filter(Boolean)) &&
+    !blockchain$9.stables.usd.includes(tokenIn) &&
+    (stablesIn = (await Promise.all(blockchain$9.stables.usd.map(async(stable)=>await pathExists$2({ path: [tokenIn, stable], amountIn, amountInMax, amountOut, amountOutMin }) ? stable : undefined))).filter(Boolean)) &&
+    !blockchain$9.stables.usd.includes(tokenOut) &&
+    (stablesOut = (await Promise.all(blockchain$9.stables.usd.map(async(stable)=>await pathExists$2({ path: [tokenOut, stable], amountIn: (amountOut||amountOutMin), amountInMax: (amountOut||amountOutMin), amountOut: (amountIn||amountInMax), amountOutMin: (amountIn||amountInMax) })  ? stable : undefined))).filter(Boolean)) &&
     (stable = stablesIn.filter((stable)=> stablesOut.includes(stable))[0])
   ) {
     // path via TOKEN_IN <> STABLE <> TOKEN_OUT
@@ -1704,10 +1704,10 @@ let findPath$2 = async ({ tokenIn, tokenOut, amountIn, amountOut, amountInMax, a
 
   // Add blockchain.wrapped.address to route path if things start or end with blockchain.currency.address
   // because that actually reflects how things are routed in reality:
-  if(_optionalChain$1([path, 'optionalAccess', _ => _.length]) && path[0] == blockchain$b.currency.address) {
-    path.splice(1, 0, blockchain$b.wrapped.address);
-  } else if(_optionalChain$1([path, 'optionalAccess', _2 => _2.length]) && path[path.length-1] == blockchain$b.currency.address) {
-    path.splice(path.length-1, 0, blockchain$b.wrapped.address);
+  if(_optionalChain$1([path, 'optionalAccess', _ => _.length]) && path[0] == blockchain$9.currency.address) {
+    path.splice(1, 0, blockchain$9.wrapped.address);
+  } else if(_optionalChain$1([path, 'optionalAccess', _2 => _2.length]) && path[path.length-1] == blockchain$9.currency.address) {
+    path.splice(path.length-1, 0, blockchain$9.wrapped.address);
   }
   return { path, fixedPath: fixPath$2(path) }
 };
@@ -1796,7 +1796,7 @@ let getAmounts$2 = async ({
   }
 };
 
-const blockchain$a = Blockchains.solana;
+const blockchain$8 = Blockchains.solana;
 const SWAP_INSTRUCTION = new BN("14449647541112719096");
 const TWO_HOP_SWAP_INSTRUCTION = new BN("16635068063392030915");
 
@@ -2047,8 +2047,8 @@ const getTransaction$2 = async ({
     }
   }
 
-  let startsWrapped = (path[0] === blockchain$a.currency.address && fixedPath[0] === blockchain$a.wrapped.address);
-  let endsUnwrapped = (path[path.length-1] === blockchain$a.currency.address && fixedPath[fixedPath.length-1] === blockchain$a.wrapped.address);
+  let startsWrapped = (path[0] === blockchain$8.currency.address && fixedPath[0] === blockchain$8.wrapped.address);
+  let endsUnwrapped = (path[path.length-1] === blockchain$8.currency.address && fixedPath[fixedPath.length-1] === blockchain$8.wrapped.address);
   let wrappedAccount;
   const provider = await getProvider('solana');
   
@@ -2069,7 +2069,7 @@ const getTransaction$2 = async ({
     instructions.push(
       Token.solana.initializeAccountInstruction({
         account: wrappedAccount,
-        token: blockchain$a.wrapped.address,
+        token: blockchain$8.wrapped.address,
         owner: fromAddress
       })
     );
@@ -2443,9 +2443,9 @@ var UniswapV2 = {
   PAIR,
 };
 
-const blockchain$9 = Blockchains.bsc;
+const blockchain$7 = Blockchains.bsc;
 
-const exchange$9 = {
+const exchange$7 = {
   blockchain: 'bsc',
   name: 'pancakeswap',
   alternativeNames: ['pancake'],
@@ -2467,21 +2467,21 @@ const exchange$9 = {
 
 var pancakeswap = new Exchange(
 
-  Object.assign(exchange$9, {
+  Object.assign(exchange$7, {
     findPath: ({ tokenIn, tokenOut })=>
-      UniswapV2.findPath(blockchain$9, exchange$9, { tokenIn, tokenOut }),
+      UniswapV2.findPath(blockchain$7, exchange$7, { tokenIn, tokenOut }),
     pathExists: (path)=>
-      UniswapV2.pathExists(blockchain$9, exchange$9, path),
+      UniswapV2.pathExists(blockchain$7, exchange$7, path),
     getAmounts: ({ path, block, tokenIn, tokenOut, amountOut, amountIn, amountInMax, amountOutMin })=>
-      UniswapV2.getAmounts(blockchain$9, exchange$9, { path, block, tokenIn, tokenOut, amountOut, amountIn, amountInMax, amountOutMin }),
+      UniswapV2.getAmounts(blockchain$7, exchange$7, { path, block, tokenIn, tokenOut, amountOut, amountIn, amountInMax, amountOutMin }),
     getTransaction: ({ path, amountIn, amountInMax, amountOut, amountOutMin, amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput, fromAddress })=>
-      UniswapV2.getTransaction(blockchain$9, exchange$9 ,{ path, amountIn, amountInMax, amountOut, amountOutMin, amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput, fromAddress }),
+      UniswapV2.getTransaction(blockchain$7, exchange$7 ,{ path, amountIn, amountInMax, amountOut, amountOutMin, amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput, fromAddress }),
   })
 );
 
-const blockchain$8 = Blockchains.polygon;
+const blockchain$6 = Blockchains.polygon;
 
-const exchange$8 = {
+const exchange$6 = {
   blockchain: 'polygon',
   name: 'quickswap',
   alternativeNames: [],
@@ -2503,21 +2503,21 @@ const exchange$8 = {
 
 var quickswap = new Exchange(
 
-  Object.assign(exchange$8, {
+  Object.assign(exchange$6, {
     findPath: ({ tokenIn, tokenOut })=>
-      UniswapV2.findPath(blockchain$8, exchange$8, { tokenIn, tokenOut }),
+      UniswapV2.findPath(blockchain$6, exchange$6, { tokenIn, tokenOut }),
     pathExists: (path)=>
-      UniswapV2.pathExists(blockchain$8, exchange$8, path),
+      UniswapV2.pathExists(blockchain$6, exchange$6, path),
     getAmounts: ({ path, block, tokenIn, tokenOut, amountOut, amountIn, amountInMax, amountOutMin })=>
-      UniswapV2.getAmounts(blockchain$8, exchange$8, { path, block, tokenIn, tokenOut, amountOut, amountIn, amountInMax, amountOutMin }),
+      UniswapV2.getAmounts(blockchain$6, exchange$6, { path, block, tokenIn, tokenOut, amountOut, amountIn, amountInMax, amountOutMin }),
     getTransaction: ({ path, amountIn, amountInMax, amountOut, amountOutMin, amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput, fromAddress })=>
-      UniswapV2.getTransaction(blockchain$8, exchange$8 ,{ path, amountIn, amountInMax, amountOut, amountOutMin, amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput, fromAddress }),
+      UniswapV2.getTransaction(blockchain$6, exchange$6 ,{ path, amountIn, amountInMax, amountOut, amountOutMin, amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput, fromAddress }),
   })
 );
 
-const blockchain$7 = Blockchains.fantom;
+const blockchain$5 = Blockchains.fantom;
 
-const exchange$7 = {
+const exchange$5 = {
   blockchain: 'fantom',
   name: 'spookyswap',
   alternativeNames: [],
@@ -2539,21 +2539,21 @@ const exchange$7 = {
 
 var spookyswap = new Exchange(
 
-  Object.assign(exchange$7, {
+  Object.assign(exchange$5, {
     findPath: ({ tokenIn, tokenOut })=>
-      UniswapV2.findPath(blockchain$7, exchange$7, { tokenIn, tokenOut }),
+      UniswapV2.findPath(blockchain$5, exchange$5, { tokenIn, tokenOut }),
     pathExists: (path)=>
-      UniswapV2.pathExists(blockchain$7, exchange$7, path),
+      UniswapV2.pathExists(blockchain$5, exchange$5, path),
     getAmounts: ({ path, block, tokenIn, tokenOut, amountOut, amountIn, amountInMax, amountOutMin })=>
-      UniswapV2.getAmounts(blockchain$7, exchange$7, { path, block, tokenIn, tokenOut, amountOut, amountIn, amountInMax, amountOutMin }),
+      UniswapV2.getAmounts(blockchain$5, exchange$5, { path, block, tokenIn, tokenOut, amountOut, amountIn, amountInMax, amountOutMin }),
     getTransaction: ({ path, amountIn, amountInMax, amountOut, amountOutMin, amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput, fromAddress })=>
-      UniswapV2.getTransaction(blockchain$7, exchange$7 ,{ path, amountIn, amountInMax, amountOut, amountOutMin, amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput, fromAddress }),
+      UniswapV2.getTransaction(blockchain$5, exchange$5 ,{ path, amountIn, amountInMax, amountOut, amountOutMin, amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput, fromAddress }),
   })
 );
 
-const blockchain$6 = Blockchains.ethereum;
+const blockchain$4 = Blockchains.ethereum;
 
-const exchange$6 = {
+const exchange$4 = {
   blockchain: 'ethereum',
   name: 'uniswap_v2',
   alternativeNames: [],
@@ -2575,51 +2575,15 @@ const exchange$6 = {
 
 var uniswap_v2 = new Exchange(
 
-  Object.assign(exchange$6, {
+  Object.assign(exchange$4, {
     findPath: ({ tokenIn, tokenOut })=>
-      UniswapV2.findPath(blockchain$6, exchange$6, { tokenIn, tokenOut }),
+      UniswapV2.findPath(blockchain$4, exchange$4, { tokenIn, tokenOut }),
     pathExists: (path)=>
-      UniswapV2.pathExists(blockchain$6, exchange$6, path),
+      UniswapV2.pathExists(blockchain$4, exchange$4, path),
     getAmounts: ({ path, block, tokenIn, tokenOut, amountOut, amountIn, amountInMax, amountOutMin })=>
-      UniswapV2.getAmounts(blockchain$6, exchange$6, { path, block, tokenIn, tokenOut, amountOut, amountIn, amountInMax, amountOutMin }),
+      UniswapV2.getAmounts(blockchain$4, exchange$4, { path, block, tokenIn, tokenOut, amountOut, amountIn, amountInMax, amountOutMin }),
     getTransaction: ({ path, amountIn, amountInMax, amountOut, amountOutMin, amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput, fromAddress })=>
-      UniswapV2.getTransaction(blockchain$6, exchange$6 ,{ path, amountIn, amountInMax, amountOut, amountOutMin, amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput, fromAddress }),
-  })
-);
-
-const blockchain$5 = Blockchains.velas;
-
-const exchange$5 = {
-  blockchain: 'velas',
-  name: 'wagyuswap',
-  alternativeNames: [],
-  label: 'WagyuSwap',
-  logo: 'data:image/svg+xml;base64,PHN2ZyBpZD0iTGF5ZXJfMSIgZGF0YS1uYW1lPSJMYXllciAxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA5NC45MSAxMzAuMjYiPjxnIGlkPSJMYXllcl8yIiBkYXRhLW5hbWU9IkxheWVyIDIiPjxwYXRoIGQ9Ik0xMTcuMjgsOTYuNDVjMCwyNC42Mi0yMS4yNCw0NC42LTQ3LjQ1LDQ0LjZzLTQ3LjQ2LTIwLTQ3LjQ2LTQ0LjZjMC0zLjE5LDAtMTkuODUsNy40My0zMy40NSw3LjA4LTEzLDE5LjUyLTIxLjY5LDE5LjUyLTIxLjY5cy4xNywzLjgxLjY2LDcuODJhMjQuMSwyNC4xLDAsMCwwLDEsNGMuMDYtMy40NCwxLjM2LTExLjcsNi41Ny0yMS42Myw2LTExLjQ2LDE3LTIwLjcyLDE3LTIwLjcyYTEwOC41MSwxMDguNTEsMCwwLDAsLjMsMTYuOTFjLjg1LDcuNzIsNC4xNSwxNC45MSw1LjA3LDE1LjU5YTI1LjgyLDI1LjgyLDAsMCwxLC44Ni00Ljg1LDE3LjM0LDE3LjM0LDAsMCwxLDIuNTctNC42NWMuMi0uOC40Miw2LjE1LDIuODcsMTAuNDQsNS43LDEwLDIwLjE0LDIzLjEsMjMuNTEsMjhBNDIuNDQsNDIuNDQsMCwwLDEsMTE3LjI4LDk2LjQ1WiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTIyLjM3IC0xMC43OSkiIGZpbGw9IiNjYTQwNGYiLz48cGF0aCBkPSJNNzMsMTM1LjU5Yy0yNi4yMSwwLTQ3LjQ1LTIwLTQ3LjQ1LTQ0LjYsMC0zLjA2LDAtMTguMzksNi40Ny0zMS42My0uNzYsMS4xNi0xLjQ4LDIuMzUtMi4xNSwzLjYtNy40NywxMy42NC03LjQ3LDMwLjMtNy40NywzMy40OSwwLDI0LjYyLDIxLjI0LDQ0LjYsNDcuNDYsNDQuNiwxOS4yOCwwLDM1Ljg3LTEwLjgsNDMuMy0yNi4zMUE0OC4yNSw0OC4yNSwwLDAsMSw3MywxMzUuNTlaIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMjIuMzcgLTEwLjc5KSIgZmlsbD0iIzkyMzg0YiIvPjxwYXRoIGQ9Ik01MCw0OS4yNmEyMy4wNiwyMy4wNiwwLDAsMCwxLDRDNTEsNDkuOTQsNTIuNSw0MS40OCw1Ny4xOSwzMi4xYy0uODYsMS4zNy0yLDMuNTMtMi43Niw1QTY1LDY1LDAsMCwwLDQ5Ljg3LDQ4QzQ5LjkyLDQ4LjQzLDUwLDQ4Ljg0LDUwLDQ5LjI2WiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTIyLjM3IC0xMC43OSkiIGZpbGw9IiM5MjM4NGIiLz48cGF0aCBkPSJNNzguNDQsODIuNmMtOS4yOCwxMS4zNC0yMi4zLDE4LjA2LTE5LjEyLDIxLjE3LDMuMzQsMy4yNywyMy4wOSwxMy45MiwzOC4zLTEuNzEsOC04LjI0LDcuMzMtMjEuMTgsMi44Ni0yOS4wNiwwLDAsMi43LTcuOCwyLjU3LTguMzYtLjQ3LTEuOS0xMC0xMi0xMS4zMy0xMi42MkE4Ny4yMyw4Ny4yMywwLDAsMSw4OSw2NC43MUM4Ny43LDY4LjU1LDgzLjkyLDc1Ljg5LDc4LjQ0LDgyLjZaIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMjIuMzcgLTEwLjc5KSIgZmlsbD0iI2VjZDBjZiIvPjxwYXRoIGQ9Ik04My43OSw4Ny4xM2MtNiw3LjMtMTMuNzksMTIuMjUtMTEuNDcsMTMuOTRzMTAuNzYsNiwyMC41OS00YzcuMzItNy41MSw0LjIzLTE3LjQzLDEuOS0xOS4xMlM4OC44LDgxLDgzLjc5LDg3LjEzWiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTIyLjM3IC0xMC43OSkiIGZpbGw9IiNkYWIyYjUiLz48cGF0aCBkPSJNODYuMTMsOTEuMzVjLTIuNDMsMy4zNi0zLjQzLDYuNzUtMi4zMiw3LjU3czQtMS4yMyw2LjQ1LTQuNTgsMy40NC02Ljc0LDIuMzMtNy41N1M4OC41Niw4OCw4Ni4xMyw5MS4zNVoiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0yMi4zNyAtMTAuNzkpIiBmaWxsPSIjYzk5NDljIi8+PHBhdGggZD0iTTg2LjIyLDQ0LjI0YTE1LjQzLDE1LjQzLDAsMCwxLTEtMi4wNkE2My4xOSw2My4xOSwwLDAsMSw2OC44LDU4LjY1QzYwLjYxLDY0LjM2LDU2LDY4LjYsNTMuNzUsODEsNTIuNTQsODcuNDYsMzUsNzcuNzQsMjkuMzIsODZjLTIuNDEsMy41Mi0yLjI1LDcuMDktMy41OCw5LjMxLjQzLDEwLjE4LDcuNDQsMjAsNy40NCwyMC0xLjE5LTEuNzItLjM3LTEyLDMuNjQtMTguNzQsMy44My02LjQ1LDE3LjEyLTYuOSwyMy4yOS0xMy43NkM2Ni41Nyw3NS43LDY2LjM2LDY5LjM4LDcxLDYzLjY5YzYuNS04LDE1LTE1LjEzLDE5LjcyLTEyLjg2QTU2LjQ0LDU2LjQ0LDAsMCwxLDg2LjIyLDQ0LjI0WiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTIyLjM3IC0xMC43OSkiIGZpbGw9IiNmNGVhZTYiLz48cGF0aCBkPSJNMTE3LjI4LDk2LjQ1Yy0uNDMsMy0zLjY4LDkuMzEtNy44OCwxMC4yOS03LjY3LDEuNzctMTAuNzktMy0xNS42NywyYTI5LjgyLDI5LjgyLDAsMCwxLTI5LjY2LDcuMTFjLTkuNDMtMi45NC0yMC4xOCw2LjQzLTI3LDQuMzksNS4yOSw2Ljg2LDE3LjUzLDEyLDE4LjkyLDEyLjQyLTEtMS4xNi00LjA4LTUuODQtMS4xMi03LjM3LDUuNjQtMi45MSwxNCwyLjc1LDIwLjA4LDEuMDYsNy4yMS0yLDEwLjI5LTgsMTQuMS0xMC4zNSwxLjktMS4xOSwxMi05LjMxLDI0LjExLTEuNDZBNDIuMDYsNDIuMDYsMCwwLDAsMTE3LjI4LDk2LjQ1WiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTIyLjM3IC0xMC43OSkiIGZpbGw9IiNmNGVhZTYiLz48L2c+PC9zdmc+',
-  router: {
-    address: '0x3D1c58B6d4501E34DF37Cf0f664A58059a188F00',
-    api: UniswapV2.ROUTER
-  },
-  factory: {
-    address: '0x69f3212344a38b35844cce4864c2af9c717f35e3',
-    api: UniswapV2.FACTORY
-  },
-  pair: {
-    api: UniswapV2.PAIR
-  },
-  slippage: true,
-};
-
-var wagyuswap = new Exchange(
-
-  Object.assign(exchange$5, {
-    findPath: ({ tokenIn, tokenOut })=>
-      UniswapV2.findPath(blockchain$5, exchange$5, { tokenIn, tokenOut }),
-    pathExists: (path)=>
-      UniswapV2.pathExists(blockchain$5, exchange$5, path),
-    getAmounts: ({ path, block, tokenIn, tokenOut, amountOut, amountIn, amountInMax, amountOutMin })=>
-      UniswapV2.getAmounts(blockchain$5, exchange$5, { path, block, tokenIn, tokenOut, amountOut, amountIn, amountInMax, amountOutMin }),
-    getTransaction: ({ path, amountIn, amountInMax, amountOut, amountOutMin, amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput, fromAddress })=>
-      UniswapV2.getTransaction(blockchain$5, exchange$5 ,{ path, amountIn, amountInMax, amountOut, amountOutMin, amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput, fromAddress }),
+      UniswapV2.getTransaction(blockchain$4, exchange$4 ,{ path, amountIn, amountInMax, amountOut, amountOutMin, amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput, fromAddress }),
   })
 );
 
@@ -2711,42 +2675,14 @@ var WETH$1 = {
   WETH,
 };
 
-const blockchain$4 = Blockchains.bsc;
+const blockchain$3 = Blockchains.bsc;
 
-const exchange$4 = {
+const exchange$3 = {
   blockchain: 'bsc',
   name: 'wbnb',
   alternativeNames: [],
   label: 'Wrapped BNB',
   logo: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPCEtLSBHZW5lcmF0b3I6IEFkb2JlIElsbHVzdHJhdG9yIDI2LjAuMSwgU1ZHIEV4cG9ydCBQbHVnLUluIC4gU1ZHIFZlcnNpb246IDYuMDAgQnVpbGQgMCkgIC0tPgo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkxheWVyXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IgoJIHZpZXdCb3g9IjAgMCAxOTIgMTkyIiBzdHlsZT0iZW5hYmxlLWJhY2tncm91bmQ6bmV3IDAgMCAxOTIgMTkyOyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+CjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+Cgkuc3Qwe2ZpbGw6I0YwQjkwQjt9Cjwvc3R5bGU+CjxwYXRoIGNsYXNzPSJzdDAiIGQ9Ik01NCw0MS4xbDQyLTI0LjJsNDIsMjQuMmwtMTUuNCw4LjlMOTYsMzQuOUw2OS40LDUwTDU0LDQxLjF6IE0xMzgsNzEuN2wtMTUuNC04LjlMOTYsNzhMNjkuNCw2Mi43bC0xNS40LDl2MTgKCUw4MC42LDEwNXYzMC41bDE1LjQsOWwxNS40LTlWMTA1TDEzOCw4OS43VjcxLjd6IE0xMzgsMTIwLjN2LTE4bC0xNS40LDguOXYxOEMxMjIuNiwxMjkuMSwxMzgsMTIwLjMsMTM4LDEyMC4zeiBNMTQ4LjksMTI2LjQKCWwtMjYuNiwxNS4zdjE4bDQyLTI0LjJWODdsLTE1LjQsOUMxNDguOSw5NiwxNDguOSwxMjYuNCwxNDguOSwxMjYuNHogTTEzMy41LDU2LjRsMTUuNCw5djE4bDE1LjQtOXYtMThsLTE1LjQtOUwxMzMuNSw1Ni40CglMMTMzLjUsNTYuNHogTTgwLjYsMTQ4LjN2MThsMTUuNCw5bDE1LjQtOXYtMThMOTYsMTU3LjFMODAuNiwxNDguM3ogTTU0LDEyMC4zbDE1LjQsOXYtMTguMUw1NCwxMDIuM0w1NCwxMjAuM0w1NCwxMjAuM3oKCSBNODAuNiw1Ni40bDE1LjQsOWwxNS40LTlMOTYsNDcuNUM5Niw0Ny40LDgwLjYsNTYuNCw4MC42LDU2LjRMODAuNiw1Ni40eiBNNDMuMSw2NS40bDE1LjQtOWwtMTUuNC05bC0xNS40LDl2MThsMTUuNCw5TDQzLjEsNjUuNAoJTDQzLjEsNjUuNHogTTQzLjEsOTUuOUwyNy43LDg3djQ4LjVsNDIsMjQuMnYtMThsLTI2LjYtMTUuM1Y5NS45TDQzLjEsOTUuOXoiLz4KPC9zdmc+Cg==',
-  wrapper: {
-    address: blockchain$4.wrapped.address,
-    api: WETH$1.WETH
-  },
-  slippage: false,
-};
-
-var wbnb = new Exchange(
-
-  Object.assign(exchange$4, {
-    findPath: ({ tokenIn, tokenOut })=>
-      WETH$1.findPath(blockchain$4, { tokenIn, tokenOut }),
-    pathExists: (path)=>
-      WETH$1.pathExists(blockchain$4, path),
-    getAmounts: WETH$1.getAmounts,
-    getTransaction: ({ path, amountIn, amountInMax, amountOut, amountOutMin, amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput, fromAddress })=>
-      WETH$1.getTransaction(blockchain$4, exchange$4 ,{ path, amountIn, amountInMax, amountOut, amountOutMin, amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput, fromAddress }),
-  })
-);
-
-const blockchain$3 = Blockchains.ethereum;
-
-const exchange$3 = {
-  blockchain: 'ethereum',
-  name: 'weth',
-  alternativeNames: [],
-  label: 'Wrapped Ethereum',
-  logo: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPCEtLSBHZW5lcmF0b3I6IEFkb2JlIElsbHVzdHJhdG9yIDI2LjAuMSwgU1ZHIEV4cG9ydCBQbHVnLUluIC4gU1ZHIFZlcnNpb246IDYuMDAgQnVpbGQgMCkgIC0tPgo8c3ZnIHZlcnNpb249IjEuMSIKCSBpZD0iTGF5ZXJfMSIgaW1hZ2UtcmVuZGVyaW5nPSJvcHRpbWl6ZVF1YWxpdHkiIHNoYXBlLXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIiB0ZXh0LXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIgoJIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IiB2aWV3Qm94PSIwIDAgMjgzLjUgMjgzLjUiCgkgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgMjgzLjUgMjgzLjU7IiB4bWw6c3BhY2U9InByZXNlcnZlIj4KPHN0eWxlIHR5cGU9InRleHQvY3NzIj4KCS5zdDB7ZmlsbDojMzQzNDM0O30KCS5zdDF7ZmlsbDojOEM4QzhDO30KCS5zdDJ7ZmlsbDojM0MzQzNCO30KCS5zdDN7ZmlsbDojMTQxNDE0O30KCS5zdDR7ZmlsbDojMzkzOTM5O30KPC9zdHlsZT4KPGc+Cgk8Zz4KCQk8cGF0aCBjbGFzcz0ic3QwIiBkPSJNMTQxLjcsMjUuOWwtMS41LDUuMnYxNTMuM2wxLjUsMS41bDcxLjItNDIuMUwxNDEuNywyNS45eiIvPgoJCTxwYXRoIGNsYXNzPSJzdDEiIGQ9Ik0xNDEuNywyNS45TDcwLjYsMTQzLjhsNzEuMSw0Mi4xdi03NC40VjI1Ljl6Ii8+CgkJPHBhdGggY2xhc3M9InN0MiIgZD0iTTE0MS43LDE5OS40bC0wLjgsMS4xdjU0LjZsMC44LDIuNWw3MS4yLTEwMC4zTDE0MS43LDE5OS40eiIvPgoJCTxwYXRoIGNsYXNzPSJzdDEiIGQ9Ik0xNDEuNywyNTcuNnYtNTguMmwtNzEuMS00Mi4xTDE0MS43LDI1Ny42eiIvPgoJCTxwYXRoIGNsYXNzPSJzdDMiIGQ9Ik0xNDEuNywxODUuOWw3MS4yLTQyLjFsLTcxLjItMzIuM1YxODUuOXoiLz4KCQk8cGF0aCBjbGFzcz0ic3Q0IiBkPSJNNzAuNiwxNDMuOGw3MS4xLDQyLjF2LTc0LjRMNzAuNiwxNDMuOHoiLz4KCTwvZz4KPC9nPgo8L3N2Zz4K',
   wrapper: {
     address: blockchain$3.wrapped.address,
     api: WETH$1.WETH
@@ -2754,7 +2690,7 @@ const exchange$3 = {
   slippage: false,
 };
 
-var weth = new Exchange(
+var wbnb = new Exchange(
 
   Object.assign(exchange$3, {
     findPath: ({ tokenIn, tokenOut })=>
@@ -2767,14 +2703,14 @@ var weth = new Exchange(
   })
 );
 
-const blockchain$2 = Blockchains.fantom;
+const blockchain$2 = Blockchains.ethereum;
 
 const exchange$2 = {
-  blockchain: 'fantom',
-  name: 'wftm',
+  blockchain: 'ethereum',
+  name: 'weth',
   alternativeNames: [],
-  label: 'Wrapped Fantom',
-  logo: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB2ZXJzaW9uPSIxLjEiIGlkPSJMYXllcl8xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4PSIwcHgiIHk9IjBweCIKCSB2aWV3Qm94PSIwIDAgMTkyIDE5MiIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgMTkyIDE5MjsiIHhtbDpzcGFjZT0icHJlc2VydmUiPgo8ZyBpZD0iY2lyY2xlIj4KCTxnIGlkPSJGYW50b20tY2lyY2xlIj4KCQk8Y2lyY2xlIGlkPSJPdmFsIiBmaWxsUnVsZT0iZXZlbm9kZCIgY2xpcFJ1bGU9ImV2ZW5vZGQiIGZpbGw9IiMxOTY5RkYiIGNsYXNzPSJzdDAiIGN4PSI5NiIgY3k9Ijk2IiByPSI4MC40Ii8+CgkJPHBhdGggaWQ9IlNoYXBlIiBmaWxsPSIjRkZGRkZGIiBkPSJNOTEuMSw0MS4yYzIuNy0xLjQsNi44LTEuNCw5LjUsMGwyNy42LDE0LjZjMS42LDAuOSwyLjUsMi4xLDIuNywzLjVoMHY3My4zCgkJCWMwLDEuNC0wLjksMi45LTIuNywzLjhsLTI3LjYsMTQuNmMtMi43LDEuNC02LjgsMS40LTkuNSwwbC0yNy42LTE0LjZjLTEuOC0wLjktMi42LTIuNC0yLjctMy44YzAtMC4xLDAtMC4zLDAtMC40bDAtNzIuNAoJCQljMC0wLjEsMC0wLjIsMC0wLjNsMC0wLjJoMGMwLjEtMS4zLDEtMi42LDIuNi0zLjVMOTEuMSw0MS4yeiBNMTI2LjYsOTkuOWwtMjYsMTMuN2MtMi43LDEuNC02LjgsMS40LTkuNSwwTDY1LjIsMTAwdjMyLjMKCQkJbDI1LjksMTMuNmMxLjUsMC44LDMuMSwxLjYsNC43LDEuN2wwLjEsMGMxLjUsMCwzLTAuOCw0LjYtMS41bDI2LjItMTMuOVY5OS45eiBNNTYuNSwxMzAuOWMwLDIuOCwwLjMsNC43LDEsNgoJCQljMC41LDEuMSwxLjMsMS45LDIuOCwyLjlsMC4xLDAuMWMwLjMsMC4yLDAuNywwLjQsMS4xLDAuN2wwLjUsMC4zbDEuNiwwLjlsLTIuMiwzLjdsLTEuNy0xLjFsLTAuMy0wLjJjLTAuNS0wLjMtMC45LTAuNi0xLjMtMC44CgkJCWMtNC4yLTIuOC01LjctNS45LTUuNy0xMi4zbDAtMC4ySDU2LjV6IE05My44LDgwLjVjLTAuMiwwLjEtMC40LDAuMS0wLjYsMC4yTDY1LjYsOTUuM2MwLDAtMC4xLDAtMC4xLDBsMCwwbDAsMGwwLjEsMGwyNy42LDE0LjYKCQkJYzAuMiwwLjEsMC40LDAuMiwwLjYsMC4yVjgwLjV6IE05OC4yLDgwLjV2MjkuOGMwLjItMC4xLDAuNC0wLjEsMC42LTAuMmwyNy42LTE0LjZjMCwwLDAuMSwwLDAuMSwwbDAsMGwwLDBsLTAuMSwwTDk4LjgsODAuNwoJCQlDOTguNiw4MC42LDk4LjQsODAuNSw5OC4yLDgwLjV6IE0xMjYuNiw2NC40bC0yNC44LDEzbDI0LjgsMTNWNjQuNHogTTY1LjIsNjQuNHYyNi4xbDI0LjgtMTNMNjUuMiw2NC40eiBNOTguNyw0NS4xCgkJCWMtMS40LTAuOC00LTAuOC01LjUsMEw2NS42LDU5LjdjMCwwLTAuMSwwLTAuMSwwbDAsMGwwLDBsMC4xLDBsMjcuNiwxNC42YzEuNCwwLjgsNCwwLjgsNS41LDBsMjcuNi0xNC42YzAsMCwwLjEsMCwwLjEsMGwwLDBsMCwwCgkJCWwtMC4xLDBMOTguNyw0NS4xeiBNMTMwLjcsNDYuNWwxLjcsMS4xbDAuMywwLjJjMC41LDAuMywwLjksMC42LDEuMywwLjhjNC4yLDIuOCw1LjcsNS45LDUuNywxMi4zbDAsMC4yaC00LjNjMC0yLjgtMC4zLTQuNy0xLTYKCQkJYy0wLjUtMS4xLTEuMy0xLjktMi44LTIuOWwtMC4xLTAuMWMtMC4zLTAuMi0wLjctMC40LTEuMS0wLjdsLTAuNS0wLjNsLTEuNi0wLjlMMTMwLjcsNDYuNXoiLz4KCTwvZz4KPC9nPgo8L3N2Zz4K',
+  label: 'Wrapped Ethereum',
+  logo: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPCEtLSBHZW5lcmF0b3I6IEFkb2JlIElsbHVzdHJhdG9yIDI2LjAuMSwgU1ZHIEV4cG9ydCBQbHVnLUluIC4gU1ZHIFZlcnNpb246IDYuMDAgQnVpbGQgMCkgIC0tPgo8c3ZnIHZlcnNpb249IjEuMSIKCSBpZD0iTGF5ZXJfMSIgaW1hZ2UtcmVuZGVyaW5nPSJvcHRpbWl6ZVF1YWxpdHkiIHNoYXBlLXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIiB0ZXh0LXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIgoJIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IiB2aWV3Qm94PSIwIDAgMjgzLjUgMjgzLjUiCgkgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgMjgzLjUgMjgzLjU7IiB4bWw6c3BhY2U9InByZXNlcnZlIj4KPHN0eWxlIHR5cGU9InRleHQvY3NzIj4KCS5zdDB7ZmlsbDojMzQzNDM0O30KCS5zdDF7ZmlsbDojOEM4QzhDO30KCS5zdDJ7ZmlsbDojM0MzQzNCO30KCS5zdDN7ZmlsbDojMTQxNDE0O30KCS5zdDR7ZmlsbDojMzkzOTM5O30KPC9zdHlsZT4KPGc+Cgk8Zz4KCQk8cGF0aCBjbGFzcz0ic3QwIiBkPSJNMTQxLjcsMjUuOWwtMS41LDUuMnYxNTMuM2wxLjUsMS41bDcxLjItNDIuMUwxNDEuNywyNS45eiIvPgoJCTxwYXRoIGNsYXNzPSJzdDEiIGQ9Ik0xNDEuNywyNS45TDcwLjYsMTQzLjhsNzEuMSw0Mi4xdi03NC40VjI1Ljl6Ii8+CgkJPHBhdGggY2xhc3M9InN0MiIgZD0iTTE0MS43LDE5OS40bC0wLjgsMS4xdjU0LjZsMC44LDIuNWw3MS4yLTEwMC4zTDE0MS43LDE5OS40eiIvPgoJCTxwYXRoIGNsYXNzPSJzdDEiIGQ9Ik0xNDEuNywyNTcuNnYtNTguMmwtNzEuMS00Mi4xTDE0MS43LDI1Ny42eiIvPgoJCTxwYXRoIGNsYXNzPSJzdDMiIGQ9Ik0xNDEuNywxODUuOWw3MS4yLTQyLjFsLTcxLjItMzIuM1YxODUuOXoiLz4KCQk8cGF0aCBjbGFzcz0ic3Q0IiBkPSJNNzAuNiwxNDMuOGw3MS4xLDQyLjF2LTc0LjRMNzAuNiwxNDMuOHoiLz4KCTwvZz4KPC9nPgo8L3N2Zz4K',
   wrapper: {
     address: blockchain$2.wrapped.address,
     api: WETH$1.WETH
@@ -2782,7 +2718,7 @@ const exchange$2 = {
   slippage: false,
 };
 
-var wftm = new Exchange(
+var weth = new Exchange(
 
   Object.assign(exchange$2, {
     findPath: ({ tokenIn, tokenOut })=>
@@ -2795,14 +2731,14 @@ var wftm = new Exchange(
   })
 );
 
-const blockchain$1 = Blockchains.polygon;
+const blockchain$1 = Blockchains.fantom;
 
 const exchange$1 = {
-  blockchain: 'polygon',
-  name: 'wmatic',
+  blockchain: 'fantom',
+  name: 'wftm',
   alternativeNames: [],
-  label: 'Wrapped MATIC',
-  logo: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPCEtLSBHZW5lcmF0b3I6IEFkb2JlIElsbHVzdHJhdG9yIDI2LjAuMSwgU1ZHIEV4cG9ydCBQbHVnLUluIC4gU1ZHIFZlcnNpb246IDYuMDAgQnVpbGQgMCkgIC0tPgo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkxheWVyXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IgoJIHZpZXdCb3g9IjAgMCA0NS40IDQ1LjQiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDQ1LjQgNDUuNDsiIHhtbDpzcGFjZT0icHJlc2VydmUiPgo8c3R5bGUgdHlwZT0idGV4dC9jc3MiPgoJLnN0MHtmaWxsOiM4MjQ3RTU7fQo8L3N0eWxlPgo8cGF0aCBjbGFzcz0ic3QwIiBkPSJNMzEuOSwxNi42Yy0wLjctMC40LTEuNi0wLjQtMi4yLDBsLTUuMywzLjFsLTMuNSwybC01LjEsMy4xYy0wLjcsMC40LTEuNiwwLjQtMi4yLDBsLTQtMi40CgljLTAuNi0wLjQtMS4xLTEuMS0xLjEtMnYtNC42YzAtMC45LDAuNS0xLjYsMS4xLTJsNC0yLjNjMC43LTAuNCwxLjUtMC40LDIuMiwwbDQsMi40YzAuNywwLjQsMS4xLDEuMSwxLjEsMnYzLjFsMy41LTIuMXYtMy4yCgljMC0wLjktMC40LTEuNi0xLjEtMmwtNy41LTQuNGMtMC43LTAuNC0xLjUtMC40LTIuMiwwTDYsMTEuN2MtMC43LDAuNC0xLjEsMS4xLTEuMSwxLjh2OC43YzAsMC45LDAuNCwxLjYsMS4xLDJsNy42LDQuNAoJYzAuNywwLjQsMS41LDAuNCwyLjIsMGw1LjEtMi45bDMuNS0yLjFsNS4xLTIuOWMwLjctMC40LDEuNi0wLjQsMi4yLDBsNCwyLjNjMC43LDAuNCwxLjEsMS4xLDEuMSwydjQuNmMwLDAuOS0wLjQsMS42LTEuMSwyCglsLTMuOSwyLjNjLTAuNywwLjQtMS41LDAuNC0yLjIsMGwtNC0yLjNjLTAuNy0wLjQtMS4xLTEuMS0xLjEtMnYtMi45TDIxLDI4Ljd2My4xYzAsMC45LDAuNCwxLjYsMS4xLDJsNy41LDQuNAoJYzAuNywwLjQsMS41LDAuNCwyLjIsMGw3LjUtNC40YzAuNy0wLjQsMS4xLTEuMSwxLjEtMlYyM2MwLTAuOS0wLjQtMS42LTEuMS0yQzM5LjIsMjEsMzEuOSwxNi42LDMxLjksMTYuNnoiLz4KPC9zdmc+Cg==',
+  label: 'Wrapped Fantom',
+  logo: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB2ZXJzaW9uPSIxLjEiIGlkPSJMYXllcl8xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4PSIwcHgiIHk9IjBweCIKCSB2aWV3Qm94PSIwIDAgMTkyIDE5MiIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgMTkyIDE5MjsiIHhtbDpzcGFjZT0icHJlc2VydmUiPgo8ZyBpZD0iY2lyY2xlIj4KCTxnIGlkPSJGYW50b20tY2lyY2xlIj4KCQk8Y2lyY2xlIGlkPSJPdmFsIiBmaWxsUnVsZT0iZXZlbm9kZCIgY2xpcFJ1bGU9ImV2ZW5vZGQiIGZpbGw9IiMxOTY5RkYiIGNsYXNzPSJzdDAiIGN4PSI5NiIgY3k9Ijk2IiByPSI4MC40Ii8+CgkJPHBhdGggaWQ9IlNoYXBlIiBmaWxsPSIjRkZGRkZGIiBkPSJNOTEuMSw0MS4yYzIuNy0xLjQsNi44LTEuNCw5LjUsMGwyNy42LDE0LjZjMS42LDAuOSwyLjUsMi4xLDIuNywzLjVoMHY3My4zCgkJCWMwLDEuNC0wLjksMi45LTIuNywzLjhsLTI3LjYsMTQuNmMtMi43LDEuNC02LjgsMS40LTkuNSwwbC0yNy42LTE0LjZjLTEuOC0wLjktMi42LTIuNC0yLjctMy44YzAtMC4xLDAtMC4zLDAtMC40bDAtNzIuNAoJCQljMC0wLjEsMC0wLjIsMC0wLjNsMC0wLjJoMGMwLjEtMS4zLDEtMi42LDIuNi0zLjVMOTEuMSw0MS4yeiBNMTI2LjYsOTkuOWwtMjYsMTMuN2MtMi43LDEuNC02LjgsMS40LTkuNSwwTDY1LjIsMTAwdjMyLjMKCQkJbDI1LjksMTMuNmMxLjUsMC44LDMuMSwxLjYsNC43LDEuN2wwLjEsMGMxLjUsMCwzLTAuOCw0LjYtMS41bDI2LjItMTMuOVY5OS45eiBNNTYuNSwxMzAuOWMwLDIuOCwwLjMsNC43LDEsNgoJCQljMC41LDEuMSwxLjMsMS45LDIuOCwyLjlsMC4xLDAuMWMwLjMsMC4yLDAuNywwLjQsMS4xLDAuN2wwLjUsMC4zbDEuNiwwLjlsLTIuMiwzLjdsLTEuNy0xLjFsLTAuMy0wLjJjLTAuNS0wLjMtMC45LTAuNi0xLjMtMC44CgkJCWMtNC4yLTIuOC01LjctNS45LTUuNy0xMi4zbDAtMC4ySDU2LjV6IE05My44LDgwLjVjLTAuMiwwLjEtMC40LDAuMS0wLjYsMC4yTDY1LjYsOTUuM2MwLDAtMC4xLDAtMC4xLDBsMCwwbDAsMGwwLjEsMGwyNy42LDE0LjYKCQkJYzAuMiwwLjEsMC40LDAuMiwwLjYsMC4yVjgwLjV6IE05OC4yLDgwLjV2MjkuOGMwLjItMC4xLDAuNC0wLjEsMC42LTAuMmwyNy42LTE0LjZjMCwwLDAuMSwwLDAuMSwwbDAsMGwwLDBsLTAuMSwwTDk4LjgsODAuNwoJCQlDOTguNiw4MC42LDk4LjQsODAuNSw5OC4yLDgwLjV6IE0xMjYuNiw2NC40bC0yNC44LDEzbDI0LjgsMTNWNjQuNHogTTY1LjIsNjQuNHYyNi4xbDI0LjgtMTNMNjUuMiw2NC40eiBNOTguNyw0NS4xCgkJCWMtMS40LTAuOC00LTAuOC01LjUsMEw2NS42LDU5LjdjMCwwLTAuMSwwLTAuMSwwbDAsMGwwLDBsMC4xLDBsMjcuNiwxNC42YzEuNCwwLjgsNCwwLjgsNS41LDBsMjcuNi0xNC42YzAsMCwwLjEsMCwwLjEsMGwwLDBsMCwwCgkJCWwtMC4xLDBMOTguNyw0NS4xeiBNMTMwLjcsNDYuNWwxLjcsMS4xbDAuMywwLjJjMC41LDAuMywwLjksMC42LDEuMywwLjhjNC4yLDIuOCw1LjcsNS45LDUuNywxMi4zbDAsMC4yaC00LjNjMC0yLjgtMC4zLTQuNy0xLTYKCQkJYy0wLjUtMS4xLTEuMy0xLjktMi44LTIuOWwtMC4xLTAuMWMtMC4zLTAuMi0wLjctMC40LTEuMS0wLjdsLTAuNS0wLjNsLTEuNi0wLjlMMTMwLjcsNDYuNXoiLz4KCTwvZz4KPC9nPgo8L3N2Zz4K',
   wrapper: {
     address: blockchain$1.wrapped.address,
     api: WETH$1.WETH
@@ -2810,7 +2746,7 @@ const exchange$1 = {
   slippage: false,
 };
 
-var wmatic = new Exchange(
+var wftm = new Exchange(
 
   Object.assign(exchange$1, {
     findPath: ({ tokenIn, tokenOut })=>
@@ -2823,14 +2759,14 @@ var wmatic = new Exchange(
   })
 );
 
-const blockchain = Blockchains.velas;
+const blockchain = Blockchains.polygon;
 
 const exchange = {
-  blockchain: 'velas',
-  name: 'wvlx',
+  blockchain: 'polygon',
+  name: 'wmatic',
   alternativeNames: [],
-  label: 'Wrapped Velas',
-  logo: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPCEtLSBHZW5lcmF0b3I6IEFkb2JlIElsbHVzdHJhdG9yIDI2LjAuMSwgU1ZHIEV4cG9ydCBQbHVnLUluIC4gU1ZHIFZlcnNpb246IDYuMDAgQnVpbGQgMCkgIC0tPgo8c3ZnIHZlcnNpb249IjEuMSIKCSBpZD0iTGF5ZXJfMSIgdGV4dC1yZW5kZXJpbmc9Imdlb21ldHJpY1ByZWNpc2lvbiIgc2hhcGUtcmVuZGVyaW5nPSJnZW9tZXRyaWNQcmVjaXNpb24iIGltYWdlLXJlbmRlcmluZz0ib3B0aW1pemVRdWFsaXR5IgoJIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IiB2aWV3Qm94PSIwIDAgNDUuNCA0NS40IgoJIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDQ1LjQgNDUuNDsiIHhtbDpzcGFjZT0icHJlc2VydmUiPgo8c3R5bGUgdHlwZT0idGV4dC9jc3MiPgoJLnN0MHtmaWxsOiMwMDM3QzE7fQo8L3N0eWxlPgo8cGF0aCBjbGFzcz0ic3QwIiBkPSJNMjguOCwyMi44bC02LjEsMTAuNmwtNi4xLTEwLjdMMjguOCwyMi44TDI4LjgsMjIuOHogTTM0LjksMTkuMkgxMC41bDEyLjIsMjEuNEwzNC45LDE5LjJ6IE02LjUsMTIuMWwyLDMuNgoJaDI4LjNsMi4xLTMuNkg2LjV6Ii8+Cjwvc3ZnPgo=',
+  label: 'Wrapped MATIC',
+  logo: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPCEtLSBHZW5lcmF0b3I6IEFkb2JlIElsbHVzdHJhdG9yIDI2LjAuMSwgU1ZHIEV4cG9ydCBQbHVnLUluIC4gU1ZHIFZlcnNpb246IDYuMDAgQnVpbGQgMCkgIC0tPgo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkxheWVyXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IgoJIHZpZXdCb3g9IjAgMCA0NS40IDQ1LjQiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDQ1LjQgNDUuNDsiIHhtbDpzcGFjZT0icHJlc2VydmUiPgo8c3R5bGUgdHlwZT0idGV4dC9jc3MiPgoJLnN0MHtmaWxsOiM4MjQ3RTU7fQo8L3N0eWxlPgo8cGF0aCBjbGFzcz0ic3QwIiBkPSJNMzEuOSwxNi42Yy0wLjctMC40LTEuNi0wLjQtMi4yLDBsLTUuMywzLjFsLTMuNSwybC01LjEsMy4xYy0wLjcsMC40LTEuNiwwLjQtMi4yLDBsLTQtMi40CgljLTAuNi0wLjQtMS4xLTEuMS0xLjEtMnYtNC42YzAtMC45LDAuNS0xLjYsMS4xLTJsNC0yLjNjMC43LTAuNCwxLjUtMC40LDIuMiwwbDQsMi40YzAuNywwLjQsMS4xLDEuMSwxLjEsMnYzLjFsMy41LTIuMXYtMy4yCgljMC0wLjktMC40LTEuNi0xLjEtMmwtNy41LTQuNGMtMC43LTAuNC0xLjUtMC40LTIuMiwwTDYsMTEuN2MtMC43LDAuNC0xLjEsMS4xLTEuMSwxLjh2OC43YzAsMC45LDAuNCwxLjYsMS4xLDJsNy42LDQuNAoJYzAuNywwLjQsMS41LDAuNCwyLjIsMGw1LjEtMi45bDMuNS0yLjFsNS4xLTIuOWMwLjctMC40LDEuNi0wLjQsMi4yLDBsNCwyLjNjMC43LDAuNCwxLjEsMS4xLDEuMSwydjQuNmMwLDAuOS0wLjQsMS42LTEuMSwyCglsLTMuOSwyLjNjLTAuNywwLjQtMS41LDAuNC0yLjIsMGwtNC0yLjNjLTAuNy0wLjQtMS4xLTEuMS0xLjEtMnYtMi45TDIxLDI4Ljd2My4xYzAsMC45LDAuNCwxLjYsMS4xLDJsNy41LDQuNAoJYzAuNywwLjQsMS41LDAuNCwyLjIsMGw3LjUtNC40YzAuNy0wLjQsMS4xLTEuMSwxLjEtMlYyM2MwLTAuOS0wLjQtMS42LTEuMS0yQzM5LjIsMjEsMzEuOSwxNi42LDMxLjksMTYuNnoiLz4KPC9zdmc+Cg==',
   wrapper: {
     address: blockchain.wrapped.address,
     api: WETH$1.WETH
@@ -2838,7 +2774,7 @@ const exchange = {
   slippage: false,
 };
 
-var wvlx = new Exchange(
+var wmatic = new Exchange(
 
   Object.assign(exchange, {
     findPath: ({ tokenIn, tokenOut })=>
@@ -2857,7 +2793,6 @@ let all = {
   polygon: [quickswap, wmatic],
   solana: [orca],
   fantom: [spookyswap, wftm],
-  velas: [wagyuswap, wvlx],
 };
 
 var find = (blockchain, name) => {

@@ -59,7 +59,10 @@ This library supports the following blockchains:
 - [Polygon](https://polygon.technology)
 - [Solana](https://solana.com)
 - [Fantom](https://fantom.foundation)
-- [Velas](https://velas.com)
+- [Arbitrum](https://arbitrum.io)
+- [Avalanche](https://www.avax.network)
+- [Gnosis](https://gnosis.io)
+- [Optimism](https://www.optimism.io)
 
 This library supports the following decentralized exchanges:
 
