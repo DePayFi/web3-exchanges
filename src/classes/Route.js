@@ -3,6 +3,7 @@ class Route {
     tokenIn,
     tokenOut,
     path,
+    pool,
     amountIn,
     amountInMax,
     amountOut,
@@ -13,6 +14,7 @@ class Route {
     this.tokenIn = tokenIn
     this.tokenOut = tokenOut
     this.path = path
+    this.pool = pool
     this.amountIn = amountIn?.toString()
     this.amountOutMin = amountOutMin?.toString()
     this.amountOut = amountOut?.toString()

@@ -85,9 +85,6 @@ Fantom:
 - [SpookySwap](https://spookyswap.fi)
 - [WFTM](https://ftmscan.com/token/0x21be370d5312f44cb42ce377bc9b8a0cef1a4c83)
 
-Velas:
-- [WagyuSwap](https://www.wagyuswap.app)
-- [WVLX](https://velascan.org/address/0xc579d1f3cf86749e05cd06f7ade17856c2ce3126)
 
 ## Platform specific packaging
 
@@ -162,6 +159,7 @@ Routes are returned by calling `route`. A single Route has the following structu
   tokenIn: String (e.g. '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb')
   tokenOut: String (e.g. '0xdAC17F958D2ee523a2206206994597C13D831ec7')
   path: Array (e.g. ['0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb', '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2', '0xdAC17F958D2ee523a2206206994597C13D831ec7'])
+  pool: Object ({})
   amountIn: BigNumber (e.g. '1000000000000000000')
   amountOutMin: BigNumber (e.g. '32000000000000000000')
   amountOut: BigNumber (e.g. '32000000000000000000')
@@ -294,6 +292,7 @@ import { find } from '@depay/web3-exchanges'
 let exchange = find('ethereum', 'uniswap_v2')
 
 let route = await exchange.route({
+  blockchain: 'ethereum',
   tokenIn: '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb',
   tokenOut: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
   amountIn: 1
@@ -321,24 +320,6 @@ let { amountIn } = await exchange.getAmounts({
   amountOut: '2111112220000000',
   block: 14904658
 }) // '123222200000000000'
-```
-
-### Exchange
-
-#### Solana Exchanges
-
-##### Get pair
-
-Provides pair/pool account for swap transactions:
-
-```javascript
-let exchange = find('solana', 'raydium')
-
-let pair = await exchange.getPair(tokenA, tokenB)
-// account {}
-
-pair.pubkey
-// 58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2
 ```
 
 ## Development

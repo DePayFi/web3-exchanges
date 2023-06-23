@@ -4,6 +4,7 @@ import { fixAddress } from '../address'
 import { fixRouteParams, preflight } from '../params'
 
 const route = ({
+  blockchain,
   exchange,
   tokenIn,
   tokenOut,
@@ -24,12 +25,12 @@ const route = ({
   if([amountIn, amountOut, amountInMax, amountOutMin].filter(Boolean).length < 1) { throw('You need to pass exactly one: amountIn, amountOut, amountInMax or amountOutMin') }
 
   return new Promise(async (resolve)=> {
-    let { path, fixedPath } = await findPath({ tokenIn, tokenOut, amountIn, amountOut, amountInMax, amountOutMin })
+    let { path, fixedPath, pool } = await findPath({ blockchain, tokenIn, tokenOut, amountIn, amountOut, amountInMax, amountOutMin })
     if (path === undefined || path.length == 0) { return resolve() }
     let [amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput] = [amountIn, amountOut, amountInMax, amountOutMin];
 
     let amounts // includes intermediary amounts for longer routes
-    ({ amountIn, amountInMax, amountOut, amountOutMin, amounts } = await getAmounts({ path, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }));
+    ({ amountIn, amountInMax, amountOut, amountOutMin, amounts } = await getAmounts({ blockchain, path, pool, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }));
     if([amountIn, amountInMax, amountOut, amountOutMin].every((amount)=>{ return amount == undefined })) { return resolve() }
 
     if(slippage) {
@@ -48,6 +49,7 @@ const route = ({
         tokenIn,
         tokenOut,
         path,
+        pool,
         amountIn,
         amountInMax,
         amountOut,
@@ -55,6 +57,8 @@ const route = ({
         exchange,
         getTransaction: async ({ from })=> await getTransaction({
           exchange,
+          blockchain,
+          pool,
           path,
           amountIn,
           amountInMax,
@@ -73,41 +77,12 @@ const route = ({
 }
 
 class Exchange {
-  constructor({
-    name,
-    blockchain,
-    alternativeNames,
-    label,
-    logo,
-    router,
-    factory,
-    wrapper,
-    pair,
-    market,
-    findPath,
-    pathExists,
-    getAmounts,
-    getTransaction,
-    slippage,
-  }) {
-    this.name = name
-    this.blockchain = blockchain
-    this.alternativeNames = alternativeNames
-    this.label = label
-    this.logo = logo
-    this.router = router
-    this.factory = factory
-    this.wrapper = wrapper
-    this.pair = pair
-    this.market = market
-    this.findPath = findPath
-    this.pathExists = pathExists
-    this.getAmounts = getAmounts
-    this.getTransaction = getTransaction
-    this.slippage = slippage
+  constructor(...args) {
+    Object.assign(this, ...args)
   }
 
   async route({
+    blockchain,
     tokenIn,
     tokenOut,
     amountIn,
@@ -133,7 +108,7 @@ class Exchange {
     return await route({
       ...
       await fixRouteParams({
-        blockchain: this.blockchain,
+        blockchain,
         exchange: this,
         tokenIn,
         tokenOut,
@@ -142,6 +117,7 @@ class Exchange {
         amountInMax,
         amountOutMin,
       }),
+      blockchain,
       findPath: this.findPath,
       getAmounts: this.getAmounts,
       getTransaction: this.getTransaction,

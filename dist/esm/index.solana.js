@@ -72,6 +72,7 @@ function _optionalChain$1(ops) { let lastAccessLHS = undefined; let value = ops[
     tokenIn,
     tokenOut,
     path,
+    pool,
     amountIn,
     amountInMax,
     amountOut,
@@ -82,6 +83,7 @@ function _optionalChain$1(ops) { let lastAccessLHS = undefined; let value = ops[
     this.tokenIn = tokenIn;
     this.tokenOut = tokenOut;
     this.path = path;
+    this.pool = pool;
     this.amountIn = _optionalChain$1([amountIn, 'optionalAccess', _ => _.toString, 'call', _2 => _2()]);
     this.amountOutMin = _optionalChain$1([amountOutMin, 'optionalAccess', _3 => _3.toString, 'call', _4 => _4()]);
     this.amountOut = _optionalChain$1([amountOut, 'optionalAccess', _5 => _5.toString, 'call', _6 => _6()]);
@@ -328,6 +330,7 @@ let preflight = ({
 };
 
 const route$1 = ({
+  blockchain,
   exchange,
   tokenIn,
   tokenOut,
@@ -348,12 +351,12 @@ const route$1 = ({
   if([amountIn, amountOut, amountInMax, amountOutMin].filter(Boolean).length < 1) { throw('You need to pass exactly one: amountIn, amountOut, amountInMax or amountOutMin') }
 
   return new Promise(async (resolve)=> {
-    let { path, fixedPath } = await findPath({ tokenIn, tokenOut, amountIn, amountOut, amountInMax, amountOutMin });
+    let { path, fixedPath, pool } = await findPath({ blockchain, tokenIn, tokenOut, amountIn, amountOut, amountInMax, amountOutMin });
     if (path === undefined || path.length == 0) { return resolve() }
     let [amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput] = [amountIn, amountOut, amountInMax, amountOutMin];
 
     let amounts; // includes intermediary amounts for longer routes
-    ({ amountIn, amountInMax, amountOut, amountOutMin, amounts } = await getAmounts({ path, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }));
+    ({ amountIn, amountInMax, amountOut, amountOutMin, amounts } = await getAmounts({ blockchain, path, pool, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }));
     if([amountIn, amountInMax, amountOut, amountOutMin].every((amount)=>{ return amount == undefined })) { return resolve() }
 
     if(slippage) {
@@ -372,6 +375,7 @@ const route$1 = ({
         tokenIn,
         tokenOut,
         path,
+        pool,
         amountIn,
         amountInMax,
         amountOut,
@@ -379,6 +383,8 @@ const route$1 = ({
         exchange,
         getTransaction: async ({ from })=> await getTransaction({
           exchange,
+          blockchain,
+          pool,
           path,
           amountIn,
           amountInMax,
@@ -397,41 +403,12 @@ const route$1 = ({
 };
 
 class Exchange {
-  constructor({
-    name,
-    blockchain,
-    alternativeNames,
-    label,
-    logo,
-    router,
-    factory,
-    wrapper,
-    pair,
-    market,
-    findPath,
-    pathExists,
-    getAmounts,
-    getTransaction,
-    slippage,
-  }) {
-    this.name = name;
-    this.blockchain = blockchain;
-    this.alternativeNames = alternativeNames;
-    this.label = label;
-    this.logo = logo;
-    this.router = router;
-    this.factory = factory;
-    this.wrapper = wrapper;
-    this.pair = pair;
-    this.market = market;
-    this.findPath = findPath;
-    this.pathExists = pathExists;
-    this.getAmounts = getAmounts;
-    this.getTransaction = getTransaction;
-    this.slippage = slippage;
+  constructor(...args) {
+    Object.assign(this, ...args);
   }
 
   async route({
+    blockchain,
     tokenIn,
     tokenOut,
     amountIn,
@@ -457,7 +434,7 @@ class Exchange {
     return await route$1({
       ...
       await fixRouteParams({
-        blockchain: this.blockchain,
+        blockchain,
         exchange: this,
         tokenIn,
         tokenOut,
@@ -466,6 +443,7 @@ class Exchange {
         amountInMax,
         amountOutMin,
       }),
+      blockchain,
       findPath: this.findPath,
       getAmounts: this.getAmounts,
       getTransaction: this.getTransaction,
@@ -2174,19 +2152,26 @@ var orca = new Exchange(
   })
 );
 
-let all = {
-  ethereum: [],
-  bsc: [],
-  polygon: [],
-  solana: [orca],
-  velas: [],
-  fantom: [],
-};
+const all = [
+  orca,
+];
 
-var find = (blockchain, name) => {
-  return all[blockchain].find((exchange) => {
-    return exchange.name === name || exchange.alternativeNames.includes(name)
-  })
+all.solana = [orca];
+all.ethereum = [];
+all.bsc = [];
+all.polygon = [];
+all.fantom = [];
+
+var find = ({ blockchain, name }) => {
+  if(blockchain) {
+    return all[blockchain].find((exchange) => {
+      return exchange.name === name || exchange.alternativeNames.includes(name)
+    })
+  } else {
+    return all.find((exchange) => {
+      return exchange.name === name || exchange.alternativeNames.includes(name)
+    })
+  }
 };
 
 let route = ({
