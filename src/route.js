@@ -1,5 +1,4 @@
 import all from './all'
-import { fixRouteParams, preflight } from './params'
 
 let route = ({
   blockchain,

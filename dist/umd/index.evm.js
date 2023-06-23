@@ -376,7 +376,7 @@
       return await route$1({
         ...
         await fixRouteParams({
-          blockchain,
+          blockchain: blockchain || this.blockchain,
           exchange: this,
           tokenIn,
           tokenOut,

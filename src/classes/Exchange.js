@@ -108,7 +108,7 @@ class Exchange {
     return await route({
       ...
       await fixRouteParams({
-        blockchain,
+        blockchain: blockchain || this.blockchain,
         exchange: this,
         tokenIn,
         tokenOut,
