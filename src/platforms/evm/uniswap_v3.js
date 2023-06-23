@@ -1,6 +1,5 @@
 /*#if _EVM
 
-import Blockchains from '@depay/web3-blockchains-evm'
 import Token from '@depay/web3-tokens-evm'
 import { request } from '@depay/web3-client-evm'
 
