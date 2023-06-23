@@ -3236,21 +3236,43 @@
   );
 
   const all = [
-    uniswap_v2,
     uniswap_v3,
+    uniswap_v2,
     pancakeswap,
     quickswap,
     orca,
     spookyswap,
     weth,
     wbnb,
+    wmatic,
+    wftm,
   ];
 
-  all.ethereum = [uniswap_v2, uniswap_v3, weth];
-  all.bsc = [pancakeswap, wbnb];
-  all.polygon = [quickswap, wmatic];
-  all.solana = [orca];
-  all.fantom = [spookyswap, wftm];
+  all.ethereum = {
+   uniswap_v3,
+   uniswap_v2,
+   weth, 
+  };
+
+  all.bsc = {
+    uniswap_v3,
+    pancakeswap,
+    wbnb,
+  };
+
+  all.polygon = {
+    quickswap,
+    wmatic,
+  };
+
+  all.solana = {
+    orca
+  };
+
+  all.fantom = {
+    spookyswap,
+    wftm
+  };
 
   var find = ({ blockchain, name }) => {
     if(blockchain) {

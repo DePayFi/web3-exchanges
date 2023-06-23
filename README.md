@@ -13,14 +13,12 @@ npm install --save @depay/web3-exchanges
 ```javascript
 import { all, find, route } from '@depay/web3-exchanges'
 
-all
-// [
-//   { name: 'uniswap_v2', label: 'Uniswap v2', logo: '...' }
-//   { name: 'pancakeswap_v2', label: 'PancakeSwap v2', logo: '...' }
-//   ...
-// ]
+// access all
+all.ethereum.uniswap_v2
+all.solana.orca
 
-let exchange = find('ethereum', 'uniswap_v2')
+// or use find
+let exchange = find({ blockchain: 'ethereum', name: 'uniswap_v2' })
 // { name: 'uniswap_v2', label: 'Uniswap v2', logo: '...' }
 
 let routes
@@ -256,10 +254,10 @@ all
 ```javascript
 import { find } from '@depay/web3-exchanges'
 
-find('ethereum', 'uniswap_v2')
+find({ blockchain: 'ethereum', name: 'uniswap_v2' })
 // { name: 'uniswap_v2', label: 'Uniswap v2', logo: '...' }
 
-find('bsc', 'pancakeswap_v2')
+find({ blockchain: 'bsc', name: 'pancakeswap_v2' })
 // { name: 'pancakeswap_v2', label: 'PancakeSwap v2', logo: '...' }
 ```
 
@@ -289,7 +287,7 @@ wallet.sendTransaction(transaction)
 ```javascript
 import { find } from '@depay/web3-exchanges'
 
-let exchange = find('ethereum', 'uniswap_v2')
+let exchange = find({ blockchain: 'ethereum', name: 'uniswap_v2' })
 
 let route = await exchange.route({
   blockchain: 'ethereum',
@@ -313,7 +311,7 @@ wallet.sendTransaction(transaction)
 ```javascript
 import { find } from '@depay/web3-exchanges'
 
-let exchange = find('ethereum', 'uniswap_v2')
+let exchange = find({ blockchain: 'ethereum', name: 'uniswap_v2' })
 
 let { amountIn } = await exchange.getAmounts({
   path: ['0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb', '0xdAC17F958D2ee523a2206206994597C13D831ec7'],

@@ -6,7 +6,7 @@ describe('spookyswap', () => {
   describe('basics', ()=> {
     
     it('provides basic structured data for spookyswap', ()=> {
-      let exchange = find('fantom', 'spookyswap')
+      let exchange = find({ blockchain: 'fantom', name: 'spookyswap' })
       expect(exchange.name).toEqual('spookyswap')
       expect(exchange.blockchain).toEqual('fantom')
       expect(exchange.alternativeNames).toEqual([])

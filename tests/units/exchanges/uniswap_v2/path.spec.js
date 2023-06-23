@@ -8,7 +8,7 @@ import Token from '@depay/web3-tokens'
 
 describe('uniswap_v2', () => {
   
-  const exchange = find('ethereum', 'uniswap_v2')
+  const exchange = find({ blockchain: 'ethereum', name: 'uniswap_v2' })
   const blockchain = 'ethereum'
   const accounts = ['0xd8da6bf26964af9d7eed9e03e53415d37aa96045']
   

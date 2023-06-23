@@ -18,7 +18,7 @@ describe('orca', () => {
     mock({ provider, blockchain, accounts: { return: accounts } })
   })
 
-  let exchange = find('solana', 'orca')
+  let exchange = find({ blockchain: 'solana', name: 'orca' })
   let fromAddress = '2UgCJaHU5y8NC4uWQcZYeV9a5RyYLF7iKYCybCsdFFD1'
 
   it('provides amounts for amountIn, amountInMax, amountOut and amountOutMin', async ()=> {

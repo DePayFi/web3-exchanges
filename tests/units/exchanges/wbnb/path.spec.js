@@ -4,7 +4,7 @@ import { mock, resetMocks } from '@depay/web3-mock'
 
 describe('wbnb', () => {
 
-  const exchange = find('bsc', 'wbnb')
+  const exchange = find({ blockchain: 'bsc', name: 'wbnb' })
   const blockchain = 'bsc'
 
   describe('pathExists', ()=>{

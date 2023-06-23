@@ -12,7 +12,7 @@ describe('pancakeswap', () => {
   
   const blockchain = 'bsc'
   const accounts = ['0xd8da6bf26964af9d7eed9e03e53415d37aa96045']
-  const exchange = find('bsc', 'pancakeswap')
+  const exchange = find({ blockchain: 'bsc', name: 'pancakeswap' })
   const pair = '0x804678fa97d91B974ec2af3c843270886528a9E6'
   const fromAddress = '0x5Af489c8786A018EC4814194dC8048be1007e390'
   const toAddress = '0x5Af489c8786A018EC4814194dC8048be1007e390'

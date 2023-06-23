@@ -6,7 +6,7 @@ describe('pancakswap', () => {
   describe('basics', ()=> {
     
     it('provides basic structured data for pancakeswap', ()=> {
-      let exchange = find('bsc', 'pancakeswap')
+      let exchange = find({ blockchain: 'bsc', 'pancakeswap' })
       expect(exchange.name).toEqual('pancakeswap')
       expect(exchange.blockchain).toEqual('bsc')
       expect(exchange.alternativeNames).toEqual(['pancake'])

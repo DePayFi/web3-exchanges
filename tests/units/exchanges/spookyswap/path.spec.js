@@ -8,7 +8,7 @@ import Token from '@depay/web3-tokens'
 
 describe('spookyswap', () => {
   
-  const exchange = find('fantom', 'spookyswap')
+  const exchange = find({ blockchain: 'fantom', name: 'spookyswap' })
   const blockchain = 'fantom'
   const accounts = ['0xd8da6bf26964af9d7eed9e03e53415d37aa96045']
   

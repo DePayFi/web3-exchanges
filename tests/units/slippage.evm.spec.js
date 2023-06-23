@@ -8,7 +8,7 @@ import { resetCache, getProvider } from '@depay/web3-client-evm'
 describe('slippage', () => {
 
   const blockchain = 'ethereum'
-  const exchange = find(blockchain, 'uniswap_v2')
+  const exchange = find({ blockchain, name: 'uniswap_v2' })
   const accounts = ['0xd8da6bf26964af9d7eed9e03e53415d37aa96045']
   const tokenOut = '0x6b175474e89094c44da98b954eedeac495271d0f'
   const pair = '0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852'

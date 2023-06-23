@@ -2156,11 +2156,9 @@ const all = [
   orca,
 ];
 
-all.solana = [orca];
-all.ethereum = [];
-all.bsc = [];
-all.polygon = [];
-all.fantom = [];
+all.solana = {
+  orca
+};
 
 var find = ({ blockchain, name }) => {
   if(blockchain) {

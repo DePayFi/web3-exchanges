@@ -11,19 +11,38 @@ import wftm from './exchanges/wftm'
 import wmatic from './exchanges/wmatic'
 
 const all = [
-  uniswap_v2,
   uniswap_v3,
+  uniswap_v2,
   pancakeswap,
   quickswap,
   spookyswap,
   weth,
   wbnb,
+  wmatic,
+  wftm,
 ]
 
-all.ethereum = [uniswap_v2, uniswap_v3, weth]
-all.bsc = [pancakeswap, wbnb]
-all.polygon = [quickswap, wmatic]
-all.fantom = [spookyswap, wftm]
+all.ethereum = {
+ uniswap_v3,
+ uniswap_v2,
+ weth, 
+}
+
+all.bsc = {
+  uniswap_v3,
+  pancakeswap,
+  wbnb,
+}
+
+all.polygon = {
+  quickswap,
+  wmatic,
+}
+
+all.fantom = {
+  spookyswap,
+  wftm
+}
 
 /*#elif _SOLANA
 
@@ -33,11 +52,9 @@ const all = [
   orca,
 ]
 
-all.solana = [orca]
-all.ethereum = []
-all.bsc = []
-all.polygon = []
-all.fantom = []
+all.solana = {
+  orca
+}
 
 //#else */
 
@@ -53,21 +70,43 @@ import wftm from './exchanges/wftm'
 import wmatic from './exchanges/wmatic'
 
 const all = [
-  uniswap_v2,
   uniswap_v3,
+  uniswap_v2,
   pancakeswap,
   quickswap,
   orca,
   spookyswap,
   weth,
   wbnb,
+  wmatic,
+  wftm,
 ]
 
-all.ethereum = [uniswap_v2, uniswap_v3, weth]
-all.bsc = [pancakeswap, wbnb]
-all.polygon = [quickswap, wmatic]
-all.solana = [orca]
-all.fantom = [spookyswap, wftm]
+all.ethereum = {
+ uniswap_v3,
+ uniswap_v2,
+ weth, 
+}
+
+all.bsc = {
+  uniswap_v3,
+  pancakeswap,
+  wbnb,
+}
+
+all.polygon = {
+  quickswap,
+  wmatic,
+}
+
+all.solana = {
+  orca
+}
+
+all.fantom = {
+  spookyswap,
+  wftm
+}
 
 //#endif
 

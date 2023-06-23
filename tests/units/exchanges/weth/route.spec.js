@@ -12,7 +12,7 @@ describe('weth', () => {
   
   const blockchain = 'ethereum'
   const accounts = ['0xd8da6bf26964af9d7eed9e03e53415d37aa96045']
-  const exchange = find('ethereum', 'weth')
+  const exchange = find({ blockchain: 'ethereum', name: 'weth' })
   const fromAddress = accounts[0]
   const toAddress = accounts[0]
   

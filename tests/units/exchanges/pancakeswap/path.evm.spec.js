@@ -8,7 +8,7 @@ import Token from '@depay/web3-tokens-evm'
 
 describe('pancakeswap', () => {
   
-  const exchange = find('bsc', 'pancakeswap')
+  const exchange = find({ blockchain: 'bsc', name: 'pancakeswap' })
   const blockchain = 'bsc'
   const accounts = ['0xd8da6bf26964af9d7eed9e03e53415d37aa96045']
   
