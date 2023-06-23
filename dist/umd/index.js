@@ -83,6 +83,8 @@
       amountOut,
       amountOutMin,
       exchange,
+      approvalRequired,
+      getApproval,
       getTransaction,
     }) {
       this.tokenIn = tokenIn;
@@ -2924,6 +2926,7 @@
 
   const exchange$4 = {
 
+    blockchains: ['ethereum', 'bsc', 'polygon', 'optmism', 'arbitrum'],
     name: 'uniswap_v3',
     alternativeNames: [],
     label: 'Uniswap v3',

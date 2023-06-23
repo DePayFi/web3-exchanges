@@ -78,6 +78,8 @@ function _optionalChain$3(ops) { let lastAccessLHS = undefined; let value = ops[
     amountOut,
     amountOutMin,
     exchange,
+    approvalRequired,
+    getApproval,
     getTransaction,
   }) {
     this.tokenIn = tokenIn;
@@ -2919,6 +2921,7 @@ var UniswapV3 = {
 
 const exchange$4 = {
 
+  blockchains: ['ethereum', 'bsc', 'polygon', 'optmism', 'arbitrum'],
   name: 'uniswap_v3',
   alternativeNames: [],
   label: 'Uniswap v3',

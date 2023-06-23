@@ -4,6 +4,7 @@ import UniswapV3 from '../platforms/evm/uniswap_v3'
 
 const exchange = {
 
+  blockchains: ['ethereum', 'bsc', 'polygon', 'optmism', 'arbitrum'],
   name: 'uniswap_v3',
   alternativeNames: [],
   label: 'Uniswap v3',

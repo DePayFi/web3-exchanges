@@ -9,6 +9,8 @@ class Route {
     amountOut,
     amountOutMin,
     exchange,
+    approvalRequired,
+    getApproval,
     getTransaction,
   }) {
     this.tokenIn = tokenIn

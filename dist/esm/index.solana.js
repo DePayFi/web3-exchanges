@@ -78,6 +78,8 @@ function _optionalChain$1(ops) { let lastAccessLHS = undefined; let value = ops[
     amountOut,
     amountOutMin,
     exchange,
+    approvalRequired,
+    getApproval,
     getTransaction,
   }) {
     this.tokenIn = tokenIn;
