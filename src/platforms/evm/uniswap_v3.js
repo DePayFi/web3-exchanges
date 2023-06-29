@@ -1,19 +1,20 @@
 /*#if _EVM
 
 import Token from '@depay/web3-tokens-evm'
+import { ethers } from 'ethers'
 import { request } from '@depay/web3-client-evm'
 
 /*#elif _SOLANA
 
 //#else */
 
-import Blockchains from '@depay/web3-blockchains'
 import Token from '@depay/web3-tokens'
+import { ethers } from 'ethers'
 import { request } from '@depay/web3-client'
 
 //#endif
 
-import { ethers } from 'ethers'
+import Blockchains from '@depay/web3-blockchains'
 
 const FEES = [100, 500, 3000, 10000]
 
@@ -182,24 +183,6 @@ const findPath = async ({ blockchain, exchange, tokenIn, tokenOut, amountIn, amo
       return( (await pathExists(blockchain, exchange, [tokenIn, stable], amountIn, amountOut, amountInMax, amountOutMin) ? stable : undefined) && await pathExists(blockchain, exchange, [tokenOut, stable], amountIn, amountOut, amountInMax, amountOutMin) ? stable : undefined )
     }))).find(Boolean)
     path = [tokenIn, USD, tokenOut]
-  } else if (
-    !Blockchains[blockchain].stables.usd.includes(tokenIn) &&
-    (await Promise.all(Blockchains[blockchain].stables.usd.map((stable)=>pathExists(blockchain, exchange, [tokenIn, stable], amountIn, amountOut, amountInMax, amountOutMin)))).filter(Boolean).length &&
-    tokenOut != Blockchains[blockchain].wrapped.address &&
-    await pathExists(blockchain, exchange, [Blockchains[blockchain].wrapped.address, tokenOut], amountIn, amountOut, amountInMax, amountOutMin)
-  ) {
-    // path via tokenIn -> USD -> WRAPPED -> tokenOut
-    let USD = (await Promise.all(Blockchains[blockchain].stables.usd.map(async (stable)=>{ return(await pathExists(blockchain, exchange, [tokenIn, stable], amountIn, amountOut, amountInMax, amountOutMin) ? stable : undefined) }))).find(Boolean)
-    path = [tokenIn, USD, Blockchains[blockchain].wrapped.address, tokenOut]
-  } else if (
-    tokenIn != Blockchains[blockchain].wrapped.address &&
-    await pathExists(blockchain, exchange, [tokenIn, Blockchains[blockchain].wrapped.address], amountIn, amountOut, amountInMax, amountOutMin) &&
-    !Blockchains[blockchain].stables.usd.includes(tokenOut) &&
-    (await Promise.all(Blockchains[blockchain].stables.usd.map((stable)=>pathExists(blockchain, exchange, [stable, tokenOut], amountIn, amountOut, amountInMax, amountOutMin)))).filter(Boolean).length
-  ) {
-    // path via tokenIn -> WRAPPED -> USD -> tokenOut
-    let USD = (await Promise.all(Blockchains[blockchain].stables.usd.map(async (stable)=>{ return(await pathExists(blockchain, exchange, [stable, tokenOut], amountIn, amountOut, amountInMax, amountOutMin) ? stable : undefined) }))).find(Boolean)
-    path = [tokenIn, Blockchains[blockchain].wrapped.address, USD, tokenOut]
   }
 
   let pools

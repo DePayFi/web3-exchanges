@@ -1,4 +1,4 @@
-import Blockchains$1 from '@depay/web3-blockchains';
+import Blockchains from '@depay/web3-blockchains';
 import { request } from '@depay/web3-client-evm';
 import { ethers } from 'ethers';
 import Token from '@depay/web3-tokens-evm';
@@ -673,7 +673,7 @@ var UniswapV2 = {
   PAIR,
 };
 
-const blockchain$7 = Blockchains$1.bsc;
+const blockchain$7 = Blockchains.bsc;
 
 const exchange$8 = {
   blockchain: 'bsc',
@@ -709,7 +709,7 @@ var pancakeswap = new Exchange(
   })
 );
 
-const blockchain$6 = Blockchains$1.polygon;
+const blockchain$6 = Blockchains.polygon;
 
 const exchange$7 = {
   blockchain: 'polygon',
@@ -745,7 +745,7 @@ var quickswap = new Exchange(
   })
 );
 
-const blockchain$5 = Blockchains$1.fantom;
+const blockchain$5 = Blockchains.fantom;
 
 const exchange$6 = {
   blockchain: 'fantom',
@@ -781,7 +781,7 @@ var spookyswap = new Exchange(
   })
 );
 
-const blockchain$4 = Blockchains$1.ethereum;
+const blockchain$4 = Blockchains.ethereum;
 
 const exchange$5 = {
   blockchain: 'ethereum',
@@ -986,24 +986,6 @@ const findPath$1 = async ({ blockchain, exchange, tokenIn, tokenOut, amountIn, a
       return( (await pathExists$1(blockchain, exchange, [tokenIn, stable]) ? stable : undefined) && await pathExists$1(blockchain, exchange, [tokenOut, stable]) ? stable : undefined )
     }))).find(Boolean);
     path = [tokenIn, USD, tokenOut];
-  } else if (
-    !Blockchains[blockchain].stables.usd.includes(tokenIn) &&
-    (await Promise.all(Blockchains[blockchain].stables.usd.map((stable)=>pathExists$1(blockchain, exchange, [tokenIn, stable])))).filter(Boolean).length &&
-    tokenOut != Blockchains[blockchain].wrapped.address &&
-    await pathExists$1(blockchain, exchange, [Blockchains[blockchain].wrapped.address, tokenOut])
-  ) {
-    // path via tokenIn -> USD -> WRAPPED -> tokenOut
-    let USD = (await Promise.all(Blockchains[blockchain].stables.usd.map(async (stable)=>{ return(await pathExists$1(blockchain, exchange, [tokenIn, stable]) ? stable : undefined) }))).find(Boolean);
-    path = [tokenIn, USD, Blockchains[blockchain].wrapped.address, tokenOut];
-  } else if (
-    tokenIn != Blockchains[blockchain].wrapped.address &&
-    await pathExists$1(blockchain, exchange, [tokenIn, Blockchains[blockchain].wrapped.address]) &&
-    !Blockchains[blockchain].stables.usd.includes(tokenOut) &&
-    (await Promise.all(Blockchains[blockchain].stables.usd.map((stable)=>pathExists$1(blockchain, exchange, [stable, tokenOut])))).filter(Boolean).length
-  ) {
-    // path via tokenIn -> WRAPPED -> USD -> tokenOut
-    let USD = (await Promise.all(Blockchains[blockchain].stables.usd.map(async (stable)=>{ return(await pathExists$1(blockchain, exchange, [stable, tokenOut]) ? stable : undefined) }))).find(Boolean);
-    path = [tokenIn, Blockchains[blockchain].wrapped.address, USD, tokenOut];
   }
 
   let pools;
@@ -1419,7 +1401,7 @@ var WETH$1 = {
   WETH,
 };
 
-const blockchain$3 = Blockchains$1.bsc;
+const blockchain$3 = Blockchains.bsc;
 
 const exchange$3 = {
   blockchain: 'bsc',
@@ -1447,7 +1429,7 @@ var wbnb = new Exchange(
   })
 );
 
-const blockchain$2 = Blockchains$1.ethereum;
+const blockchain$2 = Blockchains.ethereum;
 
 const exchange$2 = {
   blockchain: 'ethereum',
@@ -1475,7 +1457,7 @@ var weth = new Exchange(
   })
 );
 
-const blockchain$1 = Blockchains$1.fantom;
+const blockchain$1 = Blockchains.fantom;
 
 const exchange$1 = {
   blockchain: 'fantom',
@@ -1503,7 +1485,7 @@ var wftm = new Exchange(
   })
 );
 
-const blockchain = Blockchains$1.polygon;
+const blockchain = Blockchains.polygon;
 
 const exchange = {
   blockchain: 'polygon',

@@ -1,10 +1,10 @@
 import Blockchains from '@depay/web3-blockchains'
 import { ethers } from 'ethers'
-import { find } from 'src'
+import { find } from 'dist/esm/index.evm'
 import { mock, resetMocks, anything } from '@depay/web3-mock'
 import { mockDecimals } from 'tests/mocks/token'
 import { mockPair, mockAmounts } from 'tests/mocks/evm/uniswap_v3'
-import { resetCache, getProvider } from '@depay/web3-client'
+import { resetCache, getProvider } from '@depay/web3-client-evm'
 
 describe('uniswap_v3', () => {
   

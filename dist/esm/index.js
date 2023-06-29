@@ -2750,24 +2750,6 @@ const findPath$1 = async ({ blockchain, exchange, tokenIn, tokenOut, amountIn, a
       return( (await pathExists$1(blockchain, exchange, [tokenIn, stable]) ? stable : undefined) && await pathExists$1(blockchain, exchange, [tokenOut, stable]) ? stable : undefined )
     }))).find(Boolean);
     path = [tokenIn, USD, tokenOut];
-  } else if (
-    !Blockchains[blockchain].stables.usd.includes(tokenIn) &&
-    (await Promise.all(Blockchains[blockchain].stables.usd.map((stable)=>pathExists$1(blockchain, exchange, [tokenIn, stable])))).filter(Boolean).length &&
-    tokenOut != Blockchains[blockchain].wrapped.address &&
-    await pathExists$1(blockchain, exchange, [Blockchains[blockchain].wrapped.address, tokenOut])
-  ) {
-    // path via tokenIn -> USD -> WRAPPED -> tokenOut
-    let USD = (await Promise.all(Blockchains[blockchain].stables.usd.map(async (stable)=>{ return(await pathExists$1(blockchain, exchange, [tokenIn, stable]) ? stable : undefined) }))).find(Boolean);
-    path = [tokenIn, USD, Blockchains[blockchain].wrapped.address, tokenOut];
-  } else if (
-    tokenIn != Blockchains[blockchain].wrapped.address &&
-    await pathExists$1(blockchain, exchange, [tokenIn, Blockchains[blockchain].wrapped.address]) &&
-    !Blockchains[blockchain].stables.usd.includes(tokenOut) &&
-    (await Promise.all(Blockchains[blockchain].stables.usd.map((stable)=>pathExists$1(blockchain, exchange, [stable, tokenOut])))).filter(Boolean).length
-  ) {
-    // path via tokenIn -> WRAPPED -> USD -> tokenOut
-    let USD = (await Promise.all(Blockchains[blockchain].stables.usd.map(async (stable)=>{ return(await pathExists$1(blockchain, exchange, [stable, tokenOut]) ? stable : undefined) }))).find(Boolean);
-    path = [tokenIn, Blockchains[blockchain].wrapped.address, USD, tokenOut];
   }
 
   let pools;

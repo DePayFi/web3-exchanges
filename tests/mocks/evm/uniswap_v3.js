@@ -13,6 +13,17 @@ function mockPair({ blockchain, exchange, provider, tokenIn, tokenOut, fee, pair
       return: pair
     }
   })
+  mock({
+    provider,
+    blockchain,
+    request: {
+      to: exchange[blockchain].factory.address,
+      api: exchange[blockchain].factory.api,
+      method: 'getPool',
+      params: [tokenOut, tokenIn, fee],
+      return: pair
+    }
+  })
 }
 
 function mockAmounts({ blockchain, exchange, block, provider, method, params, amount }){

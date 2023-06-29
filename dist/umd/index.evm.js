@@ -2,11 +2,11 @@
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@depay/web3-blockchains'), require('@depay/web3-client-evm'), require('ethers'), require('@depay/web3-tokens-evm')) :
   typeof define === 'function' && define.amd ? define(['exports', '@depay/web3-blockchains', '@depay/web3-client-evm', 'ethers', '@depay/web3-tokens-evm'], factory) :
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.Web3Exchanges = {}, global.Web3Blockchains, global.Web3Client, global.ethers, global.Web3Tokens));
-}(this, (function (exports, Blockchains$1, web3ClientEvm, ethers, Token) { 'use strict';
+}(this, (function (exports, Blockchains, web3ClientEvm, ethers, Token) { 'use strict';
 
   function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
-  var Blockchains__default = /*#__PURE__*/_interopDefaultLegacy(Blockchains$1);
+  var Blockchains__default = /*#__PURE__*/_interopDefaultLegacy(Blockchains);
   var Token__default = /*#__PURE__*/_interopDefaultLegacy(Token);
 
   function _optionalChain$2(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }class Route {
@@ -837,18 +837,18 @@
     if(!path) { return }
     let fixedPath = path.map((token, index) => {
       if (
-        token === Blockchains[blockchain].currency.address && path[index+1] != Blockchains[blockchain].wrapped.address &&
-        path[index-1] != Blockchains[blockchain].wrapped.address
+        token === Blockchains__default['default'][blockchain].currency.address && path[index+1] != Blockchains__default['default'][blockchain].wrapped.address &&
+        path[index-1] != Blockchains__default['default'][blockchain].wrapped.address
       ) {
-        return Blockchains[blockchain].wrapped.address
+        return Blockchains__default['default'][blockchain].wrapped.address
       } else {
         return token
       }
     });
 
-    if(fixedPath[0] == Blockchains[blockchain].currency.address && fixedPath[1] == Blockchains[blockchain].wrapped.address) {
+    if(fixedPath[0] == Blockchains__default['default'][blockchain].currency.address && fixedPath[1] == Blockchains__default['default'][blockchain].wrapped.address) {
       fixedPath.splice(0, 1);
-    } else if(fixedPath[fixedPath.length-1] == Blockchains[blockchain].currency.address && fixedPath[fixedPath.length-2] == Blockchains[blockchain].wrapped.address) {
+    } else if(fixedPath[fixedPath.length-1] == Blockchains__default['default'][blockchain].currency.address && fixedPath[fixedPath.length-2] == Blockchains__default['default'][blockchain].wrapped.address) {
       fixedPath.splice(fixedPath.length-1, 1);
     }
 
@@ -897,7 +897,7 @@
 
       let pools = (await Promise.all(FEES.map((fee)=>{
         return web3ClientEvm.request({
-          blockchain: Blockchains[blockchain].name,
+          blockchain: Blockchains__default['default'][blockchain].name,
           address: exchange[blockchain].factory.address,
           method: 'getPool',
           api: exchange[blockchain].factory.api,
@@ -915,7 +915,7 @@
         }).catch(()=>{})
       }))).filter(Boolean);
 
-      pools = pools.filter((pool)=>pool.address != Blockchains[blockchain].zero);
+      pools = pools.filter((pool)=>pool.address != Blockchains__default['default'][blockchain].zero);
 
       pools = (await Promise.all(pools.map(async(pool)=>{
 
@@ -950,14 +950,14 @@
       let pools = (await Promise.all(FEES.map((fee)=>{
         path = fixPath$1(blockchain, exchange, path);
         return web3ClientEvm.request({
-          blockchain: Blockchains[blockchain].name,
+          blockchain: Blockchains__default['default'][blockchain].name,
           address: exchange[blockchain].factory.address,
           method: 'getPool',
           api: exchange[blockchain].factory.api,
           cache: 3600,
           params: [path[0], path[1], fee],
         }).catch(()=>{})
-      }))).filter(Boolean).filter((address)=>address != Blockchains[blockchain].zero);
+      }))).filter(Boolean).filter((address)=>address != Blockchains__default['default'][blockchain].zero);
 
       return pools.length
 
@@ -966,8 +966,8 @@
 
   const findPath$1 = async ({ blockchain, exchange, tokenIn, tokenOut, amountIn, amountOut, amountInMax, amountOutMin }) => {
     if(
-      [tokenIn, tokenOut].includes(Blockchains[blockchain].currency.address) &&
-      [tokenIn, tokenOut].includes(Blockchains[blockchain].wrapped.address)
+      [tokenIn, tokenOut].includes(Blockchains__default['default'][blockchain].currency.address) &&
+      [tokenIn, tokenOut].includes(Blockchains__default['default'][blockchain].wrapped.address)
     ) { return { path: undefined, fixedPath: undefined } }
 
     let path;
@@ -975,41 +975,23 @@
       // direct path
       path = [tokenIn, tokenOut];
     } else if (
-      tokenIn != Blockchains[blockchain].wrapped.address &&
-      await pathExists$1(blockchain, exchange, [tokenIn, Blockchains[blockchain].wrapped.address]) &&
-      tokenOut != Blockchains[blockchain].wrapped.address &&
-      await pathExists$1(blockchain, exchange, [tokenOut, Blockchains[blockchain].wrapped.address])
+      tokenIn != Blockchains__default['default'][blockchain].wrapped.address &&
+      await pathExists$1(blockchain, exchange, [tokenIn, Blockchains__default['default'][blockchain].wrapped.address]) &&
+      tokenOut != Blockchains__default['default'][blockchain].wrapped.address &&
+      await pathExists$1(blockchain, exchange, [tokenOut, Blockchains__default['default'][blockchain].wrapped.address])
     ) {
       // path via WRAPPED
-      path = [tokenIn, Blockchains[blockchain].wrapped.address, tokenOut];
+      path = [tokenIn, Blockchains__default['default'][blockchain].wrapped.address, tokenOut];
     } else if (
-      (await Promise.all(Blockchains[blockchain].stables.usd.map(async (stable)=>{
+      (await Promise.all(Blockchains__default['default'][blockchain].stables.usd.map(async (stable)=>{
         return( (await pathExists$1(blockchain, exchange, [tokenIn, stable]) ? stable : undefined) && await pathExists$1(blockchain, exchange, [tokenOut, stable]) ? stable : undefined )
       }))).find(Boolean)
     ) {
       // path via tokenIn -> USD -> tokenOut
-      let USD = (await Promise.all(Blockchains[blockchain].stables.usd.map(async (stable)=>{
+      let USD = (await Promise.all(Blockchains__default['default'][blockchain].stables.usd.map(async (stable)=>{
         return( (await pathExists$1(blockchain, exchange, [tokenIn, stable]) ? stable : undefined) && await pathExists$1(blockchain, exchange, [tokenOut, stable]) ? stable : undefined )
       }))).find(Boolean);
       path = [tokenIn, USD, tokenOut];
-    } else if (
-      !Blockchains[blockchain].stables.usd.includes(tokenIn) &&
-      (await Promise.all(Blockchains[blockchain].stables.usd.map((stable)=>pathExists$1(blockchain, exchange, [tokenIn, stable])))).filter(Boolean).length &&
-      tokenOut != Blockchains[blockchain].wrapped.address &&
-      await pathExists$1(blockchain, exchange, [Blockchains[blockchain].wrapped.address, tokenOut])
-    ) {
-      // path via tokenIn -> USD -> WRAPPED -> tokenOut
-      let USD = (await Promise.all(Blockchains[blockchain].stables.usd.map(async (stable)=>{ return(await pathExists$1(blockchain, exchange, [tokenIn, stable]) ? stable : undefined) }))).find(Boolean);
-      path = [tokenIn, USD, Blockchains[blockchain].wrapped.address, tokenOut];
-    } else if (
-      tokenIn != Blockchains[blockchain].wrapped.address &&
-      await pathExists$1(blockchain, exchange, [tokenIn, Blockchains[blockchain].wrapped.address]) &&
-      !Blockchains[blockchain].stables.usd.includes(tokenOut) &&
-      (await Promise.all(Blockchains[blockchain].stables.usd.map((stable)=>pathExists$1(blockchain, exchange, [stable, tokenOut])))).filter(Boolean).length
-    ) {
-      // path via tokenIn -> WRAPPED -> USD -> tokenOut
-      let USD = (await Promise.all(Blockchains[blockchain].stables.usd.map(async (stable)=>{ return(await pathExists$1(blockchain, exchange, [stable, tokenOut]) ? stable : undefined) }))).find(Boolean);
-      path = [tokenIn, Blockchains[blockchain].wrapped.address, USD, tokenOut];
     }
 
     let pools;
@@ -1031,10 +1013,10 @@
 
     // Add WRAPPED to route path if things start or end with NATIVE
     // because that actually reflects how things are routed in reality:
-    if(_optionalChain([path, 'optionalAccess', _ => _.length]) && path[0] == Blockchains[blockchain].currency.address) {
-      path.splice(1, 0, Blockchains[blockchain].wrapped.address);
-    } else if(_optionalChain([path, 'optionalAccess', _2 => _2.length]) && path[path.length-1] == Blockchains[blockchain].currency.address) {
-      path.splice(path.length-1, 0, Blockchains[blockchain].wrapped.address);
+    if(_optionalChain([path, 'optionalAccess', _ => _.length]) && path[0] == Blockchains__default['default'][blockchain].currency.address) {
+      path.splice(1, 0, Blockchains__default['default'][blockchain].wrapped.address);
+    } else if(_optionalChain([path, 'optionalAccess', _2 => _2.length]) && path[path.length-1] == Blockchains__default['default'][blockchain].currency.address) {
+      path.splice(path.length-1, 0, Blockchains__default['default'][blockchain].wrapped.address);
     }
 
     return { path, pools, fixedPath: fixPath$1(blockchain, exchange, path) }
@@ -1136,7 +1118,7 @@
     let inputs = [];
     let value = "0";
 
-    if (path[0] === Blockchains[blockchain].currency.address) {
+    if (path[0] === Blockchains__default['default'][blockchain].currency.address) {
       commands.push("0x0b"); // WRAP_ETH
       inputs.push(
         ethers.ethers.utils.solidityPack(
@@ -1184,7 +1166,7 @@
       );
     }
 
-    if (path[path.length-1] === Blockchains[blockchain].currency.address) {
+    if (path[path.length-1] === Blockchains__default['default'][blockchain].currency.address) {
       commands.push("0x0c"); // UNWRAP_WETH
       inputs.push(
         ethers.ethers.utils.solidityPack(
