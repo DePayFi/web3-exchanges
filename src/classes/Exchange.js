@@ -25,12 +25,12 @@ const route = ({
   if([amountIn, amountOut, amountInMax, amountOutMin].filter(Boolean).length < 1) { throw('You need to pass exactly one: amountIn, amountOut, amountInMax or amountOutMin') }
 
   return new Promise(async (resolve)=> {
-    let { path, fixedPath, pool } = await findPath({ blockchain, tokenIn, tokenOut, amountIn, amountOut, amountInMax, amountOutMin })
+    let { path, fixedPath, pools } = await findPath({ blockchain, tokenIn, tokenOut, amountIn, amountOut, amountInMax, amountOutMin })
     if (path === undefined || path.length == 0) { return resolve() }
     let [amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput] = [amountIn, amountOut, amountInMax, amountOutMin];
 
     let amounts // includes intermediary amounts for longer routes
-    ({ amountIn, amountInMax, amountOut, amountOutMin, amounts } = await getAmounts({ blockchain, path, pool, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }));
+    ({ amountIn, amountInMax, amountOut, amountOutMin, amounts } = await getAmounts({ blockchain, path, pools, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }));
     if([amountIn, amountInMax, amountOut, amountOutMin].every((amount)=>{ return amount == undefined })) { return resolve() }
 
     if(slippage) {
@@ -49,7 +49,7 @@ const route = ({
         tokenIn,
         tokenOut,
         path,
-        pool,
+        pools,
         amountIn,
         amountInMax,
         amountOut,
@@ -58,7 +58,7 @@ const route = ({
         getTransaction: async ({ from })=> await getTransaction({
           exchange,
           blockchain,
-          pool,
+          pools,
           path,
           amountIn,
           amountInMax,
@@ -95,6 +95,8 @@ class Exchange {
     if(tokenIn === tokenOut){ return Promise.resolve() }
     
     preflight({
+      blockchain,
+      exchange: this,
       tokenIn,
       tokenOut,
       amountIn,

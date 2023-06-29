@@ -37,3 +37,23 @@ let transaction = await routes[0].getTransaction({ from })
 
 wallet.sendTransaction(transaction)
 ```
+
+# TOKEN TO TOKEN (2 pools)
+
+```javascript
+let exchange = Web3Exchanges.find({ name: 'uniswap_v3' })
+
+let route = await exchange.route({
+  blockchain: 'ethereum',
+  tokenIn: '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb', // DEPAY
+  tokenOut: '0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984', // UNI
+  amountOut: 1
+})
+
+let wallets = await Web3Wallets.getWallets()
+let wallet = wallets[0]
+let from = await wallet.account()
+let transaction = await route.getTransaction({ from })
+
+wallet.sendTransaction(transaction)
+```

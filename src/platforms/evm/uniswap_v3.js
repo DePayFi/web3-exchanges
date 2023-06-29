@@ -80,6 +80,7 @@ const getOutputAmount = async (exchange, pool, inputAmount)=>{
 }
 
 const getBestPool = async ({ blockchain, exchange, path, amountIn, amountOut, block }) => {
+  console.log('getBestPool path', path)
   path = fixPath(blockchain, exchange, path)
   if(path.length > 2) { throw('Uniswap V3 can only check paths for up to 2 tokens!') }
 
@@ -210,8 +211,20 @@ const findPath = async ({ blockchain, exchange, tokenIn, tokenOut, amountIn, amo
     path.splice(path.length-1, 0, Blockchains[blockchain].wrapped.address)
   }
 
-  const pool = await getBestPool({ blockchain, exchange, path, amountIn, amountOut })
-  return { path, pool, fixedPath: fixPath(blockchain, exchange, path) }
+  let pools
+  if(path.length == 2) {
+    pools = [
+      await getBestPool({ blockchain, exchange, path: [path[0], path[1]], amountIn, amountOut })
+    ]
+  } else if (path.length == 3) {
+    console.log('amountIn', amountIn)
+    console.log('amountOut', amountOut)
+    let pool1 = await getBestPool({ blockchain, exchange, path: [path[0], path[1]], amountIn, amountOut })
+    let pool2 = await getBestPool({ blockchain, exchange, path: [path[1], path[2]], amountIn, amountOut })
+    pools = [pool1, pool2]
+  }
+
+  return { path, pools, fixedPath: fixPath(blockchain, exchange, path) }
 }
 
 let getAmountOut = (blockchain, exchange, { path, pool, amountIn, tokenIn, tokenOut }) => {

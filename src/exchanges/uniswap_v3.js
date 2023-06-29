@@ -4,7 +4,7 @@ import UniswapV3 from '../platforms/evm/uniswap_v3'
 
 const exchange = {
 
-  blockchains: ['ethereum', 'bsc', 'polygon', 'optmism', 'arbitrum'],
+  blockchains: ['ethereum', 'bsc', 'polygon', 'optimism', 'arbitrum'],
   name: 'uniswap_v3',
   alternativeNames: [],
   label: 'Uniswap v3',
@@ -65,7 +65,7 @@ const exchange = {
     }
   },
 
-  optmism: {
+  optimism: {
     router: {
       address: '0x3fc91a3afd70395cd496c647d5a6cc9d4b2b7fad',
       api: UniswapV3.ROUTER

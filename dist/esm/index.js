@@ -297,6 +297,8 @@ let fixRouteParams = async ({
 };
 
 let preflight = ({
+  blockchain,
+  exchange,
   tokenIn,
   tokenOut,
   amountIn,
@@ -306,6 +308,10 @@ let preflight = ({
   amountOutMax,
   amountInMin,
 }) => {
+  if(blockchain === undefined && exchange.blockchains != undefined) {
+    throw 'You need to provide a blockchain when calling route on an exchange that supports multiple blockchains!'
+  }
+
   if (typeof amountOutMax !== 'undefined') {
     throw 'You cannot not set amountOutMax! Only amountInMax or amountOutMin!'
   }
@@ -423,6 +429,8 @@ class Exchange {
     if(tokenIn === tokenOut){ return Promise.resolve() }
     
     preflight({
+      blockchain,
+      exchange: this,
       tokenIn,
       tokenOut,
       amountIn,
@@ -2634,7 +2642,9 @@ const getOutputAmount = async (exchange, pool, inputAmount)=>{
 };
 
 const getBestPool = async ({ blockchain, exchange, path, amountIn, amountOut, block }) => {
+  console.log('getBestPool path', path);
   path = fixPath$1(blockchain, exchange, path);
+  console.log('fixedPath', path);
   if(path.length > 2) { throw('Uniswap V3 can only check paths for up to 2 tokens!') }
 
   try {
@@ -2921,7 +2931,7 @@ var UniswapV3 = {
 
 const exchange$4 = {
 
-  blockchains: ['ethereum', 'bsc', 'polygon', 'optmism', 'arbitrum'],
+  blockchains: ['ethereum', 'bsc', 'polygon', 'optimism', 'arbitrum'],
   name: 'uniswap_v3',
   alternativeNames: [],
   label: 'Uniswap v3',
@@ -2982,7 +2992,7 @@ const exchange$4 = {
     }
   },
 
-  optmism: {
+  optimism: {
     router: {
       address: '0x3fc91a3afd70395cd496c647d5a6cc9d4b2b7fad',
       api: UniswapV3.ROUTER
