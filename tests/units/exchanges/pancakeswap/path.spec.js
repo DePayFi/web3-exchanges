@@ -2,7 +2,7 @@ import Blockchains from '@depay/web3-blockchains'
 import { find } from 'src'
 import { mock, resetMocks } from '@depay/web3-mock'
 import { mockDecimals } from 'tests/mocks/token'
-import { mockPair } from 'tests/mocks/evm/exchange'
+import { mockPair } from 'tests/mocks/evm/uniswap_v2'
 import { getProvider, resetCache } from '@depay/web3-client'
 import Token from '@depay/web3-tokens'
 

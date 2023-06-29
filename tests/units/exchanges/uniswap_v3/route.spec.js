@@ -1,12 +1,11 @@
-import Route from 'src/classes/Route'
 import Blockchains from '@depay/web3-blockchains'
+import Route from 'src/classes/Route'
 import { ethers } from 'ethers'
 import { find } from 'src'
 import { mock, resetMocks, anything } from '@depay/web3-mock'
 import { mockDecimals } from 'tests/mocks/token'
-import { mockPair, mockAmounts } from 'tests/mocks/evm/exchange'
+import { mockPair, mockAmounts } from 'tests/mocks/evm/uniswap_v3'
 import { resetCache, getProvider } from '@depay/web3-client'
-import { testRouting } from 'tests/helpers/testRouting'
 
 describe('uniswap_v3', () => {
   
@@ -49,7 +48,7 @@ describe('uniswap_v3', () => {
           expect(route).toEqual(undefined)
         })
 
-        it.only('throws an error if no blockchain has been provided to route', async ()=> {
+        it('throws an error if no blockchain has been provided to route', async ()=> {
 
           await expect(
             exchange.route({
@@ -76,17 +75,19 @@ describe('uniswap_v3', () => {
           let amountOutBN = ethers.utils.parseUnits(amountOut.toString(), decimalsOut)
           let path = [tokenIn, tokenOut]
 
-          // mock({
-          //   provider,
-          //   blockchain,
-          //   request: {
-          //     to: exchange.router.address,
-          //     api: exchange.router.api,
-          //     method: 'getAmountsIn',
-          //     params: [amountOutBN, path],
-          //     return: Error('Routing Error')
-          //   }
-          // })
+          mockDecimals({ provider, blockchain, address: tokenIn, value: decimalsIn })
+          mockDecimals({ provider, blockchain, address: tokenOut, value: decimalsOut })
+
+          mock({
+            provider,
+            blockchain,
+            request: {
+              to: exchange[blockchain].factory.address,
+              api: exchange[blockchain].factory.api,
+              method: 'getPool',
+              return: Error('Routing Error')
+            }
+          })
 
           let route = await exchange.route({
             blockchain,
@@ -101,52 +102,16 @@ describe('uniswap_v3', () => {
         })
       })
 
-      describe('route token to token', ()=>{
+      describe('route token to token (1 pool)', ()=>{
 
         let tokenIn = '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb'
         let decimalsIn = 18
         let tokenOut = '0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984'
         let decimalsOut = 6
         let path = [tokenIn, tokenOut]
+        let fee = 3000
 
-        it('routes a token to token swap for given amountOut on uniswap_v2', async ()=> {
-
-          let amountOut = 1
-          let amountOutBN = ethers.utils.parseUnits(amountOut.toString(), decimalsOut)
-          let fetchedAmountIn = 43
-          let fetchedAmountInBN = ethers.utils.parseUnits(fetchedAmountIn.toString(), decimalsIn)
-          let slippage = ethers.BigNumber.from('215000000000000000')
-
-          mockPair({ blockchain, exchange, provider, tokenIn, tokenOut, pair })
-          mockAmounts({ blockchain, exchange, provider, method: 'getAmountsIn', params: [amountOutBN,path], amounts: [fetchedAmountInBN, amountOutBN] })
-
-          await testRouting({
-            blockchain,
-            exchange,
-            tokenIn,
-            decimalsIn,
-            tokenOut,
-            decimalsOut,
-            path,
-            amountOut,
-            pair,
-            fromAddress,
-            toAddress,
-            transaction: {
-              to: exchange.router.address,
-              api: exchange.router.api,
-              method: 'swapTokensForExactTokens',
-              params: {
-                amountInMax: fetchedAmountInBN.add(slippage),
-                amountOut: amountOutBN,
-                path: path,
-                to: toAddress
-              }
-            }
-          })
-        });
-
-        it('fixes lowercase token addresses given either as tokenIn or tokenOut', async ()=> {
+        it('routes a token to token swap for a given amountOut', async ()=> {
 
           let amountOut = 1
           let amountOutBN = ethers.utils.parseUnits(amountOut.toString(), decimalsOut)
@@ -154,578 +119,269 @@ describe('uniswap_v3', () => {
           let fetchedAmountInBN = ethers.utils.parseUnits(fetchedAmountIn.toString(), decimalsIn)
           let slippage = ethers.BigNumber.from('215000000000000000')
 
-          mockPair({ blockchain, exchange, provider, tokenIn, tokenOut, pair })
-          mockAmounts({ blockchain, exchange, provider, method: 'getAmountsIn', params: [amountOutBN,path], amounts: [fetchedAmountInBN, amountOutBN] })
-
-          await testRouting({
-            blockchain,
-            exchange,
-            tokenIn: tokenIn.toLowerCase(),
-            decimalsIn,
-            tokenOut: tokenOut.toLowerCase(),
-            decimalsOut,
-            path,
-            amountOut,
-            pair,
-            fromAddress,
-            toAddress,
-            transaction: {
-              to: exchange.router.address,
-              api: exchange.router.api,
-              method: 'swapTokensForExactTokens',
-              params: {
-                amountInMax: fetchedAmountInBN.add(slippage),
-                amountOut: amountOutBN,
-                path: path,
-                to: toAddress
-              }
-            }
+          mockDecimals({ blockchain, address: tokenIn, value: decimalsIn })
+          mockDecimals({ blockchain, address: tokenOut, value: decimalsOut })
+          mockPair({ blockchain, exchange, provider, tokenIn, tokenOut, fee, pair })
+          mockAmounts({ blockchain, exchange, provider, method: 'quoteExactOutput',
+            params: [ethers.utils.solidityPack(["address","uint24","address"],[tokenOut, fee, tokenIn]), amountOutBN],
+            amount: fetchedAmountInBN
           })
-        });
+          ;[0,1].forEach((block)=>{
+            mockAmounts({ blockchain, exchange, provider, method: 'quoteExactOutput',
+              params: [ethers.utils.solidityPack(["address","uint24","address"],[tokenOut, fee, tokenIn]), amountOutBN],
+              amount: fetchedAmountInBN,
+              block
+            })
+          })
 
-        it('routes a token to token swap for given amountOutMin on uniswap_v2', async ()=> {
+          const route = await exchange.route({
+            blockchain,
+            fromAddress,
+            amountOut,
+            tokenIn,
+            tokenOut
+          })
 
-          let amountOutMin = 1
-          let amountOutMinBN = ethers.utils.parseUnits(amountOutMin.toString(), decimalsOut)
+          expect(route.tokenIn).toEqual(tokenIn)
+          expect(route.tokenOut).toEqual(tokenOut)
+          expect(route.path).toEqual([tokenIn, tokenOut])
+          expect(route.pools[0].blockchain).toEqual(blockchain)
+          expect(route.pools[0].address).toEqual(pair)
+          expect(route.pools[0].fee).toEqual(fee)
+          expect(route.pools[0].token0).toEqual(tokenOut)
+          expect(route.pools[0].token1).toEqual(tokenIn)
+          expect(route.pools[0].amountIn).toEqual(fetchedAmountInBN)
+          expect(route.pools[0].amountOut).toEqual(amountOutBN)
+          expect(route.amountOutMin).toEqual(undefined)
+          expect(route.amountOut).toEqual(amountOutBN.toString())
+          expect(route.amountIn).toEqual(fetchedAmountInBN.add(slippage).toString())
+          expect(route.amountInMax).toEqual(fetchedAmountInBN.add(slippage).toString())
+          expect(route.exchange).toBeDefined()
+
+          const transaction = await route.getTransaction({ from: fromAddress })
+
+          expect(transaction.blockchain).toEqual(blockchain)
+          expect(transaction.from).toEqual(fromAddress)
+          expect(transaction.to).toEqual(exchange[blockchain].router.address)
+          expect(transaction.api).toEqual(exchange[blockchain].router.api)
+          expect(transaction.method).toEqual('execute')
+          expect(transaction.params.commands).toEqual(['0x01'])
+          expect(transaction.params.inputs).toEqual([
+            ethers.utils.solidityPack(["address", "uint256", "uint256", "bytes", "bool"],
+              [
+                fromAddress,
+                amountOutBN.toString(),
+                fetchedAmountInBN.add(slippage).toString(),
+                ethers.utils.solidityPack(["address","uint24","address"], [tokenIn, fee, tokenOut]),
+                true
+              ]
+            )
+          ])
+          expect(transaction.value).toEqual('0')
+        })
+
+        it('routes a token to token swap for given amountOutMin', async ()=> {
+
+          let amountOut = 1
+          let amountOutBN = ethers.utils.parseUnits(amountOut.toString(), decimalsOut)
           let fetchedAmountIn = 43
           let fetchedAmountInBN = ethers.utils.parseUnits(fetchedAmountIn.toString(), decimalsIn)
           let slippage = ethers.BigNumber.from('215000000000000000')
 
-          mockPair({ blockchain, exchange, provider, tokenIn, tokenOut, pair })
-          mockAmounts({ blockchain, exchange, provider, method: 'getAmountsIn', params: [amountOutMinBN,path], amounts: [fetchedAmountInBN, amountOutMinBN] })
-
-          await testRouting({
-            blockchain,
-            exchange,
-            tokenIn,
-            decimalsIn,
-            tokenOut,
-            decimalsOut,
-            path,
-            amountOutMin,
-            pair,
-            fromAddress,
-            toAddress,
-            transaction: {
-              to: exchange.router.address,
-              api: exchange.router.api,
-              method: 'swapExactTokensForTokens',
-              params: {
-                amountIn: fetchedAmountInBN.add(slippage),
-                amountOutMin: amountOutMinBN,
-                path: path,
-                to: toAddress
-              }
-            }
+          mockDecimals({ blockchain, address: tokenIn, value: decimalsIn })
+          mockDecimals({ blockchain, address: tokenOut, value: decimalsOut })
+          mockPair({ blockchain, exchange, provider, tokenIn, tokenOut, fee, pair })
+          mockAmounts({ blockchain, exchange, provider, method: 'quoteExactOutput',
+            params: [ethers.utils.solidityPack(["address","uint24","address"],[tokenOut, fee, tokenIn]), amountOutBN],
+            amount: fetchedAmountInBN
           })
-        });
+          ;[0,1].forEach((block)=>{
+            mockAmounts({ blockchain, exchange, provider, method: 'quoteExactOutput',
+              params: [ethers.utils.solidityPack(["address","uint24","address"],[tokenOut, fee, tokenIn]), amountOutBN],
+              amount: fetchedAmountInBN,
+              block
+            })
+          })
 
-        it('routes a token to token swap for given amountIn on uniswap_v2', async ()=> {
+          const route = await exchange.route({
+            blockchain,
+            fromAddress,
+            amountOutMin: amountOut,
+            tokenIn,
+            tokenOut
+          })
+
+          expect(route.tokenIn).toEqual(tokenIn)
+          expect(route.tokenOut).toEqual(tokenOut)
+          expect(route.path).toEqual([tokenIn, tokenOut])
+          expect(route.pools[0].blockchain).toEqual(blockchain)
+          expect(route.pools[0].address).toEqual(pair)
+          expect(route.pools[0].fee).toEqual(fee)
+          expect(route.pools[0].token0).toEqual(tokenOut)
+          expect(route.pools[0].token1).toEqual(tokenIn)
+          expect(route.pools[0].amountIn).toEqual(fetchedAmountInBN)
+          expect(route.pools[0].amountOut).toEqual(amountOutBN)
+          expect(route.amountOutMin).toEqual(amountOutBN.toString())
+          expect(route.amountOut).toEqual(undefined)
+          expect(route.amountIn).toEqual(fetchedAmountInBN.add(slippage).toString())
+          expect(route.amountInMax).toEqual(fetchedAmountInBN.add(slippage).toString())
+          expect(route.exchange).toBeDefined()
+
+          const transaction = await route.getTransaction({ from: fromAddress })
+
+          expect(transaction.blockchain).toEqual(blockchain)
+          expect(transaction.from).toEqual(fromAddress)
+          expect(transaction.to).toEqual(exchange[blockchain].router.address)
+          expect(transaction.api).toEqual(exchange[blockchain].router.api)
+          expect(transaction.method).toEqual('execute')
+          expect(transaction.params.commands).toEqual(['0x00'])
+          expect(transaction.params.inputs).toEqual([
+            ethers.utils.solidityPack(["address", "uint256", "uint256", "bytes", "bool"],
+              [
+                fromAddress,
+                fetchedAmountInBN.add(slippage).toString(),
+                amountOutBN.toString(),
+                ethers.utils.solidityPack(["address","uint24","address"], [tokenIn, fee, tokenOut]),
+                true
+              ]
+            )
+          ])
+          expect(transaction.value).toEqual('0')
+        })
+
+        it('routes a token to token swap for given amountIn', async ()=> {
 
           let amountIn = 1
           let amountInBN = ethers.utils.parseUnits(amountIn.toString(), decimalsIn)
           let fetchedAmountOut = 43
           let fetchedAmountOutBN = ethers.utils.parseUnits(fetchedAmountOut.toString(), decimalsOut)
-          let path = [tokenIn, tokenOut]
 
-          mockPair({ blockchain, exchange, provider, tokenIn, tokenOut, pair })
-          mockAmounts({ blockchain, exchange, provider, method: 'getAmountsOut', params: [amountInBN,path], amounts: [amountInBN, fetchedAmountOutBN] })
+          mockDecimals({ blockchain, address: tokenIn, value: decimalsIn })
+          mockDecimals({ blockchain, address: tokenOut, value: decimalsOut })
+          mockPair({ blockchain, exchange, provider, tokenIn, tokenOut, fee, pair })
+          mockAmounts({ blockchain, exchange, provider, method: 'quoteExactInput',
+            params: [ethers.utils.solidityPack(["address","uint24","address"],[tokenIn, fee, tokenOut]), amountInBN],
+            amount: fetchedAmountOutBN
+          })
 
-          await testRouting({
+          const route = await exchange.route({
             blockchain,
-            exchange,
-            tokenIn,
-            decimalsIn,
-            tokenOut,
-            decimalsOut,
+            fromAddress,
             amountIn,
-            path,
-            pair,
-            fromAddress,
-            toAddress,
-            transaction: {
-              to: exchange.router.address,
-              api: exchange.router.api,
-              method: 'swapExactTokensForTokens',
-              params: {
-                amountIn: amountInBN,
-                amountOutMin: fetchedAmountOutBN,
-                path: [tokenIn, tokenOut],
-                to: toAddress
-              }
-            }
-          })
-        });
-
-        it('routes a token to token swap for given amountInMax without given amountOut on uniswap_v2', async ()=> {
-
-          let amountInMax = 1
-          let amountInMaxBN = ethers.utils.parseUnits(amountInMax.toString(), decimalsIn)
-          let fetchedAmountOut = 43
-          let fetchedAmountOutBN = ethers.utils.parseUnits(fetchedAmountOut.toString(), decimalsOut)
-          let path = [tokenIn, tokenOut]
-
-          mockPair({ blockchain, exchange, provider, tokenIn, tokenOut, pair })
-          mockAmounts({ blockchain, exchange, provider, method: 'getAmountsOut', params: [amountInMaxBN, path], amounts: [amountInMaxBN, fetchedAmountOutBN] })
-
-          await testRouting({
-            blockchain,
-            exchange,
             tokenIn,
-            decimalsIn,
-            tokenOut,
-            decimalsOut,
-            amountInMax,
-            path,
-            pair,
-            fromAddress,
-            toAddress,
-            transaction: {
-              to: exchange.router.address,
-              api: exchange.router.api,
-              method: 'swapTokensForExactTokens',
-              params: {
-                amountInMax: amountInMaxBN,
-                amountOut: fetchedAmountOutBN,
-                path: [tokenIn, tokenOut],
-                to: toAddress
-              }
-            }
+            tokenOut
           })
-        });
 
-        it('routes a token to token swap for given amountOut on uniswap_v2', async ()=> {
+          expect(route.tokenIn).toEqual(tokenIn)
+          expect(route.tokenOut).toEqual(tokenOut)
+          expect(route.path).toEqual([tokenIn, tokenOut])
+          expect(route.pools[0].blockchain).toEqual(blockchain)
+          expect(route.pools[0].address).toEqual(pair)
+          expect(route.pools[0].fee).toEqual(fee)
+          expect(route.pools[0].token0).toEqual(tokenOut)
+          expect(route.pools[0].token1).toEqual(tokenIn)
+          expect(route.pools[0].amountIn).toEqual(amountInBN)
+          expect(route.pools[0].amountOut).toEqual(fetchedAmountOutBN)
+          expect(route.amountOutMin).toEqual(fetchedAmountOutBN.toString())
+          expect(route.amountOut).toEqual(fetchedAmountOutBN.toString())
+          expect(route.amountIn).toEqual(amountInBN.toString())
+          expect(route.amountInMax).toEqual(undefined)
+          expect(route.exchange).toBeDefined()
 
-          let amountOut = 1
-          let amountOutBN = ethers.utils.parseUnits(amountOut.toString(), decimalsOut)
-          let amountInMax = 32
-          let amountInMaxBN = ethers.utils.parseUnits(amountInMax.toString(), decimalsIn)
-          let slippage = ethers.BigNumber.from('160000000000000000')
-          let path = [tokenIn, tokenOut]
+          const transaction = await route.getTransaction({ from: fromAddress })
 
-          mockPair({ blockchain, exchange, provider, tokenIn, tokenOut, pair })
-          mockAmounts({ blockchain, exchange, provider, method: 'getAmountsIn', params: [amountOutBN,path], amounts: [amountInMaxBN, amountOutBN] })
-
-          await testRouting({
-            blockchain,
-            exchange,
-            tokenIn,
-            decimalsIn,
-            tokenOut,
-            decimalsOut,
-            amountOut,
-            path,
-            pair,
-            fromAddress,
-            toAddress,
-            transaction: {
-              to: exchange.router.address,
-              api: exchange.router.api,
-              method: 'swapTokensForExactTokens',
-              params: {
-                amountInMax: amountInMaxBN.add(slippage),
-                amountOut:  amountOutBN,
-                path: [tokenIn, tokenOut],
-                to: toAddress
-              }
-            },
-          })
-        });
-
-        it('routes a token to token swap for given amountOutMin on uniswap_v2', async ()=> {
-
-          let amountOutMin = 1
-          let amountOutMinBN = ethers.utils.parseUnits(amountOutMin.toString(), decimalsOut)
-          let fetchedAmountIn = 32
-          let fetchedAmountInBN = ethers.utils.parseUnits(fetchedAmountIn.toString(), decimalsIn)
-          let slippage = ethers.BigNumber.from('160000000000000000')
-          let path = [tokenIn, tokenOut]
-
-          mockPair({ blockchain, exchange, provider, tokenIn, tokenOut, pair })
-          mockAmounts({ blockchain, exchange, provider, method: 'getAmountsIn', params: [amountOutMinBN, path], amounts: [fetchedAmountInBN, amountOutMinBN] })
-
-          await testRouting({
-            blockchain,
-            exchange,
-            tokenIn,
-            decimalsIn,
-            tokenOut,
-            decimalsOut,
-            amountOutMin,
-            path,
-            pair,
-            fromAddress,
-            toAddress,
-            transaction: {
-              to: exchange.router.address,
-              api: exchange.router.api,
-              method: 'swapExactTokensForTokens',
-              params: {
-                amountIn: fetchedAmountInBN.add(slippage),
-                amountOutMin: amountOutMinBN,
-                path: path,
-                to: toAddress
-              }
-            },
-          })
-        });
-
-        it('routes a token to token swap on uniswap_v2 also if the routing path is via another token A->B->C', async ()=> {
-          let amountOutMin = 1
-          let amountOutMinBN = ethers.utils.parseUnits(amountOutMin.toString(), decimalsOut)
-          let fetchedAmountIn = 32
-          let fetchedAmountInBN = ethers.utils.parseUnits(fetchedAmountIn.toString(), decimalsIn)
-          let slippage = ethers.BigNumber.from('160000000000000000')
-          let tokenVia = Blockchains[blockchain].wrapped.address
-          let amountVia = 0.1
-          let amountViaBN = ethers.utils.parseUnits(amountVia.toString(), Blockchains[blockchain].currency.decimals)
-
-          path = [tokenIn, tokenVia, tokenOut]
-
-          mockPair({ blockchain, exchange, provider, tokenIn, tokenOut, pair: Blockchains[blockchain].zero })
-          mockPair({ blockchain, exchange, provider, tokenIn, tokenOut: tokenVia, pair: '0xef8cd6cb5c841a4f02986e8a8ab3cc545d1b8b6d' })
-          mockPair({ blockchain, exchange, provider, tokenIn: tokenOut, tokenOut: tokenVia, pair: '0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852' })
-          mockAmounts({ blockchain, exchange, provider, method: 'getAmountsIn', params: [amountOutMinBN, path], amounts: [fetchedAmountInBN, amountViaBN, amountOutMinBN] })
-
-          await testRouting({
-            blockchain,
-            exchange,
-            tokenIn,
-            decimalsIn,
-            tokenOut,
-            decimalsOut,
-            path,
-            amountOutMin,
-            pair,
-            fromAddress,
-            toAddress,
-            transaction: {
-              to: exchange.router.address,
-              api: exchange.router.api,
-              method: 'swapExactTokensForTokens',
-              params: {
-                amountIn: fetchedAmountInBN.add(slippage),
-                amountOutMin: amountOutMinBN,
-                path: path,
-                to: toAddress
-              }
-            }
-          })
+          expect(transaction.blockchain).toEqual(blockchain)
+          expect(transaction.from).toEqual(fromAddress)
+          expect(transaction.to).toEqual(exchange[blockchain].router.address)
+          expect(transaction.api).toEqual(exchange[blockchain].router.api)
+          expect(transaction.method).toEqual('execute')
+          expect(transaction.params.commands).toEqual(['0x00'])
+          expect(transaction.params.inputs).toEqual([
+            ethers.utils.solidityPack(["address", "uint256", "uint256", "bytes", "bool"],
+              [
+                fromAddress,
+                amountInBN.toString(),
+                fetchedAmountOutBN.toString(),
+                ethers.utils.solidityPack(["address","uint24","address"], [tokenIn, fee, tokenOut]),
+                true
+              ]
+            )
+          ])
+          expect(transaction.value).toEqual('0')
         })
 
-        it('does not fail, but it provides no route if none was found', async ()=> {
-          let amountOutMin = 1
-          let amountOutMinBN = ethers.utils.parseUnits(amountOutMin.toString(), decimalsOut)
-          let amountIn = 32
-          let amountInBN = ethers.utils.parseUnits(amountIn.toString(), decimalsIn)
-
-          mockDecimals({ provider, blockchain, address: tokenIn, value: decimalsIn })
-          mockDecimals({ provider, blockchain, address: tokenOut, value: decimalsOut })
-          
-          mockPair({ blockchain, exchange, provider, tokenIn, tokenOut, pair: Blockchains[blockchain].zero })
-          mockPair({ blockchain, exchange, provider, tokenIn, tokenOut: Blockchains[blockchain].wrapped.address, pair: Blockchains[blockchain].zero })
-          Blockchains[blockchain].stables.usd.forEach((stable)=>{
-            mockPair({ blockchain, exchange, provider, tokenIn, tokenOut: stable, pair: Blockchains[blockchain].zero })
-          })
-
-          let route = await exchange.route({
-            tokenIn,
-            tokenOut,
-            amountOutMin,
-            fromAddress,
-            toAddress
-          })
-
-          expect(route).toEqual(undefined)
-        })
-
-        it('routes a token to token swap on uniswap_v2 also if the routing path is via TOKEN_A->USD->WRAPPED->TOKEN_B', async ()=> {
-          let amountOutMin = 1
-          let amountOutMinBN = ethers.utils.parseUnits(amountOutMin.toString(), decimalsOut)
-          let fetchedAmountIn = 32
-          let fetchedAmountInBN = ethers.utils.parseUnits(fetchedAmountIn.toString(), decimalsIn)
-          let slippage = ethers.BigNumber.from('160000000000000000')
-          let amountWRAPPED = 0.1
-          let amountWRAPPEDBN = ethers.utils.parseUnits(amountWRAPPED.toString(), Blockchains[blockchain].currency.decimals)
-          let amountUSD = 420
-          let amountUSDBN = ethers.utils.parseUnits(amountUSD.toString(), Blockchains[blockchain].currency.decimals)
-
-          path = [tokenIn, Blockchains[blockchain].stables.usd[0], Blockchains[blockchain].wrapped.address, tokenOut]
-
-          mockDecimals({ provider, blockchain, address: Blockchains[blockchain].stables.usd[0], value: Blockchains[blockchain].currency.decimals })
-          mockPair({ blockchain, exchange, provider, tokenIn, tokenOut, pair: Blockchains[blockchain].zero })
-          mockPair({ blockchain, exchange, provider, tokenIn, tokenOut: Blockchains[blockchain].wrapped.address, pair: Blockchains[blockchain].zero })
-          Blockchains[blockchain].stables.usd.forEach((stable)=>{
-            if(stable != Blockchains[blockchain].stables.usd[0]) {
-              mockPair({ blockchain, exchange, provider, tokenIn, tokenOut: stable, pair: Blockchains[blockchain].zero })
-            }
-          })
-          mockPair({ blockchain, exchange, provider, tokenIn, tokenOut: Blockchains[blockchain].stables.usd[0], pair: '0xef8cd6cb5c841a4f02986e8a8ab3cc545d1b8b6d' })
-          mockPair({ blockchain, exchange, provider, tokenIn: Blockchains[blockchain].wrapped.address, tokenOut, pair: '0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852' })
-          mockAmounts({ blockchain, exchange, provider, method: 'getAmountsIn', params: [amountOutMinBN, path], amounts: [fetchedAmountInBN, amountUSDBN, amountWRAPPEDBN, amountOutMinBN] })
-
-          await testRouting({
-            blockchain,
-            exchange,
-            tokenIn,
-            decimalsIn,
-            tokenOut,
-            decimalsOut,
-            path,
-            amountOutMin,
-            pair,
-            fromAddress,
-            toAddress,
-            transaction: {
-              to: exchange.router.address,
-              api: exchange.router.api,
-              method: 'swapExactTokensForTokens',
-              params: {
-                amountIn: fetchedAmountInBN.add(slippage),
-                amountOutMin: amountOutMinBN,
-                path: path,
-                to: toAddress
-              }
-            }
-          })
-        })
-
-        it('routes a token to token swap on uniswap_v2 also if the routing path is via TOKEN_A->WRAPPED->USD->TOKEN_B', async ()=> {
-          let amountOutMin = 1
-          let amountOutMinBN = ethers.utils.parseUnits(amountOutMin.toString(), decimalsOut)
-          let fetchedAmountIn = 32
-          let fetchedAmountInBN = ethers.utils.parseUnits(fetchedAmountIn.toString(), decimalsIn)
-          let slippage = ethers.BigNumber.from('160000000000000000')
-          let amountWRAPPED = 0.1
-          let amountWRAPPEDBN = ethers.utils.parseUnits(amountWRAPPED.toString(), Blockchains[blockchain].currency.decimals)
-          let amountUSD = 420
-          let amountUSDBN = ethers.utils.parseUnits(amountUSD.toString(), Blockchains[blockchain].currency.decimals)
-
-          path = [tokenIn, Blockchains[blockchain].wrapped.address, Blockchains[blockchain].stables.usd[0], tokenOut]
-
-          mockDecimals({ provider, blockchain, address: Blockchains[blockchain].stables.usd[0], value: Blockchains[blockchain].currency.decimals })
-          mockPair({ blockchain, exchange, provider, tokenIn, tokenOut, pair: Blockchains[blockchain].zero })
-          mockPair({ blockchain, exchange, provider, tokenIn, tokenOut: Blockchains[blockchain].stables.usd[0], pair: Blockchains[blockchain].zero })
-          mockPair({ blockchain, exchange, provider, tokenIn, tokenOut: Blockchains[blockchain].wrapped.address, pair: '0xef8cd6cb5c841a4f02986e8a8ab3cc545d1b8b6d' })
-          mockPair({ blockchain, exchange, provider, tokenIn: tokenOut, tokenOut: Blockchains[blockchain].wrapped.address, pair: Blockchains[blockchain].zero })
-          Blockchains[blockchain].stables.usd.forEach((stable)=>{
-              mockPair({ blockchain, exchange, provider, tokenIn, tokenOut: stable, pair: Blockchains[blockchain].zero })
-          })
-          Blockchains[blockchain].stables.usd.forEach((stable)=>{
-            if(stable != Blockchains[blockchain].stables.usd[0]) {
-              mockPair({ blockchain, exchange, provider, tokenIn: stable, tokenOut, pair: Blockchains[blockchain].zero })
-            }
-          })
-          mockPair({ blockchain, exchange, provider, tokenIn: Blockchains[blockchain].stables.usd[0], tokenOut, pair: '0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852' })
-          mockAmounts({ blockchain, exchange, provider, method: 'getAmountsIn', params: [amountOutMinBN, path], amounts: [fetchedAmountInBN, amountWRAPPEDBN, amountUSDBN, amountOutMinBN] })
-
-          await testRouting({
-            blockchain,
-            exchange,
-            tokenIn,
-            decimalsIn,
-            tokenOut,
-            decimalsOut,
-            path,
-            amountOutMin,
-            pair,
-            fromAddress,
-            toAddress,
-            transaction: {
-              to: exchange.router.address,
-              api: exchange.router.api,
-              method: 'swapExactTokensForTokens',
-              params: {
-                amountIn: fetchedAmountInBN.add(slippage),
-                amountOutMin: amountOutMinBN,
-                path: path,
-                to: toAddress
-              }
-            }
-          })
-        })
-      })
-
-      describe('route ETH to token', ()=>{
-
-        let tokenIn
-        let decimalsIn
-        let tokenOut = '0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984'
-        let decimalsOut = 6
-        let path
-
-        beforeEach(async ()=>{
-          tokenIn = Blockchains[blockchain].currency.address
-          decimalsIn = Blockchains[blockchain].currency.decimals
-          path = [tokenIn, Blockchains[blockchain].wrapped.address, tokenOut]
-        })
-
-        it('routes a ETH to token swap for given amountOut without given amountInMax on uniswap_v2', async ()=> {
-
-          let amountOut = 1
-          let amountOutBN = ethers.utils.parseUnits(amountOut.toString(), decimalsOut)
-          let fetchedAmountIn = 43
-          let fetchedAmountInBN = ethers.utils.parseUnits(fetchedAmountIn.toString(), decimalsIn)
-          let slippage = ethers.BigNumber.from('215000000000000000')
-
-          mockPair({ blockchain, exchange, provider, tokenIn: Blockchains[blockchain].wrapped.address, tokenOut, pair })
-          mockAmounts({ blockchain, exchange, provider, method: 'getAmountsIn', params: [amountOutBN,[Blockchains[blockchain].wrapped.address,tokenOut]], amounts: [fetchedAmountInBN, amountOutBN] })
-
-          await testRouting({
-            blockchain,
-            exchange,
-            tokenIn,
-            decimalsIn,
-            tokenOut,
-            decimalsOut,
-            path,
-            amountOut,
-            pair,
-            fromAddress,
-            toAddress,
-            transaction: {
-              to: exchange.router.address,
-              api: exchange.router.api,
-              method: 'swapETHForExactTokens',
-              params: {
-                amountOut: amountOutBN,
-                path: [Blockchains[blockchain].wrapped.address, tokenOut],
-                to: toAddress
-              },
-              value: fetchedAmountInBN.add(slippage)
-            }
-          })
-        });
-
-        it('routes a ETH to token swap for given amountIn on uniswap_v2', async ()=> {
+        it('routes a token to token swap for given amountInMax', async ()=> {
 
           let amountIn = 1
           let amountInBN = ethers.utils.parseUnits(amountIn.toString(), decimalsIn)
           let fetchedAmountOut = 43
           let fetchedAmountOutBN = ethers.utils.parseUnits(fetchedAmountOut.toString(), decimalsOut)
-          let path = [tokenIn, Blockchains[blockchain].wrapped.address, tokenOut]
 
-          mockPair({ blockchain, exchange, provider, tokenIn: Blockchains[blockchain].wrapped.address, tokenOut, pair })
-          mockAmounts({ blockchain, exchange, provider, method: 'getAmountsOut', params: [amountInBN,[Blockchains[blockchain].wrapped.address,tokenOut]], amounts: [amountInBN, fetchedAmountOutBN] })
-
-          await testRouting({
-            blockchain,
-            exchange,
-            tokenIn,
-            decimalsIn,
-            tokenOut,
-            decimalsOut,
-            amountIn,
-            path,
-            pair,
-            fromAddress,
-            toAddress,
-            transaction: {
-              to: exchange.router.address,
-              api: exchange.router.api,
-              method: 'swapExactETHForTokens',
-              params: {
-                amountOutMin: fetchedAmountOutBN,
-                path: [Blockchains[blockchain].wrapped.address, tokenOut],
-                to: toAddress
-              },
-              value: amountInBN
-            }
+          mockDecimals({ blockchain, address: tokenIn, value: decimalsIn })
+          mockDecimals({ blockchain, address: tokenOut, value: decimalsOut })
+          mockPair({ blockchain, exchange, provider, tokenIn, tokenOut, fee, pair })
+          mockAmounts({ blockchain, exchange, provider, method: 'quoteExactInput',
+            params: [ethers.utils.solidityPack(["address","uint24","address"],[tokenIn, fee, tokenOut]), amountInBN],
+            amount: fetchedAmountOutBN
           })
-        });
 
-        it('routes a ETH to token swap for given amountOut on uniswap_v2', async ()=> {
-
-          let amountOut = 1
-          let amountOutBN = ethers.utils.parseUnits(amountOut.toString(), decimalsOut)
-          let amountInMax = 32
-          let amountInMaxBN = ethers.utils.parseUnits(amountInMax.toString(), decimalsIn)
-          let slippage = ethers.BigNumber.from('160000000000000000')
-          let path = [tokenIn, Blockchains[blockchain].wrapped.address, tokenOut]
-
-          mockPair({ blockchain, exchange, provider, tokenIn: Blockchains[blockchain].wrapped.address, tokenOut, pair })
-          mockAmounts({ blockchain, exchange, provider, method: 'getAmountsIn', params: [amountOutBN,[Blockchains[blockchain].wrapped.address,tokenOut]], amounts: [amountInMaxBN, amountOutBN] })
-
-          await testRouting({
+          const route = await exchange.route({
             blockchain,
-            exchange,
-            tokenIn,
-            decimalsIn,
-            tokenOut,
-            decimalsOut,
-            amountOut,
-            path,
-            pair,
             fromAddress,
-            toAddress,
-            transaction: {
-              to: exchange.router.address,
-              api: exchange.router.api,
-              method: 'swapETHForExactTokens',
-              params: {
-                amountOut:  amountOutBN,
-                path: [Blockchains[blockchain].wrapped.address, tokenOut],
-                to: toAddress
-              },
-              value: amountInMaxBN.add(slippage)
-            },
-          })
-        });
-
-        it('routes a ETH to token swap for given amountOutMin on uniswap_v2', async ()=> {
-
-          let amountOutMin = 1
-          let amountOutMinBN = ethers.utils.parseUnits(amountOutMin.toString(), decimalsOut)
-          let fetchedAmountIn = 32
-          let fetchedAmountInBN = ethers.utils.parseUnits(fetchedAmountIn.toString(), decimalsIn)
-          let slippage = ethers.BigNumber.from('160000000000000000')
-          let path = [tokenIn, Blockchains[blockchain].wrapped.address, tokenOut]
-
-          mockPair({ blockchain, exchange, provider, tokenIn: Blockchains[blockchain].wrapped.address, tokenOut, pair })
-          mockAmounts({ blockchain, exchange, provider, method: 'getAmountsIn', params: [amountOutMinBN, [Blockchains[blockchain].wrapped.address,tokenOut]], amounts: [fetchedAmountInBN, amountOutMinBN] })
-
-          await testRouting({
-            blockchain,
-            exchange,
+            amountInMax: amountIn,
             tokenIn,
-            decimalsIn,
-            tokenOut,
-            decimalsOut,
-            amountOutMin,
-            path,
-            pair,
-            fromAddress,
-            toAddress,
-            transaction: {
-              to: exchange.router.address,
-              api: exchange.router.api,
-              method: 'swapExactETHForTokens',
-              params: {
-                amountOutMin: amountOutMinBN,
-                path: [Blockchains[blockchain].wrapped.address,tokenOut],
-                to: toAddress
-              },
-              value: fetchedAmountInBN.add(slippage)
-            },
+            tokenOut
           })
-        });
+
+          expect(route.tokenIn).toEqual(tokenIn)
+          expect(route.tokenOut).toEqual(tokenOut)
+          expect(route.path).toEqual([tokenIn, tokenOut])
+          expect(route.pools[0].blockchain).toEqual(blockchain)
+          expect(route.pools[0].address).toEqual(pair)
+          expect(route.pools[0].fee).toEqual(fee)
+          expect(route.pools[0].token0).toEqual(tokenOut)
+          expect(route.pools[0].token1).toEqual(tokenIn)
+          expect(route.pools[0].amountIn).toEqual(amountInBN)
+          expect(route.pools[0].amountOut).toEqual(fetchedAmountOutBN)
+          expect(route.amountOutMin).toEqual(fetchedAmountOutBN.toString())
+          expect(route.amountOut).toEqual(fetchedAmountOutBN.toString())
+          expect(route.amountIn).toEqual(undefined)
+          expect(route.amountInMax).toEqual(amountInBN.toString())
+          expect(route.exchange).toBeDefined()
+
+          const transaction = await route.getTransaction({ from: fromAddress })
+
+          expect(transaction.blockchain).toEqual(blockchain)
+          expect(transaction.from).toEqual(fromAddress)
+          expect(transaction.to).toEqual(exchange[blockchain].router.address)
+          expect(transaction.api).toEqual(exchange[blockchain].router.api)
+          expect(transaction.method).toEqual('execute')
+          expect(transaction.params.commands).toEqual(['0x01'])
+          expect(transaction.params.inputs).toEqual([
+            ethers.utils.solidityPack(["address", "uint256", "uint256", "bytes", "bool"],
+              [
+                fromAddress,
+                fetchedAmountOutBN.toString(),
+                amountInBN.toString(),
+                ethers.utils.solidityPack(["address","uint24","address"], [tokenIn, fee, tokenOut]),
+                true
+              ]
+            )
+          ])
+          expect(transaction.value).toEqual('0')
+        })
       })
 
-      describe('route token to ETH', ()=>{
+      describe('routes token to native (1 pool)', ()=>{
 
         let tokenIn = '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb'
         let decimalsIn = 18
-        let tokenOut
-        let decimalsOut
-        let path
+        let tokenOut = Blockchains[blockchain].currency.address
+        let decimalsOut = Blockchains[blockchain].currency.decimals
+        let path = [tokenIn, tokenOut]
+        let fee = 3000
 
-        beforeEach(async()=>{
-          tokenOut = Blockchains[blockchain].currency.address
-          decimalsOut = Blockchains[blockchain].currency.decimals
-          path = [tokenIn, Blockchains[blockchain].wrapped.address, tokenOut]
-        })
-
-        it('routes a token to ETH swap for given amountOut on uniswap_v2', async ()=> {
+        it('routes a token to token swap for a given amountOut', async ()=> {
 
           let amountOut = 1
           let amountOutBN = ethers.utils.parseUnits(amountOut.toString(), decimalsOut)
@@ -733,147 +389,575 @@ describe('uniswap_v3', () => {
           let fetchedAmountInBN = ethers.utils.parseUnits(fetchedAmountIn.toString(), decimalsIn)
           let slippage = ethers.BigNumber.from('215000000000000000')
 
-          mockPair({ blockchain, exchange, provider, tokenIn, tokenOut: Blockchains[blockchain].wrapped.address, pair })
-          mockAmounts({ blockchain, exchange, provider, method: 'getAmountsIn', params: [amountOutBN,[tokenIn, Blockchains[blockchain].wrapped.address]], amounts: [fetchedAmountInBN, amountOutBN] })
-
-          await testRouting({
-            blockchain,
-            exchange,
-            tokenIn,
-            decimalsIn,
-            tokenOut,
-            decimalsOut,
-            path,
-            amountOut,
-            pair,
-            fromAddress,
-            toAddress,
-            transaction: {
-              to: exchange.router.address,
-              api: exchange.router.api,
-              method: 'swapTokensForExactETH',
-              params: {
-                amountInMax: fetchedAmountInBN.add(slippage),
-                amountOut: amountOutBN,
-                path: [tokenIn, Blockchains[blockchain].wrapped.address],
-                to: toAddress
-              }
-            }
+          mockDecimals({ blockchain, address: tokenIn, value: decimalsIn })
+          mockPair({ blockchain, exchange, provider, tokenIn, tokenOut: Blockchains[blockchain].wrapped.address, fee, pair })
+          mockAmounts({ blockchain, exchange, provider, method: 'quoteExactOutput',
+            params: [ethers.utils.solidityPack(["address","uint24","address"],[Blockchains[blockchain].wrapped.address, fee, tokenIn]), amountOutBN],
+            amount: fetchedAmountInBN
           })
-        });
+          ;[0,1].forEach((block)=>{
+            mockAmounts({ blockchain, exchange, provider, method: 'quoteExactOutput',
+              params: [ethers.utils.solidityPack(["address","uint24","address"],[Blockchains[blockchain].wrapped.address, fee, tokenIn]), amountOutBN],
+              amount: fetchedAmountInBN,
+              block
+            })
+          })
 
-        it('routes a token to ETH swap for given amountIn on uniswap_v2', async ()=> {
+          const route = await exchange.route({
+            blockchain,
+            fromAddress,
+            amountOut,
+            tokenIn,
+            tokenOut
+          })
+
+          expect(route.tokenIn).toEqual(tokenIn)
+          expect(route.tokenOut).toEqual(tokenOut)
+          expect(route.path).toEqual([tokenIn, Blockchains[blockchain].wrapped.address, tokenOut])
+          expect(route.pools[0].blockchain).toEqual(blockchain)
+          expect(route.pools[0].address).toEqual(pair)
+          expect(route.pools[0].fee).toEqual(fee)
+          expect(route.pools[0].token0).toEqual(Blockchains[blockchain].wrapped.address)
+          expect(route.pools[0].token1).toEqual(tokenIn)
+          expect(route.pools[0].amountIn).toEqual(fetchedAmountInBN)
+          expect(route.pools[0].amountOut).toEqual(amountOutBN)
+          expect(route.amountOutMin).toEqual(undefined)
+          expect(route.amountOut).toEqual(amountOutBN.toString())
+          expect(route.amountIn).toEqual(fetchedAmountInBN.add(slippage).toString())
+          expect(route.amountInMax).toEqual(fetchedAmountInBN.add(slippage).toString())
+          expect(route.exchange).toBeDefined()
+
+          const transaction = await route.getTransaction({ from: fromAddress })
+
+          expect(transaction.blockchain).toEqual(blockchain)
+          expect(transaction.from).toEqual(fromAddress)
+          expect(transaction.to).toEqual(exchange[blockchain].router.address)
+          expect(transaction.api).toEqual(exchange[blockchain].router.api)
+          expect(transaction.method).toEqual('execute')
+          expect(transaction.params.commands).toEqual(['0x01', '0x0c'])
+          expect(transaction.params.inputs).toEqual([
+            ethers.utils.solidityPack(["address", "uint256", "uint256", "bytes", "bool"],
+              [
+                fromAddress,
+                amountOutBN.toString(),
+                fetchedAmountInBN.add(slippage).toString(),
+                ethers.utils.solidityPack(["address","uint24","address"], [tokenIn, fee, Blockchains[blockchain].wrapped.address]),
+                true
+              ]
+            ),
+            ethers.utils.solidityPack(["address", "uint256"],
+              [
+                fromAddress,
+                amountOutBN.toString(),
+              ]
+            )
+          ])
+          expect(transaction.value).toEqual('0')
+        })
+
+        it('routes a token to token swap for given amountOutMin', async ()=> {
+
+          let amountOut = 1
+          let amountOutBN = ethers.utils.parseUnits(amountOut.toString(), decimalsOut)
+          let fetchedAmountIn = 43
+          let fetchedAmountInBN = ethers.utils.parseUnits(fetchedAmountIn.toString(), decimalsIn)
+          let slippage = ethers.BigNumber.from('215000000000000000')
+
+          mockDecimals({ blockchain, address: tokenIn, value: decimalsIn })
+          mockPair({ blockchain, exchange, provider, tokenIn, tokenOut: Blockchains[blockchain].wrapped.address, fee, pair })
+          mockAmounts({ blockchain, exchange, provider, method: 'quoteExactOutput',
+            params: [ethers.utils.solidityPack(["address","uint24","address"],[Blockchains[blockchain].wrapped.address, fee, tokenIn]), amountOutBN],
+            amount: fetchedAmountInBN
+          })
+          ;[0,1].forEach((block)=>{
+            mockAmounts({ blockchain, exchange, provider, method: 'quoteExactOutput',
+              params: [ethers.utils.solidityPack(["address","uint24","address"],[Blockchains[blockchain].wrapped.address, fee, tokenIn]), amountOutBN],
+              amount: fetchedAmountInBN,
+              block
+            })
+          })
+
+          const route = await exchange.route({
+            blockchain,
+            fromAddress,
+            amountOutMin: amountOut,
+            tokenIn,
+            tokenOut
+          })
+
+          expect(route.tokenIn).toEqual(tokenIn)
+          expect(route.tokenOut).toEqual(tokenOut)
+          expect(route.path).toEqual([tokenIn, Blockchains[blockchain].wrapped.address, tokenOut])
+          expect(route.pools[0].blockchain).toEqual(blockchain)
+          expect(route.pools[0].address).toEqual(pair)
+          expect(route.pools[0].fee).toEqual(fee)
+          expect(route.pools[0].token0).toEqual(Blockchains[blockchain].wrapped.address)
+          expect(route.pools[0].token1).toEqual(tokenIn)
+          expect(route.pools[0].amountIn).toEqual(fetchedAmountInBN)
+          expect(route.pools[0].amountOut).toEqual(amountOutBN)
+          expect(route.amountOutMin).toEqual(amountOutBN.toString())
+          expect(route.amountOut).toEqual(undefined)
+          expect(route.amountIn).toEqual(fetchedAmountInBN.add(slippage).toString())
+          expect(route.amountInMax).toEqual(fetchedAmountInBN.add(slippage).toString())
+          expect(route.exchange).toBeDefined()
+
+          const transaction = await route.getTransaction({ from: fromAddress })
+
+          expect(transaction.blockchain).toEqual(blockchain)
+          expect(transaction.from).toEqual(fromAddress)
+          expect(transaction.to).toEqual(exchange[blockchain].router.address)
+          expect(transaction.api).toEqual(exchange[blockchain].router.api)
+          expect(transaction.method).toEqual('execute')
+          expect(transaction.params.commands).toEqual(['0x00', '0x0c'])
+          expect(transaction.params.inputs).toEqual([
+            ethers.utils.solidityPack(["address", "uint256", "uint256", "bytes", "bool"],
+              [
+                fromAddress,
+                fetchedAmountInBN.add(slippage).toString(),
+                amountOutBN.toString(),
+                ethers.utils.solidityPack(["address","uint24","address"], [tokenIn, fee, Blockchains[blockchain].wrapped.address]),
+                true
+              ]
+            ),
+            ethers.utils.solidityPack(["address", "uint256"],
+              [
+                fromAddress,
+                amountOutBN.toString(),
+              ]
+            )
+          ])
+          expect(transaction.value).toEqual('0')
+        })
+
+        it('routes a token to token swap for given amountIn', async ()=> {
 
           let amountIn = 1
           let amountInBN = ethers.utils.parseUnits(amountIn.toString(), decimalsIn)
           let fetchedAmountOut = 43
           let fetchedAmountOutBN = ethers.utils.parseUnits(fetchedAmountOut.toString(), decimalsOut)
-          let path = [tokenIn, Blockchains[blockchain].wrapped.address, tokenOut]
 
-          mockPair({ blockchain, exchange, provider, tokenIn, tokenOut: Blockchains[blockchain].wrapped.address, pair })
-          mockAmounts({ blockchain, exchange, provider, method: 'getAmountsOut', params: [amountInBN,[tokenIn, Blockchains[blockchain].wrapped.address]], amounts: [amountInBN, fetchedAmountOutBN] })
-
-          await testRouting({
-            blockchain,
-            exchange,
-            tokenIn,
-            decimalsIn,
-            tokenOut,
-            decimalsOut,
-            amountIn,
-            path,
-            pair,
-            fromAddress,
-            toAddress,
-            transaction: {
-              to: exchange.router.address,
-              api: exchange.router.api,
-              method: 'swapExactTokensForETH',
-              params: {
-                amountIn: amountInBN,
-                amountOutMin: fetchedAmountOutBN,
-                path: [tokenIn, Blockchains[blockchain].wrapped.address],
-                to: toAddress
-              }
-            }
+          mockDecimals({ blockchain, address: tokenIn, value: decimalsIn })
+          mockPair({ blockchain, exchange, provider, tokenIn, tokenOut: Blockchains[blockchain].wrapped.address, fee, pair })
+          mockAmounts({ blockchain, exchange, provider, method: 'quoteExactInput',
+            params: [ethers.utils.solidityPack(["address","uint24","address"],[tokenIn, fee, Blockchains[blockchain].wrapped.address]), amountInBN],
+            amount: fetchedAmountOutBN
           })
-        });
 
-        it('routes a token to ETH swap for given amountOut on uniswap_v2', async ()=> {
+          const route = await exchange.route({
+            blockchain,
+            fromAddress,
+            amountIn,
+            tokenIn,
+            tokenOut
+          })
+
+          expect(route.tokenIn).toEqual(tokenIn)
+          expect(route.tokenOut).toEqual(tokenOut)
+          expect(route.path).toEqual([tokenIn, Blockchains[blockchain].wrapped.address, tokenOut])
+          expect(route.pools[0].blockchain).toEqual(blockchain)
+          expect(route.pools[0].address).toEqual(pair)
+          expect(route.pools[0].fee).toEqual(fee)
+          expect(route.pools[0].token0).toEqual(Blockchains[blockchain].wrapped.address)
+          expect(route.pools[0].token1).toEqual(tokenIn)
+          expect(route.pools[0].amountIn).toEqual(amountInBN)
+          expect(route.pools[0].amountOut).toEqual(fetchedAmountOutBN)
+          expect(route.amountOutMin).toEqual(fetchedAmountOutBN.toString())
+          expect(route.amountOut).toEqual(fetchedAmountOutBN.toString())
+          expect(route.amountIn).toEqual(amountInBN.toString())
+          expect(route.amountInMax).toEqual(undefined)
+          expect(route.exchange).toBeDefined()
+
+          const transaction = await route.getTransaction({ from: fromAddress })
+
+          expect(transaction.blockchain).toEqual(blockchain)
+          expect(transaction.from).toEqual(fromAddress)
+          expect(transaction.to).toEqual(exchange[blockchain].router.address)
+          expect(transaction.api).toEqual(exchange[blockchain].router.api)
+          expect(transaction.method).toEqual('execute')
+          expect(transaction.params.commands).toEqual(['0x00', '0x0c'])
+          expect(transaction.params.inputs).toEqual([
+            ethers.utils.solidityPack(["address", "uint256", "uint256", "bytes", "bool"],
+              [
+                fromAddress,
+                amountInBN.toString(),
+                fetchedAmountOutBN.toString(),
+                ethers.utils.solidityPack(["address","uint24","address"], [tokenIn, fee, Blockchains[blockchain].wrapped.address]),
+                true
+              ]
+            ),
+            ethers.utils.solidityPack(["address", "uint256"],
+              [
+                fromAddress,
+                fetchedAmountOutBN.toString(),
+              ]
+            )
+          ])
+          expect(transaction.value).toEqual('0')
+        })
+
+        it('routes a token to token swap for given amountInMax', async ()=> {
+
+          let amountIn = 1
+          let amountInBN = ethers.utils.parseUnits(amountIn.toString(), decimalsIn)
+          let fetchedAmountOut = 43
+          let fetchedAmountOutBN = ethers.utils.parseUnits(fetchedAmountOut.toString(), decimalsOut)
+
+          mockDecimals({ blockchain, address: tokenIn, value: decimalsIn })
+          mockPair({ blockchain, exchange, provider, tokenIn, tokenOut: Blockchains[blockchain].wrapped.address, fee, pair })
+          mockAmounts({ blockchain, exchange, provider, method: 'quoteExactInput',
+            params: [ethers.utils.solidityPack(["address","uint24","address"],[tokenIn, fee, Blockchains[blockchain].wrapped.address]), amountInBN],
+            amount: fetchedAmountOutBN
+          })
+
+          const route = await exchange.route({
+            blockchain,
+            fromAddress,
+            amountInMax: amountIn,
+            tokenIn,
+            tokenOut
+          })
+
+          expect(route.tokenIn).toEqual(tokenIn)
+          expect(route.tokenOut).toEqual(tokenOut)
+          expect(route.path).toEqual([tokenIn, Blockchains[blockchain].wrapped.address, tokenOut])
+          expect(route.pools[0].blockchain).toEqual(blockchain)
+          expect(route.pools[0].address).toEqual(pair)
+          expect(route.pools[0].fee).toEqual(fee)
+          expect(route.pools[0].token0).toEqual(Blockchains[blockchain].wrapped.address)
+          expect(route.pools[0].token1).toEqual(tokenIn)
+          expect(route.pools[0].amountIn).toEqual(amountInBN)
+          expect(route.pools[0].amountOut).toEqual(fetchedAmountOutBN)
+          expect(route.amountOutMin).toEqual(fetchedAmountOutBN.toString())
+          expect(route.amountOut).toEqual(fetchedAmountOutBN.toString())
+          expect(route.amountIn).toEqual(undefined)
+          expect(route.amountInMax).toEqual(amountInBN.toString())
+          expect(route.exchange).toBeDefined()
+
+          const transaction = await route.getTransaction({ from: fromAddress })
+
+          expect(transaction.blockchain).toEqual(blockchain)
+          expect(transaction.from).toEqual(fromAddress)
+          expect(transaction.to).toEqual(exchange[blockchain].router.address)
+          expect(transaction.api).toEqual(exchange[blockchain].router.api)
+          expect(transaction.method).toEqual('execute')
+          expect(transaction.params.commands).toEqual(['0x01', '0x0c'])
+          expect(transaction.params.inputs).toEqual([
+            ethers.utils.solidityPack(["address", "uint256", "uint256", "bytes", "bool"],
+              [
+                fromAddress,
+                fetchedAmountOutBN.toString(),
+                amountInBN.toString(),
+                ethers.utils.solidityPack(["address","uint24","address"], [tokenIn, fee, Blockchains[blockchain].wrapped.address]),
+                true
+              ]
+            ),
+            ethers.utils.solidityPack(["address", "uint256"],
+              [
+                fromAddress,
+                fetchedAmountOutBN.toString(),
+              ]
+            )
+          ])
+          expect(transaction.value).toEqual('0')
+        })
+
+      })
+
+      describe('routes native to token (1 pool)', ()=>{
+
+        let tokenIn = Blockchains[blockchain].currency.address
+        let decimalsIn = Blockchains[blockchain].currency.decimals
+        let tokenOut = '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb'
+        let decimalsOut = 18
+        let path = [tokenIn, tokenOut]
+        let fee = 3000
+
+        it('routes a token to token swap for a given amountOut', async ()=> {
 
           let amountOut = 1
           let amountOutBN = ethers.utils.parseUnits(amountOut.toString(), decimalsOut)
-          let amountInMax = 32
-          let amountInMaxBN = ethers.utils.parseUnits(amountInMax.toString(), decimalsIn)
-          let slippage = ethers.BigNumber.from('160000000000000000')
-          let path = [tokenIn, Blockchains[blockchain].wrapped.address, tokenOut]
-
-          mockPair({ blockchain, exchange, provider, tokenIn, tokenOut: Blockchains[blockchain].wrapped.address, pair })
-          mockAmounts({ blockchain, exchange, provider, method: 'getAmountsIn', params: [amountOutBN,[tokenIn, Blockchains[blockchain].wrapped.address]], amounts: [amountInMaxBN, amountOutBN] })
-
-          await testRouting({
-            blockchain,
-            exchange,
-            tokenIn,
-            decimalsIn,
-            tokenOut,
-            decimalsOut,
-            amountOut,
-            path,
-            pair,
-            fromAddress,
-            toAddress,
-            transaction: {
-              to: exchange.router.address,
-              api: exchange.router.api,
-              method: 'swapTokensForExactETH',
-              params: {
-                amountInMax: amountInMaxBN.add(slippage),
-                amountOut:  amountOutBN,
-                path: [tokenIn, Blockchains[blockchain].wrapped.address],
-                to: toAddress
-              }
-            },
-          })
-        });
-
-        it('routes a token to ETH swap for given amountIn and amountOutMin on uniswap_v2', async ()=> {
-          let amountOutMin = 1
-          let amountOutMinBN = ethers.utils.parseUnits(amountOutMin.toString(), decimalsOut)
-          let fetchedAmountIn = 32
+          let fetchedAmountIn = 43
           let fetchedAmountInBN = ethers.utils.parseUnits(fetchedAmountIn.toString(), decimalsIn)
-          let slippage = ethers.BigNumber.from('160000000000000000')
-          let path = [tokenIn, Blockchains[blockchain].wrapped.address, tokenOut]
+          let slippage = ethers.BigNumber.from('215000000000000000')
 
-          mockPair({ blockchain, exchange, provider, tokenIn, tokenOut: Blockchains[blockchain].wrapped.address, pair })
-          mockAmounts({ blockchain, exchange, provider, method: 'getAmountsIn', params: [amountOutMinBN, [tokenIn, Blockchains[blockchain].wrapped.address]], amounts: [fetchedAmountInBN, amountOutMinBN] })
-
-          await testRouting({
-            blockchain,
-            exchange,
-            tokenIn,
-            decimalsIn,
-            tokenOut,
-            decimalsOut,
-            amountOutMin,
-            path,
-            pair,
-            fromAddress,
-            toAddress,
-            transaction: {
-              to: exchange.router.address,
-              api: exchange.router.api,
-              method: 'swapExactTokensForETH',
-              params: {
-                amountIn: fetchedAmountInBN.add(slippage),
-                amountOutMin: amountOutMinBN,
-                path: [tokenIn, Blockchains[blockchain].wrapped.address],
-                to: toAddress
-              }
-            },
+          mockDecimals({ blockchain, address: tokenOut, value: decimalsOut })
+          mockPair({ blockchain, exchange, provider, tokenIn: Blockchains[blockchain].wrapped.address, tokenOut, fee, pair })
+          mockAmounts({ blockchain, exchange, provider, method: 'quoteExactOutput',
+            params: [ethers.utils.solidityPack(["address","uint24","address"],[tokenOut, fee, Blockchains[blockchain].wrapped.address]), amountOutBN],
+            amount: fetchedAmountInBN
           })
+          ;[0,1].forEach((block)=>{
+            mockAmounts({ blockchain, exchange, provider, method: 'quoteExactOutput',
+              params: [ethers.utils.solidityPack(["address","uint24","address"],[tokenOut, fee, Blockchains[blockchain].wrapped.address]), amountOutBN],
+              amount: fetchedAmountInBN,
+              block
+            })
+          })
+
+          const route = await exchange.route({
+            blockchain,
+            fromAddress,
+            amountOut,
+            tokenIn,
+            tokenOut
+          })
+
+          expect(route.tokenIn).toEqual(tokenIn)
+          expect(route.tokenOut).toEqual(tokenOut)
+          expect(route.path).toEqual([tokenIn, Blockchains[blockchain].wrapped.address, tokenOut])
+          expect(route.pools[0].blockchain).toEqual(blockchain)
+          expect(route.pools[0].address).toEqual(pair)
+          expect(route.pools[0].fee).toEqual(fee)
+          expect(route.pools[0].token0).toEqual(Blockchains[blockchain].wrapped.address)
+          expect(route.pools[0].token1).toEqual(tokenOut)
+          expect(route.pools[0].amountIn).toEqual(fetchedAmountInBN)
+          expect(route.pools[0].amountOut).toEqual(amountOutBN)
+          expect(route.amountOutMin).toEqual(undefined)
+          expect(route.amountOut).toEqual(amountOutBN.toString())
+          expect(route.amountIn).toEqual(fetchedAmountInBN.add(slippage).toString())
+          expect(route.amountInMax).toEqual(fetchedAmountInBN.add(slippage).toString())
+          expect(route.exchange).toBeDefined()
+
+          const transaction = await route.getTransaction({ from: fromAddress })
+
+          expect(transaction.blockchain).toEqual(blockchain)
+          expect(transaction.from).toEqual(fromAddress)
+          expect(transaction.to).toEqual(exchange[blockchain].router.address)
+          expect(transaction.api).toEqual(exchange[blockchain].router.api)
+          expect(transaction.method).toEqual('execute')
+          expect(transaction.params.commands).toEqual(['0x0b', '0x01'])
+          expect(transaction.params.inputs).toEqual([
+            ethers.utils.solidityPack(["address", "uint256"],
+              [
+                fromAddress,
+                fetchedAmountInBN.add(slippage).toString(),
+              ]
+            ),
+            ethers.utils.solidityPack(["address", "uint256", "uint256", "bytes", "bool"],
+              [
+                fromAddress,
+                amountOutBN.toString(),
+                fetchedAmountInBN.add(slippage).toString(),
+                ethers.utils.solidityPack(["address","uint24","address"], [Blockchains[blockchain].wrapped.address, fee, tokenOut]),
+                true
+              ]
+            )
+          ])
+          expect(transaction.value).toEqual(fetchedAmountInBN.add(slippage).toString())
+        })
+
+        it('routes a token to token swap for given amountOutMin', async ()=> {
+
+          let amountOut = 1
+          let amountOutBN = ethers.utils.parseUnits(amountOut.toString(), decimalsOut)
+          let fetchedAmountIn = 43
+          let fetchedAmountInBN = ethers.utils.parseUnits(fetchedAmountIn.toString(), decimalsIn)
+          let slippage = ethers.BigNumber.from('215000000000000000')
+
+          mockDecimals({ blockchain, address: tokenOut, value: decimalsOut })
+          mockPair({ blockchain, exchange, provider, tokenIn: Blockchains[blockchain].wrapped.address, tokenOut, fee, pair })
+          mockAmounts({ blockchain, exchange, provider, method: 'quoteExactOutput',
+            params: [ethers.utils.solidityPack(["address","uint24","address"],[tokenOut, fee, Blockchains[blockchain].wrapped.address]), amountOutBN],
+            amount: fetchedAmountInBN
+          })
+          ;[0,1].forEach((block)=>{
+            mockAmounts({ blockchain, exchange, provider, method: 'quoteExactOutput',
+              params: [ethers.utils.solidityPack(["address","uint24","address"],[tokenOut, fee, Blockchains[blockchain].wrapped.address]), amountOutBN],
+              amount: fetchedAmountInBN,
+              block
+            })
+          })
+
+          const route = await exchange.route({
+            blockchain,
+            fromAddress,
+            amountOutMin: amountOut,
+            tokenIn,
+            tokenOut
+          })
+
+          expect(route.tokenIn).toEqual(tokenIn)
+          expect(route.tokenOut).toEqual(tokenOut)
+          expect(route.path).toEqual([tokenIn, Blockchains[blockchain].wrapped.address, tokenOut])
+          expect(route.pools[0].blockchain).toEqual(blockchain)
+          expect(route.pools[0].address).toEqual(pair)
+          expect(route.pools[0].fee).toEqual(fee)
+          expect(route.pools[0].token0).toEqual(Blockchains[blockchain].wrapped.address)
+          expect(route.pools[0].token1).toEqual(tokenOut)
+          expect(route.pools[0].amountIn).toEqual(fetchedAmountInBN)
+          expect(route.pools[0].amountOut).toEqual(amountOutBN)
+          expect(route.amountOutMin).toEqual(amountOutBN.toString())
+          expect(route.amountOut).toEqual(undefined)
+          expect(route.amountIn).toEqual(fetchedAmountInBN.add(slippage).toString())
+          expect(route.amountInMax).toEqual(fetchedAmountInBN.add(slippage).toString())
+          expect(route.exchange).toBeDefined()
+
+          const transaction = await route.getTransaction({ from: fromAddress })
+
+          expect(transaction.blockchain).toEqual(blockchain)
+          expect(transaction.from).toEqual(fromAddress)
+          expect(transaction.to).toEqual(exchange[blockchain].router.address)
+          expect(transaction.api).toEqual(exchange[blockchain].router.api)
+          expect(transaction.method).toEqual('execute')
+          expect(transaction.params.commands).toEqual(['0x0b', '0x00'])
+          expect(transaction.params.inputs).toEqual([
+            ethers.utils.solidityPack(["address", "uint256"],
+              [
+                fromAddress,
+                fetchedAmountInBN.add(slippage).toString(),
+              ]
+            ),
+            ethers.utils.solidityPack(["address", "uint256", "uint256", "bytes", "bool"],
+              [
+                fromAddress,
+                fetchedAmountInBN.add(slippage).toString(),
+                amountOutBN.toString(),
+                ethers.utils.solidityPack(["address","uint24","address"], [Blockchains[blockchain].wrapped.address, fee, tokenOut]),
+                true
+              ]
+            )
+          ])
+          expect(transaction.value).toEqual(fetchedAmountInBN.add(slippage).toString())
+        })
+
+        it('routes a token to token swap for given amountIn', async ()=> {
+
+          let amountIn = 1
+          let amountInBN = ethers.utils.parseUnits(amountIn.toString(), decimalsIn)
+          let fetchedAmountOut = 43
+          let fetchedAmountOutBN = ethers.utils.parseUnits(fetchedAmountOut.toString(), decimalsOut)
+
+          mockDecimals({ blockchain, address: tokenOut, value: decimalsOut })
+          mockPair({ blockchain, exchange, provider, tokenIn: Blockchains[blockchain].wrapped.address, tokenOut, fee, pair })
+          mockAmounts({ blockchain, exchange, provider, method: 'quoteExactInput',
+            params: [ethers.utils.solidityPack(["address","uint24","address"],[Blockchains[blockchain].wrapped.address, fee, tokenOut]), amountInBN],
+            amount: fetchedAmountOutBN
+          })
+
+          const route = await exchange.route({
+            blockchain,
+            fromAddress,
+            amountIn,
+            tokenIn,
+            tokenOut
+          })
+
+          expect(route.tokenIn).toEqual(tokenIn)
+          expect(route.tokenOut).toEqual(tokenOut)
+          expect(route.path).toEqual([tokenIn, Blockchains[blockchain].wrapped.address, tokenOut])
+          expect(route.pools[0].blockchain).toEqual(blockchain)
+          expect(route.pools[0].address).toEqual(pair)
+          expect(route.pools[0].fee).toEqual(fee)
+          expect(route.pools[0].token0).toEqual(Blockchains[blockchain].wrapped.address)
+          expect(route.pools[0].token1).toEqual(tokenOut)
+          expect(route.pools[0].amountIn).toEqual(amountInBN)
+          expect(route.pools[0].amountOut).toEqual(fetchedAmountOutBN)
+          expect(route.amountOutMin).toEqual(fetchedAmountOutBN.toString())
+          expect(route.amountOut).toEqual(fetchedAmountOutBN.toString())
+          expect(route.amountIn).toEqual(amountInBN.toString())
+          expect(route.amountInMax).toEqual(undefined)
+          expect(route.exchange).toBeDefined()
+
+          const transaction = await route.getTransaction({ from: fromAddress })
+
+          expect(transaction.blockchain).toEqual(blockchain)
+          expect(transaction.from).toEqual(fromAddress)
+          expect(transaction.to).toEqual(exchange[blockchain].router.address)
+          expect(transaction.api).toEqual(exchange[blockchain].router.api)
+          expect(transaction.method).toEqual('execute')
+          expect(transaction.params.commands).toEqual(['0x0b', '0x00'])
+          expect(transaction.params.inputs).toEqual([
+            ethers.utils.solidityPack(["address", "uint256"],
+              [
+                fromAddress,
+                amountInBN.toString(),
+              ]
+            ),
+            ethers.utils.solidityPack(["address", "uint256", "uint256", "bytes", "bool"],
+              [
+                fromAddress,
+                amountInBN.toString(),
+                fetchedAmountOutBN.toString(),
+                ethers.utils.solidityPack(["address","uint24","address"], [Blockchains[blockchain].wrapped.address, fee, tokenOut]),
+                true
+              ]
+            )
+          ])
+          expect(transaction.value).toEqual(amountInBN.toString())
+        })
+
+        it('routes a token to token swap for given amountInMax', async ()=> {
+
+          let amountIn = 1
+          let amountInBN = ethers.utils.parseUnits(amountIn.toString(), decimalsIn)
+          let fetchedAmountOut = 43
+          let fetchedAmountOutBN = ethers.utils.parseUnits(fetchedAmountOut.toString(), decimalsOut)
+
+          mockDecimals({ blockchain, address: tokenOut, value: decimalsOut })
+          mockPair({ blockchain, exchange, provider, tokenIn: Blockchains[blockchain].wrapped.address, tokenOut, fee, pair })
+          mockAmounts({ blockchain, exchange, provider, method: 'quoteExactInput',
+            params: [ethers.utils.solidityPack(["address","uint24","address"],[Blockchains[blockchain].wrapped.address, fee, tokenOut]), amountInBN],
+            amount: fetchedAmountOutBN
+          })
+
+          const route = await exchange.route({
+            blockchain,
+            fromAddress,
+            amountInMax: amountIn,
+            tokenIn,
+            tokenOut
+          })
+
+          expect(route.tokenIn).toEqual(tokenIn)
+          expect(route.tokenOut).toEqual(tokenOut)
+          expect(route.path).toEqual([tokenIn, Blockchains[blockchain].wrapped.address, tokenOut])
+          expect(route.pools[0].blockchain).toEqual(blockchain)
+          expect(route.pools[0].address).toEqual(pair)
+          expect(route.pools[0].fee).toEqual(fee)
+          expect(route.pools[0].token0).toEqual(Blockchains[blockchain].wrapped.address)
+          expect(route.pools[0].token1).toEqual(tokenOut)
+          expect(route.pools[0].amountIn).toEqual(amountInBN)
+          expect(route.pools[0].amountOut).toEqual(fetchedAmountOutBN)
+          expect(route.amountOutMin).toEqual(fetchedAmountOutBN.toString())
+          expect(route.amountOut).toEqual(fetchedAmountOutBN.toString())
+          expect(route.amountIn).toEqual(undefined)
+          expect(route.amountInMax).toEqual(amountInBN.toString())
+          expect(route.exchange).toBeDefined()
+
+          const transaction = await route.getTransaction({ from: fromAddress })
+
+          expect(transaction.blockchain).toEqual(blockchain)
+          expect(transaction.from).toEqual(fromAddress)
+          expect(transaction.to).toEqual(exchange[blockchain].router.address)
+          expect(transaction.api).toEqual(exchange[blockchain].router.api)
+          expect(transaction.method).toEqual('execute')
+          expect(transaction.params.commands).toEqual(['0x0b', '0x01'])
+          expect(transaction.params.inputs).toEqual([
+            ethers.utils.solidityPack(["address", "uint256"],
+              [
+                fromAddress,
+                amountInBN.toString(),
+              ]
+            ),
+            ethers.utils.solidityPack(["address", "uint256", "uint256", "bytes", "bool"],
+              [
+                fromAddress,
+                fetchedAmountOutBN.toString(),
+                amountInBN.toString(),
+                ethers.utils.solidityPack(["address","uint24","address"], [Blockchains[blockchain].wrapped.address, fee, tokenOut]),
+                true
+              ]
+            )
+          ])
+          expect(transaction.value).toEqual(amountInBN.toString())
         })
       })
+      
+      describe('route token to token (2 pools)', ()=>{})
+
+      describe('routes token to native (2 pools)', ()=>{})
+
+      describe('routes native to token (2 pools)', ()=>{})
     })
   })
 })

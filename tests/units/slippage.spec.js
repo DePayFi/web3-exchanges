@@ -2,7 +2,7 @@ import { ethers } from 'ethers'
 import { find } from 'src'
 import { mock, resetMocks, increaseBlock } from '@depay/web3-mock'
 import { mockDecimals } from 'tests/mocks/token'
-import { mockPair, mockAmounts } from 'tests/mocks/evm/exchange'
+import { mockPair, mockAmounts } from 'tests/mocks/evm/uniswap_v2'
 import { resetCache, getProvider } from '@depay/web3-client'
 
 describe('slippage', () => {

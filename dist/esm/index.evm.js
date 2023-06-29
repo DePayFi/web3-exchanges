@@ -950,8 +950,8 @@ const pathExists$1 = async (blockchain, exchange, path, amountIn, amountOut, amo
         api: exchange[blockchain].factory.api,
         cache: 3600,
         params: [path[0], path[1], fee],
-      })
-    }))).filter((address)=>address != Blockchains[blockchain].zero);
+      }).catch(()=>{})
+    }))).filter(Boolean).filter((address)=>address != Blockchains[blockchain].zero);
 
     return pools.length
 
@@ -1007,11 +1007,11 @@ const findPath$1 = async ({ blockchain, exchange, tokenIn, tokenOut, amountIn, a
   }
 
   let pools;
-  if(path.length == 2) {
+  if(path && path.length == 2) {
     pools = [
       await getBestPool({ blockchain, exchange, path: [path[0], path[1]], amountIn: (amountIn || amountInMax), amountOut: (amountOut || amountOutMin) })
     ];
-  } else if (path.length == 3) {
+  } else if (path && path.length == 3) {
     if(amountOut || amountOutMin) {
       let pool2 = await getBestPool({ blockchain, exchange, path: [path[1], path[2]], amountOut: (amountOut || amountOutMin) });
       let pool1 = await getBestPool({ blockchain, exchange, path: [path[0], path[1]], amountOut: pool2.amountIn });
@@ -1113,7 +1113,7 @@ let getAmounts$1 = async (blockchain, exchange, {
 let getTransaction$1 = async({
   blockchain,
   exchange,
-  pool,
+  pools,
   path,
   amountIn,
   amountInMax,
@@ -1135,22 +1135,29 @@ let getTransaction$1 = async({
     inputs.push(
       ethers.utils.solidityPack(
         ["address", "uint256"],
-        [fromAddress, amountIn.toString()]
+        [fromAddress, (amountIn || amountInMax).toString()]
       )
     );
-    value = amountIn.toString();
+    value = (amountIn || amountInMax).toString();
   }
 
-  if (amountOutMinInput) {
+  let packedPath;
+  if(pools.length === 1) {
+    packedPath = ethers.utils.solidityPack(["address","uint24","address"], [pools[0].path[0], pools[0].fee, pools[0].path[1]]);
+  } else if(pools.length === 2) {
+    packedPath = ethers.utils.solidityPack(["address","uint24","address","uint24","address"], [pools[0].path[0], pools[0].fee, pools[0].path[1], pools[1].fee, pools[1].path[1]]);
+  }
+
+  if (amountOutMinInput || amountInInput) {
     commands.push("0x00"); // V3_SWAP_EXACT_IN (minimum out)
     inputs.push(
       ethers.utils.solidityPack(
         ["address", "uint256", "uint256", "bytes", "bool"],
         [
           fromAddress,
-          amountIn.toString(),
-          amountOut.toString(),
-          ethers.utils.solidityPack(["address","uint24","address"],[pool.path[0], pool.fee, pool.path[1]]),
+          (amountIn || amountInMax).toString(),
+          (amountOut || amountOutMin).toString(),
+          packedPath,
           true
         ]
       )
@@ -1162,9 +1169,9 @@ let getTransaction$1 = async({
         ["address", "uint256", "uint256", "bytes", "bool"],
         [
           fromAddress,
-          amountOut.toString(),
-          amountIn.toString(),
-          ethers.utils.solidityPack(["address","uint24","address"],[pool.path[0], pool.fee, pool.path[1]]),
+          (amountOut || amountOutMin).toString(),
+          (amountIn || amountInMax).toString(),
+          packedPath,
           true
         ]
       )
@@ -1176,7 +1183,7 @@ let getTransaction$1 = async({
     inputs.push(
       ethers.utils.solidityPack(
         ["address", "uint256"],
-        [fromAddress, amountOut.toString()]
+        [fromAddress, (amountOut || amountOutMin).toString()]
       )
     );
   }
