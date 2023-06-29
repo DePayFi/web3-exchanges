@@ -110,8 +110,8 @@ export default new Exchange(
       UniswapV3.findPath({ blockchain, exchange, tokenIn, tokenOut, amountIn, amountOut, amountInMax, amountOutMin }),
     pathExists: (blockchain, path)=>
       UniswapV3.pathExists(blockchain, exchange, path),
-    getAmounts: ({ blockchain, path, pool, block, tokenIn, tokenOut, amountOut, amountIn, amountInMax, amountOutMin })=>
-      UniswapV3.getAmounts(blockchain, exchange, { path, pool, block, tokenIn, tokenOut, amountOut, amountIn, amountInMax, amountOutMin }),
+    getAmounts: ({ blockchain, path, pools, block, tokenIn, tokenOut, amountOut, amountIn, amountInMax, amountOutMin })=>
+      UniswapV3.getAmounts(blockchain, exchange, { path, pools, block, tokenIn, tokenOut, amountOut, amountIn, amountInMax, amountOutMin }),
     getTransaction: (...args)=> UniswapV3.getTransaction(...args),
   })
 )

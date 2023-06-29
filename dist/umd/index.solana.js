@@ -2,10 +2,11 @@
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@depay/solana-web3.js'), require('@depay/web3-client-solana'), require('ethers'), require('@depay/web3-tokens-solana'), require('@depay/web3-blockchains'), require('decimal.js')) :
   typeof define === 'function' && define.amd ? define(['exports', '@depay/solana-web3.js', '@depay/web3-client-solana', 'ethers', '@depay/web3-tokens-solana', '@depay/web3-blockchains', 'decimal.js'], factory) :
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.Web3Exchanges = {}, global.SolanaWeb3js, global.Web3Client, global.ethers, global.Web3Tokens, global.Web3Blockchains, global.Decimal));
-}(this, (function (exports, solanaWeb3_js, web3ClientSolana, ethers, web3TokensSolana, Blockchains, Decimal) { 'use strict';
+}(this, (function (exports, solanaWeb3_js, web3ClientSolana, ethers, Token, Blockchains, Decimal) { 'use strict';
 
   function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
+  var Token__default = /*#__PURE__*/_interopDefaultLegacy(Token);
   var Blockchains__default = /*#__PURE__*/_interopDefaultLegacy(Blockchains);
   var Decimal__default = /*#__PURE__*/_interopDefaultLegacy(Decimal);
 
@@ -76,7 +77,7 @@
       tokenIn,
       tokenOut,
       path,
-      pool,
+      pools,
       amountIn,
       amountInMax,
       amountOut,
@@ -89,7 +90,7 @@
       this.tokenIn = tokenIn;
       this.tokenOut = tokenOut;
       this.path = path;
-      this.pool = pool;
+      this.pools = pools;
       this.amountIn = _optionalChain$1([amountIn, 'optionalAccess', _ => _.toString, 'call', _2 => _2()]);
       this.amountOutMin = _optionalChain$1([amountOutMin, 'optionalAccess', _3 => _3.toString, 'call', _4 => _4()]);
       this.amountOut = _optionalChain$1([amountOut, 'optionalAccess', _5 => _5.toString, 'call', _6 => _6()]);
@@ -109,17 +110,17 @@
     return DEFAULT_SLIPPAGE
   };
 
-  const calculateAmountInWithSlippage = async ({ exchange, fixedPath, amountIn, amountOut })=>{
+  const calculateAmountInWithSlippage = async ({ exchange, blockchain, pools, fixedPath, amountIn, amountOut })=>{
 
     let defaultSlippage = getDefaultSlippage({ amountIn, amountOut });
 
     let newAmountInWithDefaultSlippageBN = amountIn.add(amountIn.mul(parseFloat(defaultSlippage)*100).div(10000));
 
-    if(!supported.evm.includes(exchange.blockchain)) { 
+    if(!supported.evm.includes(exchange.blockchain || blockchain)) { 
       return newAmountInWithDefaultSlippageBN
     }
 
-    const currentBlock = await web3ClientSolana.request({ blockchain: exchange.blockchain, method: 'latestBlockNumber' });
+    const currentBlock = await web3ClientSolana.request({ blockchain: (exchange.blockchain || blockchain), method: 'latestBlockNumber' });
 
     let blocks = [];
     for(var i = 0; i <= 2; i++){
@@ -128,7 +129,9 @@
 
     const lastAmountsIn = await Promise.all(blocks.map(async (block)=>{
       let { amountIn } = await exchange.getAmounts({
+        blockchain,
         path: fixedPath,
+        pools,
         amountOut,
         block
       });
@@ -203,6 +206,8 @@
 
   const calculateAmountsWithSlippage = async ({
     exchange,
+    blockchain,
+    pools,
     fixedPath,
     amounts,
     tokenIn, tokenOut,
@@ -210,13 +215,13 @@
     amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput,
   })=>{
     if(amountOutMinInput || amountOutInput) {
-      if(supported.evm.includes(exchange.blockchain)) {
-        amountIn = amountInMax = await calculateAmountInWithSlippage({ exchange, fixedPath, amountIn, amountOut: (amountOutMinInput || amountOut) });
-      } else if(supported.solana.includes(exchange.blockchain)){
+      if(supported.evm.includes(exchange.blockchain || blockchain)) {
+        amountIn = amountInMax = await calculateAmountInWithSlippage({ exchange, blockchain, pools, fixedPath, amountIn, amountOut: (amountOutMinInput || amountOut) });
+      } else if(supported.solana.includes(exchange.blockchain || blockchain)){
         let amountsWithSlippage = [];
         await Promise.all(fixedPath.map((step, index)=>{
           if(index != 0) {
-            let amountWithSlippage = calculateAmountInWithSlippage({ exchange, fixedPath: [fixedPath[index-1], fixedPath[index]], amountIn: amounts[index-1], amountOut: amounts[index] });
+            let amountWithSlippage = calculateAmountInWithSlippage({ exchange, pools, fixedPath: [fixedPath[index-1], fixedPath[index]], amountIn: amounts[index-1], amountOut: amounts[index] });
             amountWithSlippage.then((amount)=>amountsWithSlippage.push(amount));
             return amountWithSlippage
           }
@@ -226,7 +231,7 @@
         amountIn = amountInMax = amounts[0];
       }
     } else if(amountInMaxInput || amountInInput) {
-      if(supported.solana.includes(exchange.blockchain)){
+      if(supported.solana.includes(exchange.blockchain || blockchain)){
         let amountsWithSlippage = [];
         await Promise.all(fixedPath.map((step, index)=>{
           if(index !== 0 && index < fixedPath.length-1) {
@@ -258,7 +263,7 @@
   };
 
   let getAmount = async ({ amount, blockchain, address }) => {
-    return await web3TokensSolana.Token.BigNumber({ amount, blockchain, address })
+    return await Token__default['default'].BigNumber({ amount, blockchain, address })
   };
 
   let fixRouteParams = async ({
@@ -363,17 +368,19 @@
     if([amountIn, amountOut, amountInMax, amountOutMin].filter(Boolean).length < 1) { throw('You need to pass exactly one: amountIn, amountOut, amountInMax or amountOutMin') }
 
     return new Promise(async (resolve)=> {
-      let { path, fixedPath, pool } = await findPath({ blockchain, tokenIn, tokenOut, amountIn, amountOut, amountInMax, amountOutMin });
+      let { path, fixedPath, pools } = await findPath({ blockchain, tokenIn, tokenOut, amountIn, amountOut, amountInMax, amountOutMin });
       if (path === undefined || path.length == 0) { return resolve() }
       let [amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput] = [amountIn, amountOut, amountInMax, amountOutMin];
 
       let amounts; // includes intermediary amounts for longer routes
-      ({ amountIn, amountInMax, amountOut, amountOutMin, amounts } = await getAmounts({ blockchain, path, pool, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }));
+      ({ amountIn, amountInMax, amountOut, amountOutMin, amounts } = await getAmounts({ blockchain, path, pools, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }));
       if([amountIn, amountInMax, amountOut, amountOutMin].every((amount)=>{ return amount == undefined })) { return resolve() }
 
-      if(slippage) {
+      if(slippage || exchange.slippage) {
         ({ amountIn, amountInMax, amountOut, amountOutMin, amounts } = await calculateAmountsWithSlippage({
           exchange,
+          blockchain,
+          pools,
           fixedPath,
           amounts,
           tokenIn, tokenOut,
@@ -387,7 +394,7 @@
           tokenIn,
           tokenOut,
           path,
-          pool,
+          pools,
           amountIn,
           amountInMax,
           amountOut,
@@ -396,7 +403,7 @@
           getTransaction: async ({ from })=> await getTransaction({
             exchange,
             blockchain,
-            pool,
+            pools,
             path,
             amountIn,
             amountInMax,
@@ -1797,7 +1804,7 @@
     try{ outAccountExists = !!(await web3ClientSolana.request({ blockchain: 'solana', address: account.toString() })); } catch (e2) {}
     if(!outAccountExists) {
       instructions.push(
-        await web3TokensSolana.Token.solana.createAssociatedTokenAccountInstruction({
+        await Token__default['default'].solana.createAssociatedTokenAccountInstruction({
           token,
           owner,
           payer: owner,
@@ -1848,7 +1855,7 @@
 
     return [
       // token_program
-      { pubkey: new solanaWeb3_js.PublicKey(web3TokensSolana.Token.solana.TOKEN_PROGRAM), isWritable: false, isSigner: false },
+      { pubkey: new solanaWeb3_js.PublicKey(Token__default['default'].solana.TOKEN_PROGRAM), isWritable: false, isSigner: false },
       // token_authority
       { pubkey: new solanaWeb3_js.PublicKey(fromAddress), isWritable: false, isSigner: true },
       // whirlpool_one
@@ -1952,7 +1959,7 @@
 
     return [
       // token_program
-      { pubkey: new solanaWeb3_js.PublicKey(web3TokensSolana.Token.solana.TOKEN_PROGRAM), isWritable: false, isSigner: false },
+      { pubkey: new solanaWeb3_js.PublicKey(Token__default['default'].solana.TOKEN_PROGRAM), isWritable: false, isSigner: false },
       // token_authority
       { pubkey: new solanaWeb3_js.PublicKey(fromAddress), isWritable: false, isSigner: true },
       // whirlpool
@@ -2045,21 +2052,21 @@
     const provider = await web3ClientSolana.getProvider('solana');
     
     if(startsWrapped || endsUnwrapped) {
-      const rent = await provider.getMinimumBalanceForRentExemption(web3TokensSolana.Token.solana.TOKEN_LAYOUT.span);
+      const rent = await provider.getMinimumBalanceForRentExemption(Token__default['default'].solana.TOKEN_LAYOUT.span);
       const keypair = solanaWeb3_js.Keypair.generate();
       wrappedAccount = keypair.publicKey.toString();
       const lamports = startsWrapped ? new solanaWeb3_js.BN(amountIn.toString()).add(new solanaWeb3_js.BN(rent)) :  new solanaWeb3_js.BN(rent);
       let createAccountInstruction = solanaWeb3_js.SystemProgram.createAccount({
         fromPubkey: new solanaWeb3_js.PublicKey(fromAddress),
         newAccountPubkey: new solanaWeb3_js.PublicKey(wrappedAccount),
-        programId: new solanaWeb3_js.PublicKey(web3TokensSolana.Token.solana.TOKEN_PROGRAM),
-        space: web3TokensSolana.Token.solana.TOKEN_LAYOUT.span,
+        programId: new solanaWeb3_js.PublicKey(Token__default['default'].solana.TOKEN_PROGRAM),
+        space: Token__default['default'].solana.TOKEN_LAYOUT.span,
         lamports
       });
       createAccountInstruction.signers = [keypair];
       instructions.push(createAccountInstruction);
       instructions.push(
-        web3TokensSolana.Token.solana.initializeAccountInstruction({
+        Token__default['default'].solana.initializeAccountInstruction({
           account: wrappedAccount,
           token: blockchain.wrapped.address,
           owner: fromAddress
@@ -2072,8 +2079,8 @@
       let amountSpecifiedIsInput = !!(amountInInput || amountOutMinInput);
       let amount = amountSpecifiedIsInput ? amountIn : amountOut;
       let otherAmountThreshold = amountSpecifiedIsInput ? amountOutMin : amountInMax;
-      let tokenAccountIn = startsWrapped ? new solanaWeb3_js.PublicKey(wrappedAccount) : new solanaWeb3_js.PublicKey(await web3TokensSolana.Token.solana.findProgramAddress({ owner: fromAddress, token: tokenIn }));
-      let tokenAccountOut = endsUnwrapped ? new solanaWeb3_js.PublicKey(wrappedAccount) : new solanaWeb3_js.PublicKey(await web3TokensSolana.Token.solana.findProgramAddress({ owner: fromAddress, token: tokenOut }));
+      let tokenAccountIn = startsWrapped ? new solanaWeb3_js.PublicKey(wrappedAccount) : new solanaWeb3_js.PublicKey(await Token__default['default'].solana.findProgramAddress({ owner: fromAddress, token: tokenIn }));
+      let tokenAccountOut = endsUnwrapped ? new solanaWeb3_js.PublicKey(wrappedAccount) : new solanaWeb3_js.PublicKey(await Token__default['default'].solana.findProgramAddress({ owner: fromAddress, token: tokenOut }));
       if(!endsUnwrapped) {
         await createTokenAccountIfNotExisting({ instructions, owner: fromAddress, token: tokenOut, account: tokenAccountOut });
       }
@@ -2103,11 +2110,11 @@
       let amountSpecifiedIsInput = !!(amountInInput || amountOutMinInput);
       let amount = amountSpecifiedIsInput ? amountIn : amountOut;
       let otherAmountThreshold = amountSpecifiedIsInput ? amountOutMin : amountInMax;
-      let tokenAccountIn = startsWrapped ? new solanaWeb3_js.PublicKey(wrappedAccount) : new solanaWeb3_js.PublicKey(await web3TokensSolana.Token.solana.findProgramAddress({ owner: fromAddress, token: tokenIn }));
+      let tokenAccountIn = startsWrapped ? new solanaWeb3_js.PublicKey(wrappedAccount) : new solanaWeb3_js.PublicKey(await Token__default['default'].solana.findProgramAddress({ owner: fromAddress, token: tokenIn }));
       let tokenMiddle = fixedPath[1];
-      let tokenAccountMiddle = new solanaWeb3_js.PublicKey(await web3TokensSolana.Token.solana.findProgramAddress({ owner: fromAddress, token: tokenMiddle }));
+      let tokenAccountMiddle = new solanaWeb3_js.PublicKey(await Token__default['default'].solana.findProgramAddress({ owner: fromAddress, token: tokenMiddle }));
       await createTokenAccountIfNotExisting({ instructions, owner: fromAddress, token: tokenMiddle, account: tokenAccountMiddle });
-      let tokenAccountOut = endsUnwrapped ? new solanaWeb3_js.PublicKey(wrappedAccount) : new solanaWeb3_js.PublicKey(await web3TokensSolana.Token.solana.findProgramAddress({ owner: fromAddress, token: tokenOut }));
+      let tokenAccountOut = endsUnwrapped ? new solanaWeb3_js.PublicKey(wrappedAccount) : new solanaWeb3_js.PublicKey(await Token__default['default'].solana.findProgramAddress({ owner: fromAddress, token: tokenOut }));
       if(!endsUnwrapped) {
         await createTokenAccountIfNotExisting({ instructions, owner: fromAddress, token: tokenOut, account: tokenAccountOut });
       }
@@ -2144,7 +2151,7 @@
     
     if(startsWrapped || endsUnwrapped) {
       instructions.push(
-        web3TokensSolana.Token.solana.closeAccountInstruction({
+        Token__default['default'].solana.closeAccountInstruction({
           account: wrappedAccount,
           owner: fromAddress
         })

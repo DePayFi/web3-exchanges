@@ -72,7 +72,7 @@ function _optionalChain$1(ops) { let lastAccessLHS = undefined; let value = ops[
     tokenIn,
     tokenOut,
     path,
-    pool,
+    pools,
     amountIn,
     amountInMax,
     amountOut,
@@ -85,7 +85,7 @@ function _optionalChain$1(ops) { let lastAccessLHS = undefined; let value = ops[
     this.tokenIn = tokenIn;
     this.tokenOut = tokenOut;
     this.path = path;
-    this.pool = pool;
+    this.pools = pools;
     this.amountIn = _optionalChain$1([amountIn, 'optionalAccess', _ => _.toString, 'call', _2 => _2()]);
     this.amountOutMin = _optionalChain$1([amountOutMin, 'optionalAccess', _3 => _3.toString, 'call', _4 => _4()]);
     this.amountOut = _optionalChain$1([amountOut, 'optionalAccess', _5 => _5.toString, 'call', _6 => _6()]);
@@ -105,17 +105,17 @@ const getDefaultSlippage = ({ amountIn, amountOut })=>{
   return DEFAULT_SLIPPAGE
 };
 
-const calculateAmountInWithSlippage = async ({ exchange, fixedPath, amountIn, amountOut })=>{
+const calculateAmountInWithSlippage = async ({ exchange, blockchain, pools, fixedPath, amountIn, amountOut })=>{
 
   let defaultSlippage = getDefaultSlippage({ amountIn, amountOut });
 
   let newAmountInWithDefaultSlippageBN = amountIn.add(amountIn.mul(parseFloat(defaultSlippage)*100).div(10000));
 
-  if(!supported.evm.includes(exchange.blockchain)) { 
+  if(!supported.evm.includes(exchange.blockchain || blockchain)) { 
     return newAmountInWithDefaultSlippageBN
   }
 
-  const currentBlock = await request({ blockchain: exchange.blockchain, method: 'latestBlockNumber' });
+  const currentBlock = await request({ blockchain: (exchange.blockchain || blockchain), method: 'latestBlockNumber' });
 
   let blocks = [];
   for(var i = 0; i <= 2; i++){
@@ -124,7 +124,9 @@ const calculateAmountInWithSlippage = async ({ exchange, fixedPath, amountIn, am
 
   const lastAmountsIn = await Promise.all(blocks.map(async (block)=>{
     let { amountIn } = await exchange.getAmounts({
+      blockchain,
       path: fixedPath,
+      pools,
       amountOut,
       block
     });
@@ -199,6 +201,8 @@ const calculateAmountOutLessSlippage = async ({ exchange, fixedPath, amountOut, 
 
 const calculateAmountsWithSlippage = async ({
   exchange,
+  blockchain,
+  pools,
   fixedPath,
   amounts,
   tokenIn, tokenOut,
@@ -206,13 +210,13 @@ const calculateAmountsWithSlippage = async ({
   amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput,
 })=>{
   if(amountOutMinInput || amountOutInput) {
-    if(supported.evm.includes(exchange.blockchain)) {
-      amountIn = amountInMax = await calculateAmountInWithSlippage({ exchange, fixedPath, amountIn, amountOut: (amountOutMinInput || amountOut) });
-    } else if(supported.solana.includes(exchange.blockchain)){
+    if(supported.evm.includes(exchange.blockchain || blockchain)) {
+      amountIn = amountInMax = await calculateAmountInWithSlippage({ exchange, blockchain, pools, fixedPath, amountIn, amountOut: (amountOutMinInput || amountOut) });
+    } else if(supported.solana.includes(exchange.blockchain || blockchain)){
       let amountsWithSlippage = [];
       await Promise.all(fixedPath.map((step, index)=>{
         if(index != 0) {
-          let amountWithSlippage = calculateAmountInWithSlippage({ exchange, fixedPath: [fixedPath[index-1], fixedPath[index]], amountIn: amounts[index-1], amountOut: amounts[index] });
+          let amountWithSlippage = calculateAmountInWithSlippage({ exchange, pools, fixedPath: [fixedPath[index-1], fixedPath[index]], amountIn: amounts[index-1], amountOut: amounts[index] });
           amountWithSlippage.then((amount)=>amountsWithSlippage.push(amount));
           return amountWithSlippage
         }
@@ -222,7 +226,7 @@ const calculateAmountsWithSlippage = async ({
       amountIn = amountInMax = amounts[0];
     }
   } else if(amountInMaxInput || amountInInput) {
-    if(supported.solana.includes(exchange.blockchain)){
+    if(supported.solana.includes(exchange.blockchain || blockchain)){
       let amountsWithSlippage = [];
       await Promise.all(fixedPath.map((step, index)=>{
         if(index !== 0 && index < fixedPath.length-1) {
@@ -359,17 +363,19 @@ const route$1 = ({
   if([amountIn, amountOut, amountInMax, amountOutMin].filter(Boolean).length < 1) { throw('You need to pass exactly one: amountIn, amountOut, amountInMax or amountOutMin') }
 
   return new Promise(async (resolve)=> {
-    let { path, fixedPath, pool } = await findPath({ blockchain, tokenIn, tokenOut, amountIn, amountOut, amountInMax, amountOutMin });
+    let { path, fixedPath, pools } = await findPath({ blockchain, tokenIn, tokenOut, amountIn, amountOut, amountInMax, amountOutMin });
     if (path === undefined || path.length == 0) { return resolve() }
     let [amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput] = [amountIn, amountOut, amountInMax, amountOutMin];
 
     let amounts; // includes intermediary amounts for longer routes
-    ({ amountIn, amountInMax, amountOut, amountOutMin, amounts } = await getAmounts({ blockchain, path, pool, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }));
+    ({ amountIn, amountInMax, amountOut, amountOutMin, amounts } = await getAmounts({ blockchain, path, pools, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }));
     if([amountIn, amountInMax, amountOut, amountOutMin].every((amount)=>{ return amount == undefined })) { return resolve() }
 
-    if(slippage) {
+    if(slippage || exchange.slippage) {
       ({ amountIn, amountInMax, amountOut, amountOutMin, amounts } = await calculateAmountsWithSlippage({
         exchange,
+        blockchain,
+        pools,
         fixedPath,
         amounts,
         tokenIn, tokenOut,
@@ -383,7 +389,7 @@ const route$1 = ({
         tokenIn,
         tokenOut,
         path,
-        pool,
+        pools,
         amountIn,
         amountInMax,
         amountOut,
@@ -392,7 +398,7 @@ const route$1 = ({
         getTransaction: async ({ from })=> await getTransaction({
           exchange,
           blockchain,
-          pool,
+          pools,
           path,
           amountIn,
           amountInMax,

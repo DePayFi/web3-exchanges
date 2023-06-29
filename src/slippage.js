@@ -21,17 +21,17 @@ const getDefaultSlippage = ({ amountIn, amountOut })=>{
   return DEFAULT_SLIPPAGE
 }
 
-const calculateAmountInWithSlippage = async ({ exchange, fixedPath, amountIn, amountOut })=>{
+const calculateAmountInWithSlippage = async ({ exchange, blockchain, pools, fixedPath, amountIn, amountOut })=>{
 
   let defaultSlippage = getDefaultSlippage({ amountIn, amountOut })
 
   let newAmountInWithDefaultSlippageBN = amountIn.add(amountIn.mul(parseFloat(defaultSlippage)*100).div(10000))
 
-  if(!supported.evm.includes(exchange.blockchain)) { 
+  if(!supported.evm.includes(exchange.blockchain || blockchain)) { 
     return newAmountInWithDefaultSlippageBN
   }
 
-  const currentBlock = await request({ blockchain: exchange.blockchain, method: 'latestBlockNumber' })
+  const currentBlock = await request({ blockchain: (exchange.blockchain || blockchain), method: 'latestBlockNumber' })
 
   let blocks = []
   for(var i = 0; i <= 2; i++){
@@ -40,7 +40,9 @@ const calculateAmountInWithSlippage = async ({ exchange, fixedPath, amountIn, am
 
   const lastAmountsIn = await Promise.all(blocks.map(async (block)=>{
     let { amountIn } = await exchange.getAmounts({
+      blockchain,
       path: fixedPath,
+      pools,
       amountOut,
       block
     })
@@ -115,6 +117,8 @@ const calculateAmountOutLessSlippage = async ({ exchange, fixedPath, amountOut, 
 
 const calculateAmountsWithSlippage = async ({
   exchange,
+  blockchain,
+  pools,
   fixedPath,
   amounts,
   tokenIn, tokenOut,
@@ -122,13 +126,13 @@ const calculateAmountsWithSlippage = async ({
   amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput,
 })=>{
   if(amountOutMinInput || amountOutInput) {
-    if(supported.evm.includes(exchange.blockchain)) {
-      amountIn = amountInMax = await calculateAmountInWithSlippage({ exchange, fixedPath, amountIn, amountOut: (amountOutMinInput || amountOut) })
-    } else if(supported.solana.includes(exchange.blockchain)){
+    if(supported.evm.includes(exchange.blockchain || blockchain)) {
+      amountIn = amountInMax = await calculateAmountInWithSlippage({ exchange, blockchain, pools, fixedPath, amountIn, amountOut: (amountOutMinInput || amountOut) })
+    } else if(supported.solana.includes(exchange.blockchain || blockchain)){
       let amountsWithSlippage = []
       await Promise.all(fixedPath.map((step, index)=>{
         if(index != 0) {
-          let amountWithSlippage = calculateAmountInWithSlippage({ exchange, fixedPath: [fixedPath[index-1], fixedPath[index]], amountIn: amounts[index-1], amountOut: amounts[index] })
+          let amountWithSlippage = calculateAmountInWithSlippage({ exchange, pools, fixedPath: [fixedPath[index-1], fixedPath[index]], amountIn: amounts[index-1], amountOut: amounts[index] })
           amountWithSlippage.then((amount)=>amountsWithSlippage.push(amount))
           return amountWithSlippage
         }
@@ -138,7 +142,7 @@ const calculateAmountsWithSlippage = async ({
       amountIn = amountInMax = amounts[0]
     }
   } else if(amountInMaxInput || amountInInput) {
-    if(supported.solana.includes(exchange.blockchain)){
+    if(supported.solana.includes(exchange.blockchain || blockchain)){
       let amountsWithSlippage = []
       await Promise.all(fixedPath.map((step, index)=>{
         if(index !== 0 && index < fixedPath.length-1) {
