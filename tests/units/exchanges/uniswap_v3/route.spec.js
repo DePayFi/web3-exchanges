@@ -49,7 +49,7 @@ describe('uniswap_v3', () => {
           expect(route).toEqual(undefined)
         })
 
-        it('throws an error if no blockchain has been provided to route', async ()=> {
+        it.only('throws an error if no blockchain has been provided to route', async ()=> {
 
           await expect(
             exchange.route({
@@ -62,7 +62,7 @@ describe('uniswap_v3', () => {
           ).rejects.toEqual("You need to provide a blockchain when calling route on an exchange that supports multiple blockchains!")
         })
 
-        it.only('returns undefined and does not fail or reject in case an error happens during the routing', async ()=> {
+        it('returns undefined and does not fail or reject in case an error happens during the routing', async ()=> {
 
           mock(blockchain)
 
