@@ -4,7 +4,7 @@ import { mock, resetMocks } from '@depay/web3-mock'
 import { mockDecimals } from 'tests/mocks/token'
 import { mockPair } from 'tests/mocks/evm/exchange'
 import { getProvider, resetCache } from '@depay/web3-client'
-import Token from '@depay/web3-tokens'
+import { Token } from '@depay/web3-tokens'
 
 describe('pancakeswap', () => {
   

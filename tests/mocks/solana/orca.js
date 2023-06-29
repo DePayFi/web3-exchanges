@@ -5,7 +5,7 @@ import { getTickArrayAddresses } from 'src/exchanges/orca/route/price/ticks'
 import { mock } from '@depay/web3-mock'
 import { request } from '@depay/web3-client'
 import { TICK_ARRAY_LAYOUT } from 'src/exchanges/orca/apis'
-import Token from '@depay/web3-tokens'
+import { Token } from '@depay/web3-tokens'
 
 let blockchain = 'solana'
 

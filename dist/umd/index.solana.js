@@ -2,11 +2,10 @@
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@depay/solana-web3.js'), require('@depay/web3-client-solana'), require('ethers'), require('@depay/web3-tokens-solana'), require('@depay/web3-blockchains'), require('decimal.js')) :
   typeof define === 'function' && define.amd ? define(['exports', '@depay/solana-web3.js', '@depay/web3-client-solana', 'ethers', '@depay/web3-tokens-solana', '@depay/web3-blockchains', 'decimal.js'], factory) :
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.Web3Exchanges = {}, global.SolanaWeb3js, global.Web3Client, global.ethers, global.Web3Tokens, global.Web3Blockchains, global.Decimal));
-}(this, (function (exports, solanaWeb3_js, web3ClientSolana, ethers, Token, Blockchains, Decimal) { 'use strict';
+}(this, (function (exports, solanaWeb3_js, web3ClientSolana, ethers, web3TokensSolana, Blockchains, Decimal) { 'use strict';
 
   function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
-  var Token__default = /*#__PURE__*/_interopDefaultLegacy(Token);
   var Blockchains__default = /*#__PURE__*/_interopDefaultLegacy(Blockchains);
   var Decimal__default = /*#__PURE__*/_interopDefaultLegacy(Decimal);
 
@@ -255,7 +254,7 @@
   };
 
   let getAmount = async ({ amount, blockchain, address }) => {
-    return await Token__default['default'].BigNumber({ amount, blockchain, address })
+    return await web3TokensSolana.Token.BigNumber({ amount, blockchain, address })
   };
 
   let fixRouteParams = async ({
@@ -1810,7 +1809,7 @@
     try{ outAccountExists = !!(await web3ClientSolana.request({ blockchain: 'solana', address: account.toString() })); } catch (e2) {}
     if(!outAccountExists) {
       instructions.push(
-        await Token__default['default'].solana.createAssociatedTokenAccountInstruction({
+        await web3TokensSolana.Token.solana.createAssociatedTokenAccountInstruction({
           token,
           owner,
           payer: owner,
@@ -1861,7 +1860,7 @@
 
     return [
       // token_program
-      { pubkey: new solanaWeb3_js.PublicKey(Token__default['default'].solana.TOKEN_PROGRAM), isWritable: false, isSigner: false },
+      { pubkey: new solanaWeb3_js.PublicKey(web3TokensSolana.Token.solana.TOKEN_PROGRAM), isWritable: false, isSigner: false },
       // token_authority
       { pubkey: new solanaWeb3_js.PublicKey(fromAddress), isWritable: false, isSigner: true },
       // whirlpool_one
@@ -1965,7 +1964,7 @@
 
     return [
       // token_program
-      { pubkey: new solanaWeb3_js.PublicKey(Token__default['default'].solana.TOKEN_PROGRAM), isWritable: false, isSigner: false },
+      { pubkey: new solanaWeb3_js.PublicKey(web3TokensSolana.Token.solana.TOKEN_PROGRAM), isWritable: false, isSigner: false },
       // token_authority
       { pubkey: new solanaWeb3_js.PublicKey(fromAddress), isWritable: false, isSigner: true },
       // whirlpool
@@ -2058,21 +2057,21 @@
     const provider = await web3ClientSolana.getProvider('solana');
     
     if(startsWrapped || endsUnwrapped) {
-      const rent = await provider.getMinimumBalanceForRentExemption(Token__default['default'].solana.TOKEN_LAYOUT.span);
+      const rent = await provider.getMinimumBalanceForRentExemption(web3TokensSolana.Token.solana.TOKEN_LAYOUT.span);
       const keypair = solanaWeb3_js.Keypair.generate();
       wrappedAccount = keypair.publicKey.toString();
       const lamports = startsWrapped ? new solanaWeb3_js.BN(amountIn.toString()).add(new solanaWeb3_js.BN(rent)) :  new solanaWeb3_js.BN(rent);
       let createAccountInstruction = solanaWeb3_js.SystemProgram.createAccount({
         fromPubkey: new solanaWeb3_js.PublicKey(fromAddress),
         newAccountPubkey: new solanaWeb3_js.PublicKey(wrappedAccount),
-        programId: new solanaWeb3_js.PublicKey(Token__default['default'].solana.TOKEN_PROGRAM),
-        space: Token__default['default'].solana.TOKEN_LAYOUT.span,
+        programId: new solanaWeb3_js.PublicKey(web3TokensSolana.Token.solana.TOKEN_PROGRAM),
+        space: web3TokensSolana.Token.solana.TOKEN_LAYOUT.span,
         lamports
       });
       createAccountInstruction.signers = [keypair];
       instructions.push(createAccountInstruction);
       instructions.push(
-        Token__default['default'].solana.initializeAccountInstruction({
+        web3TokensSolana.Token.solana.initializeAccountInstruction({
           account: wrappedAccount,
           token: blockchain.wrapped.address,
           owner: fromAddress
@@ -2085,8 +2084,8 @@
       let amountSpecifiedIsInput = !!(amountInInput || amountOutMinInput);
       let amount = amountSpecifiedIsInput ? amountIn : amountOut;
       let otherAmountThreshold = amountSpecifiedIsInput ? amountOutMin : amountInMax;
-      let tokenAccountIn = startsWrapped ? new solanaWeb3_js.PublicKey(wrappedAccount) : new solanaWeb3_js.PublicKey(await Token__default['default'].solana.findProgramAddress({ owner: fromAddress, token: tokenIn }));
-      let tokenAccountOut = endsUnwrapped ? new solanaWeb3_js.PublicKey(wrappedAccount) : new solanaWeb3_js.PublicKey(await Token__default['default'].solana.findProgramAddress({ owner: fromAddress, token: tokenOut }));
+      let tokenAccountIn = startsWrapped ? new solanaWeb3_js.PublicKey(wrappedAccount) : new solanaWeb3_js.PublicKey(await web3TokensSolana.Token.solana.findProgramAddress({ owner: fromAddress, token: tokenIn }));
+      let tokenAccountOut = endsUnwrapped ? new solanaWeb3_js.PublicKey(wrappedAccount) : new solanaWeb3_js.PublicKey(await web3TokensSolana.Token.solana.findProgramAddress({ owner: fromAddress, token: tokenOut }));
       if(!endsUnwrapped) {
         await createTokenAccountIfNotExisting({ instructions, owner: fromAddress, token: tokenOut, account: tokenAccountOut });
       }
@@ -2116,11 +2115,11 @@
       let amountSpecifiedIsInput = !!(amountInInput || amountOutMinInput);
       let amount = amountSpecifiedIsInput ? amountIn : amountOut;
       let otherAmountThreshold = amountSpecifiedIsInput ? amountOutMin : amountInMax;
-      let tokenAccountIn = startsWrapped ? new solanaWeb3_js.PublicKey(wrappedAccount) : new solanaWeb3_js.PublicKey(await Token__default['default'].solana.findProgramAddress({ owner: fromAddress, token: tokenIn }));
+      let tokenAccountIn = startsWrapped ? new solanaWeb3_js.PublicKey(wrappedAccount) : new solanaWeb3_js.PublicKey(await web3TokensSolana.Token.solana.findProgramAddress({ owner: fromAddress, token: tokenIn }));
       let tokenMiddle = fixedPath[1];
-      let tokenAccountMiddle = new solanaWeb3_js.PublicKey(await Token__default['default'].solana.findProgramAddress({ owner: fromAddress, token: tokenMiddle }));
+      let tokenAccountMiddle = new solanaWeb3_js.PublicKey(await web3TokensSolana.Token.solana.findProgramAddress({ owner: fromAddress, token: tokenMiddle }));
       await createTokenAccountIfNotExisting({ instructions, owner: fromAddress, token: tokenMiddle, account: tokenAccountMiddle });
-      let tokenAccountOut = endsUnwrapped ? new solanaWeb3_js.PublicKey(wrappedAccount) : new solanaWeb3_js.PublicKey(await Token__default['default'].solana.findProgramAddress({ owner: fromAddress, token: tokenOut }));
+      let tokenAccountOut = endsUnwrapped ? new solanaWeb3_js.PublicKey(wrappedAccount) : new solanaWeb3_js.PublicKey(await web3TokensSolana.Token.solana.findProgramAddress({ owner: fromAddress, token: tokenOut }));
       if(!endsUnwrapped) {
         await createTokenAccountIfNotExisting({ instructions, owner: fromAddress, token: tokenOut, account: tokenAccountOut });
       }
@@ -2157,7 +2156,7 @@
     
     if(startsWrapped || endsUnwrapped) {
       instructions.push(
-        Token__default['default'].solana.closeAccountInstruction({
+        web3TokensSolana.Token.solana.closeAccountInstruction({
           account: wrappedAccount,
           owner: fromAddress
         })

@@ -9,7 +9,7 @@ import { resetCache, getProvider } from '@depay/web3-client'
 import { struct, u128, u64, u32, u8, publicKey, bool, BN, SystemProgram, PublicKey } from '@depay/solana-web3.js'
 import { SWAP_INSTRUCTION, TWO_HOP_SWAP_INSTRUCTION, getSwapInstructionKeys, getTwoHopSwapInstructionKeys } from 'src/exchanges/orca/route/transaction'
 import { testRouting } from 'tests/helpers/testRouting'
-import Token from '@depay/web3-tokens'
+import { Token } from '@depay/web3-tokens'
 
 describe('orca', () => {
   

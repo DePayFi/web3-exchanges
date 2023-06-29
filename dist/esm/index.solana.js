@@ -1,7 +1,7 @@
 import { struct, publicKey, u128, u64 as u64$1, seq, u8, u16, i32, bool, i128, BN, PublicKey, Buffer, Keypair, SystemProgram, TransactionInstruction } from '@depay/solana-web3.js';
 import { request, getProvider } from '@depay/web3-client-solana';
 import { ethers } from 'ethers';
-import Token from '@depay/web3-tokens-solana';
+import { Token } from '@depay/web3-tokens-solana';
 import Blockchains from '@depay/web3-blockchains';
 import Decimal from 'decimal.js';
 
