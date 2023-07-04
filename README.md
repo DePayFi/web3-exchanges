@@ -110,7 +110,6 @@ Decentralized exchange data is provided in the following structure:
 {
   blockchain: String (e.g. ethereum)
   name: String (e.g. uniswap_v2)
-  alternativeNames: Array (e.g. ['pancake'])
   label: String (e.g. Uniswap v2)
   logo: String (base64 encoded PNG)
   router: Object (contains important addresses and apis to interact with the exchange router)

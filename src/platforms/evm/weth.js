@@ -1,8 +1,8 @@
-let fixPath = (path) => path
+let getExchangePath = (path) => path
 
 let pathExists = async (blockchain, path) => {
-  if(fixPath(path).length <= 1) { return false }
-  if(fixPath(path).length >= 3) { return false }
+  if(getExchangePath(path).length <= 1) { return false }
+  if(getExchangePath(path).length >= 3) { return false }
   return (
     path.includes(blockchain.currency.address) &&
     path.includes(blockchain.wrapped.address)
@@ -13,11 +13,11 @@ let findPath = async (blockchain, { tokenIn, tokenOut }) => {
   if(
     ![tokenIn, tokenOut].includes(blockchain.currency.address) ||
     ![tokenIn, tokenOut].includes(blockchain.wrapped.address)
-  ) { return { path: undefined, fixedPath: undefined } }
+  ) { return { path: undefined, exchangePath: undefined } }
 
   let path = [tokenIn, tokenOut];
 
-  return { path, fixedPath: path }
+  return { path, exchangePath: path }
 }
 
 let getAmountIn = ({ path, amountOut, block }) => {

@@ -1,7 +1,7 @@
 # TOKEN TO TOKEN (1 pool)
 
 ```javascript
-let exchange = Web3Exchanges.find({ name: 'uniswap_v3' })
+let exchange = Web3Exchanges.uniswap_v3
 
 let route = await exchange.route({
   blockchain: 'ethereum',
@@ -17,7 +17,7 @@ let transaction = await route.getTransaction({ from })
 ```
 
 ```javascript
-let exchange = Web3Exchanges.find({ name: 'uniswap_v3' })
+let exchange = Web3Exchanges.uniswap_v3
 
 let route = await exchange.route({
   blockchain: 'ethereum',
@@ -33,7 +33,7 @@ let transaction = await route.getTransaction({ from })
 ```
 
 ```javascript
-let exchange = Web3Exchanges.find({ name: 'uniswap_v3' })
+let exchange = Web3Exchanges.uniswap_v3
 
 let route = await exchange.route({
   blockchain: 'ethereum',
@@ -49,7 +49,7 @@ let transaction = await route.getTransaction({ from })
 ```
 
 ```javascript
-let exchange = Web3Exchanges.find({ name: 'uniswap_v3' })
+let exchange = Web3Exchanges.uniswap_v3
 
 let route = await exchange.route({
   blockchain: 'ethereum',
@@ -67,7 +67,7 @@ let transaction = await route.getTransaction({ from })
 # TOKEN TO NATIVE (1 pool)
 
 ```javascript
-let exchange = Web3Exchanges.find({ name: 'uniswap_v3' })
+let exchange = Web3Exchanges.uniswap_v3
 
 let route = await exchange.route({
   blockchain: 'ethereum',
@@ -83,7 +83,7 @@ let transaction = await routes[0].getTransaction({ from })
 ```
 
 ```javascript
-let exchange = Web3Exchanges.find({ name: 'uniswap_v3' })
+let exchange = Web3Exchanges.uniswap_v3
 
 let route = await exchange.route({
   blockchain: 'ethereum',
@@ -99,7 +99,7 @@ let transaction = await routes[0].getTransaction({ from })
 ```
 
 ```javascript
-let exchange = Web3Exchanges.find({ name: 'uniswap_v3' })
+let exchange = Web3Exchanges.uniswap_v3
 
 let route = await exchange.route({
   blockchain: 'ethereum',
@@ -115,7 +115,7 @@ let transaction = await routes[0].getTransaction({ from })
 ```
 
 ```javascript
-let exchange = Web3Exchanges.find({ name: 'uniswap_v3' })
+let exchange = Web3Exchanges.uniswap_v3
 
 let route = await exchange.route({
   blockchain: 'ethereum',
@@ -133,7 +133,7 @@ let transaction = await routes[0].getTransaction({ from })
 # TOKEN TO TOKEN (2 pools)
 
 ```javascript
-let exchange = Web3Exchanges.find({ name: 'uniswap_v3' })
+let exchange = Web3Exchanges.uniswap_v3
 
 let route = await exchange.route({
   blockchain: 'ethereum',
@@ -151,7 +151,7 @@ wallet.sendTransaction(transaction)
 ```
 
 ```javascript
-let exchange = Web3Exchanges.find({ name: 'uniswap_v3' })
+let exchange = Web3Exchanges.uniswap_v3
 
 let route = await exchange.route({
   blockchain: 'ethereum',
@@ -169,7 +169,7 @@ wallet.sendTransaction(transaction)
 ```
 
 ```javascript
-let exchange = Web3Exchanges.find({ name: 'uniswap_v3' })
+let exchange = Web3Exchanges.uniswap_v3
 
 let route = await exchange.route({
   blockchain: 'ethereum',
@@ -187,7 +187,7 @@ wallet.sendTransaction(transaction)
 ```
 
 ```javascript
-let exchange = Web3Exchanges.find({ name: 'uniswap_v3' })
+let exchange = Web3Exchanges.uniswap_v3
 
 let route = await exchange.route({
   blockchain: 'ethereum',

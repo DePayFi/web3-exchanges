@@ -2172,9 +2172,10 @@ const all = [
   orca,
 ];
 
-all.solana = {
+all.solana = [
   orca
-};
+];
+all.solana.forEach((exchange)=>{ all.solana[exchange.name] = exchange; });
 
 var find = ({ blockchain, name }) => {
   if(blockchain) {

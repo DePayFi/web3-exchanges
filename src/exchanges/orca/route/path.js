@@ -9,9 +9,9 @@ const blockchain = Blockchains.solana
 // to be able to differentiate between SOL<>Token and WSOL<>Token swaps
 // as they are not the same!
 //
-let fixPath = (path) => {
+let getExchangePath = (path) => {
   if(!path) { return }
-  let fixedPath = path.map((token, index) => {
+  let exchangePath = path.map((token, index) => {
     if (
       token === blockchain.currency.address && path[index+1] != blockchain.wrapped.address &&
       path[index-1] != blockchain.wrapped.address
@@ -22,18 +22,18 @@ let fixPath = (path) => {
     }
   })
 
-  if(fixedPath[0] == blockchain.currency.address && fixedPath[1] == blockchain.wrapped.address) {
-    fixedPath.splice(0, 1)
-  } else if(fixedPath[fixedPath.length-1] == blockchain.currency.address && fixedPath[fixedPath.length-2] == blockchain.wrapped.address) {
-    fixedPath.splice(fixedPath.length-1, 1)
+  if(exchangePath[0] == blockchain.currency.address && exchangePath[1] == blockchain.wrapped.address) {
+    exchangePath.splice(0, 1)
+  } else if(exchangePath[exchangePath.length-1] == blockchain.currency.address && exchangePath[exchangePath.length-2] == blockchain.wrapped.address) {
+    exchangePath.splice(exchangePath.length-1, 1)
   }
 
-  return fixedPath
+  return exchangePath
 }
 
 let pathExists = async ({ path, amountIn, amountInMax, amountOut, amountOutMin }) => {
   if(path.length == 1) { return false }
-  path = fixPath(path)
+  path = getExchangePath(path)
   let pairs = []
   if((await getPairsWithPrice({ tokenIn: path[0], tokenOut: path[1], amountIn, amountInMax, amountOut, amountOutMin })).length > 0) {
     return true
@@ -46,7 +46,7 @@ let findPath = async ({ tokenIn, tokenOut, amountIn, amountOut, amountInMax, amo
   if(
     [tokenIn, tokenOut].includes(blockchain.currency.address) &&
     [tokenIn, tokenOut].includes(blockchain.wrapped.address)
-  ) { return { path: undefined, fixedPath: undefined } }
+  ) { return { path: undefined, exchangePath: undefined } }
 
   let path, stablesIn, stablesOut, stable
 
@@ -81,11 +81,11 @@ let findPath = async ({ tokenIn, tokenOut, amountIn, amountOut, amountInMax, amo
   } else if(path?.length && path[path.length-1] == blockchain.currency.address) {
     path.splice(path.length-1, 0, blockchain.wrapped.address)
   }
-  return { path, fixedPath: fixPath(path) }
+  return { path, exchangePath: getExchangePath(path) }
 }
 
 export {
   findPath,
-  fixPath,
+  getExchangePath,
   pathExists,
 }

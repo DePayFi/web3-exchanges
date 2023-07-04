@@ -1,7 +1,7 @@
 ## TOKEN<>TOKEN (1 Pool)
 
 ```javascript
-let exchange = Web3Exchanges.find('solana', 'orca')
+let exchange = Web3Exchanges.orca
 let route = await exchange.route({
   blockchain: 'solana',
   tokenIn: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', // USDC
@@ -18,7 +18,7 @@ wallet.sendTransaction(transaction)
 ```
 
 ```javascript
-let exchange = Web3Exchanges.find('solana', 'orca')
+let exchange = Web3Exchanges.orca
 let route = await exchange.route({
   blockchain: 'solana',
   tokenIn: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', // USDC
@@ -35,7 +35,7 @@ wallet.sendTransaction(transaction)
 ```
 
 ```javascript
-let exchange = Web3Exchanges.find('solana', 'orca')
+let exchange = Web3Exchanges.orca
 let route = await exchange.route({
   blockchain: 'solana',
   tokenIn: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', // USDC
@@ -52,7 +52,7 @@ wallet.sendTransaction(transaction)
 ```
 
 ```javascript
-let exchange = Web3Exchanges.find('solana', 'orca')
+let exchange = Web3Exchanges.orca
 let route = await exchange.route({
   blockchain: 'solana',
   tokenIn: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', // USDC
@@ -69,7 +69,7 @@ wallet.sendTransaction(transaction)
 ```
 
 ```javascript
-let exchange = Web3Exchanges.find('solana', 'orca')
+let exchange = Web3Exchanges.orca
 let route = await exchange.route({
   blockchain: 'solana',
   tokenIn: 'DePay1miDBPWXs6PVQrdC5Vch2jemgEPaiyXLNLLa2NF', // DEPAY
@@ -86,7 +86,7 @@ wallet.sendTransaction(transaction)
 ```
 
 ```javascript
-let exchange = Web3Exchanges.find('solana', 'orca')
+let exchange = Web3Exchanges.orca
 let route = await exchange.route({
   blockchain: 'solana',
   tokenIn: 'DePay1miDBPWXs6PVQrdC5Vch2jemgEPaiyXLNLLa2NF', // DEPAY
@@ -103,7 +103,7 @@ wallet.sendTransaction(transaction)
 ```
 
 ```javascript
-let exchange = Web3Exchanges.find('solana', 'orca')
+let exchange = Web3Exchanges.orca
 let route = await exchange.route({
   blockchain: 'solana',
   tokenIn: 'DePay1miDBPWXs6PVQrdC5Vch2jemgEPaiyXLNLLa2NF', // DEPAY
@@ -120,7 +120,7 @@ wallet.sendTransaction(transaction)
 ```
 
 ```javascript
-let exchange = Web3Exchanges.find('solana', 'orca')
+let exchange = Web3Exchanges.orca
 let route = await exchange.route({
   blockchain: 'solana',
   tokenIn: 'DePay1miDBPWXs6PVQrdC5Vch2jemgEPaiyXLNLLa2NF', // DEPAY
@@ -137,7 +137,7 @@ wallet.sendTransaction(transaction)
 ```
 
 ```javascript
-let exchange = Web3Exchanges.find('solana', 'orca')
+let exchange = Web3Exchanges.orca
 let route = await exchange.route({
   blockchain: 'solana',
   tokenIn: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', // USDC
@@ -154,7 +154,7 @@ wallet.sendTransaction(transaction)
 ```
 
 ```javascript
-let exchange = Web3Exchanges.find('solana', 'orca')
+let exchange = Web3Exchanges.orca
 let route = await exchange.route({
   blockchain: 'solana',
   tokenIn: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', // USDC
@@ -171,7 +171,7 @@ wallet.sendTransaction(transaction)
 ```
 
 ```javascript
-let exchange = Web3Exchanges.find('solana', 'orca')
+let exchange = Web3Exchanges.orca
 let route = await exchange.route({
   blockchain: 'solana',
   tokenIn: 'orcaEKTdK7LKz57vaAYr9QeNsVEPfiu6QeMU1kektZE', // ORCA
@@ -188,7 +188,7 @@ wallet.sendTransaction(transaction)
 ```
 
 ```javascript
-let exchange = Web3Exchanges.find('solana', 'orca')
+let exchange = Web3Exchanges.orca
 let route = await exchange.route({
   blockchain: 'solana',
   tokenIn: 'orcaEKTdK7LKz57vaAYr9QeNsVEPfiu6QeMU1kektZE', // ORCA
@@ -205,7 +205,7 @@ wallet.sendTransaction(transaction)
 ```
 
 ```javascript
-let exchange = Web3Exchanges.find('solana', 'orca')
+let exchange = Web3Exchanges.orca
 let route = await exchange.route({
   blockchain: 'solana',
   tokenIn: 'orcaEKTdK7LKz57vaAYr9QeNsVEPfiu6QeMU1kektZE', // ORCA
@@ -222,7 +222,7 @@ wallet.sendTransaction(transaction)
 ```
 
 ```javascript
-let exchange = Web3Exchanges.find('solana', 'orca')
+let exchange = Web3Exchanges.orca
 let route = await exchange.route({
   blockchain: 'solana',
   tokenIn: 'orcaEKTdK7LKz57vaAYr9QeNsVEPfiu6QeMU1kektZE', // ORCA
@@ -239,7 +239,7 @@ wallet.sendTransaction(transaction)
 ```
 
 ```javascript
-let exchange = Web3Exchanges.find('solana', 'orca')
+let exchange = Web3Exchanges.orca
 let route = await exchange.route({
   blockchain: 'solana',
   tokenIn: 'orcaEKTdK7LKz57vaAYr9QeNsVEPfiu6QeMU1kektZE', // ORCA
@@ -258,7 +258,7 @@ wallet.sendTransaction(transaction)
 ## SOL<>TOKEN
 
 ```javascript
-let exchange = Web3Exchanges.find('solana', 'orca')
+let exchange = Web3Exchanges.orca
 let route = await exchange.route({
   blockchain: 'solana',
   tokenIn: '11111111111111111111111111111111', // SOL
@@ -277,7 +277,7 @@ wallet.sendTransaction(transaction)
 ## TOKEN<>SOL
 
 ```javascript
-let exchange = Web3Exchanges.find('solana', 'orca')
+let exchange = Web3Exchanges.orca
 let route = await exchange.route({
   blockchain: 'solana',
   tokenIn: 'orcaEKTdK7LKz57vaAYr9QeNsVEPfiu6QeMU1kektZE', // ORCA
@@ -296,7 +296,7 @@ wallet.sendTransaction(transaction)
 ## TOKEN<>WSOL
 
 ```javascript
-let exchange = Web3Exchanges.find('solana', 'orca')
+let exchange = Web3Exchanges.orca
 let route = await exchange.route({
   blockchain: 'solana',
   tokenIn: 'orcaEKTdK7LKz57vaAYr9QeNsVEPfiu6QeMU1kektZE', // ORCA
@@ -315,7 +315,7 @@ wallet.sendTransaction(transaction)
 ## WSOL<>TOKEN
 
 ```javascript
-let exchange = Web3Exchanges.find('solana', 'orca')
+let exchange = Web3Exchanges.orca
 let route = await exchange.route({
   blockchain: 'solana',
   tokenIn: 'So11111111111111111111111111111111111111112', // WSOl
@@ -334,7 +334,7 @@ wallet.sendTransaction(transaction)
 ## TOKEN<>USDC<>TOKEN (2 Pools)
 
 ```javascript
-let exchange = Web3Exchanges.find('solana', 'orca')
+let exchange = Web3Exchanges.orca
 let route = await exchange.route({
   blockchain: 'solana',
   tokenIn: '11111111111111111111111111111111', // SOL
@@ -351,7 +351,7 @@ wallet.sendTransaction(transaction)
 ```
 
 ```javascript
-let exchange = Web3Exchanges.find('solana', 'orca')
+let exchange = Web3Exchanges.orca
 let route = await exchange.route({
   blockchain: 'solana',
   tokenIn: '11111111111111111111111111111111', // SOL
@@ -368,7 +368,7 @@ wallet.sendTransaction(transaction)
 ```
 
 ```javascript
-let exchange = Web3Exchanges.find('solana', 'orca')
+let exchange = Web3Exchanges.orca
 let route = await exchange.route({
   blockchain: 'solana',
   tokenIn: '11111111111111111111111111111111', // SOL
@@ -385,7 +385,7 @@ wallet.sendTransaction(transaction)
 ```
 
 ```javascript
-let exchange = Web3Exchanges.find('solana', 'orca')
+let exchange = Web3Exchanges.orca
 let route = await exchange.route({
   blockchain: 'solana',
   tokenIn: '11111111111111111111111111111111', // SOL
@@ -402,7 +402,7 @@ wallet.sendTransaction(transaction)
 ```
 
 ```javascript
-let exchange = Web3Exchanges.find('solana', 'orca')
+let exchange = Web3Exchanges.orca
 let route = await exchange.route({
   blockchain: 'solana',
   tokenIn: 'DePay1miDBPWXs6PVQrdC5Vch2jemgEPaiyXLNLLa2NF', // DEPAY
@@ -419,7 +419,7 @@ wallet.sendTransaction(transaction)
 ```
 
 ```javascript
-let exchange = Web3Exchanges.find('solana', 'orca')
+let exchange = Web3Exchanges.orca
 let route = await exchange.route({
   blockchain: 'solana',
   tokenIn: 'DePay1miDBPWXs6PVQrdC5Vch2jemgEPaiyXLNLLa2NF', // DEPAY
@@ -436,7 +436,7 @@ wallet.sendTransaction(transaction)
 ```
 
 ```javascript
-let exchange = Web3Exchanges.find('solana', 'orca')
+let exchange = Web3Exchanges.orca
 let route = await exchange.route({
   blockchain: 'solana',
   tokenIn: 'DePay1miDBPWXs6PVQrdC5Vch2jemgEPaiyXLNLLa2NF', // DEPAY
@@ -453,7 +453,7 @@ wallet.sendTransaction(transaction)
 ```
 
 ```javascript
-let exchange = Web3Exchanges.find('solana', 'orca')
+let exchange = Web3Exchanges.orca
 let route = await exchange.route({
   blockchain: 'solana',
   tokenIn: 'DePay1miDBPWXs6PVQrdC5Vch2jemgEPaiyXLNLLa2NF', // DEPAY
@@ -470,7 +470,7 @@ wallet.sendTransaction(transaction)
 ```
 
 ```javascript
-let exchange = Web3Exchanges.find('solana', 'orca')
+let exchange = Web3Exchanges.orca
 let route = await exchange.route({
   blockchain: 'solana',
   tokenIn: 'HxhWkVpk5NS4Ltg5nij2G671CKXFRKPK8vy271Ub4uEK', // HXRO
@@ -487,7 +487,7 @@ wallet.sendTransaction(transaction)
 ```
 
 ```javascript
-let exchange = Web3Exchanges.find('solana', 'orca')
+let exchange = Web3Exchanges.orca
 let route = await exchange.route({
   blockchain: 'solana',
   tokenIn: 'HxhWkVpk5NS4Ltg5nij2G671CKXFRKPK8vy271Ub4uEK', // HXRO
@@ -506,7 +506,7 @@ wallet.sendTransaction(transaction)
 ## SOL<>USDC<>TOKEN (2 Pools)
 
 ```javascript
-let exchange = Web3Exchanges.find('solana', 'orca')
+let exchange = Web3Exchanges.orca
 let route = await exchange.route({
   blockchain: 'solana',
   tokenIn: '11111111111111111111111111111111', // SOL
@@ -525,7 +525,7 @@ wallet.sendTransaction(transaction)
 ## TOKEN<>USDC<>SOL (2 Pools)
 
 ```javascript
-let exchange = Web3Exchanges.find('solana', 'orca')
+let exchange = Web3Exchanges.orca
 let route = await exchange.route({
   blockchain: 'solana',
   tokenIn: 'Saber2gLauYim4Mvftnrasomsv6NvAuncvMEZwcLpD1', // SBR
@@ -544,7 +544,7 @@ wallet.sendTransaction(transaction)
 ## TOKEN<>WSOL<>TOKEN
 
 ```javascript
-let exchange = Web3Exchanges.find('solana', 'orca')
+let exchange = Web3Exchanges.orca
 let route = await exchange.route({
   blockchain: 'solana',
   tokenIn: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', // USDC

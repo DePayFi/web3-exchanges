@@ -25,7 +25,7 @@ const route = ({
   if([amountIn, amountOut, amountInMax, amountOutMin].filter(Boolean).length < 1) { throw('You need to pass exactly one: amountIn, amountOut, amountInMax or amountOutMin') }
 
   return new Promise(async (resolve)=> {
-    let { path, fixedPath, pools } = await findPath({ blockchain, tokenIn, tokenOut, amountIn, amountOut, amountInMax, amountOutMin })
+    let { path, exchangePath, pools } = await findPath({ blockchain, tokenIn, tokenOut, amountIn, amountOut, amountInMax, amountOutMin })
     if (path === undefined || path.length == 0) { return resolve() }
     let [amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput] = [amountIn, amountOut, amountInMax, amountOutMin];
 
@@ -38,7 +38,7 @@ const route = ({
         exchange,
         blockchain,
         pools,
-        fixedPath,
+        exchangePath,
         amounts,
         tokenIn, tokenOut,
         amountIn, amountInMax, amountOut, amountOutMin,

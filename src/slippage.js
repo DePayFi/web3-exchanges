@@ -16,14 +16,19 @@ import { ethers } from 'ethers'
 import { supported } from './blockchains'
 
 const DEFAULT_SLIPPAGE = '0.5' // percent
+const STABLECOIN_SLIPPAGE = '0.1' // percent
 
-const getDefaultSlippage = ({ amountIn, amountOut })=>{
-  return DEFAULT_SLIPPAGE
+const getDefaultSlippage = ({ exchange, blockchain, pools, amountIn, amountOut })=>{
+  if(exchange.name === 'curve' && pools && pools[0]?.onlyStablecoins) {
+    return STABLECOIN_SLIPPAGE
+  } else {
+    return DEFAULT_SLIPPAGE
+  }
 }
 
-const calculateAmountInWithSlippage = async ({ exchange, blockchain, pools, fixedPath, amountIn, amountOut })=>{
+const calculateAmountInWithSlippage = async ({ exchange, blockchain, pools, exchangePath, amountIn, amountOut })=>{
 
-  let defaultSlippage = getDefaultSlippage({ amountIn, amountOut })
+  let defaultSlippage = getDefaultSlippage({ exchange, blockchain, pools, exchangePath, amountIn, amountOut })
 
   let newAmountInWithDefaultSlippageBN = amountIn.add(amountIn.mul(parseFloat(defaultSlippage)*100).div(10000))
 
@@ -41,7 +46,7 @@ const calculateAmountInWithSlippage = async ({ exchange, blockchain, pools, fixe
   const lastAmountsIn = await Promise.all(blocks.map(async (block)=>{
     let { amountIn } = await exchange.getAmounts({
       blockchain,
-      path: fixedPath,
+      path: exchangePath,
       pools,
       amountOut,
       block
@@ -107,7 +112,7 @@ const calculateAmountInWithSlippage = async ({ exchange, blockchain, pools, fixe
   return newAmountInWithDefaultSlippageBN
 }
 
-const calculateAmountOutLessSlippage = async ({ exchange, fixedPath, amountOut, amountIn })=>{
+const calculateAmountOutLessSlippage = async ({ exchange, exchangePath, amountOut, amountIn })=>{
   let defaultSlippage = getDefaultSlippage({ amountIn, amountOut })
 
   let newAmountOutWithoutDefaultSlippageBN = amountOut.sub(amountOut.mul(parseFloat(defaultSlippage)*100).div(10000))
@@ -119,7 +124,7 @@ const calculateAmountsWithSlippage = async ({
   exchange,
   blockchain,
   pools,
-  fixedPath,
+  exchangePath,
   amounts,
   tokenIn, tokenOut,
   amountIn, amountInMax, amountOut, amountOutMin,
@@ -127,12 +132,12 @@ const calculateAmountsWithSlippage = async ({
 })=>{
   if(amountOutMinInput || amountOutInput) {
     if(supported.evm.includes(exchange.blockchain || blockchain)) {
-      amountIn = amountInMax = await calculateAmountInWithSlippage({ exchange, blockchain, pools, fixedPath, amountIn, amountOut: (amountOutMinInput || amountOut) })
+      amountIn = amountInMax = await calculateAmountInWithSlippage({ exchange, blockchain, pools, exchangePath, amountIn, amountOut: (amountOutMinInput || amountOut) })
     } else if(supported.solana.includes(exchange.blockchain || blockchain)){
       let amountsWithSlippage = []
-      await Promise.all(fixedPath.map((step, index)=>{
+      await Promise.all(exchangePath.map((step, index)=>{
         if(index != 0) {
-          let amountWithSlippage = calculateAmountInWithSlippage({ exchange, pools, fixedPath: [fixedPath[index-1], fixedPath[index]], amountIn: amounts[index-1], amountOut: amounts[index] })
+          let amountWithSlippage = calculateAmountInWithSlippage({ exchange, pools, exchangePath: [exchangePath[index-1], exchangePath[index]], amountIn: amounts[index-1], amountOut: amounts[index] })
           amountWithSlippage.then((amount)=>amountsWithSlippage.push(amount))
           return amountWithSlippage
         }
@@ -144,11 +149,11 @@ const calculateAmountsWithSlippage = async ({
   } else if(amountInMaxInput || amountInInput) {
     if(supported.solana.includes(exchange.blockchain || blockchain)){
       let amountsWithSlippage = []
-      await Promise.all(fixedPath.map((step, index)=>{
-        if(index !== 0 && index < fixedPath.length-1) {
+      await Promise.all(exchangePath.map((step, index)=>{
+        if(index !== 0 && index < exchangePath.length-1) {
           amountsWithSlippage.unshift(amounts[index])
-        } else if(index === fixedPath.length-1) {
-          let amountWithSlippage = calculateAmountOutLessSlippage({ exchange, fixedPath: [fixedPath[index-1], fixedPath[index]], amountIn: amounts[index-1], amountOut: amounts[index] })
+        } else if(index === exchangePath.length-1) {
+          let amountWithSlippage = calculateAmountOutLessSlippage({ exchange, exchangePath: [exchangePath[index-1], exchangePath[index]], amountIn: amounts[index-1], amountOut: amounts[index] })
           amountWithSlippage.then((amount)=>{
             amountsWithSlippage.unshift(amount)
             return amount

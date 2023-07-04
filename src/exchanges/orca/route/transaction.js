@@ -15,7 +15,7 @@ import Token from '@depay/web3-tokens'
 import Blockchains from '@depay/web3-blockchains'
 import exchange from '../basics'
 import { Buffer, BN, Transaction, TransactionInstruction, SystemProgram, PublicKey, Keypair, struct, u64, u128, bool } from '@depay/solana-web3.js'
-import { fixPath } from './path'
+import { getExchangePath } from './path'
 import { getBestPair } from './pairs'
 
 const blockchain = Blockchains.solana
@@ -250,14 +250,14 @@ const getTransaction = async ({
   let transaction = { blockchain: 'solana' }
   let instructions = []
 
-  const fixedPath = fixPath(path)
-  if(fixedPath.length > 3) { throw 'Orca can only handle fixed paths with a max length of 3 (2 pools)!' }
-  const tokenIn = fixedPath[0]
-  const tokenMiddle = fixedPath.length == 3 ? fixedPath[1] : undefined
-  const tokenOut = fixedPath[fixedPath.length-1]
+  const exchangePath = getExchangePath(path)
+  if(exchangePath.length > 3) { throw 'Orca can only handle fixed paths with a max length of 3 (2 pools)!' }
+  const tokenIn = exchangePath[0]
+  const tokenMiddle = exchangePath.length == 3 ? exchangePath[1] : undefined
+  const tokenOut = exchangePath[exchangePath.length-1]
 
   let pairs, amountMiddle
-  if(fixedPath.length == 2) {
+  if(exchangePath.length == 2) {
     pairs = [await getBestPair({ tokenIn, tokenOut, amountIn: (amountInInput || amountInMaxInput), amountOut: (amountOutInput || amountOutMinInput) })]
   } else {
     if(amountInInput || amountInMaxInput) {
@@ -269,8 +269,8 @@ const getTransaction = async ({
     }
   }
 
-  let startsWrapped = (path[0] === blockchain.currency.address && fixedPath[0] === blockchain.wrapped.address)
-  let endsUnwrapped = (path[path.length-1] === blockchain.currency.address && fixedPath[fixedPath.length-1] === blockchain.wrapped.address)
+  let startsWrapped = (path[0] === blockchain.currency.address && exchangePath[0] === blockchain.wrapped.address)
+  let endsUnwrapped = (path[path.length-1] === blockchain.currency.address && exchangePath[exchangePath.length-1] === blockchain.wrapped.address)
   let wrappedAccount
   const provider = await getProvider('solana')
   
@@ -334,7 +334,7 @@ const getTransaction = async ({
     let amount = amountSpecifiedIsInput ? amountIn : amountOut
     let otherAmountThreshold = amountSpecifiedIsInput ? amountOutMin : amountInMax
     let tokenAccountIn = startsWrapped ? new PublicKey(wrappedAccount) : new PublicKey(await Token.solana.findProgramAddress({ owner: fromAddress, token: tokenIn }))
-    let tokenMiddle = fixedPath[1]
+    let tokenMiddle = exchangePath[1]
     let tokenAccountMiddle = new PublicKey(await Token.solana.findProgramAddress({ owner: fromAddress, token: tokenMiddle }))
     await createTokenAccountIfNotExisting({ instructions, owner: fromAddress, token: tokenMiddle, account: tokenAccountMiddle })
     let tokenAccountOut = endsUnwrapped ? new PublicKey(wrappedAccount) : new PublicKey(await Token.solana.findProgramAddress({ owner: fromAddress, token: tokenOut }))

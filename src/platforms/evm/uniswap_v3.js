@@ -24,9 +24,9 @@ const FEES = [100, 500, 3000, 10000]
 // to be able to differentiate between ETH<>Token and WETH<>Token swaps
 // as they are not the same!
 //
-const fixPath = (blockchain, exchange, path) => {
+const getExchangePath = (blockchain, exchange, path) => {
   if(!path) { return }
-  let fixedPath = path.map((token, index) => {
+  let exchangePath = path.map((token, index) => {
     if (
       token === Blockchains[blockchain].currency.address && path[index+1] != Blockchains[blockchain].wrapped.address &&
       path[index-1] != Blockchains[blockchain].wrapped.address
@@ -37,13 +37,13 @@ const fixPath = (blockchain, exchange, path) => {
     }
   })
 
-  if(fixedPath[0] == Blockchains[blockchain].currency.address && fixedPath[1] == Blockchains[blockchain].wrapped.address) {
-    fixedPath.splice(0, 1)
-  } else if(fixedPath[fixedPath.length-1] == Blockchains[blockchain].currency.address && fixedPath[fixedPath.length-2] == Blockchains[blockchain].wrapped.address) {
-    fixedPath.splice(fixedPath.length-1, 1)
+  if(exchangePath[0] == Blockchains[blockchain].currency.address && exchangePath[1] == Blockchains[blockchain].wrapped.address) {
+    exchangePath.splice(0, 1)
+  } else if(exchangePath[exchangePath.length-1] == Blockchains[blockchain].currency.address && exchangePath[exchangePath.length-2] == Blockchains[blockchain].wrapped.address) {
+    exchangePath.splice(exchangePath.length-1, 1)
   }
 
-  return fixedPath
+  return exchangePath
 }
 
 const getInputAmount = async (exchange, pool, outputAmount)=>{
@@ -81,7 +81,7 @@ const getOutputAmount = async (exchange, pool, inputAmount)=>{
 }
 
 const getBestPool = async ({ blockchain, exchange, path, amountIn, amountOut, block }) => {
-  path = fixPath(blockchain, exchange, path)
+  path = getExchangePath(blockchain, exchange, path)
   if(path.length > 2) { throw('Uniswap V3 can only check paths for up to 2 tokens!') }
 
   try {
@@ -139,7 +139,7 @@ const pathExists = async (blockchain, exchange, path, amountIn, amountOut, amoun
   try {
 
     let pools = (await Promise.all(FEES.map((fee)=>{
-      path = fixPath(blockchain, exchange, path)
+      path = getExchangePath(blockchain, exchange, path)
       return request({
         blockchain: Blockchains[blockchain].name,
         address: exchange[blockchain].factory.address,
@@ -159,7 +159,7 @@ const findPath = async ({ blockchain, exchange, tokenIn, tokenOut, amountIn, amo
   if(
     [tokenIn, tokenOut].includes(Blockchains[blockchain].currency.address) &&
     [tokenIn, tokenOut].includes(Blockchains[blockchain].wrapped.address)
-  ) { return { path: undefined, fixedPath: undefined } }
+  ) { return { path: undefined, exchangePath: undefined } }
 
   let path
   if (await pathExists(blockchain, exchange, [tokenIn, tokenOut], amountIn, amountOut, amountInMax, amountOutMin)) {
@@ -210,7 +210,7 @@ const findPath = async ({ blockchain, exchange, tokenIn, tokenOut, amountIn, amo
     path.splice(path.length-1, 0, Blockchains[blockchain].wrapped.address)
   }
 
-  return { path, pools, fixedPath: fixPath(blockchain, exchange, path) }
+  return { path, pools, exchangePath: getExchangePath(blockchain, exchange, path) }
 }
 
 let getAmountOut = (blockchain, exchange, { path, pools, amountIn }) => {
