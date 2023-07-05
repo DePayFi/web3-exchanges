@@ -1,6 +1,5 @@
 /*#if _EVM
 
-import curve from './exchanges/curve'
 import pancakeswap from './exchanges/pancakeswap'
 import quickswap from './exchanges/quickswap'
 import spookyswap from './exchanges/spookyswap'
@@ -17,7 +16,6 @@ import wxdai from './exchanges/wxdai'
 
 const exchanges = [
   uniswap_v3,
-  curve,
   uniswap_v2,
   pancakeswap,
   quickswap,
@@ -33,7 +31,6 @@ const exchanges = [
 ]
 
 exchanges.uniswap_v3 = uniswap_v3
-exchanges.curve = curve
 exchanges.uniswap_v2 = uniswap_v2
 exchanges.pancakeswap = pancakeswap
 exchanges.quickswap = quickswap
@@ -49,7 +46,6 @@ exchanges.wxdai = wxdai
 
 exchanges.ethereum = [
   uniswap_v3,
-  curve,
   uniswap_v2,
   weth,
 ]
@@ -64,7 +60,6 @@ exchanges.bsc.forEach((exchange)=>{ exchanges.bsc[exchange.name] = exchange })
 
 exchanges.polygon = [
   uniswap_v3,
-  curve,
   quickswap,
   wmatic,
 ]
@@ -72,21 +67,18 @@ exchanges.polygon.forEach((exchange)=>{ exchanges.polygon[exchange.name] = excha
 
 exchanges.optimism = [
   uniswap_v3,
-  curve,
   weth_optimism,
 ]
 exchanges.optimism.forEach((exchange)=>{ exchanges.optimism[exchange.name] = exchange })
 
 exchanges.arbitrum = [
   uniswap_v3,
-  curve,
   weth_arbitrum,
 ]
 exchanges.arbitrum.forEach((exchange)=>{ exchanges.arbitrum[exchange.name] = exchange })
 
 exchanges.fantom = [
   spookyswap,
-  curve,
   wftm,
 ]
 exchanges.fantom.forEach((exchange)=>{ exchanges.fantom[exchange.name] = exchange })
@@ -97,7 +89,6 @@ exchanges.avalanche = [
 exchanges.avalanche.forEach((exchange)=>{ exchanges.avalanche[exchange.name] = exchange })
 
 exchanges.gnosis = [
-  curve,
   wxdai,
 ]
 exchanges.gnosis.forEach((exchange)=>{ exchanges.gnosis[exchange.name] = exchange })
@@ -120,7 +111,6 @@ exchanges.solana.forEach((exchange)=>{ exchanges.solana[exchange.name] = exchang
 
 //#else */
 
-import curve from './exchanges/curve'
 import orca from './exchanges/orca'
 import pancakeswap from './exchanges/pancakeswap'
 import quickswap from './exchanges/quickswap'
@@ -139,7 +129,6 @@ import wxdai from './exchanges/wxdai'
 const exchanges = [
   orca,
   uniswap_v3,
-  curve,
   uniswap_v2,
   pancakeswap,
   quickswap,
@@ -156,7 +145,6 @@ const exchanges = [
 
 exchanges.orca = orca
 exchanges.uniswap_v3 = uniswap_v3
-exchanges.curve = curve
 exchanges.uniswap_v2 = uniswap_v2
 exchanges.pancakeswap = pancakeswap
 exchanges.quickswap = quickswap
@@ -172,7 +160,6 @@ exchanges.wxdai = wxdai
 
 exchanges.ethereum = [
   uniswap_v3,
-  curve,
   uniswap_v2,
   weth,
 ]
@@ -187,7 +174,6 @@ exchanges.bsc.forEach((exchange)=>{ exchanges.bsc[exchange.name] = exchange })
 
 exchanges.polygon = [
   uniswap_v3,
-  curve,
   quickswap,
   wmatic,
 ]
@@ -200,21 +186,18 @@ exchanges.solana.forEach((exchange)=>{ exchanges.solana[exchange.name] = exchang
 
 exchanges.optimism = [
   uniswap_v3,
-  curve,
   weth_optimism,
 ]
 exchanges.optimism.forEach((exchange)=>{ exchanges.optimism[exchange.name] = exchange })
 
 exchanges.arbitrum = [
   uniswap_v3,
-  curve,
   weth_arbitrum,
 ]
 exchanges.arbitrum.forEach((exchange)=>{ exchanges.arbitrum[exchange.name] = exchange })
 
 exchanges.fantom = [
   spookyswap,
-  curve,
   wftm
 ]
 exchanges.fantom.forEach((exchange)=>{ exchanges.fantom[exchange.name] = exchange })
@@ -225,7 +208,6 @@ exchanges.avalanche = [
 exchanges.avalanche.forEach((exchange)=>{ exchanges.avalanche[exchange.name] = exchange })
 
 exchanges.gnosis = [
-  curve,
   wxdai,
 ]
 exchanges.gnosis.forEach((exchange)=>{ exchanges.gnosis[exchange.name] = exchange })

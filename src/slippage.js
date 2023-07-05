@@ -16,14 +16,9 @@ import { ethers } from 'ethers'
 import { supported } from './blockchains'
 
 const DEFAULT_SLIPPAGE = '0.5' // percent
-const STABLECOIN_SLIPPAGE = '0.1' // percent
 
 const getDefaultSlippage = ({ exchange, blockchain, pools, amountIn, amountOut })=>{
-  if(exchange.name === 'curve' && pools && pools[0]?.onlyStablecoins) {
-    return STABLECOIN_SLIPPAGE
-  } else {
-    return DEFAULT_SLIPPAGE
-  }
+  return DEFAULT_SLIPPAGE
 }
 
 const calculateAmountInWithSlippage = async ({ exchange, blockchain, pools, exchangePath, amountIn, amountOut })=>{

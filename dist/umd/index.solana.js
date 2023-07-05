@@ -1,8 +1,8 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@depay/solana-web3.js'), require('@depay/web3-client-solana'), require('ethers'), require('@depay/web3-tokens-solana'), require('@depay/web3-blockchains'), require('decimal.js')) :
-  typeof define === 'function' && define.amd ? define(['exports', '@depay/solana-web3.js', '@depay/web3-client-solana', 'ethers', '@depay/web3-tokens-solana', '@depay/web3-blockchains', 'decimal.js'], factory) :
-  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.Web3Exchanges = {}, global.SolanaWeb3js, global.Web3Client, global.ethers, global.Web3Tokens, global.Web3Blockchains, global.Decimal));
-}(this, (function (exports, solanaWeb3_js, web3ClientSolana, ethers, Token, Blockchains, Decimal) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('@depay/solana-web3.js'), require('@depay/web3-client-solana'), require('ethers'), require('@depay/web3-tokens-solana'), require('@depay/web3-blockchains'), require('decimal.js')) :
+  typeof define === 'function' && define.amd ? define(['@depay/solana-web3.js', '@depay/web3-client-solana', 'ethers', '@depay/web3-tokens-solana', '@depay/web3-blockchains', 'decimal.js'], factory) :
+  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.Web3Exchanges = factory(global.SolanaWeb3js, global.Web3Client, global.ethers, global.Web3Tokens, global.Web3Blockchains, global.Decimal));
+}(this, (function (solanaWeb3_js, web3ClientSolana, ethers, Token, Blockchains, Decimal) { 'use strict';
 
   function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
@@ -60,7 +60,6 @@
   var basics = {
     blockchain: 'solana',
     name: 'orca',
-    alternativeNames: [],
     label: 'Orca',
     logo: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPCEtLSBHZW5lcmF0b3I6IEFkb2JlIElsbHVzdHJhdG9yIDI3LjIuMCwgU1ZHIEV4cG9ydCBQbHVnLUluIC4gU1ZHIFZlcnNpb246IDYuMDAgQnVpbGQgMCkgIC0tPgo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9ImthdG1hbl8xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4PSIwcHgiIHk9IjBweCIKCSB2aWV3Qm94PSIwIDAgNjAwIDQ1MCIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgNjAwIDQ1MDsiIHhtbDpzcGFjZT0icHJlc2VydmUiPgo8cGF0aCBmaWxsPSIjRkZEMTVDIiBkPSJNNDg4LjQsMjIyLjljMCwxMDMuOC04NC4xLDE4Ny45LTE4Ny45LDE4Ny45Yy0xMDMuOCwwLTE4Ny45LTg0LjEtMTg3LjktMTg3LjlDMTEyLjYsMTE5LjEsMTk2LjcsMzUsMzAwLjUsMzUKCUM0MDQuMiwzNSw0ODguNCwxMTkuMSw0ODguNCwyMjIuOXoiLz4KPHBhdGggZmlsbD0iI0ZGRkZGRiIgc3Ryb2tlPSIjMDAwMDAwIiBzdHJva2Utd2lkdGg9IjE3LjY3NTUiIGQ9Ik0yMDkuNSwyOTkuOGMxLjYtMS4xLDMuMS0yLjgsMy45LTUuMWMwLjgtMi42LDAuMy00LjksMC02LjJjMCwwLDAtMC4xLDAtMC4xbDAuMy0xLjhjMC45LDAuNSwxLjksMS4xLDMsMS45CgljMC4zLDAuMiwwLjcsMC41LDEuMSwwLjdjMC41LDAuNCwxLjEsMC44LDEuNCwxYzAuNiwwLjQsMS41LDEsMi41LDEuNWMyNS4xLDE1LjYsNDUuOCwyMiw2Mi4yLDIxLjJjMTctMC44LDI4LjktOS40LDM1LjEtMjEuOQoJYzUuOS0xMi4xLDYuMi0yNywyLTQwLjljLTQuMi0xMy45LTEzLTI3LjUtMjYuMi0zNi45Yy0yMi4yLTE1LjgtNDIuNS0zOS44LTUyLjctNjAuM2MtNS4yLTEwLjQtNy4zLTE4LjctNi43LTI0LjIKCWMwLjMtMi41LDEtNC4xLDItNS4xYzAuOS0xLDIuNi0yLjEsNS45LTIuNmM2LjktMS4xLDE1LTMuNiwyMy4xLTYuMmMzLjItMSw2LjMtMiw5LjUtMi45YzExLjctMy40LDI0LjItNi4zLDM3LjItNi4zCgljMjUuMywwLDU1LDExLDg2LjMsNTYuOGM0MC4yLDU4LjgsMTguMSwxMjQuNC0yOC4yLDE1OC45Yy0yMy4xLDE3LjItNTEuOSwyNi4zLTgxLjUsMjIuOUMyNjIuOSwzNDEuMywyMzQuOSwzMjcuOSwyMDkuNSwyOTkuOHoKCSBNMjE0LjIsMjg0LjZDMjE0LjIsMjg0LjYsMjE0LjIsMjg0LjcsMjE0LjIsMjg0LjZDMjE0LjEsMjg0LjcsMjE0LjIsMjg0LjYsMjE0LjIsMjg0LjZ6IE0yMTEuNiwyODUuOAoJQzIxMS42LDI4NS44LDIxMS43LDI4NS44LDIxMS42LDI4NS44QzIxMS43LDI4NS44LDIxMS42LDI4NS44LDIxMS42LDI4NS44eiIvPgo8cGF0aCBkPSJNMjMyLjUsMTI0LjNjMCwwLDcxLjgtMTkuMSw4Ny41LTE5LjFjMTUuNywwLDc4LjYsMzAuNSw5Ni45LDg2LjNjMjYsNzktNDQuNywxMzAuOS01Mi43LDEyNS44CgljNzYuMS02Mi45LTQ4LjQtMTc5LjEtMTA5LjYtMTcwLjRjLTcuNiwxLjEtMy40LDcuNi0zLjQsNy42bC0xLjcsMTdsLTEyLjctMjEuMkwyMzIuNSwxMjQuM3oiLz4KPHBhdGggZD0iTTQwNi41LDE2Ny42YzIyLjcsMzkuOSwxOCwxNy4xLDEyLjksNjIuN2M5LjMtMTUuMSwyMy45LTMuOCwyOS45LDJjMS4xLDEsMi45LDAuNCwyLjgtMS4xYy0wLjItNi44LTIuMi0yMS40LTEzLjQtMzcuMQoJQzQyMy40LDE3Mi42LDQwNi41LDE2Ny42LDQwNi41LDE2Ny42eiIvPgo8cGF0aCBmaWxsPSJub25lIiBzdHJva2U9IiMwMDAwMDAiIHN0cm9rZS13aWR0aD0iMC45OTMiIGQ9Ik00MTkuNCwyMzAuM2M1LTQ1LjYsOS43LTIyLjgtMTIuOS02Mi43YzAsMCwxNi45LDUsMzIuMywyNi41YzExLjIsMTUuNywxMy4xLDMwLjMsMTMuNCwzNy4xCgljMC4xLDEuNS0xLjcsMi4xLTIuOCwxLjFDNDQzLjMsMjI2LjUsNDI4LjcsMjE1LjMsNDE5LjQsMjMwLjN6IE00MTkuNCwyMzAuM2MwLjktMi4xLDIuMi01LjUsMi4yLTUuNSIvPgo8cGF0aCBkPSJNMjI0LDIyNC4yYy05LjYsMTYuMi0yOS4yLDE1LTI4LjgsMzQuM2MxNy41LDM5LDE3LjYsMzYuMiwxNy42LDM2LjJjMzIuNS0xOC4yLDE5LjEtNTguNSwxNC4zLTcwLjQKCUMyMjYuNiwyMjMsMjI0LjcsMjIzLDIyNCwyMjQuMnoiLz4KPHBhdGggZD0iTTE1MC40LDI2MC4xYzE4LjcsMi40LDI5LjgtMTMuOCw0NC44LTEuNmMxOS45LDM3LjgsMTcuNiwzNi4yLDE3LjYsMzYuMmMtMzQuNCwxNC40LTU3LjktMjEtNjQuMy0zMi4xCglDMTQ3LjgsMjYxLjMsMTQ5LDI1OS45LDE1MC40LDI2MC4xeiIvPgo8cGF0aCBkPSJNMzA2LjksMjM2YzAsMCwxOC43LDE5LjEsOC45LDIyLjFjLTEyLjItNy41LTM0LTEuNy00NC43LDEuOWMtMi42LDAuOS01LjItMS40LTQuMy00LjFjMy42LTEwLDEyLjYtMjguNiwyOS45LTMxCglDMzA2LjksMjIyLjQsMzA2LjksMjM2LDMwNi45LDIzNnoiLz4KPHBhdGggZmlsbD0iI0ZGRkZGRiIgZD0iTTMxOC4zLDE0Mi41Yy0yLjEtMy02LjQtMTEsNi44LTExYzEzLjIsMCwzMy4zLDE0LjksMzcuNCwyMC40Yy0xLjMsMy40LTkuOCw0LjEtMTQsMy44Yy00LjItMC4zLTExLjUtMS0xNy0zLjgKCUMzMjYsMTQ5LjIsMzIwLjUsMTQ1LjUsMzE4LjMsMTQyLjV6Ii8+Cjwvc3ZnPgo=',
     router: {
@@ -106,13 +105,13 @@
 
   const DEFAULT_SLIPPAGE = '0.5'; // percent
 
-  const getDefaultSlippage = ({ amountIn, amountOut })=>{
+  const getDefaultSlippage = ({ exchange, blockchain, pools, amountIn, amountOut })=>{
     return DEFAULT_SLIPPAGE
   };
 
-  const calculateAmountInWithSlippage = async ({ exchange, blockchain, pools, fixedPath, amountIn, amountOut })=>{
+  const calculateAmountInWithSlippage = async ({ exchange, blockchain, pools, exchangePath, amountIn, amountOut })=>{
 
-    let defaultSlippage = getDefaultSlippage({ amountIn, amountOut });
+    let defaultSlippage = getDefaultSlippage({ exchange, blockchain, pools, exchangePath, amountIn, amountOut });
 
     let newAmountInWithDefaultSlippageBN = amountIn.add(amountIn.mul(parseFloat(defaultSlippage)*100).div(10000));
 
@@ -130,7 +129,7 @@
     const lastAmountsIn = await Promise.all(blocks.map(async (block)=>{
       let { amountIn } = await exchange.getAmounts({
         blockchain,
-        path: fixedPath,
+        path: exchangePath,
         pools,
         amountOut,
         block
@@ -196,7 +195,7 @@
     return newAmountInWithDefaultSlippageBN
   };
 
-  const calculateAmountOutLessSlippage = async ({ exchange, fixedPath, amountOut, amountIn })=>{
+  const calculateAmountOutLessSlippage = async ({ exchange, exchangePath, amountOut, amountIn })=>{
     let defaultSlippage = getDefaultSlippage({ amountIn, amountOut });
 
     let newAmountOutWithoutDefaultSlippageBN = amountOut.sub(amountOut.mul(parseFloat(defaultSlippage)*100).div(10000));
@@ -208,7 +207,7 @@
     exchange,
     blockchain,
     pools,
-    fixedPath,
+    exchangePath,
     amounts,
     tokenIn, tokenOut,
     amountIn, amountInMax, amountOut, amountOutMin,
@@ -216,12 +215,12 @@
   })=>{
     if(amountOutMinInput || amountOutInput) {
       if(supported.evm.includes(exchange.blockchain || blockchain)) {
-        amountIn = amountInMax = await calculateAmountInWithSlippage({ exchange, blockchain, pools, fixedPath, amountIn, amountOut: (amountOutMinInput || amountOut) });
+        amountIn = amountInMax = await calculateAmountInWithSlippage({ exchange, blockchain, pools, exchangePath, amountIn, amountOut: (amountOutMinInput || amountOut) });
       } else if(supported.solana.includes(exchange.blockchain || blockchain)){
         let amountsWithSlippage = [];
-        await Promise.all(fixedPath.map((step, index)=>{
+        await Promise.all(exchangePath.map((step, index)=>{
           if(index != 0) {
-            let amountWithSlippage = calculateAmountInWithSlippage({ exchange, pools, fixedPath: [fixedPath[index-1], fixedPath[index]], amountIn: amounts[index-1], amountOut: amounts[index] });
+            let amountWithSlippage = calculateAmountInWithSlippage({ exchange, pools, exchangePath: [exchangePath[index-1], exchangePath[index]], amountIn: amounts[index-1], amountOut: amounts[index] });
             amountWithSlippage.then((amount)=>amountsWithSlippage.push(amount));
             return amountWithSlippage
           }
@@ -233,11 +232,11 @@
     } else if(amountInMaxInput || amountInInput) {
       if(supported.solana.includes(exchange.blockchain || blockchain)){
         let amountsWithSlippage = [];
-        await Promise.all(fixedPath.map((step, index)=>{
-          if(index !== 0 && index < fixedPath.length-1) {
+        await Promise.all(exchangePath.map((step, index)=>{
+          if(index !== 0 && index < exchangePath.length-1) {
             amountsWithSlippage.unshift(amounts[index]);
-          } else if(index === fixedPath.length-1) {
-            let amountWithSlippage = calculateAmountOutLessSlippage({ exchange, fixedPath: [fixedPath[index-1], fixedPath[index]], amountIn: amounts[index-1], amountOut: amounts[index] });
+          } else if(index === exchangePath.length-1) {
+            let amountWithSlippage = calculateAmountOutLessSlippage({ exchange, exchangePath: [exchangePath[index-1], exchangePath[index]], amountIn: amounts[index-1], amountOut: amounts[index] });
             amountWithSlippage.then((amount)=>{
               amountsWithSlippage.unshift(amount);
               return amount
@@ -368,7 +367,7 @@
     if([amountIn, amountOut, amountInMax, amountOutMin].filter(Boolean).length < 1) { throw('You need to pass exactly one: amountIn, amountOut, amountInMax or amountOutMin') }
 
     return new Promise(async (resolve)=> {
-      let { path, fixedPath, pools } = await findPath({ blockchain, tokenIn, tokenOut, amountIn, amountOut, amountInMax, amountOutMin });
+      let { path, exchangePath, pools } = await findPath({ blockchain, tokenIn, tokenOut, amountIn, amountOut, amountInMax, amountOutMin });
       if (path === undefined || path.length == 0) { return resolve() }
       let [amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput] = [amountIn, amountOut, amountInMax, amountOutMin];
 
@@ -381,7 +380,7 @@
           exchange,
           blockchain,
           pools,
-          fixedPath,
+          exchangePath,
           amounts,
           tokenIn, tokenOut,
           amountIn, amountInMax, amountOut, amountOutMin,
@@ -1637,9 +1636,9 @@
   // to be able to differentiate between SOL<>Token and WSOL<>Token swaps
   // as they are not the same!
   //
-  let fixPath = (path) => {
+  let getExchangePath = (path) => {
     if(!path) { return }
-    let fixedPath = path.map((token, index) => {
+    let exchangePath = path.map((token, index) => {
       if (
         token === blockchain$1.currency.address && path[index+1] != blockchain$1.wrapped.address &&
         path[index-1] != blockchain$1.wrapped.address
@@ -1650,18 +1649,18 @@
       }
     });
 
-    if(fixedPath[0] == blockchain$1.currency.address && fixedPath[1] == blockchain$1.wrapped.address) {
-      fixedPath.splice(0, 1);
-    } else if(fixedPath[fixedPath.length-1] == blockchain$1.currency.address && fixedPath[fixedPath.length-2] == blockchain$1.wrapped.address) {
-      fixedPath.splice(fixedPath.length-1, 1);
+    if(exchangePath[0] == blockchain$1.currency.address && exchangePath[1] == blockchain$1.wrapped.address) {
+      exchangePath.splice(0, 1);
+    } else if(exchangePath[exchangePath.length-1] == blockchain$1.currency.address && exchangePath[exchangePath.length-2] == blockchain$1.wrapped.address) {
+      exchangePath.splice(exchangePath.length-1, 1);
     }
 
-    return fixedPath
+    return exchangePath
   };
 
   let pathExists = async ({ path, amountIn, amountInMax, amountOut, amountOutMin }) => {
     if(path.length == 1) { return false }
-    path = fixPath(path);
+    path = getExchangePath(path);
     if((await getPairsWithPrice({ tokenIn: path[0], tokenOut: path[1], amountIn, amountInMax, amountOut, amountOutMin })).length > 0) {
       return true
     } else {
@@ -1673,7 +1672,7 @@
     if(
       [tokenIn, tokenOut].includes(blockchain$1.currency.address) &&
       [tokenIn, tokenOut].includes(blockchain$1.wrapped.address)
-    ) { return { path: undefined, fixedPath: undefined } }
+    ) { return { path: undefined, exchangePath: undefined } }
 
     let path, stablesIn, stablesOut, stable;
 
@@ -1708,7 +1707,7 @@
     } else if(_optionalChain([path, 'optionalAccess', _2 => _2.length]) && path[path.length-1] == blockchain$1.currency.address) {
       path.splice(path.length-1, 0, blockchain$1.wrapped.address);
     }
-    return { path, fixedPath: fixPath(path) }
+    return { path, exchangePath: getExchangePath(path) }
   };
 
   let getAmountsOut = async ({ path, amountIn, amountInMax }) => {
@@ -1751,7 +1750,7 @@
     amountInMax,
     amountOutMin
   }) => {
-    path = fixPath(path);
+    path = getExchangePath(path);
     let amounts;
     if (amountOut) {
       amounts = await getAmountsIn({ path, amountOut, tokenIn, tokenOut });
@@ -2027,14 +2026,14 @@
     let transaction = { blockchain: 'solana' };
     let instructions = [];
 
-    const fixedPath = fixPath(path);
-    if(fixedPath.length > 3) { throw 'Orca can only handle fixed paths with a max length of 3 (2 pools)!' }
-    const tokenIn = fixedPath[0];
-    const tokenMiddle = fixedPath.length == 3 ? fixedPath[1] : undefined;
-    const tokenOut = fixedPath[fixedPath.length-1];
+    const exchangePath = getExchangePath(path);
+    if(exchangePath.length > 3) { throw 'Orca can only handle fixed paths with a max length of 3 (2 pools)!' }
+    const tokenIn = exchangePath[0];
+    const tokenMiddle = exchangePath.length == 3 ? exchangePath[1] : undefined;
+    const tokenOut = exchangePath[exchangePath.length-1];
 
     let pairs;
-    if(fixedPath.length == 2) {
+    if(exchangePath.length == 2) {
       pairs = [await getBestPair({ tokenIn, tokenOut, amountIn: (amountInInput || amountInMaxInput), amountOut: (amountOutInput || amountOutMinInput) })];
     } else {
       if(amountInInput || amountInMaxInput) {
@@ -2046,8 +2045,8 @@
       }
     }
 
-    let startsWrapped = (path[0] === blockchain.currency.address && fixedPath[0] === blockchain.wrapped.address);
-    let endsUnwrapped = (path[path.length-1] === blockchain.currency.address && fixedPath[fixedPath.length-1] === blockchain.wrapped.address);
+    let startsWrapped = (path[0] === blockchain.currency.address && exchangePath[0] === blockchain.wrapped.address);
+    let endsUnwrapped = (path[path.length-1] === blockchain.currency.address && exchangePath[exchangePath.length-1] === blockchain.wrapped.address);
     let wrappedAccount;
     const provider = await web3ClientSolana.getProvider('solana');
     
@@ -2111,7 +2110,7 @@
       let amount = amountSpecifiedIsInput ? amountIn : amountOut;
       let otherAmountThreshold = amountSpecifiedIsInput ? amountOutMin : amountInMax;
       let tokenAccountIn = startsWrapped ? new solanaWeb3_js.PublicKey(wrappedAccount) : new solanaWeb3_js.PublicKey(await Token__default['default'].solana.findProgramAddress({ owner: fromAddress, token: tokenIn }));
-      let tokenMiddle = fixedPath[1];
+      let tokenMiddle = exchangePath[1];
       let tokenAccountMiddle = new solanaWeb3_js.PublicKey(await Token__default['default'].solana.findProgramAddress({ owner: fromAddress, token: tokenMiddle }));
       await createTokenAccountIfNotExisting({ instructions, owner: fromAddress, token: tokenMiddle, account: tokenAccountMiddle });
       let tokenAccountOut = endsUnwrapped ? new solanaWeb3_js.PublicKey(wrappedAccount) : new solanaWeb3_js.PublicKey(await Token__default['default'].solana.findProgramAddress({ owner: fromAddress, token: tokenOut }));
@@ -2173,29 +2172,16 @@
     })
   );
 
-  const all = [
+  const exchanges = [
     orca,
   ];
 
-  all.solana = [
+  exchanges.orca = orca;
+
+  exchanges.solana = [
     orca
   ];
-  all.solana.forEach((exchange)=>{ all.solana[exchange.name] = exchange; });
-
-  var find = ({ blockchain, name }) => {
-    if(blockchain) {
-      return all.find((exchange) => {
-        return (
-          (exchange.blockchain === blockchain) &&
-          (exchange.name === name || exchange.alternativeNames.includes(name))
-        )
-      })
-    } else {
-      return all.find((exchange) => {
-        return exchange.name === name || exchange.alternativeNames.includes(name)
-      })
-    }
-  };
+  exchanges.solana.forEach((exchange)=>{ exchanges.solana[exchange.name] = exchange; });
 
   let route = ({
     blockchain,
@@ -2209,7 +2195,7 @@
     amountInMin,
   }) => {
     return Promise.all(
-      all[blockchain].map((exchange) => {
+      exchanges[blockchain].map((exchange) => {
         return exchange.route({
           tokenIn,
           tokenOut,
@@ -2225,10 +2211,8 @@
     .then((routes)=>routes.filter(Boolean))
   };
 
-  exports.all = all;
-  exports.find = find;
-  exports.route = route;
+  exchanges.route = route;
 
-  Object.defineProperty(exports, '__esModule', { value: true });
+  return exchanges;
 
 })));
