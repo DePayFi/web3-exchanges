@@ -16,8 +16,6 @@ import { request } from '@depay/web3-client'
 
 import Blockchains from '@depay/web3-blockchains'
 
-const FEES = [100, 500, 3000, 10000]
-
 // Replaces 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE with the wrapped token and implies wrapping.
 //
 // We keep 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE internally
@@ -86,7 +84,7 @@ const getBestPool = async ({ blockchain, exchange, path, amountIn, amountOut, bl
 
   try {
 
-    let pools = (await Promise.all(FEES.map((fee)=>{
+    let pools = (await Promise.all(exchange.fees.map((fee)=>{
       return request({
         blockchain: Blockchains[blockchain].name,
         address: exchange[blockchain].factory.address,
@@ -138,7 +136,7 @@ const getBestPool = async ({ blockchain, exchange, path, amountIn, amountOut, bl
 const pathExists = async (blockchain, exchange, path, amountIn, amountOut, amountInMax, amountOutMin) => {
   try {
 
-    let pools = (await Promise.all(FEES.map((fee)=>{
+    let pools = (await Promise.all(exchange.fees.map((fee)=>{
       path = getExchangePath(blockchain, exchange, path)
       return request({
         blockchain: Blockchains[blockchain].name,

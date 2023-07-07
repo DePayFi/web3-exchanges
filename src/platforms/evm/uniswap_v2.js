@@ -79,7 +79,7 @@ const pathExists = async (blockchain, exchange, path) => {
     } else {
       return true
     }
-  } catch { return false }
+  } catch (e){ console.log('e', e); return false }
 }
 
 const findPath = async (blockchain, exchange, { tokenIn, tokenOut }) => {

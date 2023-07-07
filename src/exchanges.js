@@ -1,8 +1,10 @@
 /*#if _EVM
 
 import pancakeswap from './exchanges/pancakeswap'
+import pancakeswap_v3 from './exchanges/pancakeswap_v3'
 import quickswap from './exchanges/quickswap'
 import spookyswap from './exchanges/spookyswap'
+import trader_joe_v2_1 from './exchanges/trader_joe_v2_1'
 import uniswap_v2 from './exchanges/uniswap_v2'
 import uniswap_v3 from './exchanges/uniswap_v3'
 import wavax from './exchanges/wavax'
@@ -16,9 +18,11 @@ import wxdai from './exchanges/wxdai'
 
 const exchanges = [
   uniswap_v3,
+  pancakeswap_v3,
   uniswap_v2,
   pancakeswap,
   quickswap,
+  trader_joe_v2_1,
   spookyswap,
   weth,
   weth_optimism,
@@ -33,7 +37,9 @@ const exchanges = [
 exchanges.uniswap_v3 = uniswap_v3
 exchanges.uniswap_v2 = uniswap_v2
 exchanges.pancakeswap = pancakeswap
+exchanges.pancakeswap_v3 = pancakeswap_v3
 exchanges.quickswap = quickswap
+exchanges.trader_joe_v2_1 = trader_joe_v2_1
 exchanges.spookyswap = spookyswap
 exchanges.weth = weth
 exchanges.weth_optimism = weth_optimism
@@ -52,6 +58,7 @@ exchanges.ethereum = [
 exchanges.ethereum.forEach((exchange)=>{ exchanges.ethereum[exchange.name] = exchange })
 
 exchanges.bsc = [
+  pancakeswap_v3,
   uniswap_v3,
   pancakeswap,
   wbnb,
@@ -84,6 +91,7 @@ exchanges.fantom = [
 exchanges.fantom.forEach((exchange)=>{ exchanges.fantom[exchange.name] = exchange })
 
 exchanges.avalanche = [
+  trader_joe_v2_1,
   wavax,
 ]
 exchanges.avalanche.forEach((exchange)=>{ exchanges.avalanche[exchange.name] = exchange })
@@ -113,8 +121,10 @@ exchanges.solana.forEach((exchange)=>{ exchanges.solana[exchange.name] = exchang
 
 import orca from './exchanges/orca'
 import pancakeswap from './exchanges/pancakeswap'
+import pancakeswap_v3 from './exchanges/pancakeswap_v3'
 import quickswap from './exchanges/quickswap'
 import spookyswap from './exchanges/spookyswap'
+import trader_joe_v2_1 from './exchanges/trader_joe_v2_1'
 import uniswap_v2 from './exchanges/uniswap_v2'
 import uniswap_v3 from './exchanges/uniswap_v3'
 import wavax from './exchanges/wavax'
@@ -129,8 +139,10 @@ import wxdai from './exchanges/wxdai'
 const exchanges = [
   orca,
   uniswap_v3,
+  pancakeswap_v3,
   uniswap_v2,
   pancakeswap,
+  trader_joe_v2_1,
   quickswap,
   spookyswap,
   weth,
@@ -147,6 +159,8 @@ exchanges.orca = orca
 exchanges.uniswap_v3 = uniswap_v3
 exchanges.uniswap_v2 = uniswap_v2
 exchanges.pancakeswap = pancakeswap
+exchanges.pancakeswap_v3 = pancakeswap_v3
+exchanges.trader_joe_v2_1 = trader_joe_v2_1
 exchanges.quickswap = quickswap
 exchanges.spookyswap = spookyswap
 exchanges.weth = weth
@@ -166,6 +180,7 @@ exchanges.ethereum = [
 exchanges.ethereum.forEach((exchange)=>{ exchanges.ethereum[exchange.name] = exchange })
 
 exchanges.bsc = [
+  pancakeswap_v3,
   uniswap_v3,
   pancakeswap,
   wbnb,
@@ -203,6 +218,7 @@ exchanges.fantom = [
 exchanges.fantom.forEach((exchange)=>{ exchanges.fantom[exchange.name] = exchange })
 
 exchanges.avalanche = [
+  trader_joe_v2_1,
   wavax,
 ]
 exchanges.avalanche.forEach((exchange)=>{ exchanges.avalanche[exchange.name] = exchange })
