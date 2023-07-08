@@ -2,29 +2,33 @@ import Blockchains from '@depay/web3-blockchains'
 import Exchange from '../classes/Exchange'
 import WETH from '../platforms/evm/weth'
 
-const blockchain = Blockchains.gnosis
-
 const exchange = {
-  blockchain: 'gnosis',
+  
   name: 'wxdai',
   label: 'Wrapped XDAI',
-  logo: blockchain.wrapped.logo,
-  wrapper: {
-    address: blockchain.wrapped.address,
-    api: WETH.WETH
-  },
+  logo: Blockchains.gnosis.wrapped.logo,
+
   slippage: false,
+
+  blockchain: 'gnosis',
+  
+  gnosis: {
+    router: {
+      address: Blockchains.gnosis.wrapped.address,
+      api: WETH.WETH
+    },
+  }
 }
 
 export default new Exchange(
 
   Object.assign(exchange, {
-    findPath: ({ tokenIn, tokenOut })=>
+    findPath: ({ blockchain, tokenIn, tokenOut })=>
       WETH.findPath(blockchain, { tokenIn, tokenOut }),
-    pathExists: (path)=>
+    pathExists: (blockchain, path)=>
       WETH.pathExists(blockchain, path),
     getAmounts: WETH.getAmounts,
-    getTransaction: ({ path, amountIn, amountInMax, amountOut, amountOutMin, amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput, fromAddress })=>
+    getTransaction: ({ blockchain, path, amountIn, amountInMax, amountOut, amountOutMin, amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput, fromAddress })=>
       WETH.getTransaction(blockchain, exchange ,{ path, amountIn, amountInMax, amountOut, amountOutMin, amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput, fromAddress }),
   })
 )
