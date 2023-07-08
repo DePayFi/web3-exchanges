@@ -1,4 +1,4 @@
-import { find } from 'src'
+import Exchanges from 'src'
 import UniswapV3 from 'src/platforms/evm/uniswap_v3'
 
 describe('uniswap_v3', () => {

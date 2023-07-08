@@ -1,6 +1,6 @@
 import Blockchains from '@depay/web3-blockchains'
 import { ethers } from 'ethers'
-import { find } from 'src'
+import Exchanges from 'src'
 import { mock, resetMocks } from '@depay/web3-mock'
 import { mockPool } from 'tests/mocks/solana/orca'
 import { getProvider, resetCache } from '@depay/web3-client'
@@ -18,7 +18,7 @@ describe('orca', () => {
     mock({ provider, blockchain, accounts: { return: accounts } })
   })
 
-  let exchange = find({ blockchain: 'solana', name: 'orca' })
+  let exchange = Exchanges.orca
   let fromAddress = '2UgCJaHU5y8NC4uWQcZYeV9a5RyYLF7iKYCybCsdFFD1'
 
   it('provides amounts for amountIn, amountInMax, amountOut and amountOutMin', async ()=> {

@@ -9,7 +9,7 @@ describe('weth', () => {
   describe('basics', ()=> {
     
     it('provides basic structured data for weth', ()=> {
-      let exchange = find({ blockchain: 'ethereum', name: 'weth' })
+      let exchange = Exchanges.weth
       expect(exchange.name).toEqual('weth')
       expect(exchange.blockchain).toEqual('ethereum')
       expect(exchange.label).toEqual('Wrapped Ethereum')

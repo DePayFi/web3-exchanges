@@ -1,7 +1,7 @@
 import Blockchains from '@depay/web3-blockchains'
 import Route from 'src/classes/Route'
 import { ethers } from 'ethers'
-import { find } from 'src'
+import Exchanges from 'src'
 import { getTickArrays } from 'src/exchanges/orca/route/price/ticks'
 import { mock, anything, resetMocks } from '@depay/web3-mock'
 import { mockPool, mockPools, mockTransactionKeys, getMockedPool } from 'tests/mocks/solana/orca'
@@ -16,7 +16,7 @@ describe('orca', () => {
   const blockchain = 'solana'
   const fromAddress = '2UgCJaHU5y8NC4uWQcZYeV9a5RyYLF7iKYCybCsdFFD1'
   const accounts = [fromAddress]
-  const exchange = find({ blockchain: 'solana', name: 'orca' })
+  const exchange = Exchanges.orca
   const decimalsIn = 6
   const decimalsOut = 6
   const aToB = false // current tick mocking only supports aToB false

@@ -1,11 +1,11 @@
 import Blockchains from '@depay/web3-blockchains'
-import { find } from 'src'
+import Exchanges from 'src'
 
 describe('wmatic', () => {
   
   const blockchain = 'polygon'
   const accounts = ['0xd8da6bf26964af9d7eed9e03e53415d37aa96045']
-  const exchange = find({ blockchain: 'polygon', name: 'wmatic' })
+  const exchange = Exchanges.wmatic
   const fromAddress = '0x5Af489c8786A018EC4814194dC8048be1007e390'
   const toAddress = '0x5Af489c8786A018EC4814194dC8048be1007e390'
   

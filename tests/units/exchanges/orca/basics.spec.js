@@ -1,5 +1,5 @@
 import { ethers } from 'ethers'
-import { find } from 'src'
+import Exchanges from 'src'
 import { WHIRLPOOL_LAYOUT } from 'src/exchanges/orca/apis'
 
 describe('orca', () => {
@@ -7,7 +7,7 @@ describe('orca', () => {
   describe('basics', ()=> {
     
     it('provides basic structured data for orca', ()=> {
-      let exchange = find({ blockchain: 'solana', name: 'orca' })
+      let exchange = Exchanges.orca
       expect(exchange.name).toEqual('orca')
       expect(exchange.blockchain).toEqual('solana')
       expect(exchange.label).toEqual('Orca')

@@ -1,7 +1,7 @@
 import Route from 'src/classes/Route'
 import Blockchains from '@depay/web3-blockchains'
 import { ethers } from 'ethers'
-import { find } from 'src'
+import Exchanges from 'src'
 import { getWallets } from '@depay/web3-wallets'
 import { mock, resetMocks, anything } from '@depay/web3-mock'
 import { mockDecimals } from 'tests/mocks/token'
@@ -12,7 +12,7 @@ describe('weth', () => {
   
   const blockchain = 'ethereum'
   const accounts = ['0xd8da6bf26964af9d7eed9e03e53415d37aa96045']
-  const exchange = find({ blockchain: 'ethereum', name: 'weth' })
+  const exchange = Exchanges.weth
   const fromAddress = accounts[0]
   const toAddress = accounts[0]
   

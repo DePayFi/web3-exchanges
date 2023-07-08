@@ -1,5 +1,5 @@
 import Blockchains from '@depay/web3-blockchains'
-import { find } from 'src'
+import Exchanges from 'src'
 import WETH from 'src/platforms/evm/weth'
 
 const blockchain = Blockchains.polygon
@@ -9,7 +9,7 @@ describe('wmatic', () => {
   describe('basics', ()=> {
     
     it('provides basic structured data for wmatic', ()=> {
-      let exchange = find({ blockchain: 'polygon', name: 'wmatic' })
+      let exchange = Exchanges.wmatic
       expect(exchange.name).toEqual('wmatic')
       expect(exchange.blockchain).toEqual('polygon')
       expect(exchange.label).toEqual('Wrapped MATIC')

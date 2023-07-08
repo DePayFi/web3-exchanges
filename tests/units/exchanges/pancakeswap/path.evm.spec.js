@@ -1,5 +1,5 @@
 import Blockchains from '@depay/web3-blockchains'
-import { find } from 'dist/esm/index.evm'
+import Exchanges from 'dist/esm/index.evm'
 import { getProvider, resetCache } from '@depay/web3-client-evm'
 import { mock, resetMocks } from '@depay/web3-mock'
 import { mockDecimals } from 'tests/mocks/token'
@@ -8,7 +8,7 @@ import Token from '@depay/web3-tokens-evm'
 
 describe('pancakeswap', () => {
   
-  const exchange = find({ blockchain: 'bsc', name: 'pancakeswap' })
+  const exchange = Exchanges.pancakeswap
   const blockchain = 'bsc'
   const accounts = ['0xd8da6bf26964af9d7eed9e03e53415d37aa96045']
   

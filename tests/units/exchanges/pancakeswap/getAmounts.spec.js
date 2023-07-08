@@ -1,6 +1,6 @@
 import PancakeSwap from 'src/exchanges/pancakeswap'
 import { ethers } from 'ethers'
-import { find } from 'src'
+import Exchanges from 'src'
 import { mock, resetMocks } from '@depay/web3-mock'
 import { getProvider, resetCache } from '@depay/web3-client'
 
@@ -8,7 +8,7 @@ describe('pancakeswap', () => {
   
   const blockchain = 'bsc'
   const accounts = ['0xd8da6bf26964af9d7eed9e03e53415d37aa96045']
-  const exchange = find({ blockchain: 'bsc', name: 'pancakeswap' })
+  const exchange = Exchanges.pancakeswap
   const pair = '0xEF8cD6Cb5c841A4f02986e8A8ab3cC545d1B8B6d'
   const fromAddress = '0x5Af489c8786A018EC4814194dC8048be1007e390'
   const toAddress = '0x5Af489c8786A018EC4814194dC8048be1007e390'

@@ -1,10 +1,10 @@
 import Blockchains from '@depay/web3-blockchains'
-import { find } from 'src'
+import Exchanges from 'src'
 import { mock, resetMocks } from '@depay/web3-mock'
 
 describe('weth', () => {
 
-  const exchange = find({ blockchain: 'ethereum', name: 'weth' })
+  const exchange = Exchanges.weth
   const blockchain = 'ethereum'
 
   describe('pathExists', ()=>{

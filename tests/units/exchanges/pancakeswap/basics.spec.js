@@ -1,4 +1,4 @@
-import { find } from 'src'
+import Exchanges from 'src'
 import UniswapV2 from 'src/platforms/evm/uniswap_v2'
 
 describe('pancakswap', () => {
@@ -6,7 +6,7 @@ describe('pancakswap', () => {
   describe('basics', ()=> {
     
     it('provides basic structured data for pancakeswap', ()=> {
-      let exchange = find({ blockchain: 'bsc', name: 'pancakeswap' })
+      let exchange = Exchanges.pancakeswap
       expect(exchange.name).toEqual('pancakeswap')
       expect(exchange.blockchain).toEqual('bsc')
       expect(exchange.label).toEqual('PancakeSwap')

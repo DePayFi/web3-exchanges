@@ -1,4 +1,4 @@
-import Exchanges from 'src'
+import Exchanges from 'dist/esm/index.evm'
 
 describe('Exchanges', () => {
   

@@ -1,8 +1,8 @@
-import { find } from 'dist/esm/index.solana'
+import Exchanges from 'dist/esm/index.solana'
 
 describe('find', () => {
   
   it('provides a dex by name', () => {
-    expect(find({ blockchain: 'solana', name: 'orca' }).label).toEqual('Orca')
+    expect(Exchanges.orca.label).toEqual('Orca')
   });
 });

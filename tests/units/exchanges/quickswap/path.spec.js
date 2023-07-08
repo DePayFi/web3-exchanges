@@ -1,5 +1,5 @@
 import Blockchains from '@depay/web3-blockchains'
-import { find } from 'src'
+import Exchanges from 'src'
 import { mock, resetMocks } from '@depay/web3-mock'
 import { mockDecimals } from 'tests/mocks/token'
 import { mockPair } from 'tests/mocks/evm/uniswap_v2'
@@ -8,7 +8,7 @@ import Token from '@depay/web3-tokens'
 
 describe('quickswap', () => {
   
-  const exchange = find({ blockchain: 'polygon', name: 'quickswap' })
+  const exchange = Exchanges.quickswap
   const blockchain = 'polygon'
   const accounts = ['0xd8da6bf26964af9d7eed9e03e53415d37aa96045']
   
