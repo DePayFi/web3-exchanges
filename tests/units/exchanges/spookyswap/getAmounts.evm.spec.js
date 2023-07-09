@@ -1,5 +1,5 @@
 import { ethers } from 'ethers'
-import { find } from 'dist/esm/index.evm'
+import Exchanges from 'dist/esm/index.evm'
 import { mock, resetMocks } from '@depay/web3-mock'
 import { getProvider, resetCache } from '@depay/web3-client-evm'
 

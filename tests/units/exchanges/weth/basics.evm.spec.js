@@ -1,5 +1,5 @@
 import Blockchains from '@depay/web3-blockchains'
-import { find } from 'dist/esm/index.evm'
+import Exchanges from 'dist/esm/index.evm'
 import WETH from 'src/platforms/evm/weth'
 
 const blockchain = Blockchains.ethereum

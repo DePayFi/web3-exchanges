@@ -1,5 +1,5 @@
 import Blockchains from '@depay/web3-blockchains'
-import { find } from 'dist/esm/index.evm'
+import Exchanges from 'dist/esm/index.evm'
 import { mock, resetMocks } from '@depay/web3-mock'
 import { mockDecimals } from 'tests/mocks/token'
 import { mockPair } from 'tests/mocks/evm/uniswap_v2'

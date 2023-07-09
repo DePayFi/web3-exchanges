@@ -3,7 +3,7 @@ import { mock, resetMocks } from '@depay/web3-mock'
 import { mockDecimals } from 'tests/mocks/token'
 import { mockPair, mockAmounts } from 'tests/mocks/evm/uniswap_v2'
 import { resetCache, getProvider } from '@depay/web3-client'
-import { route, all } from 'src'
+import Exchanges from 'src'
 import { supported } from 'src/blockchains'
 
 describe('route', ()=> {
@@ -37,7 +37,7 @@ describe('route', ()=> {
     let slippage = ethers.BigNumber.from('215000000000000000')
 
 
-    let routes = await route({
+    let routes = await Exchanges.route({
       blockchain,
       tokenIn: tokenIn,
       tokenOut: tokenOut,

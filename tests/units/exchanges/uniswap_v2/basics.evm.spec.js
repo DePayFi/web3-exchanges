@@ -1,4 +1,4 @@
-import { find } from 'dist/esm/index.evm'
+import Exchanges from 'dist/esm/index.evm'
 import UniswapV2 from 'src/platforms/evm/uniswap_v2'
 
 describe('uniswap_v2', () => {
