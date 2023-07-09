@@ -9,7 +9,7 @@ import { resetCache, getProvider } from '@depay/web3-client-evm'
 describe('uniswap_v3', () => {
   
   const accounts = ['0xd8da6bf26964af9d7eed9e03e53415d37aa96045']
-  const exchange = find({ name: 'uniswap_v3' })
+  const exchange = Exchanges.uniswap_v3
   const pair = '0xEF8cD6Cb5c841A4f02986e8A8ab3cC545d1B8B6d'
   const pair2 = '0x08B277154218CCF3380CAE48d630DA13462E3950'
   const fromAddress = '0x5Af489c8786A018EC4814194dC8048be1007e390'
