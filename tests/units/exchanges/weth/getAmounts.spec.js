@@ -17,6 +17,7 @@ describe('weth', () => {
       const amount = '100000000000'
       
       let { amountIn, amountOut, amountInMax, amountOutMin } = await exchange.getAmounts({
+        blockchain,
         path,
         amountOut: amount
       })
@@ -33,6 +34,7 @@ describe('weth', () => {
       const amount = '100000000000'
       
       let { amountIn } = await exchange.getAmounts({
+        blockchain,
         path,
         amountOut: amount
       })

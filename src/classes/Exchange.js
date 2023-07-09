@@ -17,7 +17,7 @@ const route = ({
   getTransaction,
   slippage,
 }) => {
-  
+
   tokenIn = fixAddress(tokenIn)
   tokenOut = fixAddress(tokenOut)
 
@@ -95,7 +95,15 @@ class Exchange {
     amountInMin,
   }) {
     if(tokenIn === tokenOut){ return Promise.resolve() }
-    
+
+    if(blockchain === undefined) {
+      if(this.scope) { 
+        blockchain = this.scope
+      } else if (this.blockchains.length === 1) {
+        blockchain = this.blockchains[0]
+      }
+    }
+
     preflight({
       blockchain,
       exchange: this,
@@ -112,7 +120,7 @@ class Exchange {
     return await route({
       ...
       await fixRouteParams({
-        blockchain: blockchain || this.blockchain,
+        blockchain: blockchain,
         exchange: this,
         tokenIn,
         tokenOut,

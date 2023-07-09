@@ -20,15 +20,19 @@ const exchange = {
   }
 }
 
-export default new Exchange(
+export default (scope)=>{
+  
+  return new Exchange(
 
-  Object.assign(exchange, {
-    findPath: ({ blockchain, tokenIn, tokenOut })=>
-      WETH.findPath(blockchain, { tokenIn, tokenOut }),
-    pathExists: (blockchain, path)=>
-      WETH.pathExists(blockchain, path),
-    getAmounts: WETH.getAmounts,
-    getTransaction: ({ blockchain, path, amountIn, amountInMax, amountOut, amountOutMin, amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput, fromAddress })=>
-      WETH.getTransaction(blockchain, exchange ,{ path, amountIn, amountInMax, amountOut, amountOutMin, amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput, fromAddress }),
-  })
-)
+    Object.assign(exchange, {
+      scope,
+      findPath: ({ blockchain, tokenIn, tokenOut })=>
+        WETH.findPath(blockchain, { tokenIn, tokenOut }),
+      pathExists: (blockchain, path)=>
+        WETH.pathExists(blockchain, path),
+      getAmounts: WETH.getAmounts,
+      getTransaction: ({ blockchain, path, amountIn, amountInMax, amountOut, amountOutMin, amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput, fromAddress })=>
+        WETH.getTransaction(blockchain, exchange ,{ path, amountIn, amountInMax, amountOut, amountOutMin, amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput, fromAddress }),
+    })
+  )
+}

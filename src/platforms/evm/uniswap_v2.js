@@ -13,6 +13,7 @@ import Token from '@depay/web3-tokens'
 //#endif
 
 import { ethers } from 'ethers'
+import Blockchains from '@depay/web3-blockchains'
 
 // Replaces 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE with the wrapped token and implies wrapping.
 //
@@ -24,18 +25,18 @@ const getExchangePath = (blockchain, exchange, path) => {
   if(!path) { return }
   let exchangePath = path.map((token, index) => {
     if (
-      token === blockchain.currency.address && path[index+1] != blockchain.wrapped.address &&
-      path[index-1] != blockchain.wrapped.address
+      token === Blockchains[blockchain].currency.address && path[index+1] != Blockchains[blockchain].wrapped.address &&
+      path[index-1] != Blockchains[blockchain].wrapped.address
     ) {
-      return blockchain.wrapped.address
+      return Blockchains[blockchain].wrapped.address
     } else {
       return token
     }
   })
 
-  if(exchangePath[0] == blockchain.currency.address && exchangePath[1] == blockchain.wrapped.address) {
+  if(exchangePath[0] == Blockchains[blockchain].currency.address && exchangePath[1] == Blockchains[blockchain].wrapped.address) {
     exchangePath.splice(0, 1)
-  } else if(exchangePath[exchangePath.length-1] == blockchain.currency.address && exchangePath[exchangePath.length-2] == blockchain.wrapped.address) {
+  } else if(exchangePath[exchangePath.length-1] == Blockchains[blockchain].currency.address && exchangePath[exchangePath.length-2] == Blockchains[blockchain].wrapped.address) {
     exchangePath.splice(exchangePath.length-1, 1)
   }
 
@@ -56,24 +57,24 @@ const pathExists = async (blockchain, exchange, path) => {
   if(getExchangePath(blockchain, exchange, path).length == 1) { return false }
   try {
     let pair = await request({
-      blockchain: blockchain.name,
+      blockchain,
       address: exchange[blockchain].factory.address,
       method: 'getPair',
       api: exchange[blockchain].factory.api,
       cache: 3600000,
       params: getExchangePath(blockchain, exchange, path),
     })
-    if(!pair || pair == blockchain.zero) { return false }
+    if(!pair || pair == Blockchains[blockchain].zero) { return false }
     let [reserves, token0, token1] = await Promise.all([
-      request({ blockchain: blockchain.name, address: pair, method: 'getReserves', api: exchange[blockchain].pair.api, cache: 3600000 }),
-      request({ blockchain: blockchain.name, address: pair, method: 'token0', api: exchange[blockchain].pair.api, cache: 3600000 }),
-      request({ blockchain: blockchain.name, address: pair, method: 'token1', api: exchange[blockchain].pair.api, cache: 3600000 })
+      request({ blockchain, address: pair, method: 'getReserves', api: exchange[blockchain].pair.api, cache: 3600000 }),
+      request({ blockchain, address: pair, method: 'token0', api: exchange[blockchain].pair.api, cache: 3600000 }),
+      request({ blockchain, address: pair, method: 'token1', api: exchange[blockchain].pair.api, cache: 3600000 })
     ])
-    if(path.includes(blockchain.wrapped.address)) {
-      return minReserveRequirements({ min: 1, token: blockchain.wrapped.address, decimals: blockchain.currency.decimals, reserves, token0, token1 })
-    } else if (path.find((step)=>blockchain.stables.usd.includes(step))) {
-      let address = path.find((step)=>blockchain.stables.usd.includes(step))
-      let token = new Token({ blockchain: blockchain.name, address })
+    if(path.includes(Blockchains[blockchain].wrapped.address)) {
+      return minReserveRequirements({ min: 1, token: Blockchains[blockchain].wrapped.address, decimals: Blockchains[blockchain].currency.decimals, reserves, token0, token1 })
+    } else if (path.find((step)=>Blockchains[blockchain].stables.usd.includes(step))) {
+      let address = path.find((step)=>Blockchains[blockchain].stables.usd.includes(step))
+      let token = new Token({ blockchain, address })
       let decimals = await token.decimals()
       return minReserveRequirements({ min: 1000, token: address, decimals, reserves, token0, token1 })
     } else {
@@ -84,8 +85,8 @@ const pathExists = async (blockchain, exchange, path) => {
 
 const findPath = async (blockchain, exchange, { tokenIn, tokenOut }) => {
   if(
-    [tokenIn, tokenOut].includes(blockchain.currency.address) &&
-    [tokenIn, tokenOut].includes(blockchain.wrapped.address)
+    [tokenIn, tokenOut].includes(Blockchains[blockchain].currency.address) &&
+    [tokenIn, tokenOut].includes(Blockchains[blockchain].wrapped.address)
   ) { return { path: undefined, exchangePath: undefined } }
 
   let path
@@ -93,39 +94,39 @@ const findPath = async (blockchain, exchange, { tokenIn, tokenOut }) => {
     // direct path
     path = [tokenIn, tokenOut]
   } else if (
-    tokenIn != blockchain.wrapped.address &&
-    await pathExists(blockchain, exchange, [tokenIn, blockchain.wrapped.address]) &&
-    tokenOut != blockchain.wrapped.address &&
-    await pathExists(blockchain, exchange, [tokenOut, blockchain.wrapped.address])
+    tokenIn != Blockchains[blockchain].wrapped.address &&
+    await pathExists(blockchain, exchange, [tokenIn, Blockchains[blockchain].wrapped.address]) &&
+    tokenOut != Blockchains[blockchain].wrapped.address &&
+    await pathExists(blockchain, exchange, [tokenOut, Blockchains[blockchain].wrapped.address])
   ) {
     // path via WRAPPED
-    path = [tokenIn, blockchain.wrapped.address, tokenOut]
+    path = [tokenIn, Blockchains[blockchain].wrapped.address, tokenOut]
   } else if (
-    !blockchain.stables.usd.includes(tokenIn) &&
-    (await Promise.all(blockchain.stables.usd.map((stable)=>pathExists(blockchain, exchange, [tokenIn, stable])))).filter(Boolean).length &&
-    tokenOut != blockchain.wrapped.address &&
-    await pathExists(blockchain, exchange, [blockchain.wrapped.address, tokenOut])
+    !Blockchains[blockchain].stables.usd.includes(tokenIn) &&
+    (await Promise.all(Blockchains[blockchain].stables.usd.map((stable)=>pathExists(blockchain, exchange, [tokenIn, stable])))).filter(Boolean).length &&
+    tokenOut != Blockchains[blockchain].wrapped.address &&
+    await pathExists(blockchain, exchange, [Blockchains[blockchain].wrapped.address, tokenOut])
   ) {
     // path via tokenIn -> USD -> WRAPPED -> tokenOut
-    let USD = (await Promise.all(blockchain.stables.usd.map(async (stable)=>{ return(await pathExists(blockchain, exchange, [tokenIn, stable]) ? stable : undefined) }))).find(Boolean)
-    path = [tokenIn, USD, blockchain.wrapped.address, tokenOut]
+    let USD = (await Promise.all(Blockchains[blockchain].stables.usd.map(async (stable)=>{ return(await pathExists(blockchain, exchange, [tokenIn, stable]) ? stable : undefined) }))).find(Boolean)
+    path = [tokenIn, USD, Blockchains[blockchain].wrapped.address, tokenOut]
   } else if (
-    tokenIn != blockchain.wrapped.address &&
-    await pathExists(blockchain, exchange, [tokenIn, blockchain.wrapped.address]) &&
-    !blockchain.stables.usd.includes(tokenOut) &&
-    (await Promise.all(blockchain.stables.usd.map((stable)=>pathExists(blockchain, exchange, [stable, tokenOut])))).filter(Boolean).length
+    tokenIn != Blockchains[blockchain].wrapped.address &&
+    await pathExists(blockchain, exchange, [tokenIn, Blockchains[blockchain].wrapped.address]) &&
+    !Blockchains[blockchain].stables.usd.includes(tokenOut) &&
+    (await Promise.all(Blockchains[blockchain].stables.usd.map((stable)=>pathExists(blockchain, exchange, [stable, tokenOut])))).filter(Boolean).length
   ) {
     // path via tokenIn -> WRAPPED -> USD -> tokenOut
-    let USD = (await Promise.all(blockchain.stables.usd.map(async (stable)=>{ return(await pathExists(blockchain, exchange, [stable, tokenOut]) ? stable : undefined) }))).find(Boolean)
-    path = [tokenIn, blockchain.wrapped.address, USD, tokenOut]
+    let USD = (await Promise.all(Blockchains[blockchain].stables.usd.map(async (stable)=>{ return(await pathExists(blockchain, exchange, [stable, tokenOut]) ? stable : undefined) }))).find(Boolean)
+    path = [tokenIn, Blockchains[blockchain].wrapped.address, USD, tokenOut]
   }
 
   // Add WRAPPED to route path if things start or end with NATIVE
   // because that actually reflects how things are routed in reality:
-  if(path?.length && path[0] == blockchain.currency.address) {
-    path.splice(1, 0, blockchain.wrapped.address)
-  } else if(path?.length && path[path.length-1] == blockchain.currency.address) {
-    path.splice(path.length-1, 0, blockchain.wrapped.address)
+  if(path?.length && path[0] == Blockchains[blockchain].currency.address) {
+    path.splice(1, 0, Blockchains[blockchain].wrapped.address)
+  } else if(path?.length && path[path.length-1] == Blockchains[blockchain].currency.address) {
+    path.splice(path.length-1, 0, Blockchains[blockchain].wrapped.address)
   }
 
   return { path, exchangePath: getExchangePath(blockchain, exchange, path) }
@@ -134,7 +135,7 @@ const findPath = async (blockchain, exchange, { tokenIn, tokenOut }) => {
 let getAmountOut = (blockchain, exchange, { path, amountIn, tokenIn, tokenOut }) => {
   return new Promise((resolve) => {
     request({
-      blockchain: blockchain.name,
+      blockchain,
       address: exchange[blockchain].router.address,
       method: 'getAmountsOut',
       api: exchange[blockchain].router.api,
@@ -153,7 +154,7 @@ let getAmountOut = (blockchain, exchange, { path, amountIn, tokenIn, tokenOut })
 let getAmountIn = (blockchain, exchange, { path, amountOut, block }) => {
   return new Promise((resolve) => {
     request({
-      blockchain: blockchain.name,
+      blockchain,
       address: exchange[blockchain].router.address,
       method: 'getAmountsIn',
       api: exchange[blockchain].router.api,
@@ -224,13 +225,13 @@ let getTransaction = (blockchain, exchange, {
 }) => {
 
   let transaction = {
-    blockchain: blockchain.name,
+    blockchain,
     from: fromAddress,
     to: exchange[blockchain].router.address,
     api: exchange[blockchain].router.api,
   }
 
-  if (path[0] === blockchain.currency.address) {
+  if (path[0] === Blockchains[blockchain].currency.address) {
     if (amountInInput || amountOutMinInput) {
       transaction.method = 'swapExactETHForTokens'
       transaction.value = amountIn.toString()
@@ -240,7 +241,7 @@ let getTransaction = (blockchain, exchange, {
       transaction.value = amountInMax.toString()
       transaction.params = { amountOut: amountOut.toString() }
     }
-  } else if (path[path.length - 1] === blockchain.currency.address) {
+  } else if (path[path.length - 1] === Blockchains[blockchain].currency.address) {
     if (amountInInput || amountOutMinInput) {
       transaction.method = 'swapExactTokensForETH'
       transaction.params = { amountIn: amountIn.toString(), amountOutMin: amountOutMin.toString() }

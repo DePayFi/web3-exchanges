@@ -114,19 +114,19 @@ describe('orca', () => {
     })
 
     expect(
-      (await exchange.getAmounts({ path, amountOut: amountBN })).amounts.map((amount)=>amount.toString())
+      (await exchange.getAmounts({ blockchain, path, amountOut: amountBN })).amounts.map((amount)=>amount.toString())
     ).toEqual([ '25049159', '1000000000' ])
 
     expect(
-      (await exchange.getAmounts({ path, amountOutMin: amountBN })).amounts.map((amount)=>amount.toString())
+      (await exchange.getAmounts({ blockchain, path, amountOutMin: amountBN })).amounts.map((amount)=>amount.toString())
     ).toEqual([ '25049159', '1000000000' ])
 
     expect(
-      (await exchange.getAmounts({ path, amountIn: amountBN })).amounts.map((amount)=>amount.toString())
+      (await exchange.getAmounts({ blockchain, path, amountIn: amountBN })).amounts.map((amount)=>amount.toString())
     ).toEqual([ '1000000000', '39919706760' ])
 
     expect(
-      (await exchange.getAmounts({ path, amountInMax: amountBN })).amounts.map((amount)=>amount.toString())
+      (await exchange.getAmounts({ blockchain, path, amountInMax: amountBN })).amounts.map((amount)=>amount.toString())
     ).toEqual([ '1000000000', '39919706760' ])
     
   })

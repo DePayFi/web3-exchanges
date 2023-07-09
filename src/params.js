@@ -67,7 +67,7 @@ let preflight = ({
   amountOutMax,
   amountInMin,
 }) => {
-  if(blockchain === undefined && exchange.blockchains != undefined) {
+  if(blockchain === undefined && exchange.blockchains != undefined && exchange.blockchains > 1) {
     throw 'You need to provide a blockchain when calling route on an exchange that supports multiple blockchains!'
   }
 

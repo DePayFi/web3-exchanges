@@ -2,8 +2,6 @@ import Blockchains from '@depay/web3-blockchains'
 import Exchange from '../classes/Exchange'
 import UniswapV2 from '../platforms/evm/uniswap_v2'
 
-const blockchain = Blockchains.polygon
-
 const exchange = {
   
   name: 'quickswap',
@@ -29,16 +27,20 @@ const exchange = {
   }
 }
 
-export default new Exchange(
+export default (scope)=>{
+  
+  return new Exchange(
 
-  Object.assign(exchange, {
-    findPath: ({ tokenIn, tokenOut })=>
-      UniswapV2.findPath(blockchain, exchange, { tokenIn, tokenOut }),
-    pathExists: (path)=>
-      UniswapV2.pathExists(blockchain, exchange, path),
-    getAmounts: ({ path, block, tokenIn, tokenOut, amountOut, amountIn, amountInMax, amountOutMin })=>
-      UniswapV2.getAmounts(blockchain, exchange, { path, block, tokenIn, tokenOut, amountOut, amountIn, amountInMax, amountOutMin }),
-    getTransaction: ({ path, amountIn, amountInMax, amountOut, amountOutMin, amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput, fromAddress })=>
-      UniswapV2.getTransaction(blockchain, exchange ,{ path, amountIn, amountInMax, amountOut, amountOutMin, amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput, fromAddress }),
-  })
-)
+    Object.assign(exchange, {
+      scope,
+      findPath: ({ blockchian, tokenIn, tokenOut })=>
+        UniswapV2.findPath(blockchain, exchange, { tokenIn, tokenOut }),
+      pathExists: (blockchain, path)=>
+        UniswapV2.pathExists(blockchain, exchange, path),
+      getAmounts: ({ blockchain, path, block, tokenIn, tokenOut, amountOut, amountIn, amountInMax, amountOutMin })=>
+        UniswapV2.getAmounts(blockchain, exchange, { path, block, tokenIn, tokenOut, amountOut, amountIn, amountInMax, amountOutMin }),
+      getTransaction: ({ blockchain, path, amountIn, amountInMax, amountOut, amountOutMin, amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput, fromAddress })=>
+        UniswapV2.getTransaction(blockchain, exchange ,{ path, amountIn, amountInMax, amountOut, amountOutMin, amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput, fromAddress }),
+    })
+  )
+}

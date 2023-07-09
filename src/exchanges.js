@@ -17,87 +17,75 @@ import wmatic from './exchanges/wmatic'
 import wxdai from './exchanges/wxdai'
 
 const exchanges = [
-  uniswap_v3,
-  pancakeswap_v3,
-  uniswap_v2,
-  pancakeswap,
-  quickswap,
-  trader_joe_v2_1,
-  spookyswap,
-  weth,
-  weth_optimism,
-  weth_arbitrum,
-  wbnb,
-  wmatic,
-  wftm,
-  wavax,
-  wxdai,
+  uniswap_v3(),
+  pancakeswap_v3(),
+  uniswap_v2(),
+  pancakeswap(),
+  quickswap(),
+  trader_joe_v2_1(),
+  spookyswap(),
+  weth(),
+  weth_optimism(),
+  weth_arbitrum(),
+  wbnb(),
+  wmatic(),
+  wftm(),
+  wavax(),
+  wxdai(),
 ]
 
-exchanges.uniswap_v3 = uniswap_v3
-exchanges.uniswap_v2 = uniswap_v2
-exchanges.pancakeswap = pancakeswap
-exchanges.pancakeswap_v3 = pancakeswap_v3
-exchanges.quickswap = quickswap
-exchanges.trader_joe_v2_1 = trader_joe_v2_1
-exchanges.spookyswap = spookyswap
-exchanges.weth = weth
-exchanges.weth_optimism = weth_optimism
-exchanges.weth_arbitrum = weth_arbitrum
-exchanges.wbnb = wbnb
-exchanges.wmatic = wmatic
-exchanges.wftm = wftm
-exchanges.wavax = wavax
-exchanges.wxdai = wxdai
+exchanges.forEach((exchange)=>{
+  exchanges[exchange.name] = exchange
+})
 
 exchanges.ethereum = [
-  uniswap_v3,
-  uniswap_v2,
-  weth,
+  uniswap_v3('ethereum'),
+  uniswap_v2('ethereum'),
+  weth('ethereum'),
 ]
 exchanges.ethereum.forEach((exchange)=>{ exchanges.ethereum[exchange.name] = exchange })
 
 exchanges.bsc = [
-  pancakeswap_v3,
-  uniswap_v3,
-  pancakeswap,
-  wbnb,
+  pancakeswap_v3('bsc'),
+  uniswap_v3('bsc'),
+  pancakeswap('bsc'),
+  wbnb('bsc'),
 ]
 exchanges.bsc.forEach((exchange)=>{ exchanges.bsc[exchange.name] = exchange })
 
 exchanges.polygon = [
-  uniswap_v3,
-  quickswap,
-  wmatic,
+  uniswap_v3('polygon'),
+  quickswap('polygon'),
+  wmatic('polygon'),
 ]
 exchanges.polygon.forEach((exchange)=>{ exchanges.polygon[exchange.name] = exchange })
 
 exchanges.optimism = [
-  uniswap_v3,
-  weth_optimism,
+  uniswap_v3('optimism'),
+  weth_optimism('optimism'),
 ]
 exchanges.optimism.forEach((exchange)=>{ exchanges.optimism[exchange.name] = exchange })
 
 exchanges.arbitrum = [
-  uniswap_v3,
-  weth_arbitrum,
+  uniswap_v3('arbitrum'),
+  weth_arbitrum('arbitrum'),
 ]
 exchanges.arbitrum.forEach((exchange)=>{ exchanges.arbitrum[exchange.name] = exchange })
 
 exchanges.fantom = [
-  spookyswap,
-  wftm,
+  spookyswap('fantom'),
+  wftm('wftm'),
 ]
 exchanges.fantom.forEach((exchange)=>{ exchanges.fantom[exchange.name] = exchange })
 
 exchanges.avalanche = [
-  trader_joe_v2_1,
-  wavax,
+  trader_joe_v2_1('avalanche'),
+  wavax('avalanche'),
 ]
 exchanges.avalanche.forEach((exchange)=>{ exchanges.avalanche[exchange.name] = exchange })
 
 exchanges.gnosis = [
-  wxdai,
+  wxdai('gnosis'),
 ]
 exchanges.gnosis.forEach((exchange)=>{ exchanges.gnosis[exchange.name] = exchange })
 
@@ -107,13 +95,14 @@ exchanges.gnosis.forEach((exchange)=>{ exchanges.gnosis[exchange.name] = exchang
 import orca from './exchanges/orca'
 
 const exchanges = [
-  orca,
+  orca(),
 ]
-
-exchanges.orca = orca
+exchanges.forEach((exchange)=>{
+  exchanges[exchange.name] = exchange
+})
 
 exchanges.solana = [
-  orca
+  orca('solana'),
 ]
 exchanges.solana.forEach((exchange)=>{ exchanges.solana[exchange.name] = exchange })
 
@@ -137,94 +126,80 @@ import wmatic from './exchanges/wmatic'
 import wxdai from './exchanges/wxdai'
 
 const exchanges = [
-  orca,
-  uniswap_v3,
-  pancakeswap_v3,
-  uniswap_v2,
-  pancakeswap,
-  trader_joe_v2_1,
-  quickswap,
-  spookyswap,
-  weth,
-  weth_optimism,
-  weth_arbitrum,
-  wbnb,
-  wmatic,
-  wftm,
-  wavax,
-  wxdai,
+  orca(),
+  uniswap_v3(),
+  pancakeswap_v3(),
+  uniswap_v2(),
+  pancakeswap(),
+  trader_joe_v2_1(),
+  quickswap(),
+  spookyswap(),
+  weth(),
+  weth_optimism(),
+  weth_arbitrum(),
+  wbnb(),
+  wmatic(),
+  wftm(),
+  wavax(),
+  wxdai(),
 ]
-
-exchanges.orca = orca
-exchanges.uniswap_v3 = uniswap_v3
-exchanges.uniswap_v2 = uniswap_v2
-exchanges.pancakeswap = pancakeswap
-exchanges.pancakeswap_v3 = pancakeswap_v3
-exchanges.trader_joe_v2_1 = trader_joe_v2_1
-exchanges.quickswap = quickswap
-exchanges.spookyswap = spookyswap
-exchanges.weth = weth
-exchanges.weth_optimism = weth_optimism
-exchanges.weth_arbitrum = weth_arbitrum
-exchanges.wbnb = wbnb
-exchanges.wmatic = wmatic
-exchanges.wftm = wftm
-exchanges.wavax = wavax
-exchanges.wxdai = wxdai
+exchanges.forEach((exchange)=>{
+  exchanges[exchange.name] = exchange
+})
 
 exchanges.ethereum = [
-  uniswap_v3,
-  uniswap_v2,
-  weth,
+  uniswap_v3('ethereum'),
+  uniswap_v2('ethereum'),
+  weth('ethereum'),
 ]
 exchanges.ethereum.forEach((exchange)=>{ exchanges.ethereum[exchange.name] = exchange })
 
 exchanges.bsc = [
-  pancakeswap_v3,
-  uniswap_v3,
-  pancakeswap,
-  wbnb,
+  pancakeswap_v3('bsc'),
+  uniswap_v3('bsc'),
+  pancakeswap('bsc'),
+  wbnb('bsc'),
 ]
 exchanges.bsc.forEach((exchange)=>{ exchanges.bsc[exchange.name] = exchange })
 
 exchanges.polygon = [
-  uniswap_v3,
-  quickswap,
-  wmatic,
+  uniswap_v3('polygon'),
+  quickswap('polygon'),
+  wmatic('polygon'),
 ]
 exchanges.polygon.forEach((exchange)=>{ exchanges.polygon[exchange.name] = exchange })
 
 exchanges.solana = [
-  orca
+  orca('solana'),
 ]
 exchanges.solana.forEach((exchange)=>{ exchanges.solana[exchange.name] = exchange })
 
 exchanges.optimism = [
-  uniswap_v3,
-  weth_optimism,
+  uniswap_v3('optimism'),
+  weth_optimism('optimism'),
 ]
 exchanges.optimism.forEach((exchange)=>{ exchanges.optimism[exchange.name] = exchange })
 
 exchanges.arbitrum = [
-  uniswap_v3,
-  weth_arbitrum,
+  uniswap_v3('arbitrum'),
+  weth_arbitrum('arbitrum'),
 ]
 exchanges.arbitrum.forEach((exchange)=>{ exchanges.arbitrum[exchange.name] = exchange })
 
 exchanges.fantom = [
-  spookyswap,
-  wftm
+  spookyswap('fantom'),
+  wftm('fantom'),
 ]
 exchanges.fantom.forEach((exchange)=>{ exchanges.fantom[exchange.name] = exchange })
 
 exchanges.avalanche = [
-  trader_joe_v2_1,
-  wavax,
+  trader_joe_v2_1('avalanche'),
+  wavax('avalanche'),
 ]
 exchanges.avalanche.forEach((exchange)=>{ exchanges.avalanche[exchange.name] = exchange })
 
 exchanges.gnosis = [
-  wxdai,
+  wxdai('gnosis'),
 ]
 exchanges.gnosis.forEach((exchange)=>{ exchanges.gnosis[exchange.name] = exchange })
 

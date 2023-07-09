@@ -33,15 +33,19 @@ const exchange = {
 
 }
 
-export default new Exchange(
+export default (scope)=>{
+  
+  return new Exchange(
 
-  Object.assign(exchange, {
-    findPath: ({ blockchain, tokenIn, tokenOut, amountIn, amountOut, amountInMax, amountOutMin })=>
-      UniswapV3.findPath({ blockchain, exchange, tokenIn, tokenOut, amountIn, amountOut, amountInMax, amountOutMin }),
-    pathExists: (blockchain, path)=>
-      UniswapV3.pathExists(blockchain, exchange, path),
-    getAmounts: ({ blockchain, path, pools, block, tokenIn, tokenOut, amountOut, amountIn, amountInMax, amountOutMin })=>
-      UniswapV3.getAmounts(blockchain, exchange, { path, pools, block, tokenIn, tokenOut, amountOut, amountIn, amountInMax, amountOutMin }),
-    getTransaction: (...args)=> UniswapV3.getTransaction(...args),
-  })
-)
+    Object.assign(exchange, {
+      scope,
+      findPath: ({ blockchain, tokenIn, tokenOut, amountIn, amountOut, amountInMax, amountOutMin })=>
+        UniswapV3.findPath({ blockchain, exchange, tokenIn, tokenOut, amountIn, amountOut, amountInMax, amountOutMin }),
+      pathExists: (blockchain, path)=>
+        UniswapV3.pathExists(blockchain, exchange, path),
+      getAmounts: ({ blockchain, path, pools, block, tokenIn, tokenOut, amountOut, amountIn, amountInMax, amountOutMin })=>
+        UniswapV3.getAmounts(blockchain, exchange, { path, pools, block, tokenIn, tokenOut, amountOut, amountIn, amountInMax, amountOutMin }),
+      getTransaction: (...args)=> UniswapV3.getTransaction(...args),
+    })
+  )
+}

@@ -314,7 +314,7 @@ let preflight = ({
   amountOutMax,
   amountInMin,
 }) => {
-  if(blockchain === undefined && exchange.blockchains != undefined) {
+  if(blockchain === undefined && exchange.blockchains != undefined && exchange.blockchains > 1) {
     throw 'You need to provide a blockchain when calling route on an exchange that supports multiple blockchains!'
   }
 
@@ -357,7 +357,7 @@ const route$1 = ({
   getTransaction,
   slippage,
 }) => {
-  
+
   tokenIn = fixAddress(tokenIn);
   tokenOut = fixAddress(tokenOut);
 
@@ -435,7 +435,15 @@ class Exchange {
     amountInMin,
   }) {
     if(tokenIn === tokenOut){ return Promise.resolve() }
-    
+
+    if(blockchain === undefined) {
+      if(this.scope) { 
+        blockchain = this.scope;
+      } else if (this.blockchains.length === 1) {
+        blockchain = this.blockchains[0];
+      }
+    }
+
     preflight({
       blockchain,
       exchange: this,
@@ -452,7 +460,7 @@ class Exchange {
     return await route$1({
       ...
       await fixRouteParams({
-        blockchain: blockchain || this.blockchain,
+        blockchain: blockchain,
         exchange: this,
         tokenIn,
         tokenOut,
@@ -2161,23 +2169,29 @@ const getTransaction = async ({
   return transaction
 };
 
-var orca = new Exchange(
-  Object.assign(basics, {
-    findPath,
-    pathExists,
-    getAmounts,
-    getTransaction,
-  })
-);
+var orca = (scope)=>{
+  
+  return new Exchange(
+
+    Object.assign(basics, {
+      scope,
+      findPath,
+      pathExists,
+      getAmounts,
+      getTransaction,
+    })
+  )
+};
 
 const exchanges = [
-  orca,
+  orca(),
 ];
-
-exchanges.orca = orca;
+exchanges.forEach((exchange)=>{
+  exchanges[exchange.name] = exchange;
+});
 
 exchanges.solana = [
-  orca
+  orca('solana'),
 ];
 exchanges.solana.forEach((exchange)=>{ exchanges.solana[exchange.name] = exchange; });
 

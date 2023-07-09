@@ -13,9 +13,13 @@ npm install --save @depay/web3-exchanges
 ```javascript
 import Exchanges from '@depay/web3-exchanges'
 
-Exchanges.ethereum.uniswap_v2
-Exchanges.solana.orca
 Exchanges.uniswap_v2
+Exchanges.orca
+
+// scoped
+
+Exchanges.ethereum.uniswap_v2 // Ethereum scoped uniswap_v2
+Exchanges.solana.orca
 
 let routes
 
@@ -278,7 +282,7 @@ Exchanges.uniswap_v2
 
 ```
 
-### Access exchange via blockchain
+### Access exchange scoped for a given blockchain
 
 ```javascript
 import Exchanges from '@depay/web3-exchanges'
@@ -304,8 +308,7 @@ let routes = Exchanges.route({
 ```javascript
 import Exchanges from '@depay/web3-exchanges'
 
-let route = await Exchanges.uniswap_v2.route({
-  blockchain: 'ethereum',
+let route = await Exchanges.ethereum.uniswap_v2.route({
   tokenIn: '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb',
   tokenOut: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
   amountIn: 1

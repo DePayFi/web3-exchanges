@@ -44,6 +44,7 @@ describe('pancakeswap', () => {
       })
 
       let { amountIn } = await exchange.getAmounts({
+        blockchain,
         path,
         amountOut,
         block
