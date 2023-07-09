@@ -67,8 +67,8 @@ describe('uniswap_v2', () => {
         provider,
         blockchain,
         request: {
-          to: exchange.router.address,
-          api: exchange.router.api,
+          to: exchange[blockchain].router.address,
+          api: exchange[blockchain].router.api,
           method: 'getAmountsIn',
           params: [amountOutBN, path],
           return: Error('Routing Error')
@@ -119,8 +119,8 @@ describe('uniswap_v2', () => {
         fromAddress,
         toAddress,
         transaction: {
-          to: exchange.router.address,
-          api: exchange.router.api,
+          to: exchange[blockchain].router.address,
+          api: exchange[blockchain].router.api,
           method: 'swapTokensForExactTokens',
           params: {
             amountInMax: fetchedAmountInBN.add(slippage),
@@ -156,8 +156,8 @@ describe('uniswap_v2', () => {
         fromAddress,
         toAddress,
         transaction: {
-          to: exchange.router.address,
-          api: exchange.router.api,
+          to: exchange[blockchain].router.address,
+          api: exchange[blockchain].router.api,
           method: 'swapTokensForExactTokens',
           params: {
             amountInMax: fetchedAmountInBN.add(slippage),
@@ -193,8 +193,8 @@ describe('uniswap_v2', () => {
         fromAddress,
         toAddress,
         transaction: {
-          to: exchange.router.address,
-          api: exchange.router.api,
+          to: exchange[blockchain].router.address,
+          api: exchange[blockchain].router.api,
           method: 'swapExactTokensForTokens',
           params: {
             amountIn: fetchedAmountInBN.add(slippage),
@@ -230,8 +230,8 @@ describe('uniswap_v2', () => {
         fromAddress,
         toAddress,
         transaction: {
-          to: exchange.router.address,
-          api: exchange.router.api,
+          to: exchange[blockchain].router.address,
+          api: exchange[blockchain].router.api,
           method: 'swapExactTokensForTokens',
           params: {
             amountIn: amountInBN,
@@ -267,8 +267,8 @@ describe('uniswap_v2', () => {
         fromAddress,
         toAddress,
         transaction: {
-          to: exchange.router.address,
-          api: exchange.router.api,
+          to: exchange[blockchain].router.address,
+          api: exchange[blockchain].router.api,
           method: 'swapTokensForExactTokens',
           params: {
             amountInMax: amountInMaxBN,
@@ -305,8 +305,8 @@ describe('uniswap_v2', () => {
         fromAddress,
         toAddress,
         transaction: {
-          to: exchange.router.address,
-          api: exchange.router.api,
+          to: exchange[blockchain].router.address,
+          api: exchange[blockchain].router.api,
           method: 'swapTokensForExactTokens',
           params: {
             amountInMax: amountInMaxBN.add(slippage),
@@ -343,8 +343,8 @@ describe('uniswap_v2', () => {
         fromAddress,
         toAddress,
         transaction: {
-          to: exchange.router.address,
-          api: exchange.router.api,
+          to: exchange[blockchain].router.address,
+          api: exchange[blockchain].router.api,
           method: 'swapExactTokensForTokens',
           params: {
             amountIn: fetchedAmountInBN.add(slippage),
@@ -386,8 +386,8 @@ describe('uniswap_v2', () => {
         fromAddress,
         toAddress,
         transaction: {
-          to: exchange.router.address,
-          api: exchange.router.api,
+          to: exchange[blockchain].router.address,
+          api: exchange[blockchain].router.api,
           method: 'swapExactTokensForTokens',
           params: {
             amountIn: fetchedAmountInBN.add(slippage),
@@ -463,8 +463,8 @@ describe('uniswap_v2', () => {
         fromAddress,
         toAddress,
         transaction: {
-          to: exchange.router.address,
-          api: exchange.router.api,
+          to: exchange[blockchain].router.address,
+          api: exchange[blockchain].router.api,
           method: 'swapExactTokensForTokens',
           params: {
             amountIn: fetchedAmountInBN.add(slippage),
@@ -518,8 +518,8 @@ describe('uniswap_v2', () => {
         fromAddress,
         toAddress,
         transaction: {
-          to: exchange.router.address,
-          api: exchange.router.api,
+          to: exchange[blockchain].router.address,
+          api: exchange[blockchain].router.api,
           method: 'swapExactTokensForTokens',
           params: {
             amountIn: fetchedAmountInBN.add(slippage),
@@ -564,8 +564,8 @@ describe('uniswap_v2', () => {
         fromAddress,
         toAddress,
         transaction: {
-          to: exchange.router.address,
-          api: exchange.router.api,
+          to: exchange[blockchain].router.address,
+          api: exchange[blockchain].router.api,
           method: 'swapETHForExactTokens',
           params: {
             amountOut: amountOutBN,
@@ -601,8 +601,8 @@ describe('uniswap_v2', () => {
         fromAddress,
         toAddress,
         transaction: {
-          to: exchange.router.address,
-          api: exchange.router.api,
+          to: exchange[blockchain].router.address,
+          api: exchange[blockchain].router.api,
           method: 'swapExactETHForTokens',
           params: {
             amountOutMin: fetchedAmountOutBN,
@@ -639,8 +639,8 @@ describe('uniswap_v2', () => {
         fromAddress,
         toAddress,
         transaction: {
-          to: exchange.router.address,
-          api: exchange.router.api,
+          to: exchange[blockchain].router.address,
+          api: exchange[blockchain].router.api,
           method: 'swapETHForExactTokens',
           params: {
             amountOut:  amountOutBN,
@@ -677,8 +677,8 @@ describe('uniswap_v2', () => {
         fromAddress,
         toAddress,
         transaction: {
-          to: exchange.router.address,
-          api: exchange.router.api,
+          to: exchange[blockchain].router.address,
+          api: exchange[blockchain].router.api,
           method: 'swapExactETHForTokens',
           params: {
             amountOutMin: amountOutMinBN,
@@ -723,8 +723,8 @@ describe('uniswap_v2', () => {
         fromAddress,
         toAddress,
         transaction: {
-          to: exchange.router.address,
-          api: exchange.router.api,
+          to: exchange[blockchain].router.address,
+          api: exchange[blockchain].router.api,
           method: 'swapTokensForExactETH',
           params: {
             amountInMax: fetchedAmountInBN.add(slippage),
@@ -760,8 +760,8 @@ describe('uniswap_v2', () => {
         fromAddress,
         toAddress,
         transaction: {
-          to: exchange.router.address,
-          api: exchange.router.api,
+          to: exchange[blockchain].router.address,
+          api: exchange[blockchain].router.api,
           method: 'swapExactTokensForETH',
           params: {
             amountIn: amountInBN,
@@ -798,8 +798,8 @@ describe('uniswap_v2', () => {
         fromAddress,
         toAddress,
         transaction: {
-          to: exchange.router.address,
-          api: exchange.router.api,
+          to: exchange[blockchain].router.address,
+          api: exchange[blockchain].router.api,
           method: 'swapTokensForExactETH',
           params: {
             amountInMax: amountInMaxBN.add(slippage),
@@ -835,8 +835,8 @@ describe('uniswap_v2', () => {
         fromAddress,
         toAddress,
         transaction: {
-          to: exchange.router.address,
-          api: exchange.router.api,
+          to: exchange[blockchain].router.address,
+          api: exchange[blockchain].router.api,
           method: 'swapExactTokensForETH',
           params: {
             amountIn: fetchedAmountInBN.add(slippage),

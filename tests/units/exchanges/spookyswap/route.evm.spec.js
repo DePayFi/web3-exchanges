@@ -67,8 +67,8 @@ describe('spookyswap', () => {
         provider,
         blockchain,
         request: {
-          to: exchange.router.address,
-          api: exchange.router.api,
+          to: exchange[blockchain].router.address,
+          api: exchange[blockchain].router.api,
           method: 'getAmountsIn',
           params: [amountOutBN, path],
           return: Error('Routing Error')
@@ -119,8 +119,8 @@ describe('spookyswap', () => {
         fromAddress,
         toAddress,
         transaction: {
-          to: exchange.router.address,
-          api: exchange.router.api,
+          to: exchange[blockchain].router.address,
+          api: exchange[blockchain].router.api,
           method: 'swapTokensForExactTokens',
           params: {
             amountInMax: fetchedAmountInBN.add(slippage),
@@ -156,8 +156,8 @@ describe('spookyswap', () => {
         fromAddress,
         toAddress,
         transaction: {
-          to: exchange.router.address,
-          api: exchange.router.api,
+          to: exchange[blockchain].router.address,
+          api: exchange[blockchain].router.api,
           method: 'swapTokensForExactTokens',
           params: {
             amountInMax: fetchedAmountInBN.add(slippage),
@@ -192,8 +192,8 @@ describe('spookyswap', () => {
         fromAddress,
         toAddress,
         transaction: {
-          to: exchange.router.address,
-          api: exchange.router.api,
+          to: exchange[blockchain].router.address,
+          api: exchange[blockchain].router.api,
           method: 'swapExactTokensForTokens',
           params: {
             amountIn: fetchedAmountInBN.add(slippage),
@@ -229,8 +229,8 @@ describe('spookyswap', () => {
         fromAddress,
         toAddress,
         transaction: {
-          to: exchange.router.address,
-          api: exchange.router.api,
+          to: exchange[blockchain].router.address,
+          api: exchange[blockchain].router.api,
           method: 'swapExactTokensForTokens',
           params: {
             amountIn: amountInBN,
@@ -266,8 +266,8 @@ describe('spookyswap', () => {
         fromAddress,
         toAddress,
         transaction: {
-          to: exchange.router.address,
-          api: exchange.router.api,
+          to: exchange[blockchain].router.address,
+          api: exchange[blockchain].router.api,
           method: 'swapTokensForExactTokens',
           params: {
             amountInMax: amountInMaxBN,
@@ -304,8 +304,8 @@ describe('spookyswap', () => {
         fromAddress,
         toAddress,
         transaction: {
-          to: exchange.router.address,
-          api: exchange.router.api,
+          to: exchange[blockchain].router.address,
+          api: exchange[blockchain].router.api,
           method: 'swapTokensForExactTokens',
           params: {
             amountInMax: amountInMaxBN.add(slippage),
@@ -341,8 +341,8 @@ describe('spookyswap', () => {
         fromAddress,
         toAddress,
         transaction: {
-          to: exchange.router.address,
-          api: exchange.router.api,
+          to: exchange[blockchain].router.address,
+          api: exchange[blockchain].router.api,
           method: 'swapExactTokensForTokens',
           params: {
             amountIn: fetchedAmountInBN.add(slippage),
@@ -384,8 +384,8 @@ describe('spookyswap', () => {
         fromAddress,
         toAddress,
         transaction: {
-          to: exchange.router.address,
-          api: exchange.router.api,
+          to: exchange[blockchain].router.address,
+          api: exchange[blockchain].router.api,
           method: 'swapExactTokensForTokens',
           params: {
             amountIn: fetchedAmountInBN.add(slippage),
@@ -461,8 +461,8 @@ describe('spookyswap', () => {
         fromAddress,
         toAddress,
         transaction: {
-          to: exchange.router.address,
-          api: exchange.router.api,
+          to: exchange[blockchain].router.address,
+          api: exchange[blockchain].router.api,
           method: 'swapExactTokensForTokens',
           params: {
             amountIn: fetchedAmountInBN.add(slippage),
@@ -516,8 +516,8 @@ describe('spookyswap', () => {
         fromAddress,
         toAddress,
         transaction: {
-          to: exchange.router.address,
-          api: exchange.router.api,
+          to: exchange[blockchain].router.address,
+          api: exchange[blockchain].router.api,
           method: 'swapExactTokensForTokens',
           params: {
             amountIn: fetchedAmountInBN.add(slippage),
@@ -562,8 +562,8 @@ describe('spookyswap', () => {
         fromAddress,
         toAddress,
         transaction: {
-          to: exchange.router.address,
-          api: exchange.router.api,
+          to: exchange[blockchain].router.address,
+          api: exchange[blockchain].router.api,
           method: 'swapETHForExactTokens',
           params: {
             amountOut: amountOutBN,
@@ -599,8 +599,8 @@ describe('spookyswap', () => {
         fromAddress,
         toAddress,
         transaction: {
-          to: exchange.router.address,
-          api: exchange.router.api,
+          to: exchange[blockchain].router.address,
+          api: exchange[blockchain].router.api,
           method: 'swapExactETHForTokens',
           params: {
             amountOutMin: fetchedAmountOutBN,
@@ -637,8 +637,8 @@ describe('spookyswap', () => {
         fromAddress,
         toAddress,
         transaction: {
-          to: exchange.router.address,
-          api: exchange.router.api,
+          to: exchange[blockchain].router.address,
+          api: exchange[blockchain].router.api,
           method: 'swapETHForExactTokens',
           params: {
             amountOut:  amountOutBN,
@@ -674,8 +674,8 @@ describe('spookyswap', () => {
         fromAddress,
         toAddress,
         transaction: {
-          to: exchange.router.address,
-          api: exchange.router.api,
+          to: exchange[blockchain].router.address,
+          api: exchange[blockchain].router.api,
           method: 'swapExactETHForTokens',
           params: {
             amountOutMin: amountOutMinBN,
@@ -720,8 +720,8 @@ describe('spookyswap', () => {
         fromAddress,
         toAddress,
         transaction: {
-          to: exchange.router.address,
-          api: exchange.router.api,
+          to: exchange[blockchain].router.address,
+          api: exchange[blockchain].router.api,
           method: 'swapTokensForExactETH',
           params: {
             amountInMax: fetchedAmountInBN.add(slippage),
@@ -757,8 +757,8 @@ describe('spookyswap', () => {
         fromAddress,
         toAddress,
         transaction: {
-          to: exchange.router.address,
-          api: exchange.router.api,
+          to: exchange[blockchain].router.address,
+          api: exchange[blockchain].router.api,
           method: 'swapExactTokensForETH',
           params: {
             amountIn: amountInBN,
@@ -795,8 +795,8 @@ describe('spookyswap', () => {
         fromAddress,
         toAddress,
         transaction: {
-          to: exchange.router.address,
-          api: exchange.router.api,
+          to: exchange[blockchain].router.address,
+          api: exchange[blockchain].router.api,
           method: 'swapTokensForExactETH',
           params: {
             amountInMax: amountInMaxBN.add(slippage),
@@ -832,8 +832,8 @@ describe('spookyswap', () => {
         fromAddress,
         toAddress,
         transaction: {
-          to: exchange.router.address,
-          api: exchange.router.api,
+          to: exchange[blockchain].router.address,
+          api: exchange[blockchain].router.api,
           method: 'swapExactTokensForETH',
           params: {
             amountIn: fetchedAmountInBN.add(slippage),

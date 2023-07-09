@@ -92,9 +92,9 @@ describe('orca', () => {
         provider,
         request: {
           method: 'getProgramAccounts',
-          to: exchange.router.v1.address,
+          to: exchange[blockchain].router.v1.address,
           params: { filters: [
-            { dataSize: exchange.router.v1.api.span },
+            { dataSize: exchange[blockchain].router.v1.api.span },
             { memcmp: { offset: 8, bytes: '2LecshUwdy9xi7meFgHtFJQNSKk4KdTrcpvaB56dP2NQ' }},
             { memcmp: { offset: 101, bytes: tokenOut }},
             { memcmp: { offset: 181, bytes: tokenIn }},
@@ -163,7 +163,7 @@ describe('orca', () => {
           blockchain,
           instructions: [
             { // SWAP
-              to: exchange.router.v1.address,
+              to: exchange[blockchain].router.v1.address,
               api: struct([u64("anchorDiscriminator"), u64("amount"), u64("otherAmountThreshold"), u128("sqrtPriceLimit"), bool("amountSpecifiedIsInput"), bool("aToB")]),
               params: {
                 anchorDiscriminator: SWAP_INSTRUCTION.toString(),
@@ -197,7 +197,7 @@ describe('orca', () => {
           blockchain,
           instructions: [
             { // SWAP
-              to: exchange.router.v1.address,
+              to: exchange[blockchain].router.v1.address,
               api: struct([u64("anchorDiscriminator"), u64("amount"), u64("otherAmountThreshold"), u128("sqrtPriceLimit"), bool("amountSpecifiedIsInput"), bool("aToB")]),
               params: {
                 anchorDiscriminator: SWAP_INSTRUCTION.toString(),
@@ -231,7 +231,7 @@ describe('orca', () => {
           blockchain,
           instructions: [
             { // SWAP
-              to: exchange.router.v1.address,
+              to: exchange[blockchain].router.v1.address,
               api: struct([u64("anchorDiscriminator"), u64("amount"), u64("otherAmountThreshold"), u128("sqrtPriceLimit"), bool("amountSpecifiedIsInput"), bool("aToB")]),
               params: {
                 anchorDiscriminator: SWAP_INSTRUCTION.toString(),
@@ -265,7 +265,7 @@ describe('orca', () => {
           blockchain,
           instructions: [
             { // SWAP
-              to: exchange.router.v1.address,
+              to: exchange[blockchain].router.v1.address,
               api: struct([u64("anchorDiscriminator"), u64("amount"), u64("otherAmountThreshold"), u128("sqrtPriceLimit"), bool("amountSpecifiedIsInput"), bool("aToB")]),
               params: {
                 anchorDiscriminator: SWAP_INSTRUCTION.toString(),
@@ -317,7 +317,7 @@ describe('orca', () => {
                 ]
               },
               { // SWAP
-                to: exchange.router.v1.address,
+                to: exchange[blockchain].router.v1.address,
                 api: struct([u64("anchorDiscriminator"), u64("amount"), u64("otherAmountThreshold"), u128("sqrtPriceLimit"), bool("amountSpecifiedIsInput"), bool("aToB")]),
                 params: {
                   anchorDiscriminator: SWAP_INSTRUCTION.toString(),
@@ -413,7 +413,7 @@ describe('orca', () => {
               }
             },
             { // SWAP
-              to: exchange.router.v1.address,
+              to: exchange[blockchain].router.v1.address,
               api: struct([u64("anchorDiscriminator"), u64("amount"), u64("otherAmountThreshold"), u128("sqrtPriceLimit"), bool("amountSpecifiedIsInput"), bool("aToB")]),
               params: {
                 anchorDiscriminator: SWAP_INSTRUCTION.toString(),
@@ -515,7 +515,7 @@ describe('orca', () => {
               }
             },
             { // SWAP
-              to: exchange.router.v1.address,
+              to: exchange[blockchain].router.v1.address,
               api: struct([u64("anchorDiscriminator"), u64("amount"), u64("otherAmountThreshold"), u128("sqrtPriceLimit"), bool("amountSpecifiedIsInput"), bool("aToB")]),
               params: {
                 anchorDiscriminator: SWAP_INSTRUCTION.toString(),
@@ -608,7 +608,7 @@ describe('orca', () => {
           blockchain,
           instructions: [
             { // SWAP
-              to: exchange.router.v1.address,
+              to: exchange[blockchain].router.v1.address,
               api: struct([
                 u64("anchorDiscriminator"),
                 u64("amount"),
@@ -653,7 +653,7 @@ describe('orca', () => {
           blockchain,
           instructions: [
             { // SWAP
-              to: exchange.router.v1.address,
+              to: exchange[blockchain].router.v1.address,
               api: struct([
                 u64("anchorDiscriminator"),
                 u64("amount"),
@@ -698,7 +698,7 @@ describe('orca', () => {
           blockchain,
           instructions: [
             { // SWAP
-              to: exchange.router.v1.address,
+              to: exchange[blockchain].router.v1.address,
               api: struct([
                 u64("anchorDiscriminator"),
                 u64("amount"),
@@ -743,7 +743,7 @@ describe('orca', () => {
           blockchain,
           instructions: [
             { // SWAP
-              to: exchange.router.v1.address,
+              to: exchange[blockchain].router.v1.address,
               api: struct([
                 u64("anchorDiscriminator"),
                 u64("amount"),
@@ -806,7 +806,7 @@ describe('orca', () => {
                 ]
               },
               { // SWAP
-                to: exchange.router.v1.address,
+                to: exchange[blockchain].router.v1.address,
                 api: struct([
                   u64("anchorDiscriminator"),
                   u64("amount"),

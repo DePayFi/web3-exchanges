@@ -84,8 +84,8 @@ describe('quickswap', () => {
         blockchain,
         provider,
         request: {
-          to: exchange.factory.address,
-          api: exchange.factory.api,
+          to: exchange[blockchain].factory.address,
+          api: exchange[blockchain].factory.api,
           method: 'getPair',
           params: ['0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a', Blockchains[blockchain].wrapped.address],
           return: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675'
@@ -96,7 +96,7 @@ describe('quickswap', () => {
         provider,
         request: {
           to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
-          api: exchange.pair.api,
+          api: exchange[blockchain].pair.api,
           method: 'getReserves',
           return: ['1115408461069632429', '10031', '1617377350']
         }
@@ -106,7 +106,7 @@ describe('quickswap', () => {
         provider,
         request: {
           to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
-          api: exchange.pair.api,
+          api: exchange[blockchain].pair.api,
           method: 'token0',
           return: '0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a'
         }
@@ -116,7 +116,7 @@ describe('quickswap', () => {
         provider,
         request: {
           to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
-          api: exchange.pair.api,
+          api: exchange[blockchain].pair.api,
           method: 'token1',
           return: Blockchains[blockchain].wrapped.address
         }
@@ -130,8 +130,8 @@ describe('quickswap', () => {
         blockchain,
         provider,
         request: {
-          to: exchange.factory.address,
-          api: exchange.factory.api,
+          to: exchange[blockchain].factory.address,
+          api: exchange[blockchain].factory.api,
           method: 'getPair',
           params: ['0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a', Blockchains[blockchain].wrapped.address],
           return: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675'
@@ -142,7 +142,7 @@ describe('quickswap', () => {
         provider,
         request: {
           to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
-          api: exchange.pair.api,
+          api: exchange[blockchain].pair.api,
           method: 'getReserves',
           return: ['10031', '1115408461069632429', '1617377350']
         }
@@ -152,7 +152,7 @@ describe('quickswap', () => {
         provider,
         request: {
           to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
-          api: exchange.pair.api,
+          api: exchange[blockchain].pair.api,
           method: 'token0',
           return: Blockchains[blockchain].wrapped.address
         }
@@ -162,7 +162,7 @@ describe('quickswap', () => {
         provider,
         request: {
           to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
-          api: exchange.pair.api,
+          api: exchange[blockchain].pair.api,
           method: 'token1',
           return: '0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a'
         }
@@ -191,8 +191,8 @@ describe('quickswap', () => {
           blockchain,
           provider,
           request: {
-            to: exchange.factory.address,
-            api: exchange.factory.api,
+            to: exchange[blockchain].factory.address,
+            api: exchange[blockchain].factory.api,
             method: 'getPair',
             params: ['0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a', Blockchains[blockchain].stables.usd[0]],
             return: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675'
@@ -203,7 +203,7 @@ describe('quickswap', () => {
           provider,
           request: {
             to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
-            api: exchange.pair.api,
+            api: exchange[blockchain].pair.api,
             method: 'getReserves',
             return: ['1115408461069632429', '10031', '1617377350']
           }
@@ -213,7 +213,7 @@ describe('quickswap', () => {
           provider,
           request: {
             to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
-            api: exchange.pair.api,
+            api: exchange[blockchain].pair.api,
             method: 'token0',
             return: '0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a'
           }
@@ -223,7 +223,7 @@ describe('quickswap', () => {
           provider,
           request: {
             to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
-            api: exchange.pair.api,
+            api: exchange[blockchain].pair.api,
             method: 'token1',
             return: Blockchains[blockchain].stables.usd[0]
           }
@@ -237,8 +237,8 @@ describe('quickswap', () => {
           blockchain,
           provider,
           request: {
-            to: exchange.factory.address,
-            api: exchange.factory.api,
+            to: exchange[blockchain].factory.address,
+            api: exchange[blockchain].factory.api,
             method: 'getPair',
             params: ['0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a', Blockchains[blockchain].stables.usd[0]],
             return: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675'
@@ -249,7 +249,7 @@ describe('quickswap', () => {
           provider,
           request: {
             to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
-            api: exchange.pair.api,
+            api: exchange[blockchain].pair.api,
             method: 'getReserves',
             return: ['10031', '1000000', '1617377350']
           }
@@ -259,7 +259,7 @@ describe('quickswap', () => {
           provider,
           request: {
             to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
-            api: exchange.pair.api,
+            api: exchange[blockchain].pair.api,
             method: 'token0',
             return: Blockchains[blockchain].stables.usd[0]
           }
@@ -269,7 +269,7 @@ describe('quickswap', () => {
           provider,
           request: {
             to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
-            api: exchange.pair.api,
+            api: exchange[blockchain].pair.api,
             method: 'token1',
             return: '0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a'
           }

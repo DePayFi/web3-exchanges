@@ -35,8 +35,8 @@ describe('spookyswap', () => {
         blockchain,
         block,
         request: {
-          to: Exchange.router.address,
-          api: Exchange.router.api,
+          to: exchange[blockchain].router.address,
+          api: exchange[blockchain].router.api,
           method: 'getAmountsIn',
           params: { amountOut, path },
           return: amountsIn

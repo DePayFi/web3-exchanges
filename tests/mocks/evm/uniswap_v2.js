@@ -7,7 +7,7 @@ function mockPair({ blockchain, exchange, provider, tokenIn, tokenOut, pair }) {
     blockchain,
     request: {
       to: pair,
-      api: exchange.pair.api,
+      api: exchange[blockchain].pair.api,
       method: 'getReserves',
       return: [ethers.utils.parseUnits('99999', 18), ethers.utils.parseUnits('99999', 18), '1629804922']
     }
@@ -17,7 +17,7 @@ function mockPair({ blockchain, exchange, provider, tokenIn, tokenOut, pair }) {
     blockchain,
     request: {
       to: pair,
-      api: exchange.pair.api,
+      api: exchange[blockchain].pair.api,
       method: 'token0',
       return: tokenIn
     }
@@ -27,7 +27,7 @@ function mockPair({ blockchain, exchange, provider, tokenIn, tokenOut, pair }) {
     blockchain,
     request: {
       to: pair,
-      api: exchange.pair.api,
+      api: exchange[blockchain].pair.api,
       method: 'token1',
       return: tokenOut
     }
@@ -36,8 +36,8 @@ function mockPair({ blockchain, exchange, provider, tokenIn, tokenOut, pair }) {
     provider: provider,
     blockchain,
     request: {
-      to: exchange.factory.address,
-      api: exchange.factory.api,
+      to: exchange[blockchain].factory.address,
+      api: exchange[blockchain].factory.api,
       method: 'getPair',
       params: [tokenIn, tokenOut],
       return: pair
@@ -51,8 +51,8 @@ function mockAmounts({ blockchain, exchange, block, provider, method, params, am
     blockchain,
     block,
     request: {
-      to: exchange.router.address,
-      api: exchange.router.api,
+      to: exchange[blockchain].router.address,
+      api: exchange[blockchain].router.api,
       method: method,
       params: params,
       return: amounts
