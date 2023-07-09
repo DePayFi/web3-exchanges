@@ -57,17 +57,17 @@ const pathExists = async (blockchain, exchange, path) => {
   try {
     let pair = await request({
       blockchain: blockchain.name,
-      address: exchange.factory.address,
+      address: exchange[blockchain].factory.address,
       method: 'getPair',
-      api: exchange.factory.api,
+      api: exchange[blockchain].factory.api,
       cache: 3600000,
       params: getExchangePath(blockchain, exchange, path),
     })
     if(!pair || pair == blockchain.zero) { return false }
     let [reserves, token0, token1] = await Promise.all([
-      request({ blockchain: blockchain.name, address: pair, method: 'getReserves', api: exchange.pair.api, cache: 3600000 }),
-      request({ blockchain: blockchain.name, address: pair, method: 'token0', api: exchange.pair.api, cache: 3600000 }),
-      request({ blockchain: blockchain.name, address: pair, method: 'token1', api: exchange.pair.api, cache: 3600000 })
+      request({ blockchain: blockchain.name, address: pair, method: 'getReserves', api: exchange[blockchain].pair.api, cache: 3600000 }),
+      request({ blockchain: blockchain.name, address: pair, method: 'token0', api: exchange[blockchain].pair.api, cache: 3600000 }),
+      request({ blockchain: blockchain.name, address: pair, method: 'token1', api: exchange[blockchain].pair.api, cache: 3600000 })
     ])
     if(path.includes(blockchain.wrapped.address)) {
       return minReserveRequirements({ min: 1, token: blockchain.wrapped.address, decimals: blockchain.currency.decimals, reserves, token0, token1 })
@@ -135,9 +135,9 @@ let getAmountOut = (blockchain, exchange, { path, amountIn, tokenIn, tokenOut })
   return new Promise((resolve) => {
     request({
       blockchain: blockchain.name,
-      address: exchange.router.address,
+      address: exchange[blockchain].router.address,
       method: 'getAmountsOut',
-      api: exchange.router.api,
+      api: exchange[blockchain].router.api,
       params: {
         amountIn: amountIn,
         path: getExchangePath(blockchain, exchange, path),
@@ -154,9 +154,9 @@ let getAmountIn = (blockchain, exchange, { path, amountOut, block }) => {
   return new Promise((resolve) => {
     request({
       blockchain: blockchain.name,
-      address: exchange.router.address,
+      address: exchange[blockchain].router.address,
       method: 'getAmountsIn',
-      api: exchange.router.api,
+      api: exchange[blockchain].router.api,
       params: {
         amountOut: amountOut,
         path: getExchangePath(blockchain, exchange, path),
@@ -226,8 +226,8 @@ let getTransaction = (blockchain, exchange, {
   let transaction = {
     blockchain: blockchain.name,
     from: fromAddress,
-    to: exchange.router.address,
-    api: exchange.router.api,
+    to: exchange[blockchain].router.address,
+    api: exchange[blockchain].router.api,
   }
 
   if (path[0] === blockchain.currency.address) {
