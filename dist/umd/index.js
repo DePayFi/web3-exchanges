@@ -256,7 +256,7 @@
     amountOutMax,
     amountInMin,
   }) => {
-    if(blockchain === undefined && exchange.blockchains != undefined && exchange.blockchains > 1) {
+    if(blockchain === undefined && exchange.blockchains != undefined && exchange.blockchains.length > 1) {
       throw 'You need to provide a blockchain when calling route on an exchange that supports multiple blockchains!'
     }
 
@@ -402,7 +402,7 @@
       return await route$1({
         ...
         await fixRouteParams({
-          blockchain: blockchain,
+          blockchain,
           exchange: this,
           tokenIn,
           tokenOut,
@@ -2611,9 +2611,9 @@
 
           let amount;
           if(amountIn) {
-            amount = await getOutputAmount({ exchange, pool, amountIn });
+            amount = await getOutputAmount({ exchange, pool, inputAmount: amountIn });
           } else {
-            amount = await getInputAmount({ exchange, pool, amountOut });
+            amount = await getInputAmount({ exchange, pool, outputAmount: amountOut });
           }
 
           return { ...pool, amountIn: amountIn || amount, amountOut: amountOut || amount }
@@ -2634,21 +2634,7 @@
 
   const pathExists$2 = async ({ blockchain, exchange, path, amountIn, amountOut, amountInMax, amountOutMin }) => {
     try {
-
-      let pools = (await Promise.all(exchange.fees.map((fee)=>{
-        path = getExchangePath$1({ blockchain, exchange, path });
-        return web3Client.request({
-          blockchain: Blockchains__default['default'][blockchain].name,
-          address: exchange[blockchain].factory.address,
-          method: 'getPool',
-          api: exchange[blockchain].factory.api,
-          cache: 3600,
-          params: [path[0], path[1], fee],
-        }).catch(()=>{})
-      }))).filter(Boolean).filter((address)=>address != Blockchains__default['default'][blockchain].zero);
-
-      return pools.length
-
+      return !!(await getBestPool$1({ blockchain, exchange, path, amountIn: (amountIn || amountInMax), amountOut: (amountOut || amountOutMin) }))
     } catch (e3) { return false }
   };
 
@@ -2659,43 +2645,67 @@
     ) { return { path: undefined, exchangePath: undefined } }
 
     let path;
-    if (await pathExists$2({ blockchain, exchange, path: [tokenIn, tokenOut], amountIn, amountOut, amountInMax, amountOutMin })) {
-      // direct path
+    let pools = [];
+
+    // DIRECT PATH
+    pools = [
+      await getBestPool$1({ exchange, blockchain, path: [tokenIn, tokenOut], amountIn: (amountIn || amountInMax), amountOut: (amountOut || amountOutMin) })
+    ];
+    if (pools.filter(Boolean).length) {
       path = [tokenIn, tokenOut];
-    } else if (
-      tokenIn != Blockchains__default['default'][blockchain].wrapped.address &&
-      await pathExists$2({ blockchain, exchange, path: [tokenIn, Blockchains__default['default'][blockchain].wrapped.address], amountIn, amountOut, amountInMax, amountOutMin }) &&
-      tokenOut != Blockchains__default['default'][blockchain].wrapped.address &&
-      await pathExists$2({ blockchain, exchange, path: [tokenOut, Blockchains__default['default'][blockchain].wrapped.address], amountIn, amountOut, amountInMax, amountOutMin })
-    ) {
-      // path via WRAPPED
-      path = [tokenIn, Blockchains__default['default'][blockchain].wrapped.address, tokenOut];
-    } else if (
-      (await Promise.all(Blockchains__default['default'][blockchain].stables.usd.map(async (stable)=>{
-        return( (await pathExists$2({ blockchain, exchange, path: [tokenIn, stable], amountIn, amountOut, amountInMax, amountOutMin }) ? stable : undefined) && await pathExists$2({ blockchain, exchange, path: [tokenOut, stable], amountIn, amountOut, amountInMax, amountOutMin }) ? stable : undefined )
-      }))).find(Boolean)
-    ) {
-      // path via tokenIn -> USD -> tokenOut
-      let USD = (await Promise.all(Blockchains__default['default'][blockchain].stables.usd.map(async (stable)=>{
-        return( (await pathExists$2({ blockchain, exchange, path: [tokenIn, stable], amountIn, amountOut, amountInMax, amountOutMin }) ? stable : undefined) && await pathExists$2({ blockchain, exchange, path: [tokenOut, stable], amountIn, amountOut, amountInMax, amountOutMin }) ? stable : undefined )
-      }))).find(Boolean);
-      path = [tokenIn, USD, tokenOut];
     }
 
-    let pools;
-    if(path && path.length == 2) {
-      pools = [
-        await getBestPool$1({ blockchain, exchange, path: [path[0], path[1]], amountIn: (amountIn || amountInMax), amountOut: (amountOut || amountOutMin) })
-      ];
-    } else if (path && path.length == 3) {
-      if(amountOut || amountOutMin) {
-        let pool2 = await getBestPool$1({ blockchain, exchange, path: [path[1], path[2]], amountOut: (amountOut || amountOutMin) });
-        let pool1 = await getBestPool$1({ blockchain, exchange, path: [path[0], path[1]], amountOut: pool2.amountIn });
-        pools = [pool1, pool2];
+    // PATH VIA WRAPPED
+    if(
+      !path &&
+      tokenIn != Blockchains__default['default'][blockchain].wrapped.address &&
+      tokenOut != Blockchains__default['default'][blockchain].wrapped.address
+    ) {
+      pools = [];
+      if(amountOut || amountOutMin){
+        pools.push(await getBestPool$1({ exchange, blockchain, path: [Blockchains__default['default'][blockchain].wrapped.address, tokenOut], amountOut: (amountOut || amountOutMin) }));
+        if(pools.filter(Boolean).length) {
+          pools.unshift(await getBestPool$1({ exchange, blockchain, path: [tokenIn, Blockchains__default['default'][blockchain].wrapped.address], amountOut: pools[0].amountIn }));
+        }
       } else { // amountIn
-        let pool1 = await getBestPool$1({ blockchain, exchange, path: [path[0], path[1]], amountIn: (amountIn || amountInMax) });
-        let pool2 = await getBestPool$1({ blockchain, exchange, path: [path[1], path[2]], amountIn: pool1.amountOut });
-        pools = [pool1, pool2];
+        pools.push(await getBestPool$1({ exchange, blockchain, path: [tokenIn, Blockchains__default['default'][blockchain].wrapped.address], amountIn: (amountIn || amountInMax) }));
+        if(pools.filter(Boolean).length) {
+          pools.push(await getBestPool$1({ exchange, blockchain, path: [Blockchains__default['default'][blockchain].wrapped.address, tokenOut], amountIn: pools[0].amountOut }));
+        }
+      }
+      if (pools.filter(Boolean).length === 2) {
+        // path via WRAPPED
+        path = [tokenIn, Blockchains__default['default'][blockchain].wrapped.address, tokenOut];
+      }
+    }
+
+    // PATH VIA USD STABLE
+    if(
+      !path
+    ) {
+      pools = [];
+      let allPoolsForAllUSD = await Promise.all(Blockchains__default['default'][blockchain].stables.usd.map(async(stable)=>{
+        let pools = [];
+        if(amountOut || amountOutMin){
+          pools.push(await getBestPool$1({ exchange, blockchain, path: [stable, tokenOut], amountOut: (amountOut || amountOutMin) }));
+          if(pools.filter(Boolean).length) {
+            pools.unshift(await getBestPool$1({ exchange, blockchain, path: [tokenIn, stable], amountOut: pools[0].amountIn }));
+          }
+        } else { // amountIn
+          pools.push(await getBestPool$1({ exchange, blockchain, path: [tokenIn, stable], amountIn: (amountIn || amountInMax) }));
+          if(pools.filter(Boolean).length) {
+            pools.push(await getBestPool$1({ exchange, blockchain, path: [stable, tokenOut], amountIn: pools[0].amountOut }));
+          }
+        }
+        if(pools.filter(Boolean).length === 2) {
+          return [stable, pools]
+        }
+      }));
+
+      let usdPath = allPoolsForAllUSD.filter(Boolean)[0];
+      if(usdPath) {
+        path = [tokenIn, usdPath[0], tokenOut];
+        pools = usdPath[1];
       }
     }
 
@@ -2707,6 +2717,7 @@
       path.splice(path.length-1, 0, Blockchains__default['default'][blockchain].wrapped.address);
     }
 
+    if(!path) { pools = []; }
     return { path, pools, exchangePath: getExchangePath$1({ blockchain, exchange, path }) }
   };
 
@@ -3127,7 +3138,9 @@
         }
       } else { // amountIn
         pools.push(await getBestPool({ exchange, blockchain, path: [tokenIn, Blockchains__default['default'][blockchain].wrapped.address], amountIn: (amountIn || amountInMax) }));
-        pools.push(await getBestPool({ exchange, blockchain, path: [Blockchains__default['default'][blockchain].wrapped.address, tokenOut], amountIn: pools[0].amounts[1] }));
+        if(pools.filter(Boolean).length) {
+          pools.push(await getBestPool({ exchange, blockchain, path: [Blockchains__default['default'][blockchain].wrapped.address, tokenOut], amountIn: pools[0].amounts[1] }));
+        }
       }
       if (pools.filter(Boolean).length === 2) {
         // path via WRAPPED
@@ -3149,7 +3162,9 @@
           }
         } else { // amountIn
           pools.push(await getBestPool({ exchange, blockchain, path: [tokenIn, stable], amountIn: (amountIn || amountInMax) }));
-          pools.push(await getBestPool({ exchange, blockchain, path: [stable, tokenOut], amountIn: pools[0].amounts[1] }));
+          if(pools.filter(Boolean).length) {
+            pools.push(await getBestPool({ exchange, blockchain, path: [stable, tokenOut], amountIn: pools[0].amounts[1] }));
+          }
         }
         if(pools.filter(Boolean).length === 2) {
           return [stable, pools]
@@ -3171,6 +3186,7 @@
       path.splice(path.length-1, 0, Blockchains__default['default'][blockchain].wrapped.address);
     }
 
+    if(!path) { pools = []; }
     return { path, pools, exchangePath: getExchangePath({ blockchain, path }) }
   };
 

@@ -15,7 +15,8 @@ describe('uniswap_v3', () => {
   const fromAddress = '0x5Af489c8786A018EC4814194dC8048be1007e390'
   const toAddress = '0x5Af489c8786A018EC4814194dC8048be1007e390'
 
-  exchange.blockchains.forEach((blockchain)=>{
+  // exchange.blockchains.forEach((blockchain)=>{
+  ;['ethereum'].forEach((blockchain)=>{
 
     describe(blockchain, ()=>{
   

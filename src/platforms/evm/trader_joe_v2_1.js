@@ -123,7 +123,9 @@ const findPath = async ({ exchange, blockchain, tokenIn, tokenOut, amountIn, amo
       }
     } else { // amountIn
       pools.push(await getBestPool({ exchange, blockchain, path: [tokenIn, Blockchains[blockchain].wrapped.address], amountIn: (amountIn || amountInMax) }))
-      pools.push(await getBestPool({ exchange, blockchain, path: [Blockchains[blockchain].wrapped.address, tokenOut], amountIn: pools[0].amounts[1] }))
+      if(pools.filter(Boolean).length) {
+        pools.push(await getBestPool({ exchange, blockchain, path: [Blockchains[blockchain].wrapped.address, tokenOut], amountIn: pools[0].amounts[1] }))
+      }
     }
     if (pools.filter(Boolean).length === 2) {
       // path via WRAPPED
@@ -145,7 +147,9 @@ const findPath = async ({ exchange, blockchain, tokenIn, tokenOut, amountIn, amo
         }
       } else { // amountIn
         pools.push(await getBestPool({ exchange, blockchain, path: [tokenIn, stable], amountIn: (amountIn || amountInMax) }))
-        pools.push(await getBestPool({ exchange, blockchain, path: [stable, tokenOut], amountIn: pools[0].amounts[1] }))
+        if(pools.filter(Boolean).length) {
+          pools.push(await getBestPool({ exchange, blockchain, path: [stable, tokenOut], amountIn: pools[0].amounts[1] }))
+        }
       }
       if(pools.filter(Boolean).length === 2) {
         return [stable, pools]
@@ -167,6 +171,7 @@ const findPath = async ({ exchange, blockchain, tokenIn, tokenOut, amountIn, amo
     path.splice(path.length-1, 0, Blockchains[blockchain].wrapped.address)
   }
 
+  if(!path) { pools = [] }
   return { path, pools, exchangePath: getExchangePath({ blockchain, path }) }
 }
 

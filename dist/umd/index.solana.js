@@ -256,7 +256,7 @@
     amountOutMax,
     amountInMin,
   }) => {
-    if(blockchain === undefined && exchange.blockchains != undefined && exchange.blockchains > 1) {
+    if(blockchain === undefined && exchange.blockchains != undefined && exchange.blockchains.length > 1) {
       throw 'You need to provide a blockchain when calling route on an exchange that supports multiple blockchains!'
     }
 
@@ -402,7 +402,7 @@
       return await route$1({
         ...
         await fixRouteParams({
-          blockchain: blockchain,
+          blockchain,
           exchange: this,
           tokenIn,
           tokenOut,
