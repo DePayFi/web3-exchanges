@@ -10,7 +10,7 @@ const exchange = {
   
   slippage: false,
 
-  blockchain: 'polygon',
+  blockchains: ['polygon'],
   
   polygon: {
     router: {

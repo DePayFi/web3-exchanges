@@ -427,7 +427,7 @@
   // to be able to differentiate between ETH<>Token and WETH<>Token swaps
   // as they are not the same!
   //
-  const getExchangePath$3 = ({ blockchain, exchange, path }) => {
+  const getExchangePath$2 = ({ blockchain, exchange, path }) => {
     if(!path) { return }
     let exchangePath = path.map((token, index) => {
       if (
@@ -460,7 +460,7 @@
   };
 
   const pathExists$3 = async ({ blockchain, exchange, path }) => {
-    const exchangePath = getExchangePath$3({ blockchain, exchange, path });
+    const exchangePath = getExchangePath$2({ blockchain, exchange, path });
     if(!exchangePath || exchangePath.length === 1) { return false }
     try {
       let pair = await web3ClientEvm.request({
@@ -469,7 +469,7 @@
         method: 'getPair',
         api: exchange[blockchain].factory.api,
         cache: 3600000,
-        params: getExchangePath$3({ blockchain, exchange, path }),
+        params: getExchangePath$2({ blockchain, exchange, path }),
       });
       if(!pair || pair == Blockchains__default['default'][blockchain].zero) { return false }
       let [reserves, token0, token1] = await Promise.all([
@@ -536,7 +536,7 @@
       path.splice(path.length-1, 0, Blockchains__default['default'][blockchain].wrapped.address);
     }
 
-    return { path, exchangePath: getExchangePath$3({ blockchain, exchange, path }) }
+    return { path, exchangePath: getExchangePath$2({ blockchain, exchange, path }) }
   };
 
   let getAmountOut$2 = ({ blockchain, exchange, path, amountIn, tokenIn, tokenOut }) => {
@@ -548,7 +548,7 @@
         api: exchange[blockchain].router.api,
         params: {
           amountIn: amountIn,
-          path: getExchangePath$3({ blockchain, exchange, path }),
+          path: getExchangePath$2({ blockchain, exchange, path }),
         },
       })
       .then((amountsOut)=>{
@@ -567,7 +567,7 @@
         api: exchange[blockchain].router.api,
         params: {
           amountOut: amountOut,
-          path: getExchangePath$3({ blockchain, exchange, path }),
+          path: getExchangePath$2({ blockchain, exchange, path }),
         },
         block
       })
@@ -671,7 +671,7 @@
     }
 
     transaction.params = Object.assign({}, transaction.params, {
-      path: getExchangePath$3({ blockchain, exchange, path }),
+      path: getExchangePath$2({ blockchain, exchange, path }),
       to: fromAddress,
       deadline: Math.round(Date.now() / 1000) + 60 * 60 * 24, // 24 hours
     });
@@ -742,7 +742,7 @@
   // to be able to differentiate between ETH<>Token and WETH<>Token swaps
   // as they are not the same!
   //
-  const getExchangePath$2 = ({ blockchain, exchange, path }) => {
+  const getExchangePath$1 = ({ blockchain, exchange, path }) => {
     if(!path) { return }
     let exchangePath = path.map((token, index) => {
       if (
@@ -799,7 +799,7 @@
   };
 
   const getBestPool$1 = async ({ blockchain, exchange, path, amountIn, amountOut, block }) => {
-    path = getExchangePath$2({ blockchain, exchange, path });
+    path = getExchangePath$1({ blockchain, exchange, path });
     if(path.length > 2) { throw('Uniswap V3 can only check paths for up to 2 tokens!') }
 
     try {
@@ -857,7 +857,7 @@
     try {
 
       let pools = (await Promise.all(exchange.fees.map((fee)=>{
-        path = getExchangePath$2({ blockchain, exchange, path });
+        path = getExchangePath$1({ blockchain, exchange, path });
         return web3ClientEvm.request({
           blockchain: Blockchains__default['default'][blockchain].name,
           address: exchange[blockchain].factory.address,
@@ -928,7 +928,7 @@
       path.splice(path.length-1, 0, Blockchains__default['default'][blockchain].wrapped.address);
     }
 
-    return { path, pools, exchangePath: getExchangePath$2({ blockchain, exchange, path }) }
+    return { path, pools, exchangePath: getExchangePath$1({ blockchain, exchange, path }) }
   };
 
   let getAmountOut$1 = ({ blockchain, exchange, path, pools, amountIn }) => {
@@ -1247,7 +1247,7 @@
   // to be able to differentiate between ETH<>Token and WETH<>Token swaps
   // as they are not the same!
   //
-  const getExchangePath$1 = ({ blockchain, path }) => {
+  const getExchangePath = ({ blockchain, path }) => {
     if(!path) { return }
     let exchangePath = path.map((token, index) => {
       if (
@@ -1270,7 +1270,7 @@
   };
 
   const getBestPool = async ({ exchange, blockchain, path, amountIn, amountOut, block }) => {
-    path = getExchangePath$1({ blockchain, path });
+    path = getExchangePath({ blockchain, path });
     
     let bestPool;
       
@@ -1392,7 +1392,7 @@
       path.splice(path.length-1, 0, Blockchains__default['default'][blockchain].wrapped.address);
     }
 
-    return { path, pools, exchangePath: getExchangePath$1({ blockchain, path }) }
+    return { path, pools, exchangePath: getExchangePath({ blockchain, path }) }
   };
 
   let getAmountOut = async({ exchange, blockchain, path, pools, amountIn }) => {
@@ -1403,7 +1403,7 @@
       api: exchange[blockchain].quoter.api,
       cache: 5,
       params: {
-        route: getExchangePath$1({ blockchain, path }),
+        route: getExchangePath({ blockchain, path }),
         amountIn,
       },
     }).catch(()=>{});
@@ -1421,7 +1421,7 @@
       cache: 5,
       block,
       params: {
-        route: getExchangePath$1({ blockchain, path }),
+        route: getExchangePath({ blockchain, path }),
         amountOut
       },
     }).catch(()=>{});
@@ -1503,7 +1503,7 @@
     const fullPath = [
       pools.map((pool)=>pool.binSteps[0]),
       pools.map((pool)=>pool.versions[0]),
-      getExchangePath$1({ blockchain, path })
+      getExchangePath({ blockchain, path })
     ];
 
     if(path[0] === Blockchains__default['default'][blockchain].currency.address) { // NATIVE START
@@ -1787,11 +1787,8 @@
     )
   };
 
-  let getExchangePath = (path) => path;
-
   let pathExists = async ({ blockchain, path }) => {
-    const exchangePath = getExchangePath({ path });
-    if(!exchangePath || exchangePath.length !== 2) { return false }
+    if(!path || path.length !== 2) { return false }
     return (
       path.includes(Blockchains__default['default'][blockchain].currency.address) &&
       path.includes(Blockchains__default['default'][blockchain].wrapped.address)
@@ -2077,7 +2074,7 @@
     
     slippage: false,
 
-    blockchain: 'polygon',
+    blockchains: ['polygon'],
     
     polygon: {
       router: {
@@ -2109,7 +2106,7 @@
 
     slippage: false,
 
-    blockchain: 'gnosis',
+    blockchains: ['gnosis'],
     
     gnosis: {
       router: {

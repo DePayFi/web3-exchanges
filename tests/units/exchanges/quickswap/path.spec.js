@@ -29,7 +29,7 @@ describe('quickswap', () => {
       mockPair({ blockchain, exchange, provider, tokenIn, tokenOut: Blockchains[blockchain].wrapped.address, pair: Blockchains[blockchain].zero })
       mockDecimals({ provider, blockchain, address: Blockchains[blockchain].stables.usd[0], value: Blockchains[blockchain].tokens.find((token)=>token.address == tokenIn).decimals })
       let USDtoUSDMock = mockPair({ blockchain, exchange, provider, tokenIn: Blockchains[blockchain].stables.usd[0], tokenOut: Blockchains[blockchain].stables.usd[0], pair: Blockchains[blockchain].zero })
-      let { path } = await exchange.findPath(blockchain, { tokenIn, tokenOut })
+      let { path } = await exchange.findPath({ blockchain, tokenIn, tokenOut })
       expect(USDtoUSDMock.calls.count()).toEqual(0)
       expect(path).toEqual(undefined)
     })
@@ -44,7 +44,7 @@ describe('quickswap', () => {
         mockPair({ blockchain, exchange, blockchain, exchange, provider, tokenIn, tokenOut: stable , pair: Blockchains[blockchain].zero })
       })
       let USDtoUSDMock = mockPair({ blockchain, exchange, provider, tokenIn: Blockchains[blockchain].stables.usd[0], tokenOut: Blockchains[blockchain].stables.usd[0], pair: Blockchains[blockchain].zero })
-      let { path } = await exchange.findPath(blockchain, { tokenIn, tokenOut })
+      let { path } = await exchange.findPath({ blockchain, tokenIn, tokenOut })
       expect(USDtoUSDMock.calls.count()).toEqual(0)
       expect(path).toEqual(undefined)
     })
@@ -59,7 +59,7 @@ describe('quickswap', () => {
         mockPair({ blockchain, exchange, blockchain, exchange, provider, tokenIn, tokenOut: stable , pair: Blockchains[blockchain].zero })
       })
       let WRAPPEDtoWRAPPEDMock = mockPair({ blockchain, exchange, provider, tokenIn: Blockchains[blockchain].wrapped.address, tokenOut: Blockchains[blockchain].wrapped.address, pair: Blockchains[blockchain].zero })
-      let { path } = await exchange.findPath(blockchain, { tokenIn, tokenOut })
+      let { path } = await exchange.findPath({ blockchain, tokenIn, tokenOut })
       expect(WRAPPEDtoWRAPPEDMock.calls.count()).toEqual(0)
       expect(path).toEqual(undefined)
     })
@@ -74,7 +74,7 @@ describe('quickswap', () => {
         mockPair({ blockchain, exchange, blockchain, exchange, provider, tokenIn, tokenOut: stable , pair: Blockchains[blockchain].zero })
       })
       let WRAPPEDtoWRAPPEDMock = mockPair({ blockchain, exchange, provider, tokenIn: Blockchains[blockchain].wrapped.address, tokenOut: Blockchains[blockchain].wrapped.address, pair: Blockchains[blockchain].zero })
-      let { path } = await exchange.findPath(blockchain, { tokenIn, tokenOut })
+      let { path } = await exchange.findPath({ blockchain, tokenIn, tokenOut })
       expect(WRAPPEDtoWRAPPEDMock.calls.count()).toEqual(0)
       expect(path).toEqual(undefined)
     })
@@ -121,7 +121,7 @@ describe('quickswap', () => {
           return: Blockchains[blockchain].wrapped.address
         }
       })
-      let exists = await exchange.pathExists(['0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a', Blockchains[blockchain].wrapped.address])
+      let exists = await exchange.pathExists({ blockchain, path: ['0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a', Blockchains[blockchain].wrapped.address] })
       expect(exists).toEqual(false)
     })
 
@@ -167,7 +167,7 @@ describe('quickswap', () => {
           return: '0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a'
         }
       })
-      let exists = await exchange.pathExists(['0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a', Blockchains[blockchain].wrapped.address])
+      let exists = await exchange.pathExists({ blockchain, path: ['0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a', Blockchains[blockchain].wrapped.address] })
       expect(exists).toEqual(false)
     })
 
@@ -228,7 +228,7 @@ describe('quickswap', () => {
             return: Blockchains[blockchain].stables.usd[0]
           }
         })
-        let exists = await exchange.pathExists(['0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a', Blockchains[blockchain].stables.usd[0]])
+        let exists = await exchange.pathExists({ blockchain, path: ['0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a', Blockchains[blockchain].stables.usd[0]] })
         expect(exists).toEqual(false)
       })
 
@@ -274,7 +274,7 @@ describe('quickswap', () => {
             return: '0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a'
           }
         })
-        let exists = await exchange.pathExists(['0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a', Blockchains[blockchain].stables.usd[0]])
+        let exists = await exchange.pathExists({ blockchain, path: ['0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a', Blockchains[blockchain].stables.usd[0]] })
         expect(exists).toEqual(false)
       })
     })

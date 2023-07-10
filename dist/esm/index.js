@@ -1626,7 +1626,7 @@ const blockchain$1 = Blockchains.solana;
 // to be able to differentiate between SOL<>Token and WSOL<>Token swaps
 // as they are not the same!
 //
-let getExchangePath$4 = ({ path }) => {
+let getExchangePath$3 = ({ path }) => {
   if(!path) { return }
   let exchangePath = path.map((token, index) => {
     if (
@@ -1650,7 +1650,7 @@ let getExchangePath$4 = ({ path }) => {
 
 let pathExists$4 = async ({ path, amountIn, amountInMax, amountOut, amountOutMin }) => {
   if(path.length == 1) { return false }
-  path = getExchangePath$4({ path });
+  path = getExchangePath$3({ path });
   if((await getPairsWithPrice({ tokenIn: path[0], tokenOut: path[1], amountIn, amountInMax, amountOut, amountOutMin })).length > 0) {
     return true
   } else {
@@ -1697,7 +1697,7 @@ let findPath$4 = async ({ tokenIn, tokenOut, amountIn, amountOut, amountInMax, a
   } else if(_optionalChain$3([path, 'optionalAccess', _2 => _2.length]) && path[path.length-1] == blockchain$1.currency.address) {
     path.splice(path.length-1, 0, blockchain$1.wrapped.address);
   }
-  return { path, exchangePath: getExchangePath$4({ path }) }
+  return { path, exchangePath: getExchangePath$3({ path }) }
 };
 
 let getAmountsOut = async ({ path, amountIn, amountInMax }) => {
@@ -1740,7 +1740,7 @@ let getAmounts$4 = async ({
   amountInMax,
   amountOutMin
 }) => {
-  path = getExchangePath$4({ path });
+  path = getExchangePath$3({ path });
   let amounts;
   if (amountOut) {
     amounts = await getAmountsIn({ path, amountOut, tokenIn, tokenOut });
@@ -2015,7 +2015,7 @@ const getTransaction$4 = async ({
   let transaction = { blockchain: 'solana' };
   let instructions = [];
 
-  const exchangePath = getExchangePath$4({ path });
+  const exchangePath = getExchangePath$3({ path });
   if(exchangePath.length > 3) { throw 'Orca can only handle fixed paths with a max length of 3 (2 pools)!' }
   const tokenIn = exchangePath[0];
   const tokenMiddle = exchangePath.length == 3 ? exchangePath[1] : undefined;
@@ -2201,7 +2201,7 @@ function _optionalChain$2(ops) { let lastAccessLHS = undefined; let value = ops[
 // to be able to differentiate between ETH<>Token and WETH<>Token swaps
 // as they are not the same!
 //
-const getExchangePath$3 = ({ blockchain, exchange, path }) => {
+const getExchangePath$2 = ({ blockchain, exchange, path }) => {
   if(!path) { return }
   let exchangePath = path.map((token, index) => {
     if (
@@ -2234,7 +2234,7 @@ const minReserveRequirements = ({ reserves, min, token, token0, token1, decimals
 };
 
 const pathExists$3 = async ({ blockchain, exchange, path }) => {
-  const exchangePath = getExchangePath$3({ blockchain, exchange, path });
+  const exchangePath = getExchangePath$2({ blockchain, exchange, path });
   if(!exchangePath || exchangePath.length === 1) { return false }
   try {
     let pair = await request({
@@ -2243,7 +2243,7 @@ const pathExists$3 = async ({ blockchain, exchange, path }) => {
       method: 'getPair',
       api: exchange[blockchain].factory.api,
       cache: 3600000,
-      params: getExchangePath$3({ blockchain, exchange, path }),
+      params: getExchangePath$2({ blockchain, exchange, path }),
     });
     if(!pair || pair == Blockchains[blockchain].zero) { return false }
     let [reserves, token0, token1] = await Promise.all([
@@ -2310,7 +2310,7 @@ const findPath$3 = async ({ blockchain, exchange, tokenIn, tokenOut }) => {
     path.splice(path.length-1, 0, Blockchains[blockchain].wrapped.address);
   }
 
-  return { path, exchangePath: getExchangePath$3({ blockchain, exchange, path }) }
+  return { path, exchangePath: getExchangePath$2({ blockchain, exchange, path }) }
 };
 
 let getAmountOut$2 = ({ blockchain, exchange, path, amountIn, tokenIn, tokenOut }) => {
@@ -2322,7 +2322,7 @@ let getAmountOut$2 = ({ blockchain, exchange, path, amountIn, tokenIn, tokenOut 
       api: exchange[blockchain].router.api,
       params: {
         amountIn: amountIn,
-        path: getExchangePath$3({ blockchain, exchange, path }),
+        path: getExchangePath$2({ blockchain, exchange, path }),
       },
     })
     .then((amountsOut)=>{
@@ -2341,7 +2341,7 @@ let getAmountIn$2 = ({ blockchain, exchange, path, amountOut, block }) => {
       api: exchange[blockchain].router.api,
       params: {
         amountOut: amountOut,
-        path: getExchangePath$3({ blockchain, exchange, path }),
+        path: getExchangePath$2({ blockchain, exchange, path }),
       },
       block
     })
@@ -2445,7 +2445,7 @@ let getTransaction$3 = ({
   }
 
   transaction.params = Object.assign({}, transaction.params, {
-    path: getExchangePath$3({ blockchain, exchange, path }),
+    path: getExchangePath$2({ blockchain, exchange, path }),
     to: fromAddress,
     deadline: Math.round(Date.now() / 1000) + 60 * 60 * 24, // 24 hours
   });
@@ -2516,7 +2516,7 @@ function _optionalChain$1(ops) { let lastAccessLHS = undefined; let value = ops[
 // to be able to differentiate between ETH<>Token and WETH<>Token swaps
 // as they are not the same!
 //
-const getExchangePath$2 = ({ blockchain, exchange, path }) => {
+const getExchangePath$1 = ({ blockchain, exchange, path }) => {
   if(!path) { return }
   let exchangePath = path.map((token, index) => {
     if (
@@ -2573,7 +2573,7 @@ const getOutputAmount = async ({ exchange, pool, inputAmount })=>{
 };
 
 const getBestPool$1 = async ({ blockchain, exchange, path, amountIn, amountOut, block }) => {
-  path = getExchangePath$2({ blockchain, exchange, path });
+  path = getExchangePath$1({ blockchain, exchange, path });
   if(path.length > 2) { throw('Uniswap V3 can only check paths for up to 2 tokens!') }
 
   try {
@@ -2631,7 +2631,7 @@ const pathExists$2 = async ({ blockchain, exchange, path, amountIn, amountOut, a
   try {
 
     let pools = (await Promise.all(exchange.fees.map((fee)=>{
-      path = getExchangePath$2({ blockchain, exchange, path });
+      path = getExchangePath$1({ blockchain, exchange, path });
       return request({
         blockchain: Blockchains[blockchain].name,
         address: exchange[blockchain].factory.address,
@@ -2702,7 +2702,7 @@ const findPath$2 = async ({ blockchain, exchange, tokenIn, tokenOut, amountIn, a
     path.splice(path.length-1, 0, Blockchains[blockchain].wrapped.address);
   }
 
-  return { path, pools, exchangePath: getExchangePath$2({ blockchain, exchange, path }) }
+  return { path, pools, exchangePath: getExchangePath$1({ blockchain, exchange, path }) }
 };
 
 let getAmountOut$1 = ({ blockchain, exchange, path, pools, amountIn }) => {
@@ -3021,7 +3021,7 @@ function _optionalChain(ops) { let lastAccessLHS = undefined; let value = ops[0]
 // to be able to differentiate between ETH<>Token and WETH<>Token swaps
 // as they are not the same!
 //
-const getExchangePath$1 = ({ blockchain, path }) => {
+const getExchangePath = ({ blockchain, path }) => {
   if(!path) { return }
   let exchangePath = path.map((token, index) => {
     if (
@@ -3044,7 +3044,7 @@ const getExchangePath$1 = ({ blockchain, path }) => {
 };
 
 const getBestPool = async ({ exchange, blockchain, path, amountIn, amountOut, block }) => {
-  path = getExchangePath$1({ blockchain, path });
+  path = getExchangePath({ blockchain, path });
   
   let bestPool;
     
@@ -3166,7 +3166,7 @@ const findPath$1 = async ({ exchange, blockchain, tokenIn, tokenOut, amountIn, a
     path.splice(path.length-1, 0, Blockchains[blockchain].wrapped.address);
   }
 
-  return { path, pools, exchangePath: getExchangePath$1({ blockchain, path }) }
+  return { path, pools, exchangePath: getExchangePath({ blockchain, path }) }
 };
 
 let getAmountOut = async({ exchange, blockchain, path, pools, amountIn }) => {
@@ -3177,7 +3177,7 @@ let getAmountOut = async({ exchange, blockchain, path, pools, amountIn }) => {
     api: exchange[blockchain].quoter.api,
     cache: 5,
     params: {
-      route: getExchangePath$1({ blockchain, path }),
+      route: getExchangePath({ blockchain, path }),
       amountIn,
     },
   }).catch(()=>{});
@@ -3195,7 +3195,7 @@ let getAmountIn = async ({ exchange, blockchain, path, pools, amountOut, block }
     cache: 5,
     block,
     params: {
-      route: getExchangePath$1({ blockchain, path }),
+      route: getExchangePath({ blockchain, path }),
       amountOut
     },
   }).catch(()=>{});
@@ -3277,7 +3277,7 @@ let getTransaction$1 = async({
   const fullPath = [
     pools.map((pool)=>pool.binSteps[0]),
     pools.map((pool)=>pool.versions[0]),
-    getExchangePath$1({ blockchain, path })
+    getExchangePath({ blockchain, path })
   ];
 
   if(path[0] === Blockchains[blockchain].currency.address) { // NATIVE START
@@ -3561,11 +3561,8 @@ var uniswap_v3 = (scope)=>{
   )
 };
 
-let getExchangePath = (path) => path;
-
 let pathExists = async ({ blockchain, path }) => {
-  const exchangePath = getExchangePath({ path });
-  if(!exchangePath || exchangePath.length !== 2) { return false }
+  if(!path || path.length !== 2) { return false }
   return (
     path.includes(Blockchains[blockchain].currency.address) &&
     path.includes(Blockchains[blockchain].wrapped.address)
@@ -3851,7 +3848,7 @@ const exchange$1 = {
   
   slippage: false,
 
-  blockchain: 'polygon',
+  blockchains: ['polygon'],
   
   polygon: {
     router: {
@@ -3883,7 +3880,7 @@ const exchange = {
 
   slippage: false,
 
-  blockchain: 'gnosis',
+  blockchains: ['gnosis'],
   
   gnosis: {
     router: {

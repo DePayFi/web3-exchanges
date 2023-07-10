@@ -1,6 +1,6 @@
 import { ethers } from 'ethers'
 import Exchanges from 'src'
-import { WHIRLPOOL_LAYOUT } from 'src/exchanges/orca/layouts'
+import { WHIRLPOOL_LAYOUT } from 'src/platforms/solana/orca/layouts'
 
 describe('orca', () => {
 

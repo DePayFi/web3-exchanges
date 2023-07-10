@@ -1,4 +1,3 @@
-import UniswapV2 from 'src/exchanges/uniswap_v2'
 import { ethers } from 'ethers'
 import Exchanges from 'src'
 import { mock, resetMocks } from '@depay/web3-mock'
@@ -35,8 +34,8 @@ describe('uniswap_v2', () => {
         blockchain,
         block,
         request: {
-          to: UniswapV2[blockchain].router.address,
-          api: UniswapV2[blockchain].router.api,
+          to: exchange.ethereum.router.address,
+          api: exchange.ethereum.router.api,
           method: 'getAmountsIn',
           params: { amountOut, path },
           return: amountsIn

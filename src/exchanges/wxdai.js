@@ -10,7 +10,7 @@ const exchange = {
 
   slippage: false,
 
-  blockchain: 'gnosis',
+  blockchains: ['gnosis'],
   
   gnosis: {
     router: {

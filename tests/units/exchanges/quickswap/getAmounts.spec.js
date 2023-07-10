@@ -1,4 +1,3 @@
-import Quickswap from 'src/exchanges/quickswap'
 import { ethers } from 'ethers'
 import Exchanges from 'src'
 import { mock, resetMocks } from '@depay/web3-mock'
@@ -36,8 +35,8 @@ describe('quickswap', () => {
         blockchain,
         block,
         request: {
-          to: Quickswap.polygon.router.address,
-          api: Quickswap.polygon.router.api,
+          to: exchange.polygon.router.address,
+          api: exchange.polygon.router.api,
           method: 'getAmountsIn',
           params: { amountOut, path },
           return: amountsIn

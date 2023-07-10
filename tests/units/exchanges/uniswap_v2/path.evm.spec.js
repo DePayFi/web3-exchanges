@@ -28,7 +28,7 @@ describe('uniswap_v2', () => {
       mockPair({ blockchain, exchange, provider, tokenIn, tokenOut, pair: Blockchains[blockchain].zero })
       mockPair({ blockchain, exchange, provider, tokenIn, tokenOut: Blockchains[blockchain].wrapped.address, pair: Blockchains[blockchain].zero })
       let USDtoUSDMock = mockPair({ blockchain, exchange, provider, tokenIn: Blockchains[blockchain].stables.usd[0], tokenOut: Blockchains[blockchain].stables.usd[0], pair: Blockchains[blockchain].zero })
-      let { path } = await exchange.findPath(blockchain, { tokenIn, tokenOut })
+      let { path } = await exchange.findPath({ blockchain, tokenIn, tokenOut })
       expect(USDtoUSDMock.calls.count()).toEqual(0)
       expect(path).toEqual(undefined)
     })
@@ -40,10 +40,10 @@ describe('uniswap_v2', () => {
       mockPair({ blockchain, exchange, provider, tokenIn: Blockchains[blockchain].stables.usd[0], tokenOut: Blockchains[blockchain].wrapped.address, pair: Blockchains[blockchain].zero })
       mockPair({ blockchain, exchange, provider, tokenIn, tokenOut: Blockchains[blockchain].wrapped.address, pair: '0x0ed7e52944161450477ee417de9cd3a859b14fd0' })
       Blockchains[blockchain].stables.usd.forEach((stable)=>{
-        mockPair({ blockchain, exchange, provider, tokenIn, tokenOut: stable , pair: Blockchains[blockchain].zero })
+        mockPair({ blockchain, exchange, blockchain, exchange, provider, tokenIn, tokenOut: stable , pair: Blockchains[blockchain].zero })
       })
       let USDtoUSDMock = mockPair({ blockchain, exchange, provider, tokenIn: Blockchains[blockchain].stables.usd[0], tokenOut: Blockchains[blockchain].stables.usd[0], pair: Blockchains[blockchain].zero })
-      let { path } = await exchange.findPath(blockchain, { tokenIn, tokenOut })
+      let { path } = await exchange.findPath({ blockchain, tokenIn, tokenOut })
       expect(USDtoUSDMock.calls.count()).toEqual(0)
       expect(path).toEqual(undefined)
     })
@@ -55,10 +55,10 @@ describe('uniswap_v2', () => {
       mockPair({ blockchain, exchange, provider, tokenIn, tokenOut: Blockchains[blockchain].stables.usd[0], pair: '0x804678fa97d91b974ec2af3c843270886528a9e6' })
       mockDecimals({ provider, blockchain, address: Blockchains[blockchain].stables.usd[0], value: 18 })
       Blockchains[blockchain].stables.usd.forEach((stable)=>{
-        mockPair({ blockchain, exchange, provider, tokenIn, tokenOut: stable , pair: Blockchains[blockchain].zero })
+        mockPair({ blockchain, exchange, blockchain, exchange, provider, tokenIn, tokenOut: stable , pair: Blockchains[blockchain].zero })
       })
       let WRAPPEDtoWRAPPEDMock = mockPair({ blockchain, exchange, provider, tokenIn: Blockchains[blockchain].wrapped.address, tokenOut: Blockchains[blockchain].wrapped.address, pair: Blockchains[blockchain].zero })
-      let { path } = await exchange.findPath(blockchain, { tokenIn, tokenOut })
+      let { path } = await exchange.findPath({ blockchain, tokenIn, tokenOut })
       expect(WRAPPEDtoWRAPPEDMock.calls.count()).toEqual(0)
       expect(path).toEqual(undefined)
     })
@@ -70,10 +70,10 @@ describe('uniswap_v2', () => {
       mockPair({ blockchain, exchange, provider, tokenIn, tokenOut: Blockchains[blockchain].stables.usd[0], pair: '0x58f876857a02d6762e0101bb5c46a8c1ed44dc16' })
       mockDecimals({ provider, blockchain, address: Blockchains[blockchain].stables.usd[0], value: 18 })
       Blockchains[blockchain].stables.usd.forEach((stable)=>{
-        mockPair({ blockchain, exchange, provider, tokenIn, tokenOut: stable , pair: Blockchains[blockchain].zero })
+        mockPair({ blockchain, exchange, blockchain, exchange, provider, tokenIn, tokenOut: stable , pair: Blockchains[blockchain].zero })
       })
       let WRAPPEDtoWRAPPEDMock = mockPair({ blockchain, exchange, provider, tokenIn: Blockchains[blockchain].wrapped.address, tokenOut: Blockchains[blockchain].wrapped.address, pair: Blockchains[blockchain].zero })
-      let { path } = await exchange.findPath(blockchain, { tokenIn, tokenOut })
+      let { path } = await exchange.findPath({ blockchain, tokenIn, tokenOut })
       expect(WRAPPEDtoWRAPPEDMock.calls.count()).toEqual(0)
       expect(path).toEqual(undefined)
     })
@@ -120,7 +120,7 @@ describe('uniswap_v2', () => {
           return: Blockchains[blockchain].wrapped.address
         }
       })
-      let exists = await exchange.pathExists(['0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a', Blockchains[blockchain].wrapped.address])
+      let exists = await exchange.pathExists({ blockchain, path: ['0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a', Blockchains[blockchain].wrapped.address] })
       expect(exists).toEqual(false)
     })
 
@@ -166,7 +166,7 @@ describe('uniswap_v2', () => {
           return: '0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a'
         }
       })
-      let exists = await exchange.pathExists(['0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a', Blockchains[blockchain].wrapped.address])
+      let exists = await exchange.pathExists({ blockchain, path: ['0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a', Blockchains[blockchain].wrapped.address] })
       expect(exists).toEqual(false)
     })
 
@@ -227,7 +227,7 @@ describe('uniswap_v2', () => {
             return: Blockchains[blockchain].stables.usd[0]
           }
         })
-        let exists = await exchange.pathExists(['0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a', Blockchains[blockchain].stables.usd[0]])
+        let exists = await exchange.pathExists({ blockchain, path: ['0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a', Blockchains[blockchain].stables.usd[0]] })
         expect(exists).toEqual(false)
       })
 
@@ -273,7 +273,7 @@ describe('uniswap_v2', () => {
             return: '0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a'
           }
         })
-        let exists = await exchange.pathExists(['0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a', Blockchains[blockchain].stables.usd[0]])
+        let exists = await exchange.pathExists({ blockchain, path: ['0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a', Blockchains[blockchain].stables.usd[0]] })
         expect(exists).toEqual(false)
       })
     })

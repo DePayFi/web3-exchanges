@@ -1,4 +1,3 @@
-import PancakeSwap from 'src/exchanges/pancakeswap'
 import { ethers } from 'ethers'
 import Exchanges from 'src'
 import { mock, resetMocks } from '@depay/web3-mock'
@@ -35,8 +34,8 @@ describe('pancakeswap', () => {
         blockchain,
         block,
         request: {
-          to: PancakeSwap.bsc.router.address,
-          api: PancakeSwap.bsc.router.api,
+          to: exchange.bsc.router.address,
+          api: exchange.bsc.router.api,
           method: 'getAmountsIn',
           params: { amountOut, path },
           return: amountsIn
