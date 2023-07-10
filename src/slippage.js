@@ -40,6 +40,7 @@ const calculateAmountInWithSlippage = async ({ exchange, blockchain, pools, exch
 
   const lastAmountsIn = await Promise.all(blocks.map(async (block)=>{
     let { amountIn } = await exchange.getAmounts({
+      exchange,
       blockchain,
       path: exchangePath,
       pools,

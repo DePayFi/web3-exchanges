@@ -1,4 +1,4 @@
-import { bool, struct, u8, u16, i32, u64, i128, u128, publicKey, seq } from '@depay/solana-web3.js';
+import { bool, struct, u8, u16, i32, u64, i128, u128, publicKey, seq } from '@depay/solana-web3.js'
 
 const WHIRLPOOL_REWARD_LAYOUT = struct([
   publicKey("mint"),
@@ -48,6 +48,6 @@ const TICK_ARRAY_LAYOUT = struct([
 ])
 
 export {
-  WHIRLPOOL_LAYOUT,
   TICK_ARRAY_LAYOUT,
+  WHIRLPOOL_LAYOUT,
 }

@@ -1,4 +1,3 @@
-import exchange from '../basics'
 import { ethers } from 'ethers'
 import { getExchangePath } from './path'
 import { getBestPair } from './pairs'
@@ -43,7 +42,7 @@ let getAmounts = async ({
   amountInMax,
   amountOutMin
 }) => {
-  path = getExchangePath(path)
+  path = getExchangePath({ path })
   let amounts
   if (amountOut) {
     amounts = await getAmountsIn({ path, amountOut, tokenIn, tokenOut })

@@ -52,8 +52,8 @@ describe('wbnb', () => {
       let routeTransaction = await route.getTransaction({ from: fromAddress })
 
       let transactionMock = mock({ blockchain, transaction: {
-        to: exchange.wrapper.address,
-        api: exchange.wrapper.api,
+        to: exchange[blockchain].router.address,
+        api: exchange[blockchain].router.api,
         method: 'deposit',
         value: amountIn
       }})
@@ -88,8 +88,8 @@ describe('wbnb', () => {
       let routeTransaction = await route.getTransaction({ from: fromAddress })
 
       let transactionMock = mock({ blockchain, transaction: {
-        to: exchange.wrapper.address,
-        api: exchange.wrapper.api,
+        to: exchange[blockchain].router.address,
+        api: exchange[blockchain].router.api,
         method: 'withdraw',
         params: { wad: amountIn }
       }})

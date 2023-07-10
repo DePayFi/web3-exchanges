@@ -10,9 +10,8 @@ import { request } from '@depay/web3-client'
 
 //#endif
 
-import exchange from '../../basics'
 import { Buffer, PublicKey } from '@depay/solana-web3.js'
-import { TICK_ARRAY_LAYOUT } from '../../apis'
+import { TICK_ARRAY_LAYOUT } from '../../orca/layouts'
 
 const MAX_SWAP_TICK_ARRAYS = 3
 const MAX_TICK_INDEX = 443636 // i32
@@ -48,7 +47,7 @@ const getTickArrayAddresses = async({ aToB, pool, tickSpacing, tickCurrentIndex 
           new PublicKey(pool.toString()).toBuffer(),
           Buffer.from(startIndex.toString())
         ],
-        new PublicKey(exchange.router.v1.address)
+        new PublicKey('whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc')
       )
     )[0]
     tickArrayAddresses.push(pda)

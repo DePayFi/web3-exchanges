@@ -1,4 +1,3 @@
-import Blockchains from '@depay/web3-blockchains'
 import Exchange from '../classes/Exchange'
 import TraderJoeV2_1 from '../platforms/evm/trader_joe_v2_1'
 
@@ -38,13 +37,10 @@ export default (scope)=>{
 
     Object.assign(exchange, {
       scope,
-      findPath: ({ blockchain, tokenIn, tokenOut, amountIn, amountOut, amountInMax, amountOutMin })=>
-        TraderJoeV2_1.findPath({ blockchain, exchange, tokenIn, tokenOut, amountIn, amountOut, amountInMax, amountOutMin }),
-      pathExists: (blockchain, path)=>
-        TraderJoeV2_1.pathExists(blockchain, exchange, path),
-      getAmounts: ({ blockchain, path, pools, block, tokenIn, tokenOut, amountOut, amountIn, amountInMax, amountOutMin })=>
-        TraderJoeV2_1.getAmounts(blockchain, exchange, { path, pools, block, tokenIn, tokenOut, amountOut, amountIn, amountInMax, amountOutMin }),
-      getTransaction: (...args)=> TraderJoeV2_1.getTransaction(...args),
+      findPath: (args)=>TraderJoeV2_1.findPath({ ...args, exchange }),
+      pathExists: (args)=>TraderJoeV2_1.pathExists({ ...args, exchange }),
+      getAmounts: (args)=>TraderJoeV2_1.getAmounts({ ...args, exchange }),
+      getTransaction: (args)=>TraderJoeV2_1.getTransaction({ ...args, exchange }),
     })
   )
 }

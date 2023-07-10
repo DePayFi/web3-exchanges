@@ -30,7 +30,7 @@ const route = ({
     let [amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput] = [amountIn, amountOut, amountInMax, amountOutMin];
 
     let amounts // includes intermediary amounts for longer routes
-    ({ amountIn, amountInMax, amountOut, amountOutMin, amounts } = await getAmounts({ blockchain, path, pools, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }));
+    ({ amountIn, amountInMax, amountOut, amountOutMin, amounts } = await getAmounts({ exchange, blockchain, path, pools, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }));
     if([amountIn, amountInMax, amountOut, amountOutMin].every((amount)=>{ return amount == undefined })) { return resolve() }
 
     if(slippage || exchange.slippage) {

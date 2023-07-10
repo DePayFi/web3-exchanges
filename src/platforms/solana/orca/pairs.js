@@ -13,21 +13,21 @@ import Token from '@depay/web3-tokens'
 
 //#endif
 
-import exchange from '../basics'
 import { ethers } from 'ethers'
 import { getPrice } from './price'
+import { WHIRLPOOL_LAYOUT } from './layouts'
 
 // This method is cached and is only to be used to generally existing pools every 24h
 // Do not use for price calulations, fetch accounts for pools individually in order to calculate price 
 let getAccounts = async (base, quote) => {
-  let accounts = await request(`solana://${exchange.router.v1.address}/getProgramAccounts`, {
+  let accounts = await request(`solana://whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc/getProgramAccounts`, {
     params: { filters: [
-      { dataSize: exchange.router.v1.api.span },
+      { dataSize: WHIRLPOOL_LAYOUT.span },
       { memcmp: { offset: 8, bytes: '2LecshUwdy9xi7meFgHtFJQNSKk4KdTrcpvaB56dP2NQ' }}, // whirlpoolsConfig
       { memcmp: { offset: 101, bytes: base }}, // tokenMintA
       { memcmp: { offset: 181, bytes: quote }} // tokenMintB
     ]},
-    api: exchange.router.v1.api,
+    api: WHIRLPOOL_LAYOUT,
     cache: 86400, // 24h,
     cacheKey: ['whirlpool', base.toString(), quote.toString()].join('-')
   })

@@ -9,7 +9,7 @@ const blockchain = Blockchains.solana
 // to be able to differentiate between SOL<>Token and WSOL<>Token swaps
 // as they are not the same!
 //
-let getExchangePath = (path) => {
+let getExchangePath = ({ path }) => {
   if(!path) { return }
   let exchangePath = path.map((token, index) => {
     if (
@@ -33,7 +33,7 @@ let getExchangePath = (path) => {
 
 let pathExists = async ({ path, amountIn, amountInMax, amountOut, amountOutMin }) => {
   if(path.length == 1) { return false }
-  path = getExchangePath(path)
+  path = getExchangePath({ path })
   let pairs = []
   if((await getPairsWithPrice({ tokenIn: path[0], tokenOut: path[1], amountIn, amountInMax, amountOut, amountOutMin })).length > 0) {
     return true
@@ -81,7 +81,7 @@ let findPath = async ({ tokenIn, tokenOut, amountIn, amountOut, amountInMax, amo
   } else if(path?.length && path[path.length-1] == blockchain.currency.address) {
     path.splice(path.length-1, 0, blockchain.wrapped.address)
   }
-  return { path, exchangePath: getExchangePath(path) }
+  return { path, exchangePath: getExchangePath({ path }) }
 }
 
 export {

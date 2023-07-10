@@ -22,7 +22,7 @@ import Blockchains from '@depay/web3-blockchains'
 // to be able to differentiate between ETH<>Token and WETH<>Token swaps
 // as they are not the same!
 //
-const getExchangePath = (blockchain, exchange, path) => {
+const getExchangePath = ({ blockchain, exchange, path }) => {
   if(!path) { return }
   let exchangePath = path.map((token, index) => {
     if (
@@ -44,7 +44,7 @@ const getExchangePath = (blockchain, exchange, path) => {
   return exchangePath
 }
 
-const getInputAmount = async (exchange, pool, outputAmount)=>{
+const getInputAmount = async ({ exchange, pool, outputAmount })=>{
 
   const data = await request({
     blockchain: pool.blockchain,
@@ -61,7 +61,7 @@ const getInputAmount = async (exchange, pool, outputAmount)=>{
   return data.amountIn
 }
 
-const getOutputAmount = async (exchange, pool, inputAmount)=>{
+const getOutputAmount = async ({ exchange, pool, inputAmount })=>{
 
   const data = await request({
     blockchain: pool.blockchain,
@@ -79,7 +79,7 @@ const getOutputAmount = async (exchange, pool, inputAmount)=>{
 }
 
 const getBestPool = async ({ blockchain, exchange, path, amountIn, amountOut, block }) => {
-  path = getExchangePath(blockchain, exchange, path)
+  path = getExchangePath({ blockchain, exchange, path })
   if(path.length > 2) { throw('Uniswap V3 can only check paths for up to 2 tokens!') }
 
   try {
@@ -112,9 +112,9 @@ const getBestPool = async ({ blockchain, exchange, path, amountIn, amountOut, bl
 
         let amount
         if(amountIn) {
-          amount = await getOutputAmount(exchange, pool, amountIn)
+          amount = await getOutputAmount({ exchange, pool, amountIn })
         } else {
-          amount = await getInputAmount(exchange, pool, amountOut)
+          amount = await getInputAmount({ exchange, pool, amountOut })
         }
 
         return { ...pool, amountIn: amountIn || amount, amountOut: amountOut || amount }
@@ -133,11 +133,11 @@ const getBestPool = async ({ blockchain, exchange, path, amountIn, amountOut, bl
   } catch { return }
 }
 
-const pathExists = async (blockchain, exchange, path, amountIn, amountOut, amountInMax, amountOutMin) => {
+const pathExists = async ({ blockchain, exchange, path, amountIn, amountOut, amountInMax, amountOutMin }) => {
   try {
 
     let pools = (await Promise.all(exchange.fees.map((fee)=>{
-      path = getExchangePath(blockchain, exchange, path)
+      path = getExchangePath({ blockchain, exchange, path })
       return request({
         blockchain: Blockchains[blockchain].name,
         address: exchange[blockchain].factory.address,
@@ -160,25 +160,25 @@ const findPath = async ({ blockchain, exchange, tokenIn, tokenOut, amountIn, amo
   ) { return { path: undefined, exchangePath: undefined } }
 
   let path
-  if (await pathExists(blockchain, exchange, [tokenIn, tokenOut], amountIn, amountOut, amountInMax, amountOutMin)) {
+  if (await pathExists({ blockchain, exchange, path: [tokenIn, tokenOut], amountIn, amountOut, amountInMax, amountOutMin })) {
     // direct path
     path = [tokenIn, tokenOut]
   } else if (
     tokenIn != Blockchains[blockchain].wrapped.address &&
-    await pathExists(blockchain, exchange, [tokenIn, Blockchains[blockchain].wrapped.address], amountIn, amountOut, amountInMax, amountOutMin) &&
+    await pathExists({ blockchain, exchange, path: [tokenIn, Blockchains[blockchain].wrapped.address], amountIn, amountOut, amountInMax, amountOutMin }) &&
     tokenOut != Blockchains[blockchain].wrapped.address &&
-    await pathExists(blockchain, exchange, [tokenOut, Blockchains[blockchain].wrapped.address], amountIn, amountOut, amountInMax, amountOutMin)
+    await pathExists({ blockchain, exchange, path: [tokenOut, Blockchains[blockchain].wrapped.address], amountIn, amountOut, amountInMax, amountOutMin })
   ) {
     // path via WRAPPED
     path = [tokenIn, Blockchains[blockchain].wrapped.address, tokenOut]
   } else if (
     (await Promise.all(Blockchains[blockchain].stables.usd.map(async (stable)=>{
-      return( (await pathExists(blockchain, exchange, [tokenIn, stable], amountIn, amountOut, amountInMax, amountOutMin) ? stable : undefined) && await pathExists(blockchain, exchange, [tokenOut, stable], amountIn, amountOut, amountInMax, amountOutMin) ? stable : undefined )
+      return( (await pathExists({ blockchain, exchange, path: [tokenIn, stable], amountIn, amountOut, amountInMax, amountOutMin }) ? stable : undefined) && await pathExists({ blockchain, exchange, path: [tokenOut, stable], amountIn, amountOut, amountInMax, amountOutMin }) ? stable : undefined )
     }))).find(Boolean)
   ) {
     // path via tokenIn -> USD -> tokenOut
     let USD = (await Promise.all(Blockchains[blockchain].stables.usd.map(async (stable)=>{
-      return( (await pathExists(blockchain, exchange, [tokenIn, stable], amountIn, amountOut, amountInMax, amountOutMin) ? stable : undefined) && await pathExists(blockchain, exchange, [tokenOut, stable], amountIn, amountOut, amountInMax, amountOutMin) ? stable : undefined )
+      return( (await pathExists({ blockchain, exchange, path: [tokenIn, stable], amountIn, amountOut, amountInMax, amountOutMin }) ? stable : undefined) && await pathExists({ blockchain, exchange, path: [tokenOut, stable], amountIn, amountOut, amountInMax, amountOutMin }) ? stable : undefined )
     }))).find(Boolean)
     path = [tokenIn, USD, tokenOut]
   }
@@ -208,14 +208,14 @@ const findPath = async ({ blockchain, exchange, tokenIn, tokenOut, amountIn, amo
     path.splice(path.length-1, 0, Blockchains[blockchain].wrapped.address)
   }
 
-  return { path, pools, exchangePath: getExchangePath(blockchain, exchange, path) }
+  return { path, pools, exchangePath: getExchangePath({ blockchain, exchange, path }) }
 }
 
-let getAmountOut = (blockchain, exchange, { path, pools, amountIn }) => {
+let getAmountOut = ({ blockchain, exchange, path, pools, amountIn }) => {
   return pools[pools.length-1].amountOut
 }
 
-let getAmountIn = async (blockchain, exchange, { path, pools, amountOut, block }) => {
+let getAmountIn = async ({ blockchain, exchange, path, pools, amountOut, block }) => {
   if(block === undefined) {
     return pools[0].amountIn
   } else {
@@ -244,7 +244,9 @@ let getAmountIn = async (blockchain, exchange, { path, pools, amountOut, block }
   }
 }
 
-let getAmounts = async (blockchain, exchange, {
+let getAmounts = async ({
+  blockchain,
+  exchange,
   path,
   pools,
   block,
@@ -256,28 +258,28 @@ let getAmounts = async (blockchain, exchange, {
   amountOutMin
 }) => {
   if (amountOut) {
-    amountIn = await getAmountIn(blockchain, exchange, { block, path, pools, amountOut, tokenIn, tokenOut })
+    amountIn = await getAmountIn({ blockchain, exchange, block, path, pools, amountOut, tokenIn, tokenOut })
     if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
       return {}
     } else if (amountInMax === undefined) {
       amountInMax = amountIn
     }
   } else if (amountIn) {
-    amountOut = await getAmountOut(blockchain, exchange, { path, pools, amountIn, tokenIn, tokenOut })
+    amountOut = await getAmountOut({ blockchain, exchange, path, pools, amountIn, tokenIn, tokenOut })
     if (amountOut == undefined || amountOutMin && amountOut.lt(amountOutMin)) {
       return {}
     } else if (amountOutMin === undefined) {
       amountOutMin = amountOut
     }
   } else if(amountOutMin) {
-    amountIn = await getAmountIn(blockchain, exchange, { block, path, pools, amountOut: amountOutMin, tokenIn, tokenOut })
+    amountIn = await getAmountIn({ blockchain, exchange, block, path, pools, amountOut: amountOutMin, tokenIn, tokenOut })
     if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
       return {}
     } else if (amountInMax === undefined) {
       amountInMax = amountIn
     }
   } else if(amountInMax) {
-    amountOut = await getAmountOut(blockchain, exchange, { path, pools, amountIn: amountInMax, tokenIn, tokenOut })
+    amountOut = await getAmountOut({ blockchain, exchange, path, pools, amountIn: amountInMax, tokenIn, tokenOut })
     if (amountOut == undefined ||amountOutMin && amountOut.lt(amountOutMin)) {
       return {}
     } else if (amountOutMin === undefined) {

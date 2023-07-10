@@ -2,16 +2,16 @@ import Blockchains from '@depay/web3-blockchains'
 
 let getExchangePath = (path) => path
 
-let pathExists = async (blockchain, path) => {
-  if(getExchangePath(path).length <= 1) { return false }
-  if(getExchangePath(path).length >= 3) { return false }
+let pathExists = async ({ blockchain, path }) => {
+  const exchangePath = getExchangePath({ path })
+  if(!exchangePath || exchangePath.length !== 2) { return false }
   return (
     path.includes(Blockchains[blockchain].currency.address) &&
     path.includes(Blockchains[blockchain].wrapped.address)
   )
 }
 
-let findPath = async (blockchain, { tokenIn, tokenOut }) => {
+let findPath = async ({ blockchain, tokenIn, tokenOut }) => {
   if(
     ![tokenIn, tokenOut].includes(Blockchains[blockchain].currency.address) ||
     ![tokenIn, tokenOut].includes(Blockchains[blockchain].wrapped.address)
@@ -50,7 +50,9 @@ let getAmounts = async ({
   return { amountOut, amountIn, amountInMax, amountOutMin }
 }
 
-let getTransaction = (blockchain, exchange, {
+let getTransaction = ({
+  exchange,
+  blockchain,
   path,
   amountIn,
   amountInMax,

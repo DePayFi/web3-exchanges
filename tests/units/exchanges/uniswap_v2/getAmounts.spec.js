@@ -35,8 +35,8 @@ describe('uniswap_v2', () => {
         blockchain,
         block,
         request: {
-          to: UniswapV2.router.address,
-          api: UniswapV2.router.api,
+          to: UniswapV2[blockchain].router.address,
+          api: UniswapV2[blockchain].router.api,
           method: 'getAmountsIn',
           params: { amountOut, path },
           return: amountsIn

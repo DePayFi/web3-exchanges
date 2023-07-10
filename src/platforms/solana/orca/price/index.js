@@ -10,12 +10,12 @@ import { request } from '@depay/web3-client'
 
 //#endif
 
-import exchange from '../../basics'
 import { BN } from '@depay/solana-web3.js'
 import { compute } from './compute'
 import { getTickArrays } from './ticks'
 import { MIN_SQRT_PRICE, MAX_SQRT_PRICE } from './math'
 import { TickArraySequence } from './tick-sequence'
+import { WHIRLPOOL_LAYOUT } from '../layouts'
 
 const getPrice = async ({
   account, // stale whirlpool account
@@ -32,7 +32,7 @@ const getPrice = async ({
     const freshWhirlpoolData = await request({
       blockchain: 'solana',
       address: account.pubkey.toString(),
-      api: exchange.router.v1.api,
+      api: WHIRLPOOL_LAYOUT,
       cache: 10,
     })
 

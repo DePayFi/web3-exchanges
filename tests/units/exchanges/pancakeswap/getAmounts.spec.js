@@ -35,8 +35,8 @@ describe('pancakeswap', () => {
         blockchain,
         block,
         request: {
-          to: PancakeSwap.router.address,
-          api: PancakeSwap.router.api,
+          to: PancakeSwap.bsc.router.address,
+          api: PancakeSwap.bsc.router.api,
           method: 'getAmountsIn',
           params: { amountOut, path },
           return: amountsIn

@@ -22,7 +22,7 @@ import Blockchains from '@depay/web3-blockchains'
 // to be able to differentiate between ETH<>Token and WETH<>Token swaps
 // as they are not the same!
 //
-const getExchangePath = (blockchain, exchange, path) => {
+const getExchangePath = ({ blockchain, path }) => {
   if(!path) { return }
   let exchangePath = path.map((token, index) => {
     if (
@@ -44,8 +44,8 @@ const getExchangePath = (blockchain, exchange, path) => {
   return exchangePath
 }
 
-const getBestPool = async ({ blockchain, exchange, path, amountIn, amountOut, block }) => {
-  path = getExchangePath(blockchain, exchange, path)
+const getBestPool = async ({ exchange, blockchain, path, amountIn, amountOut, block }) => {
+  path = getExchangePath({ blockchain, path })
   
   let bestPool
     
@@ -88,11 +88,11 @@ const getBestPool = async ({ blockchain, exchange, path, amountIn, amountOut, bl
   return bestPool
 }
 
-const pathExists = async (blockchain, exchange, path, amountIn, amountOut, amountInMax, amountOutMin) => {
-  return !!(await getBestPool({ blockchain, exchange, path, amountIn: (amountIn || amountInMax), amountOut: (amountOut || amountOutMin) }))
+const pathExists = async ({ exchange, blockchain, path, amountIn, amountOut, amountInMax, amountOutMin }) => {
+  return !!(await getBestPool({ exchange, blockchain, path, amountIn: (amountIn || amountInMax), amountOut: (amountOut || amountOutMin) }))
 }
 
-const findPath = async ({ blockchain, exchange, tokenIn, tokenOut, amountIn, amountOut, amountInMax, amountOutMin }) => {
+const findPath = async ({ exchange, blockchain, tokenIn, tokenOut, amountIn, amountOut, amountInMax, amountOutMin }) => {
   if(
     [tokenIn, tokenOut].includes(Blockchains[blockchain].currency.address) &&
     [tokenIn, tokenOut].includes(Blockchains[blockchain].wrapped.address)
@@ -103,7 +103,7 @@ const findPath = async ({ blockchain, exchange, tokenIn, tokenOut, amountIn, amo
 
   // DIRECT PATH
   pools = [
-    await getBestPool({ blockchain, exchange, path: [tokenIn, tokenOut], amountIn: (amountIn || amountInMax), amountOut: (amountOut || amountOutMin) })
+    await getBestPool({ exchange, blockchain, path: [tokenIn, tokenOut], amountIn: (amountIn || amountInMax), amountOut: (amountOut || amountOutMin) })
   ]
   if (pools.filter(Boolean).length) {
     path = [tokenIn, tokenOut]
@@ -117,13 +117,13 @@ const findPath = async ({ blockchain, exchange, tokenIn, tokenOut, amountIn, amo
   ) {
     pools = []
     if(amountOut || amountOutMin){
-      pools.push(await getBestPool({ blockchain, exchange, path: [Blockchains[blockchain].wrapped.address, tokenOut], amountOut: (amountOut || amountOutMin) }))
+      pools.push(await getBestPool({ exchange, blockchain, path: [Blockchains[blockchain].wrapped.address, tokenOut], amountOut: (amountOut || amountOutMin) }))
       if(pools.filter(Boolean).length) {
-        pools.unshift(await getBestPool({ blockchain, exchange, path: [tokenIn, Blockchains[blockchain].wrapped.address], amountOut: pools[0].amounts[0] }))
+        pools.unshift(await getBestPool({ exchange, blockchain, path: [tokenIn, Blockchains[blockchain].wrapped.address], amountOut: pools[0].amounts[0] }))
       }
     } else { // amountIn
-      pools.push(await getBestPool({ blockchain, exchange, path: [tokenIn, Blockchains[blockchain].wrapped.address], amountIn: (amountIn || amountInMax) }))
-      pools.push(await getBestPool({ blockchain, exchange, path: [Blockchains[blockchain].wrapped.address, tokenOut], amountIn: pools[0].amounts[1] }))
+      pools.push(await getBestPool({ exchange, blockchain, path: [tokenIn, Blockchains[blockchain].wrapped.address], amountIn: (amountIn || amountInMax) }))
+      pools.push(await getBestPool({ exchange, blockchain, path: [Blockchains[blockchain].wrapped.address, tokenOut], amountIn: pools[0].amounts[1] }))
     }
     if (pools.filter(Boolean).length === 2) {
       // path via WRAPPED
@@ -139,13 +139,13 @@ const findPath = async ({ blockchain, exchange, tokenIn, tokenOut, amountIn, amo
     let allPoolsForAllUSD = await Promise.all(Blockchains[blockchain].stables.usd.map(async(stable)=>{
       let pools = []
       if(amountOut || amountOutMin){
-        pools.push(await getBestPool({ blockchain, exchange, path: [stable, tokenOut], amountOut: (amountOut || amountOutMin) }))
+        pools.push(await getBestPool({ exchange, blockchain, path: [stable, tokenOut], amountOut: (amountOut || amountOutMin) }))
         if(pools.filter(Boolean).length) {
-          pools.unshift(await getBestPool({ blockchain, exchange, path: [tokenIn, stable], amountOut: pools[0].amounts[0] }))
+          pools.unshift(await getBestPool({ exchange, blockchain, path: [tokenIn, stable], amountOut: pools[0].amounts[0] }))
         }
       } else { // amountIn
-        pools.push(await getBestPool({ blockchain, exchange, path: [tokenIn, stable], amountIn: (amountIn || amountInMax) }))
-        pools.push(await getBestPool({ blockchain, exchange, path: [stable, tokenOut], amountIn: pools[0].amounts[1] }))
+        pools.push(await getBestPool({ exchange, blockchain, path: [tokenIn, stable], amountIn: (amountIn || amountInMax) }))
+        pools.push(await getBestPool({ exchange, blockchain, path: [stable, tokenOut], amountIn: pools[0].amounts[1] }))
       }
       if(pools.filter(Boolean).length === 2) {
         return [stable, pools]
@@ -167,10 +167,10 @@ const findPath = async ({ blockchain, exchange, tokenIn, tokenOut, amountIn, amo
     path.splice(path.length-1, 0, Blockchains[blockchain].wrapped.address)
   }
 
-  return { path, pools, exchangePath: getExchangePath(blockchain, exchange, path) }
+  return { path, pools, exchangePath: getExchangePath({ blockchain, path }) }
 }
 
-let getAmountOut = async(blockchain, exchange, { path, pools, amountIn }) => {
+let getAmountOut = async({ exchange, blockchain, path, pools, amountIn }) => {
   let bestPath = await request({
     blockchain: Blockchains[blockchain].name,
     address: exchange[blockchain].quoter.address,
@@ -178,7 +178,7 @@ let getAmountOut = async(blockchain, exchange, { path, pools, amountIn }) => {
     api: exchange[blockchain].quoter.api,
     cache: 5,
     params: {
-      route: getExchangePath(blockchain, exchange, path),
+      route: getExchangePath({ blockchain, path }),
       amountIn,
     },
   }).catch(()=>{})
@@ -187,7 +187,7 @@ let getAmountOut = async(blockchain, exchange, { path, pools, amountIn }) => {
   }
 }
 
-let getAmountIn = async (blockchain, exchange, { path, pools, amountOut, block }) => {
+let getAmountIn = async ({ exchange, blockchain, path, pools, amountOut, block }) => {
   let bestPath = await request({
     blockchain: Blockchains[blockchain].name,
     address: exchange[blockchain].quoter.address,
@@ -196,7 +196,7 @@ let getAmountIn = async (blockchain, exchange, { path, pools, amountOut, block }
     cache: 5,
     block,
     params: {
-      route: getExchangePath(blockchain, exchange, path),
+      route: getExchangePath({ blockchain, path }),
       amountOut
     },
   }).catch(()=>{})
@@ -205,7 +205,9 @@ let getAmountIn = async (blockchain, exchange, { path, pools, amountOut, block }
   }
 }
 
-let getAmounts = async (blockchain, exchange, {
+let getAmounts = async ({
+  exchange,
+  blockchain,
   path,
   pools,
   block,
@@ -217,28 +219,28 @@ let getAmounts = async (blockchain, exchange, {
   amountOutMin
 }) => {
   if (amountOut) {
-    amountIn = await getAmountIn(blockchain, exchange, { block, path, pools, amountOut, tokenIn, tokenOut })
+    amountIn = await getAmountIn({ exchange, blockchain, block, path, pools, amountOut, tokenIn, tokenOut })
     if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
       return {}
     } else if (amountInMax === undefined) {
       amountInMax = amountIn
     }
   } else if (amountIn) {
-    amountOut = await getAmountOut(blockchain, exchange, { path, pools, amountIn, tokenIn, tokenOut })
+    amountOut = await getAmountOut({ exchange, blockchain, path, pools, amountIn, tokenIn, tokenOut })
     if (amountOut == undefined || amountOutMin && amountOut.lt(amountOutMin)) {
       return {}
     } else if (amountOutMin === undefined) {
       amountOutMin = amountOut
     }
   } else if(amountOutMin) {
-    amountIn = await getAmountIn(blockchain, exchange, { block, path, pools, amountOut: amountOutMin, tokenIn, tokenOut })
+    amountIn = await getAmountIn({ exchange, blockchain, block, path, pools, amountOut: amountOutMin, tokenIn, tokenOut })
     if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
       return {}
     } else if (amountInMax === undefined) {
       amountInMax = amountIn
     }
   } else if(amountInMax) {
-    amountOut = await getAmountOut(blockchain, exchange, { path, pools, amountIn: amountInMax, tokenIn, tokenOut })
+    amountOut = await getAmountOut({ exchange, blockchain, path, pools, amountIn: amountInMax, tokenIn, tokenOut })
     if (amountOut == undefined ||amountOutMin && amountOut.lt(amountOutMin)) {
       return {}
     } else if (amountOutMin === undefined) {
@@ -249,8 +251,8 @@ let getAmounts = async (blockchain, exchange, {
 }
 
 let getTransaction = async({
-  blockchain,
   exchange,
+  blockchain,
   pools,
   path,
   amountIn,
@@ -276,7 +278,7 @@ let getTransaction = async({
   const fullPath = [
     pools.map((pool)=>pool.binSteps[0]),
     pools.map((pool)=>pool.versions[0]),
-    getExchangePath(blockchain, exchange, path)
+    getExchangePath({ blockchain, path })
   ]
 
   if(path[0] === Blockchains[blockchain].currency.address) { // NATIVE START

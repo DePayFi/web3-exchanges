@@ -1,78 +1,14 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('@depay/solana-web3.js'), require('@depay/web3-client'), require('ethers'), require('@depay/web3-tokens'), require('@depay/web3-blockchains'), require('decimal.js')) :
-  typeof define === 'function' && define.amd ? define(['@depay/solana-web3.js', '@depay/web3-client', 'ethers', '@depay/web3-tokens', '@depay/web3-blockchains', 'decimal.js'], factory) :
-  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.Web3Exchanges = factory(global.SolanaWeb3js, global.Web3Client, global.ethers, global.Web3Tokens, global.Web3Blockchains, global.Decimal));
-}(this, (function (solanaWeb3_js, web3Client, ethers, Token, Blockchains, Decimal) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('@depay/web3-client'), require('ethers'), require('@depay/web3-tokens'), require('@depay/web3-blockchains'), require('@depay/solana-web3.js'), require('decimal.js')) :
+  typeof define === 'function' && define.amd ? define(['@depay/web3-client', 'ethers', '@depay/web3-tokens', '@depay/web3-blockchains', '@depay/solana-web3.js', 'decimal.js'], factory) :
+  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.Web3Exchanges = factory(global.Web3Client, global.ethers, global.Web3Tokens, global.Web3Blockchains, global.SolanaWeb3js, global.Decimal));
+}(this, (function (web3Client, ethers, Token, Blockchains, solanaWeb3_js, Decimal) { 'use strict';
 
   function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
   var Token__default = /*#__PURE__*/_interopDefaultLegacy(Token);
   var Blockchains__default = /*#__PURE__*/_interopDefaultLegacy(Blockchains);
   var Decimal__default = /*#__PURE__*/_interopDefaultLegacy(Decimal);
-
-  const WHIRLPOOL_REWARD_LAYOUT = solanaWeb3_js.struct([
-    solanaWeb3_js.publicKey("mint"),
-    solanaWeb3_js.publicKey("vault"),
-    solanaWeb3_js.publicKey("authority"),
-    solanaWeb3_js.u128("emissionsPerSecondX64"),
-    solanaWeb3_js.u128("growthGlobalX64"),
-  ]);
-
-  const WHIRLPOOL_LAYOUT = solanaWeb3_js.struct([
-    solanaWeb3_js.u64("anchorDiscriminator"),
-    solanaWeb3_js.publicKey("whirlpoolsConfig"),
-    solanaWeb3_js.seq(solanaWeb3_js.u8(), 1, "whirlpoolBump"),
-    solanaWeb3_js.u16("tickSpacing"),
-    solanaWeb3_js.seq(solanaWeb3_js.u8(), 2, "tickSpacingSeed"),
-    solanaWeb3_js.u16("feeRate"),
-    solanaWeb3_js.u16("protocolFeeRate"),
-    solanaWeb3_js.u128("liquidity"),
-    solanaWeb3_js.u128("sqrtPrice"),
-    solanaWeb3_js.i32("tickCurrentIndex"),
-    solanaWeb3_js.u64("protocolFeeOwedA"),
-    solanaWeb3_js.u64("protocolFeeOwedB"),
-    solanaWeb3_js.publicKey("tokenMintA"),
-    solanaWeb3_js.publicKey("tokenVaultA"),
-    solanaWeb3_js.u128("feeGrowthGlobalA"),
-    solanaWeb3_js.publicKey("tokenMintB"),
-    solanaWeb3_js.publicKey("tokenVaultB"),
-    solanaWeb3_js.u128("feeGrowthGlobalB"),
-    solanaWeb3_js.u64("rewardLastUpdatedTimestamp"),
-    solanaWeb3_js.seq(WHIRLPOOL_REWARD_LAYOUT, 3, "rewardInfos"),
-  ]);
-
-  const TICK_LAYOUT = solanaWeb3_js.struct([
-    solanaWeb3_js.bool("initialized"),
-    solanaWeb3_js.i128("liquidityNet"),
-    solanaWeb3_js.u128("liquidityGross"),
-    solanaWeb3_js.u128("feeGrowthOutsideA"),
-    solanaWeb3_js.u128("feeGrowthOutsideB"),
-    solanaWeb3_js.seq(solanaWeb3_js.u128(), 3, "reward_growths_outside"),
-  ]);
-
-  const TICK_ARRAY_LAYOUT = solanaWeb3_js.struct([
-    solanaWeb3_js.u64("anchorDiscriminator"),
-    solanaWeb3_js.i32("startTickIndex"),
-    solanaWeb3_js.seq(TICK_LAYOUT, 88, "ticks"),
-    solanaWeb3_js.publicKey("whirlpool"),
-  ]);
-
-  var basics = {
-    
-    name: 'orca',
-    label: 'Orca',
-    logo: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPCEtLSBHZW5lcmF0b3I6IEFkb2JlIElsbHVzdHJhdG9yIDI3LjIuMCwgU1ZHIEV4cG9ydCBQbHVnLUluIC4gU1ZHIFZlcnNpb246IDYuMDAgQnVpbGQgMCkgIC0tPgo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9ImthdG1hbl8xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4PSIwcHgiIHk9IjBweCIKCSB2aWV3Qm94PSIwIDAgNjAwIDQ1MCIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgNjAwIDQ1MDsiIHhtbDpzcGFjZT0icHJlc2VydmUiPgo8cGF0aCBmaWxsPSIjRkZEMTVDIiBkPSJNNDg4LjQsMjIyLjljMCwxMDMuOC04NC4xLDE4Ny45LTE4Ny45LDE4Ny45Yy0xMDMuOCwwLTE4Ny45LTg0LjEtMTg3LjktMTg3LjlDMTEyLjYsMTE5LjEsMTk2LjcsMzUsMzAwLjUsMzUKCUM0MDQuMiwzNSw0ODguNCwxMTkuMSw0ODguNCwyMjIuOXoiLz4KPHBhdGggZmlsbD0iI0ZGRkZGRiIgc3Ryb2tlPSIjMDAwMDAwIiBzdHJva2Utd2lkdGg9IjE3LjY3NTUiIGQ9Ik0yMDkuNSwyOTkuOGMxLjYtMS4xLDMuMS0yLjgsMy45LTUuMWMwLjgtMi42LDAuMy00LjksMC02LjJjMCwwLDAtMC4xLDAtMC4xbDAuMy0xLjhjMC45LDAuNSwxLjksMS4xLDMsMS45CgljMC4zLDAuMiwwLjcsMC41LDEuMSwwLjdjMC41LDAuNCwxLjEsMC44LDEuNCwxYzAuNiwwLjQsMS41LDEsMi41LDEuNWMyNS4xLDE1LjYsNDUuOCwyMiw2Mi4yLDIxLjJjMTctMC44LDI4LjktOS40LDM1LjEtMjEuOQoJYzUuOS0xMi4xLDYuMi0yNywyLTQwLjljLTQuMi0xMy45LTEzLTI3LjUtMjYuMi0zNi45Yy0yMi4yLTE1LjgtNDIuNS0zOS44LTUyLjctNjAuM2MtNS4yLTEwLjQtNy4zLTE4LjctNi43LTI0LjIKCWMwLjMtMi41LDEtNC4xLDItNS4xYzAuOS0xLDIuNi0yLjEsNS45LTIuNmM2LjktMS4xLDE1LTMuNiwyMy4xLTYuMmMzLjItMSw2LjMtMiw5LjUtMi45YzExLjctMy40LDI0LjItNi4zLDM3LjItNi4zCgljMjUuMywwLDU1LDExLDg2LjMsNTYuOGM0MC4yLDU4LjgsMTguMSwxMjQuNC0yOC4yLDE1OC45Yy0yMy4xLDE3LjItNTEuOSwyNi4zLTgxLjUsMjIuOUMyNjIuOSwzNDEuMywyMzQuOSwzMjcuOSwyMDkuNSwyOTkuOHoKCSBNMjE0LjIsMjg0LjZDMjE0LjIsMjg0LjYsMjE0LjIsMjg0LjcsMjE0LjIsMjg0LjZDMjE0LjEsMjg0LjcsMjE0LjIsMjg0LjYsMjE0LjIsMjg0LjZ6IE0yMTEuNiwyODUuOAoJQzIxMS42LDI4NS44LDIxMS43LDI4NS44LDIxMS42LDI4NS44QzIxMS43LDI4NS44LDIxMS42LDI4NS44LDIxMS42LDI4NS44eiIvPgo8cGF0aCBkPSJNMjMyLjUsMTI0LjNjMCwwLDcxLjgtMTkuMSw4Ny41LTE5LjFjMTUuNywwLDc4LjYsMzAuNSw5Ni45LDg2LjNjMjYsNzktNDQuNywxMzAuOS01Mi43LDEyNS44CgljNzYuMS02Mi45LTQ4LjQtMTc5LjEtMTA5LjYtMTcwLjRjLTcuNiwxLjEtMy40LDcuNi0zLjQsNy42bC0xLjcsMTdsLTEyLjctMjEuMkwyMzIuNSwxMjQuM3oiLz4KPHBhdGggZD0iTTQwNi41LDE2Ny42YzIyLjcsMzkuOSwxOCwxNy4xLDEyLjksNjIuN2M5LjMtMTUuMSwyMy45LTMuOCwyOS45LDJjMS4xLDEsMi45LDAuNCwyLjgtMS4xYy0wLjItNi44LTIuMi0yMS40LTEzLjQtMzcuMQoJQzQyMy40LDE3Mi42LDQwNi41LDE2Ny42LDQwNi41LDE2Ny42eiIvPgo8cGF0aCBmaWxsPSJub25lIiBzdHJva2U9IiMwMDAwMDAiIHN0cm9rZS13aWR0aD0iMC45OTMiIGQ9Ik00MTkuNCwyMzAuM2M1LTQ1LjYsOS43LTIyLjgtMTIuOS02Mi43YzAsMCwxNi45LDUsMzIuMywyNi41YzExLjIsMTUuNywxMy4xLDMwLjMsMTMuNCwzNy4xCgljMC4xLDEuNS0xLjcsMi4xLTIuOCwxLjFDNDQzLjMsMjI2LjUsNDI4LjcsMjE1LjMsNDE5LjQsMjMwLjN6IE00MTkuNCwyMzAuM2MwLjktMi4xLDIuMi01LjUsMi4yLTUuNSIvPgo8cGF0aCBkPSJNMjI0LDIyNC4yYy05LjYsMTYuMi0yOS4yLDE1LTI4LjgsMzQuM2MxNy41LDM5LDE3LjYsMzYuMiwxNy42LDM2LjJjMzIuNS0xOC4yLDE5LjEtNTguNSwxNC4zLTcwLjQKCUMyMjYuNiwyMjMsMjI0LjcsMjIzLDIyNCwyMjQuMnoiLz4KPHBhdGggZD0iTTE1MC40LDI2MC4xYzE4LjcsMi40LDI5LjgtMTMuOCw0NC44LTEuNmMxOS45LDM3LjgsMTcuNiwzNi4yLDE3LjYsMzYuMmMtMzQuNCwxNC40LTU3LjktMjEtNjQuMy0zMi4xCglDMTQ3LjgsMjYxLjMsMTQ5LDI1OS45LDE1MC40LDI2MC4xeiIvPgo8cGF0aCBkPSJNMzA2LjksMjM2YzAsMCwxOC43LDE5LjEsOC45LDIyLjFjLTEyLjItNy41LTM0LTEuNy00NC43LDEuOWMtMi42LDAuOS01LjItMS40LTQuMy00LjFjMy42LTEwLDEyLjYtMjguNiwyOS45LTMxCglDMzA2LjksMjIyLjQsMzA2LjksMjM2LDMwNi45LDIzNnoiLz4KPHBhdGggZmlsbD0iI0ZGRkZGRiIgZD0iTTMxOC4zLDE0Mi41Yy0yLjEtMy02LjQtMTEsNi44LTExYzEzLjIsMCwzMy4zLDE0LjksMzcuNCwyMC40Yy0xLjMsMy40LTkuOCw0LjEtMTQsMy44Yy00LjItMC4zLTExLjUtMS0xNy0zLjgKCUMzMjYsMTQ5LjIsMzIwLjUsMTQ1LjUsMzE4LjMsMTQyLjV6Ii8+Cjwvc3ZnPgo=',
-    slippage: true,
-
-    blockchains: ['solana'],
-
-    solana: {
-      router: {
-        address: 'whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc',
-        api: WHIRLPOOL_LAYOUT,
-      },
-    }
-  };
 
   function _optionalChain$4(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }class Route {
     constructor({
@@ -131,6 +67,7 @@
 
     const lastAmountsIn = await Promise.all(blocks.map(async (block)=>{
       let { amountIn } = await exchange.getAmounts({
+        exchange,
         blockchain,
         path: exchangePath,
         pools,
@@ -375,7 +312,7 @@
       let [amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput] = [amountIn, amountOut, amountInMax, amountOutMin];
 
       let amounts; // includes intermediary amounts for longer routes
-      ({ amountIn, amountInMax, amountOut, amountOutMin, amounts } = await getAmounts({ blockchain, path, pools, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }));
+      ({ amountIn, amountInMax, amountOut, amountOutMin, amounts } = await getAmounts({ exchange, blockchain, path, pools, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }));
       if([amountIn, amountInMax, amountOut, amountOutMin].every((amount)=>{ return amount == undefined })) { return resolve() }
 
       if(slippage || exchange.slippage) {
@@ -1255,6 +1192,53 @@
     return amountCalculated
   };
 
+  const WHIRLPOOL_REWARD_LAYOUT = solanaWeb3_js.struct([
+    solanaWeb3_js.publicKey("mint"),
+    solanaWeb3_js.publicKey("vault"),
+    solanaWeb3_js.publicKey("authority"),
+    solanaWeb3_js.u128("emissionsPerSecondX64"),
+    solanaWeb3_js.u128("growthGlobalX64"),
+  ]);
+
+  const WHIRLPOOL_LAYOUT = solanaWeb3_js.struct([
+    solanaWeb3_js.u64("anchorDiscriminator"),
+    solanaWeb3_js.publicKey("whirlpoolsConfig"),
+    solanaWeb3_js.seq(solanaWeb3_js.u8(), 1, "whirlpoolBump"),
+    solanaWeb3_js.u16("tickSpacing"),
+    solanaWeb3_js.seq(solanaWeb3_js.u8(), 2, "tickSpacingSeed"),
+    solanaWeb3_js.u16("feeRate"),
+    solanaWeb3_js.u16("protocolFeeRate"),
+    solanaWeb3_js.u128("liquidity"),
+    solanaWeb3_js.u128("sqrtPrice"),
+    solanaWeb3_js.i32("tickCurrentIndex"),
+    solanaWeb3_js.u64("protocolFeeOwedA"),
+    solanaWeb3_js.u64("protocolFeeOwedB"),
+    solanaWeb3_js.publicKey("tokenMintA"),
+    solanaWeb3_js.publicKey("tokenVaultA"),
+    solanaWeb3_js.u128("feeGrowthGlobalA"),
+    solanaWeb3_js.publicKey("tokenMintB"),
+    solanaWeb3_js.publicKey("tokenVaultB"),
+    solanaWeb3_js.u128("feeGrowthGlobalB"),
+    solanaWeb3_js.u64("rewardLastUpdatedTimestamp"),
+    solanaWeb3_js.seq(WHIRLPOOL_REWARD_LAYOUT, 3, "rewardInfos"),
+  ]);
+
+  const TICK_LAYOUT = solanaWeb3_js.struct([
+    solanaWeb3_js.bool("initialized"),
+    solanaWeb3_js.i128("liquidityNet"),
+    solanaWeb3_js.u128("liquidityGross"),
+    solanaWeb3_js.u128("feeGrowthOutsideA"),
+    solanaWeb3_js.u128("feeGrowthOutsideB"),
+    solanaWeb3_js.seq(solanaWeb3_js.u128(), 3, "reward_growths_outside"),
+  ]);
+
+  const TICK_ARRAY_LAYOUT = solanaWeb3_js.struct([
+    solanaWeb3_js.u64("anchorDiscriminator"),
+    solanaWeb3_js.i32("startTickIndex"),
+    solanaWeb3_js.seq(TICK_LAYOUT, 88, "ticks"),
+    solanaWeb3_js.publicKey("whirlpool"),
+  ]);
+
   const MAX_SWAP_TICK_ARRAYS = 3;
   const MAX_TICK_INDEX = 443636; // i32
   const MIN_TICK_INDEX = -443636; // i32
@@ -1289,7 +1273,7 @@
             new solanaWeb3_js.PublicKey(pool.toString()).toBuffer(),
             solanaWeb3_js.Buffer.from(startIndex.toString())
           ],
-          new solanaWeb3_js.PublicKey(basics.router.v1.address)
+          new solanaWeb3_js.PublicKey('whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc')
         )
       )[0];
       tickArrayAddresses.push(pda);
@@ -1528,7 +1512,7 @@
       const freshWhirlpoolData = await web3Client.request({
         blockchain: 'solana',
         address: account.pubkey.toString(),
-        api: basics.router.v1.api,
+        api: WHIRLPOOL_LAYOUT,
         cache: 10,
       });
 
@@ -1573,14 +1557,14 @@
   // This method is cached and is only to be used to generally existing pools every 24h
   // Do not use for price calulations, fetch accounts for pools individually in order to calculate price 
   let getAccounts = async (base, quote) => {
-    let accounts = await web3Client.request(`solana://${basics.router.v1.address}/getProgramAccounts`, {
+    let accounts = await web3Client.request(`solana://whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc/getProgramAccounts`, {
       params: { filters: [
-        { dataSize: basics.router.v1.api.span },
+        { dataSize: WHIRLPOOL_LAYOUT.span },
         { memcmp: { offset: 8, bytes: '2LecshUwdy9xi7meFgHtFJQNSKk4KdTrcpvaB56dP2NQ' }}, // whirlpoolsConfig
         { memcmp: { offset: 101, bytes: base }}, // tokenMintA
         { memcmp: { offset: 181, bytes: quote }} // tokenMintB
       ]},
-      api: basics.router.v1.api,
+      api: WHIRLPOOL_LAYOUT,
       cache: 86400, // 24h,
       cacheKey: ['whirlpool', base.toString(), quote.toString()].join('-')
     });
@@ -1639,7 +1623,7 @@
   };
 
   function _optionalChain$3(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
-  const blockchain$2 = Blockchains__default['default'].solana;
+  const blockchain$1 = Blockchains__default['default'].solana;
 
   // Replaces 11111111111111111111111111111111 with the wrapped token and implies wrapping.
   //
@@ -1647,22 +1631,22 @@
   // to be able to differentiate between SOL<>Token and WSOL<>Token swaps
   // as they are not the same!
   //
-  let getExchangePath$4 = (path) => {
+  let getExchangePath$4 = ({ path }) => {
     if(!path) { return }
     let exchangePath = path.map((token, index) => {
       if (
-        token === blockchain$2.currency.address && path[index+1] != blockchain$2.wrapped.address &&
-        path[index-1] != blockchain$2.wrapped.address
+        token === blockchain$1.currency.address && path[index+1] != blockchain$1.wrapped.address &&
+        path[index-1] != blockchain$1.wrapped.address
       ) {
-        return blockchain$2.wrapped.address
+        return blockchain$1.wrapped.address
       } else {
         return token
       }
     });
 
-    if(exchangePath[0] == blockchain$2.currency.address && exchangePath[1] == blockchain$2.wrapped.address) {
+    if(exchangePath[0] == blockchain$1.currency.address && exchangePath[1] == blockchain$1.wrapped.address) {
       exchangePath.splice(0, 1);
-    } else if(exchangePath[exchangePath.length-1] == blockchain$2.currency.address && exchangePath[exchangePath.length-2] == blockchain$2.wrapped.address) {
+    } else if(exchangePath[exchangePath.length-1] == blockchain$1.currency.address && exchangePath[exchangePath.length-2] == blockchain$1.wrapped.address) {
       exchangePath.splice(exchangePath.length-1, 1);
     }
 
@@ -1671,7 +1655,7 @@
 
   let pathExists$4 = async ({ path, amountIn, amountInMax, amountOut, amountOutMin }) => {
     if(path.length == 1) { return false }
-    path = getExchangePath$4(path);
+    path = getExchangePath$4({ path });
     if((await getPairsWithPrice({ tokenIn: path[0], tokenOut: path[1], amountIn, amountInMax, amountOut, amountOutMin })).length > 0) {
       return true
     } else {
@@ -1681,8 +1665,8 @@
 
   let findPath$4 = async ({ tokenIn, tokenOut, amountIn, amountOut, amountInMax, amountOutMin }) => {
     if(
-      [tokenIn, tokenOut].includes(blockchain$2.currency.address) &&
-      [tokenIn, tokenOut].includes(blockchain$2.wrapped.address)
+      [tokenIn, tokenOut].includes(blockchain$1.currency.address) &&
+      [tokenIn, tokenOut].includes(blockchain$1.wrapped.address)
     ) { return { path: undefined, exchangePath: undefined } }
 
     let path, stablesIn, stablesOut, stable;
@@ -1691,20 +1675,20 @@
       // direct path
       path = [tokenIn, tokenOut];
     } else if (
-      tokenIn != blockchain$2.wrapped.address &&
-      tokenIn != blockchain$2.currency.address &&
-      await pathExists$4({ path: [tokenIn, blockchain$2.wrapped.address], amountIn, amountInMax, amountOut, amountOutMin }) &&
-      tokenOut != blockchain$2.wrapped.address &&
-      tokenOut != blockchain$2.currency.address &&
-      await pathExists$4({ path: [tokenOut, blockchain$2.wrapped.address], amountIn: (amountOut||amountOutMin), amountInMax: (amountOut||amountOutMin), amountOut: (amountIn||amountInMax), amountOutMin: (amountIn||amountInMax) })
+      tokenIn != blockchain$1.wrapped.address &&
+      tokenIn != blockchain$1.currency.address &&
+      await pathExists$4({ path: [tokenIn, blockchain$1.wrapped.address], amountIn, amountInMax, amountOut, amountOutMin }) &&
+      tokenOut != blockchain$1.wrapped.address &&
+      tokenOut != blockchain$1.currency.address &&
+      await pathExists$4({ path: [tokenOut, blockchain$1.wrapped.address], amountIn: (amountOut||amountOutMin), amountInMax: (amountOut||amountOutMin), amountOut: (amountIn||amountInMax), amountOutMin: (amountIn||amountInMax) })
     ) {
       // path via blockchain.wrapped.address
-      path = [tokenIn, blockchain$2.wrapped.address, tokenOut];
+      path = [tokenIn, blockchain$1.wrapped.address, tokenOut];
     } else if (
-      !blockchain$2.stables.usd.includes(tokenIn) &&
-      (stablesIn = (await Promise.all(blockchain$2.stables.usd.map(async(stable)=>await pathExists$4({ path: [tokenIn, stable], amountIn, amountInMax, amountOut, amountOutMin }) ? stable : undefined))).filter(Boolean)) &&
-      !blockchain$2.stables.usd.includes(tokenOut) &&
-      (stablesOut = (await Promise.all(blockchain$2.stables.usd.map(async(stable)=>await pathExists$4({ path: [tokenOut, stable], amountIn: (amountOut||amountOutMin), amountInMax: (amountOut||amountOutMin), amountOut: (amountIn||amountInMax), amountOutMin: (amountIn||amountInMax) })  ? stable : undefined))).filter(Boolean)) &&
+      !blockchain$1.stables.usd.includes(tokenIn) &&
+      (stablesIn = (await Promise.all(blockchain$1.stables.usd.map(async(stable)=>await pathExists$4({ path: [tokenIn, stable], amountIn, amountInMax, amountOut, amountOutMin }) ? stable : undefined))).filter(Boolean)) &&
+      !blockchain$1.stables.usd.includes(tokenOut) &&
+      (stablesOut = (await Promise.all(blockchain$1.stables.usd.map(async(stable)=>await pathExists$4({ path: [tokenOut, stable], amountIn: (amountOut||amountOutMin), amountInMax: (amountOut||amountOutMin), amountOut: (amountIn||amountInMax), amountOutMin: (amountIn||amountInMax) })  ? stable : undefined))).filter(Boolean)) &&
       (stable = stablesIn.filter((stable)=> stablesOut.includes(stable))[0])
     ) {
       // path via TOKEN_IN <> STABLE <> TOKEN_OUT
@@ -1713,12 +1697,12 @@
 
     // Add blockchain.wrapped.address to route path if things start or end with blockchain.currency.address
     // because that actually reflects how things are routed in reality:
-    if(_optionalChain$3([path, 'optionalAccess', _ => _.length]) && path[0] == blockchain$2.currency.address) {
-      path.splice(1, 0, blockchain$2.wrapped.address);
-    } else if(_optionalChain$3([path, 'optionalAccess', _2 => _2.length]) && path[path.length-1] == blockchain$2.currency.address) {
-      path.splice(path.length-1, 0, blockchain$2.wrapped.address);
+    if(_optionalChain$3([path, 'optionalAccess', _ => _.length]) && path[0] == blockchain$1.currency.address) {
+      path.splice(1, 0, blockchain$1.wrapped.address);
+    } else if(_optionalChain$3([path, 'optionalAccess', _2 => _2.length]) && path[path.length-1] == blockchain$1.currency.address) {
+      path.splice(path.length-1, 0, blockchain$1.wrapped.address);
     }
-    return { path, exchangePath: getExchangePath$4(path) }
+    return { path, exchangePath: getExchangePath$4({ path }) }
   };
 
   let getAmountsOut = async ({ path, amountIn, amountInMax }) => {
@@ -1761,7 +1745,7 @@
     amountInMax,
     amountOutMin
   }) => {
-    path = getExchangePath$4(path);
+    path = getExchangePath$4({ path });
     let amounts;
     if (amountOut) {
       amounts = await getAmountsIn({ path, amountOut, tokenIn, tokenOut });
@@ -1805,7 +1789,7 @@
     }
   };
 
-  const blockchain$1 = Blockchains__default['default'].solana;
+  const blockchain = Blockchains__default['default'].solana;
   const SWAP_INSTRUCTION = new solanaWeb3_js.BN("14449647541112719096");
   const TWO_HOP_SWAP_INSTRUCTION = new solanaWeb3_js.BN("16635068063392030915");
 
@@ -1901,9 +1885,9 @@
       // tick_array_two_2
       { pubkey: onlyInitializedTicksTwo[2].address, isWritable: true, isSigner: false },
       // oracle_one
-      { pubkey: (await solanaWeb3_js.PublicKey.findProgramAddress([ solanaWeb3_js.Buffer.from('oracle'), new solanaWeb3_js.PublicKey(poolOne.toString()).toBuffer() ], new solanaWeb3_js.PublicKey(basics.router.v1.address)))[0], isWritable: false, isSigner: false },
+      { pubkey: (await solanaWeb3_js.PublicKey.findProgramAddress([ solanaWeb3_js.Buffer.from('oracle'), new solanaWeb3_js.PublicKey(poolOne.toString()).toBuffer() ], new solanaWeb3_js.PublicKey('whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc')))[0], isWritable: false, isSigner: false },
       // oracle_two
-      { pubkey: (await solanaWeb3_js.PublicKey.findProgramAddress([ solanaWeb3_js.Buffer.from('oracle'), new solanaWeb3_js.PublicKey(poolTwo.toString()).toBuffer() ], new solanaWeb3_js.PublicKey(basics.router.v1.address)))[0], isWritable: false, isSigner: false },
+      { pubkey: (await solanaWeb3_js.PublicKey.findProgramAddress([ solanaWeb3_js.Buffer.from('oracle'), new solanaWeb3_js.PublicKey(poolTwo.toString()).toBuffer() ], new solanaWeb3_js.PublicKey('whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc')))[0], isWritable: false, isSigner: false },
     ]
   };
   const getTwoHopSwapInstructionData = ({
@@ -1989,7 +1973,7 @@
       // tick_array_2
       { pubkey: onlyInitializedTicks[2].address, isWritable: true, isSigner: false },
       // oracle
-      { pubkey: (await solanaWeb3_js.PublicKey.findProgramAddress([ solanaWeb3_js.Buffer.from('oracle'), new solanaWeb3_js.PublicKey(pool.toString()).toBuffer() ], new solanaWeb3_js.PublicKey(basics.router.v1.address)))[0], isWritable: false, isSigner: false },
+      { pubkey: (await solanaWeb3_js.PublicKey.findProgramAddress([ solanaWeb3_js.Buffer.from('oracle'), new solanaWeb3_js.PublicKey(pool.toString()).toBuffer() ], new solanaWeb3_js.PublicKey('whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc')))[0], isWritable: false, isSigner: false },
     ]
   };
 
@@ -2021,7 +2005,6 @@
   };
 
   const getTransaction$4 = async ({
-    exchange,
     path,
     amountIn,
     amountInMax,
@@ -2037,7 +2020,7 @@
     let transaction = { blockchain: 'solana' };
     let instructions = [];
 
-    const exchangePath = getExchangePath$4(path);
+    const exchangePath = getExchangePath$4({ path });
     if(exchangePath.length > 3) { throw 'Orca can only handle fixed paths with a max length of 3 (2 pools)!' }
     const tokenIn = exchangePath[0];
     const tokenMiddle = exchangePath.length == 3 ? exchangePath[1] : undefined;
@@ -2056,8 +2039,8 @@
       }
     }
 
-    let startsWrapped = (path[0] === blockchain$1.currency.address && exchangePath[0] === blockchain$1.wrapped.address);
-    let endsUnwrapped = (path[path.length-1] === blockchain$1.currency.address && exchangePath[exchangePath.length-1] === blockchain$1.wrapped.address);
+    let startsWrapped = (path[0] === blockchain.currency.address && exchangePath[0] === blockchain.wrapped.address);
+    let endsUnwrapped = (path[path.length-1] === blockchain.currency.address && exchangePath[exchangePath.length-1] === blockchain.wrapped.address);
     let wrappedAccount;
     const provider = await web3Client.getProvider('solana');
     
@@ -2078,7 +2061,7 @@
       instructions.push(
         Token__default['default'].solana.initializeAccountInstruction({
           account: wrappedAccount,
-          token: blockchain$1.wrapped.address,
+          token: blockchain.wrapped.address,
           owner: fromAddress
         })
       );
@@ -2096,7 +2079,7 @@
       }
       instructions.push(
         new solanaWeb3_js.TransactionInstruction({
-          programId: new solanaWeb3_js.PublicKey(exchange.router.v1.address),
+          programId: new solanaWeb3_js.PublicKey('whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc'),
           keys: await getSwapInstructionKeys({
             fromAddress,
             pool: pairs[0].pubkey,
@@ -2130,7 +2113,7 @@
       }
       instructions.push(
         new solanaWeb3_js.TransactionInstruction({
-          programId: new solanaWeb3_js.PublicKey(exchange.router.v1.address),
+          programId: new solanaWeb3_js.PublicKey('whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc'),
           keys: await getTwoHopSwapInstructionKeys({
             fromAddress,
             poolOne: pairs[0].pubkey,
@@ -2174,16 +2157,43 @@
     return transaction
   };
 
+  var Orca = {
+    findPath: findPath$4,
+    pathExists: pathExists$4,
+    getAmounts: getAmounts$4,
+    getTransaction: getTransaction$4,
+    WHIRLPOOL_LAYOUT,
+  };
+
+  const exchange$f = {
+    
+    name: 'orca',
+    label: 'Orca',
+    logo: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPCEtLSBHZW5lcmF0b3I6IEFkb2JlIElsbHVzdHJhdG9yIDI3LjIuMCwgU1ZHIEV4cG9ydCBQbHVnLUluIC4gU1ZHIFZlcnNpb246IDYuMDAgQnVpbGQgMCkgIC0tPgo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9ImthdG1hbl8xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4PSIwcHgiIHk9IjBweCIKCSB2aWV3Qm94PSIwIDAgNjAwIDQ1MCIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgNjAwIDQ1MDsiIHhtbDpzcGFjZT0icHJlc2VydmUiPgo8cGF0aCBmaWxsPSIjRkZEMTVDIiBkPSJNNDg4LjQsMjIyLjljMCwxMDMuOC04NC4xLDE4Ny45LTE4Ny45LDE4Ny45Yy0xMDMuOCwwLTE4Ny45LTg0LjEtMTg3LjktMTg3LjlDMTEyLjYsMTE5LjEsMTk2LjcsMzUsMzAwLjUsMzUKCUM0MDQuMiwzNSw0ODguNCwxMTkuMSw0ODguNCwyMjIuOXoiLz4KPHBhdGggZmlsbD0iI0ZGRkZGRiIgc3Ryb2tlPSIjMDAwMDAwIiBzdHJva2Utd2lkdGg9IjE3LjY3NTUiIGQ9Ik0yMDkuNSwyOTkuOGMxLjYtMS4xLDMuMS0yLjgsMy45LTUuMWMwLjgtMi42LDAuMy00LjksMC02LjJjMCwwLDAtMC4xLDAtMC4xbDAuMy0xLjhjMC45LDAuNSwxLjksMS4xLDMsMS45CgljMC4zLDAuMiwwLjcsMC41LDEuMSwwLjdjMC41LDAuNCwxLjEsMC44LDEuNCwxYzAuNiwwLjQsMS41LDEsMi41LDEuNWMyNS4xLDE1LjYsNDUuOCwyMiw2Mi4yLDIxLjJjMTctMC44LDI4LjktOS40LDM1LjEtMjEuOQoJYzUuOS0xMi4xLDYuMi0yNywyLTQwLjljLTQuMi0xMy45LTEzLTI3LjUtMjYuMi0zNi45Yy0yMi4yLTE1LjgtNDIuNS0zOS44LTUyLjctNjAuM2MtNS4yLTEwLjQtNy4zLTE4LjctNi43LTI0LjIKCWMwLjMtMi41LDEtNC4xLDItNS4xYzAuOS0xLDIuNi0yLjEsNS45LTIuNmM2LjktMS4xLDE1LTMuNiwyMy4xLTYuMmMzLjItMSw2LjMtMiw5LjUtMi45YzExLjctMy40LDI0LjItNi4zLDM3LjItNi4zCgljMjUuMywwLDU1LDExLDg2LjMsNTYuOGM0MC4yLDU4LjgsMTguMSwxMjQuNC0yOC4yLDE1OC45Yy0yMy4xLDE3LjItNTEuOSwyNi4zLTgxLjUsMjIuOUMyNjIuOSwzNDEuMywyMzQuOSwzMjcuOSwyMDkuNSwyOTkuOHoKCSBNMjE0LjIsMjg0LjZDMjE0LjIsMjg0LjYsMjE0LjIsMjg0LjcsMjE0LjIsMjg0LjZDMjE0LjEsMjg0LjcsMjE0LjIsMjg0LjYsMjE0LjIsMjg0LjZ6IE0yMTEuNiwyODUuOAoJQzIxMS42LDI4NS44LDIxMS43LDI4NS44LDIxMS42LDI4NS44QzIxMS43LDI4NS44LDIxMS42LDI4NS44LDIxMS42LDI4NS44eiIvPgo8cGF0aCBkPSJNMjMyLjUsMTI0LjNjMCwwLDcxLjgtMTkuMSw4Ny41LTE5LjFjMTUuNywwLDc4LjYsMzAuNSw5Ni45LDg2LjNjMjYsNzktNDQuNywxMzAuOS01Mi43LDEyNS44CgljNzYuMS02Mi45LTQ4LjQtMTc5LjEtMTA5LjYtMTcwLjRjLTcuNiwxLjEtMy40LDcuNi0zLjQsNy42bC0xLjcsMTdsLTEyLjctMjEuMkwyMzIuNSwxMjQuM3oiLz4KPHBhdGggZD0iTTQwNi41LDE2Ny42YzIyLjcsMzkuOSwxOCwxNy4xLDEyLjksNjIuN2M5LjMtMTUuMSwyMy45LTMuOCwyOS45LDJjMS4xLDEsMi45LDAuNCwyLjgtMS4xYy0wLjItNi44LTIuMi0yMS40LTEzLjQtMzcuMQoJQzQyMy40LDE3Mi42LDQwNi41LDE2Ny42LDQwNi41LDE2Ny42eiIvPgo8cGF0aCBmaWxsPSJub25lIiBzdHJva2U9IiMwMDAwMDAiIHN0cm9rZS13aWR0aD0iMC45OTMiIGQ9Ik00MTkuNCwyMzAuM2M1LTQ1LjYsOS43LTIyLjgtMTIuOS02Mi43YzAsMCwxNi45LDUsMzIuMywyNi41YzExLjIsMTUuNywxMy4xLDMwLjMsMTMuNCwzNy4xCgljMC4xLDEuNS0xLjcsMi4xLTIuOCwxLjFDNDQzLjMsMjI2LjUsNDI4LjcsMjE1LjMsNDE5LjQsMjMwLjN6IE00MTkuNCwyMzAuM2MwLjktMi4xLDIuMi01LjUsMi4yLTUuNSIvPgo8cGF0aCBkPSJNMjI0LDIyNC4yYy05LjYsMTYuMi0yOS4yLDE1LTI4LjgsMzQuM2MxNy41LDM5LDE3LjYsMzYuMiwxNy42LDM2LjJjMzIuNS0xOC4yLDE5LjEtNTguNSwxNC4zLTcwLjQKCUMyMjYuNiwyMjMsMjI0LjcsMjIzLDIyNCwyMjQuMnoiLz4KPHBhdGggZD0iTTE1MC40LDI2MC4xYzE4LjcsMi40LDI5LjgtMTMuOCw0NC44LTEuNmMxOS45LDM3LjgsMTcuNiwzNi4yLDE3LjYsMzYuMmMtMzQuNCwxNC40LTU3LjktMjEtNjQuMy0zMi4xCglDMTQ3LjgsMjYxLjMsMTQ5LDI1OS45LDE1MC40LDI2MC4xeiIvPgo8cGF0aCBkPSJNMzA2LjksMjM2YzAsMCwxOC43LDE5LjEsOC45LDIyLjFjLTEyLjItNy41LTM0LTEuNy00NC43LDEuOWMtMi42LDAuOS01LjItMS40LTQuMy00LjFjMy42LTEwLDEyLjYtMjguNiwyOS45LTMxCglDMzA2LjksMjIyLjQsMzA2LjksMjM2LDMwNi45LDIzNnoiLz4KPHBhdGggZmlsbD0iI0ZGRkZGRiIgZD0iTTMxOC4zLDE0Mi41Yy0yLjEtMy02LjQtMTEsNi44LTExYzEzLjIsMCwzMy4zLDE0LjksMzcuNCwyMC40Yy0xLjMsMy40LTkuOCw0LjEtMTQsMy44Yy00LjItMC4zLTExLjUtMS0xNy0zLjgKCUMzMjYsMTQ5LjIsMzIwLjUsMTQ1LjUsMzE4LjMsMTQyLjV6Ii8+Cjwvc3ZnPgo=',
+    
+    slippage: true,
+
+    blockchains: ['solana'],
+
+    solana: {
+      router: {
+        address: 'whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc',
+        api: Orca.WHIRLPOOL_LAYOUT,
+      },
+    }
+  };
+
   var orca = (scope)=>{
     
     return new Exchange(
 
-      Object.assign(basics, {
+      Object.assign(exchange$f, {
         scope,
-        findPath: findPath$4,
-        pathExists: pathExists$4,
-        getAmounts: getAmounts$4,
-        getTransaction: getTransaction$4,
+
+        findPath: (args)=>Orca.findPath({ ...args, exchange: exchange$f }),
+        pathExists: (args)=>Orca.pathExists({ ...args, exchange: exchange$f }),
+        getAmounts: (args)=>Orca.getAmounts({ ...args, exchange: exchange$f }),
+        getTransaction: (args)=>Orca.getTransaction({ ...args, exchange: exchange$f }),
       })
     )
   };
@@ -2196,7 +2206,7 @@
   // to be able to differentiate between ETH<>Token and WETH<>Token swaps
   // as they are not the same!
   //
-  const getExchangePath$3 = (blockchain, exchange, path) => {
+  const getExchangePath$3 = ({ blockchain, exchange, path }) => {
     if(!path) { return }
     let exchangePath = path.map((token, index) => {
       if (
@@ -2228,8 +2238,9 @@
     }
   };
 
-  const pathExists$3 = async (blockchain, exchange, path) => {
-    if(getExchangePath$3(blockchain, exchange, path).length == 1) { return false }
+  const pathExists$3 = async ({ blockchain, exchange, path }) => {
+    const exchangePath = getExchangePath$3({ blockchain, exchange, path });
+    if(!exchangePath || exchangePath.length === 1) { return false }
     try {
       let pair = await web3Client.request({
         blockchain,
@@ -2237,7 +2248,7 @@
         method: 'getPair',
         api: exchange[blockchain].factory.api,
         cache: 3600000,
-        params: getExchangePath$3(blockchain, exchange, path),
+        params: getExchangePath$3({ blockchain, exchange, path }),
       });
       if(!pair || pair == Blockchains__default['default'][blockchain].zero) { return false }
       let [reserves, token0, token1] = await Promise.all([
@@ -2258,41 +2269,41 @@
     } catch (e){ console.log('e', e); return false }
   };
 
-  const findPath$3 = async (blockchain, exchange, { tokenIn, tokenOut }) => {
+  const findPath$3 = async ({ blockchain, exchange, tokenIn, tokenOut }) => {
     if(
       [tokenIn, tokenOut].includes(Blockchains__default['default'][blockchain].currency.address) &&
       [tokenIn, tokenOut].includes(Blockchains__default['default'][blockchain].wrapped.address)
     ) { return { path: undefined, exchangePath: undefined } }
 
     let path;
-    if (await pathExists$3(blockchain, exchange, [tokenIn, tokenOut])) {
+    if (await pathExists$3({ blockchain, exchange, path: [tokenIn, tokenOut] })) {
       // direct path
       path = [tokenIn, tokenOut];
     } else if (
       tokenIn != Blockchains__default['default'][blockchain].wrapped.address &&
-      await pathExists$3(blockchain, exchange, [tokenIn, Blockchains__default['default'][blockchain].wrapped.address]) &&
+      await pathExists$3({ blockchain, exchange, path: [tokenIn, Blockchains__default['default'][blockchain].wrapped.address] }) &&
       tokenOut != Blockchains__default['default'][blockchain].wrapped.address &&
-      await pathExists$3(blockchain, exchange, [tokenOut, Blockchains__default['default'][blockchain].wrapped.address])
+      await pathExists$3({ blockchain, exchange, path: [tokenOut, Blockchains__default['default'][blockchain].wrapped.address] })
     ) {
       // path via WRAPPED
       path = [tokenIn, Blockchains__default['default'][blockchain].wrapped.address, tokenOut];
     } else if (
       !Blockchains__default['default'][blockchain].stables.usd.includes(tokenIn) &&
-      (await Promise.all(Blockchains__default['default'][blockchain].stables.usd.map((stable)=>pathExists$3(blockchain, exchange, [tokenIn, stable])))).filter(Boolean).length &&
+      (await Promise.all(Blockchains__default['default'][blockchain].stables.usd.map((stable)=>pathExists$3({ blockchain, exchange, path: [tokenIn, stable] })))).filter(Boolean).length &&
       tokenOut != Blockchains__default['default'][blockchain].wrapped.address &&
-      await pathExists$3(blockchain, exchange, [Blockchains__default['default'][blockchain].wrapped.address, tokenOut])
+      await pathExists$3({ blockchain, exchange, path: [Blockchains__default['default'][blockchain].wrapped.address, tokenOut] })
     ) {
       // path via tokenIn -> USD -> WRAPPED -> tokenOut
-      let USD = (await Promise.all(Blockchains__default['default'][blockchain].stables.usd.map(async (stable)=>{ return(await pathExists$3(blockchain, exchange, [tokenIn, stable]) ? stable : undefined) }))).find(Boolean);
+      let USD = (await Promise.all(Blockchains__default['default'][blockchain].stables.usd.map(async (stable)=>{ return(await pathExists$3({ blockchain, exchange, path: [tokenIn, stable] }) ? stable : undefined) }))).find(Boolean);
       path = [tokenIn, USD, Blockchains__default['default'][blockchain].wrapped.address, tokenOut];
     } else if (
       tokenIn != Blockchains__default['default'][blockchain].wrapped.address &&
-      await pathExists$3(blockchain, exchange, [tokenIn, Blockchains__default['default'][blockchain].wrapped.address]) &&
+      await pathExists$3({ blockchain, exchange, path: [tokenIn, Blockchains__default['default'][blockchain].wrapped.address] }) &&
       !Blockchains__default['default'][blockchain].stables.usd.includes(tokenOut) &&
-      (await Promise.all(Blockchains__default['default'][blockchain].stables.usd.map((stable)=>pathExists$3(blockchain, exchange, [stable, tokenOut])))).filter(Boolean).length
+      (await Promise.all(Blockchains__default['default'][blockchain].stables.usd.map((stable)=>pathExists$3({ blockchain, exchange, path: [stable, tokenOut] })))).filter(Boolean).length
     ) {
       // path via tokenIn -> WRAPPED -> USD -> tokenOut
-      let USD = (await Promise.all(Blockchains__default['default'][blockchain].stables.usd.map(async (stable)=>{ return(await pathExists$3(blockchain, exchange, [stable, tokenOut]) ? stable : undefined) }))).find(Boolean);
+      let USD = (await Promise.all(Blockchains__default['default'][blockchain].stables.usd.map(async (stable)=>{ return(await pathExists$3({ blockchain, exchange, path: [stable, tokenOut] }) ? stable : undefined) }))).find(Boolean);
       path = [tokenIn, Blockchains__default['default'][blockchain].wrapped.address, USD, tokenOut];
     }
 
@@ -2304,10 +2315,10 @@
       path.splice(path.length-1, 0, Blockchains__default['default'][blockchain].wrapped.address);
     }
 
-    return { path, exchangePath: getExchangePath$3(blockchain, exchange, path) }
+    return { path, exchangePath: getExchangePath$3({ blockchain, exchange, path }) }
   };
 
-  let getAmountOut$2 = (blockchain, exchange, { path, amountIn, tokenIn, tokenOut }) => {
+  let getAmountOut$2 = ({ blockchain, exchange, path, amountIn, tokenIn, tokenOut }) => {
     return new Promise((resolve) => {
       web3Client.request({
         blockchain,
@@ -2316,7 +2327,7 @@
         api: exchange[blockchain].router.api,
         params: {
           amountIn: amountIn,
-          path: getExchangePath$3(blockchain, exchange, path),
+          path: getExchangePath$3({ blockchain, exchange, path }),
         },
       })
       .then((amountsOut)=>{
@@ -2326,7 +2337,7 @@
     })
   };
 
-  let getAmountIn$2 = (blockchain, exchange, { path, amountOut, block }) => {
+  let getAmountIn$2 = ({ blockchain, exchange, path, amountOut, block }) => {
     return new Promise((resolve) => {
       web3Client.request({
         blockchain,
@@ -2335,7 +2346,7 @@
         api: exchange[blockchain].router.api,
         params: {
           amountOut: amountOut,
-          path: getExchangePath$3(blockchain, exchange, path),
+          path: getExchangePath$3({ blockchain, exchange, path }),
         },
         block
       })
@@ -2344,7 +2355,9 @@
     })
   };
 
-  let getAmounts$3 = async (blockchain, exchange, {
+  let getAmounts$3 = async ({
+    blockchain,
+    exchange,
     path,
     block,
     tokenIn,
@@ -2355,28 +2368,28 @@
     amountOutMin
   }) => {
     if (amountOut) {
-      amountIn = await getAmountIn$2(blockchain, exchange, { block, path, amountOut, tokenIn, tokenOut });
+      amountIn = await getAmountIn$2({ blockchain, exchange, block, path, amountOut, tokenIn, tokenOut });
       if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
         return {}
       } else if (amountInMax === undefined) {
         amountInMax = amountIn;
       }
     } else if (amountIn) {
-      amountOut = await getAmountOut$2(blockchain, exchange, { path, amountIn, tokenIn, tokenOut });
+      amountOut = await getAmountOut$2({ blockchain, exchange, path, amountIn, tokenIn, tokenOut });
       if (amountOut == undefined || amountOutMin && amountOut.lt(amountOutMin)) {
         return {}
       } else if (amountOutMin === undefined) {
         amountOutMin = amountOut;
       }
     } else if(amountOutMin) {
-      amountIn = await getAmountIn$2(blockchain, exchange, { block, path, amountOut: amountOutMin, tokenIn, tokenOut });
+      amountIn = await getAmountIn$2({ blockchain, exchange, block, path, amountOut: amountOutMin, tokenIn, tokenOut });
       if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
         return {}
       } else if (amountInMax === undefined) {
         amountInMax = amountIn;
       }
     } else if(amountInMax) {
-      amountOut = await getAmountOut$2(blockchain, exchange, { path, amountIn: amountInMax, tokenIn, tokenOut });
+      amountOut = await getAmountOut$2({ blockchain, exchange, path, amountIn: amountInMax, tokenIn, tokenOut });
       if (amountOut == undefined ||amountOutMin && amountOut.lt(amountOutMin)) {
         return {}
       } else if (amountOutMin === undefined) {
@@ -2386,7 +2399,9 @@
     return { amountOut, amountIn, amountInMax, amountOutMin }
   };
 
-  let getTransaction$3 = (blockchain, exchange, {
+  let getTransaction$3 = ({
+    exchange,
+    blockchain,
     path,
     amountIn,
     amountInMax,
@@ -2435,7 +2450,7 @@
     }
 
     transaction.params = Object.assign({}, transaction.params, {
-      path: getExchangePath$3(blockchain, exchange, path),
+      path: getExchangePath$3({ blockchain, exchange, path }),
       to: fromAddress,
       deadline: Math.round(Date.now() / 1000) + 60 * 60 * 24, // 24 hours
     });
@@ -2490,15 +2505,10 @@
 
       Object.assign(exchange$e, {
         scope,
-
-        findPath: ({ blockchain, tokenIn, tokenOut })=>
-          UniswapV2.findPath(blockchain, exchange$e, { tokenIn, tokenOut }),
-        pathExists: (blockchain, path)=>
-          UniswapV2.pathExists(blockchain, exchange$e, path),
-        getAmounts: ({ blockchain, path, block, tokenIn, tokenOut, amountOut, amountIn, amountInMax, amountOutMin })=>
-          UniswapV2.getAmounts(blockchain, exchange$e, { path, block, tokenIn, tokenOut, amountOut, amountIn, amountInMax, amountOutMin }),
-        getTransaction: ({ blockchain, path, amountIn, amountInMax, amountOut, amountOutMin, amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput, fromAddress })=>
-          UniswapV2.getTransaction(blockchain, exchange$e ,{ path, amountIn, amountInMax, amountOut, amountOutMin, amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput, fromAddress }),
+        findPath: (args)=>UniswapV2.findPath({ ...args, exchange: exchange$e }),
+        pathExists: (args)=>UniswapV2.pathExists({ ...args, exchange: exchange$e }),
+        getAmounts: (args)=>UniswapV2.getAmounts({ ...args, exchange: exchange$e }),
+        getTransaction: (args)=>UniswapV2.getTransaction({ ...args, exchange: exchange$e }),
       })
     )
   };
@@ -2511,7 +2521,7 @@
   // to be able to differentiate between ETH<>Token and WETH<>Token swaps
   // as they are not the same!
   //
-  const getExchangePath$2 = (blockchain, exchange, path) => {
+  const getExchangePath$2 = ({ blockchain, exchange, path }) => {
     if(!path) { return }
     let exchangePath = path.map((token, index) => {
       if (
@@ -2533,7 +2543,7 @@
     return exchangePath
   };
 
-  const getInputAmount = async (exchange, pool, outputAmount)=>{
+  const getInputAmount = async ({ exchange, pool, outputAmount })=>{
 
     const data = await web3Client.request({
       blockchain: pool.blockchain,
@@ -2550,7 +2560,7 @@
     return data.amountIn
   };
 
-  const getOutputAmount = async (exchange, pool, inputAmount)=>{
+  const getOutputAmount = async ({ exchange, pool, inputAmount })=>{
 
     const data = await web3Client.request({
       blockchain: pool.blockchain,
@@ -2568,7 +2578,7 @@
   };
 
   const getBestPool$1 = async ({ blockchain, exchange, path, amountIn, amountOut, block }) => {
-    path = getExchangePath$2(blockchain, exchange, path);
+    path = getExchangePath$2({ blockchain, exchange, path });
     if(path.length > 2) { throw('Uniswap V3 can only check paths for up to 2 tokens!') }
 
     try {
@@ -2601,9 +2611,9 @@
 
           let amount;
           if(amountIn) {
-            amount = await getOutputAmount(exchange, pool, amountIn);
+            amount = await getOutputAmount({ exchange, pool, amountIn });
           } else {
-            amount = await getInputAmount(exchange, pool, amountOut);
+            amount = await getInputAmount({ exchange, pool, amountOut });
           }
 
           return { ...pool, amountIn: amountIn || amount, amountOut: amountOut || amount }
@@ -2622,11 +2632,11 @@
     } catch (e2) { return }
   };
 
-  const pathExists$2 = async (blockchain, exchange, path, amountIn, amountOut, amountInMax, amountOutMin) => {
+  const pathExists$2 = async ({ blockchain, exchange, path, amountIn, amountOut, amountInMax, amountOutMin }) => {
     try {
 
       let pools = (await Promise.all(exchange.fees.map((fee)=>{
-        path = getExchangePath$2(blockchain, exchange, path);
+        path = getExchangePath$2({ blockchain, exchange, path });
         return web3Client.request({
           blockchain: Blockchains__default['default'][blockchain].name,
           address: exchange[blockchain].factory.address,
@@ -2649,25 +2659,25 @@
     ) { return { path: undefined, exchangePath: undefined } }
 
     let path;
-    if (await pathExists$2(blockchain, exchange, [tokenIn, tokenOut])) {
+    if (await pathExists$2({ blockchain, exchange, path: [tokenIn, tokenOut], amountIn, amountOut, amountInMax, amountOutMin })) {
       // direct path
       path = [tokenIn, tokenOut];
     } else if (
       tokenIn != Blockchains__default['default'][blockchain].wrapped.address &&
-      await pathExists$2(blockchain, exchange, [tokenIn, Blockchains__default['default'][blockchain].wrapped.address]) &&
+      await pathExists$2({ blockchain, exchange, path: [tokenIn, Blockchains__default['default'][blockchain].wrapped.address], amountIn, amountOut, amountInMax, amountOutMin }) &&
       tokenOut != Blockchains__default['default'][blockchain].wrapped.address &&
-      await pathExists$2(blockchain, exchange, [tokenOut, Blockchains__default['default'][blockchain].wrapped.address])
+      await pathExists$2({ blockchain, exchange, path: [tokenOut, Blockchains__default['default'][blockchain].wrapped.address], amountIn, amountOut, amountInMax, amountOutMin })
     ) {
       // path via WRAPPED
       path = [tokenIn, Blockchains__default['default'][blockchain].wrapped.address, tokenOut];
     } else if (
       (await Promise.all(Blockchains__default['default'][blockchain].stables.usd.map(async (stable)=>{
-        return( (await pathExists$2(blockchain, exchange, [tokenIn, stable]) ? stable : undefined) && await pathExists$2(blockchain, exchange, [tokenOut, stable]) ? stable : undefined )
+        return( (await pathExists$2({ blockchain, exchange, path: [tokenIn, stable], amountIn, amountOut, amountInMax, amountOutMin }) ? stable : undefined) && await pathExists$2({ blockchain, exchange, path: [tokenOut, stable], amountIn, amountOut, amountInMax, amountOutMin }) ? stable : undefined )
       }))).find(Boolean)
     ) {
       // path via tokenIn -> USD -> tokenOut
       let USD = (await Promise.all(Blockchains__default['default'][blockchain].stables.usd.map(async (stable)=>{
-        return( (await pathExists$2(blockchain, exchange, [tokenIn, stable]) ? stable : undefined) && await pathExists$2(blockchain, exchange, [tokenOut, stable]) ? stable : undefined )
+        return( (await pathExists$2({ blockchain, exchange, path: [tokenIn, stable], amountIn, amountOut, amountInMax, amountOutMin }) ? stable : undefined) && await pathExists$2({ blockchain, exchange, path: [tokenOut, stable], amountIn, amountOut, amountInMax, amountOutMin }) ? stable : undefined )
       }))).find(Boolean);
       path = [tokenIn, USD, tokenOut];
     }
@@ -2697,14 +2707,14 @@
       path.splice(path.length-1, 0, Blockchains__default['default'][blockchain].wrapped.address);
     }
 
-    return { path, pools, exchangePath: getExchangePath$2(blockchain, exchange, path) }
+    return { path, pools, exchangePath: getExchangePath$2({ blockchain, exchange, path }) }
   };
 
-  let getAmountOut$1 = (blockchain, exchange, { path, pools, amountIn }) => {
+  let getAmountOut$1 = ({ blockchain, exchange, path, pools, amountIn }) => {
     return pools[pools.length-1].amountOut
   };
 
-  let getAmountIn$1 = async (blockchain, exchange, { path, pools, amountOut, block }) => {
+  let getAmountIn$1 = async ({ blockchain, exchange, path, pools, amountOut, block }) => {
     if(block === undefined) {
       return pools[0].amountIn
     } else {
@@ -2733,7 +2743,9 @@
     }
   };
 
-  let getAmounts$2 = async (blockchain, exchange, {
+  let getAmounts$2 = async ({
+    blockchain,
+    exchange,
     path,
     pools,
     block,
@@ -2745,28 +2757,28 @@
     amountOutMin
   }) => {
     if (amountOut) {
-      amountIn = await getAmountIn$1(blockchain, exchange, { block, path, pools, amountOut, tokenIn, tokenOut });
+      amountIn = await getAmountIn$1({ blockchain, exchange, block, path, pools, amountOut, tokenIn, tokenOut });
       if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
         return {}
       } else if (amountInMax === undefined) {
         amountInMax = amountIn;
       }
     } else if (amountIn) {
-      amountOut = await getAmountOut$1(blockchain, exchange, { path, pools, amountIn, tokenIn, tokenOut });
+      amountOut = await getAmountOut$1({ blockchain, exchange, path, pools, amountIn, tokenIn, tokenOut });
       if (amountOut == undefined || amountOutMin && amountOut.lt(amountOutMin)) {
         return {}
       } else if (amountOutMin === undefined) {
         amountOutMin = amountOut;
       }
     } else if(amountOutMin) {
-      amountIn = await getAmountIn$1(blockchain, exchange, { block, path, pools, amountOut: amountOutMin, tokenIn, tokenOut });
+      amountIn = await getAmountIn$1({ blockchain, exchange, block, path, pools, amountOut: amountOutMin, tokenIn, tokenOut });
       if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
         return {}
       } else if (amountInMax === undefined) {
         amountInMax = amountIn;
       }
     } else if(amountInMax) {
-      amountOut = await getAmountOut$1(blockchain, exchange, { path, pools, amountIn: amountInMax, tokenIn, tokenOut });
+      amountOut = await getAmountOut$1({ blockchain, exchange, path, pools, amountIn: amountInMax, tokenIn, tokenOut });
       if (amountOut == undefined ||amountOutMin && amountOut.lt(amountOutMin)) {
         return {}
       } else if (amountOutMin === undefined) {
@@ -2920,13 +2932,10 @@
 
       Object.assign(exchange$d, {
         scope,
-        findPath: ({ blockchain, tokenIn, tokenOut, amountIn, amountOut, amountInMax, amountOutMin })=>
-          UniswapV3.findPath({ blockchain, exchange: exchange$d, tokenIn, tokenOut, amountIn, amountOut, amountInMax, amountOutMin }),
-        pathExists: (blockchain, path)=>
-          UniswapV3.pathExists(blockchain, exchange$d, path),
-        getAmounts: ({ blockchain, path, pools, block, tokenIn, tokenOut, amountOut, amountIn, amountInMax, amountOutMin })=>
-          UniswapV3.getAmounts(blockchain, exchange$d, { path, pools, block, tokenIn, tokenOut, amountOut, amountIn, amountInMax, amountOutMin }),
-        getTransaction: (...args)=> UniswapV3.getTransaction(...args),
+        findPath: (args)=>UniswapV3.findPath({ ...args, exchange: exchange$d }),
+        pathExists: (args)=>UniswapV3.pathExists({ ...args, exchange: exchange$d }),
+        getAmounts: (args)=>UniswapV3.getAmounts({ ...args, exchange: exchange$d }),
+        getTransaction: (args)=>UniswapV3.getTransaction({ ...args, exchange: exchange$d }),
       })
     )
   };
@@ -2962,14 +2971,10 @@
 
       Object.assign(exchange$c, {
         scope,
-        findPath: ({ blockchian, tokenIn, tokenOut })=>
-          UniswapV2.findPath(blockchain, exchange$c, { tokenIn, tokenOut }),
-        pathExists: (blockchain, path)=>
-          UniswapV2.pathExists(blockchain, exchange$c, path),
-        getAmounts: ({ blockchain, path, block, tokenIn, tokenOut, amountOut, amountIn, amountInMax, amountOutMin })=>
-          UniswapV2.getAmounts(blockchain, exchange$c, { path, block, tokenIn, tokenOut, amountOut, amountIn, amountInMax, amountOutMin }),
-        getTransaction: ({ blockchain, path, amountIn, amountInMax, amountOut, amountOutMin, amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput, fromAddress })=>
-          UniswapV2.getTransaction(blockchain, exchange$c ,{ path, amountIn, amountInMax, amountOut, amountOutMin, amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput, fromAddress }),
+        findPath: (args)=>UniswapV2.findPath({ ...args, exchange: exchange$c }),
+        pathExists: (args)=>UniswapV2.pathExists({ ...args, exchange: exchange$c }),
+        getAmounts: (args)=>UniswapV2.getAmounts({ ...args, exchange: exchange$c }),
+        getTransaction: (args)=>UniswapV2.getTransaction({ ...args, exchange: exchange$c }),
       })
     )
   };
@@ -3005,14 +3010,10 @@
 
       Object.assign(exchange$b, {
         scope,
-        findPath: ({ blockchain, tokenIn, tokenOut })=>
-          UniswapV2.findPath(blockchain, exchange$b, { tokenIn, tokenOut }),
-        pathExists: (blockchain, path)=>
-          UniswapV2.pathExists(blockchain, exchange$b, path),
-        getAmounts: ({ blockchain, path, block, tokenIn, tokenOut, amountOut, amountIn, amountInMax, amountOutMin })=>
-          UniswapV2.getAmounts(blockchain, exchange$b, { path, block, tokenIn, tokenOut, amountOut, amountIn, amountInMax, amountOutMin }),
-        getTransaction: ({ blockchain, path, amountIn, amountInMax, amountOut, amountOutMin, amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput, fromAddress })=>
-          UniswapV2.getTransaction(blockchain, exchange$b ,{ path, amountIn, amountInMax, amountOut, amountOutMin, amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput, fromAddress }),
+        findPath: (args)=>UniswapV2.findPath({ ...args, exchange: exchange$b }),
+        pathExists: (args)=>UniswapV2.pathExists({ ...args, exchange: exchange$b }),
+        getAmounts: (args)=>UniswapV2.getAmounts({ ...args, exchange: exchange$b }),
+        getTransaction: (args)=>UniswapV2.getTransaction({ ...args, exchange: exchange$b }),
       })
     )
   };
@@ -3025,7 +3026,7 @@
   // to be able to differentiate between ETH<>Token and WETH<>Token swaps
   // as they are not the same!
   //
-  const getExchangePath$1 = (blockchain, exchange, path) => {
+  const getExchangePath$1 = ({ blockchain, path }) => {
     if(!path) { return }
     let exchangePath = path.map((token, index) => {
       if (
@@ -3047,8 +3048,8 @@
     return exchangePath
   };
 
-  const getBestPool = async ({ blockchain, exchange, path, amountIn, amountOut, block }) => {
-    path = getExchangePath$1(blockchain, exchange, path);
+  const getBestPool = async ({ exchange, blockchain, path, amountIn, amountOut, block }) => {
+    path = getExchangePath$1({ blockchain, path });
     
     let bestPool;
       
@@ -3091,11 +3092,11 @@
     return bestPool
   };
 
-  const pathExists$1 = async (blockchain, exchange, path, amountIn, amountOut, amountInMax, amountOutMin) => {
-    return !!(await getBestPool({ blockchain, exchange, path, amountIn: (amountIn || amountInMax), amountOut: (amountOut || amountOutMin) }))
+  const pathExists$1 = async ({ exchange, blockchain, path, amountIn, amountOut, amountInMax, amountOutMin }) => {
+    return !!(await getBestPool({ exchange, blockchain, path, amountIn: (amountIn || amountInMax), amountOut: (amountOut || amountOutMin) }))
   };
 
-  const findPath$1 = async ({ blockchain, exchange, tokenIn, tokenOut, amountIn, amountOut, amountInMax, amountOutMin }) => {
+  const findPath$1 = async ({ exchange, blockchain, tokenIn, tokenOut, amountIn, amountOut, amountInMax, amountOutMin }) => {
     if(
       [tokenIn, tokenOut].includes(Blockchains__default['default'][blockchain].currency.address) &&
       [tokenIn, tokenOut].includes(Blockchains__default['default'][blockchain].wrapped.address)
@@ -3106,7 +3107,7 @@
 
     // DIRECT PATH
     pools = [
-      await getBestPool({ blockchain, exchange, path: [tokenIn, tokenOut], amountIn: (amountIn || amountInMax), amountOut: (amountOut || amountOutMin) })
+      await getBestPool({ exchange, blockchain, path: [tokenIn, tokenOut], amountIn: (amountIn || amountInMax), amountOut: (amountOut || amountOutMin) })
     ];
     if (pools.filter(Boolean).length) {
       path = [tokenIn, tokenOut];
@@ -3120,13 +3121,13 @@
     ) {
       pools = [];
       if(amountOut || amountOutMin){
-        pools.push(await getBestPool({ blockchain, exchange, path: [Blockchains__default['default'][blockchain].wrapped.address, tokenOut], amountOut: (amountOut || amountOutMin) }));
+        pools.push(await getBestPool({ exchange, blockchain, path: [Blockchains__default['default'][blockchain].wrapped.address, tokenOut], amountOut: (amountOut || amountOutMin) }));
         if(pools.filter(Boolean).length) {
-          pools.unshift(await getBestPool({ blockchain, exchange, path: [tokenIn, Blockchains__default['default'][blockchain].wrapped.address], amountOut: pools[0].amounts[0] }));
+          pools.unshift(await getBestPool({ exchange, blockchain, path: [tokenIn, Blockchains__default['default'][blockchain].wrapped.address], amountOut: pools[0].amounts[0] }));
         }
       } else { // amountIn
-        pools.push(await getBestPool({ blockchain, exchange, path: [tokenIn, Blockchains__default['default'][blockchain].wrapped.address], amountIn: (amountIn || amountInMax) }));
-        pools.push(await getBestPool({ blockchain, exchange, path: [Blockchains__default['default'][blockchain].wrapped.address, tokenOut], amountIn: pools[0].amounts[1] }));
+        pools.push(await getBestPool({ exchange, blockchain, path: [tokenIn, Blockchains__default['default'][blockchain].wrapped.address], amountIn: (amountIn || amountInMax) }));
+        pools.push(await getBestPool({ exchange, blockchain, path: [Blockchains__default['default'][blockchain].wrapped.address, tokenOut], amountIn: pools[0].amounts[1] }));
       }
       if (pools.filter(Boolean).length === 2) {
         // path via WRAPPED
@@ -3142,13 +3143,13 @@
       let allPoolsForAllUSD = await Promise.all(Blockchains__default['default'][blockchain].stables.usd.map(async(stable)=>{
         let pools = [];
         if(amountOut || amountOutMin){
-          pools.push(await getBestPool({ blockchain, exchange, path: [stable, tokenOut], amountOut: (amountOut || amountOutMin) }));
+          pools.push(await getBestPool({ exchange, blockchain, path: [stable, tokenOut], amountOut: (amountOut || amountOutMin) }));
           if(pools.filter(Boolean).length) {
-            pools.unshift(await getBestPool({ blockchain, exchange, path: [tokenIn, stable], amountOut: pools[0].amounts[0] }));
+            pools.unshift(await getBestPool({ exchange, blockchain, path: [tokenIn, stable], amountOut: pools[0].amounts[0] }));
           }
         } else { // amountIn
-          pools.push(await getBestPool({ blockchain, exchange, path: [tokenIn, stable], amountIn: (amountIn || amountInMax) }));
-          pools.push(await getBestPool({ blockchain, exchange, path: [stable, tokenOut], amountIn: pools[0].amounts[1] }));
+          pools.push(await getBestPool({ exchange, blockchain, path: [tokenIn, stable], amountIn: (amountIn || amountInMax) }));
+          pools.push(await getBestPool({ exchange, blockchain, path: [stable, tokenOut], amountIn: pools[0].amounts[1] }));
         }
         if(pools.filter(Boolean).length === 2) {
           return [stable, pools]
@@ -3170,10 +3171,10 @@
       path.splice(path.length-1, 0, Blockchains__default['default'][blockchain].wrapped.address);
     }
 
-    return { path, pools, exchangePath: getExchangePath$1(blockchain, exchange, path) }
+    return { path, pools, exchangePath: getExchangePath$1({ blockchain, path }) }
   };
 
-  let getAmountOut = async(blockchain, exchange, { path, pools, amountIn }) => {
+  let getAmountOut = async({ exchange, blockchain, path, pools, amountIn }) => {
     let bestPath = await web3Client.request({
       blockchain: Blockchains__default['default'][blockchain].name,
       address: exchange[blockchain].quoter.address,
@@ -3181,7 +3182,7 @@
       api: exchange[blockchain].quoter.api,
       cache: 5,
       params: {
-        route: getExchangePath$1(blockchain, exchange, path),
+        route: getExchangePath$1({ blockchain, path }),
         amountIn,
       },
     }).catch(()=>{});
@@ -3190,7 +3191,7 @@
     }
   };
 
-  let getAmountIn = async (blockchain, exchange, { path, pools, amountOut, block }) => {
+  let getAmountIn = async ({ exchange, blockchain, path, pools, amountOut, block }) => {
     let bestPath = await web3Client.request({
       blockchain: Blockchains__default['default'][blockchain].name,
       address: exchange[blockchain].quoter.address,
@@ -3199,7 +3200,7 @@
       cache: 5,
       block,
       params: {
-        route: getExchangePath$1(blockchain, exchange, path),
+        route: getExchangePath$1({ blockchain, path }),
         amountOut
       },
     }).catch(()=>{});
@@ -3208,7 +3209,9 @@
     }
   };
 
-  let getAmounts$1 = async (blockchain, exchange, {
+  let getAmounts$1 = async ({
+    exchange,
+    blockchain,
     path,
     pools,
     block,
@@ -3220,28 +3223,28 @@
     amountOutMin
   }) => {
     if (amountOut) {
-      amountIn = await getAmountIn(blockchain, exchange, { block, path, pools, amountOut, tokenIn, tokenOut });
+      amountIn = await getAmountIn({ exchange, blockchain, block, path, pools, amountOut, tokenIn, tokenOut });
       if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
         return {}
       } else if (amountInMax === undefined) {
         amountInMax = amountIn;
       }
     } else if (amountIn) {
-      amountOut = await getAmountOut(blockchain, exchange, { path, pools, amountIn, tokenIn, tokenOut });
+      amountOut = await getAmountOut({ exchange, blockchain, path, pools, amountIn, tokenIn, tokenOut });
       if (amountOut == undefined || amountOutMin && amountOut.lt(amountOutMin)) {
         return {}
       } else if (amountOutMin === undefined) {
         amountOutMin = amountOut;
       }
     } else if(amountOutMin) {
-      amountIn = await getAmountIn(blockchain, exchange, { block, path, pools, amountOut: amountOutMin, tokenIn, tokenOut });
+      amountIn = await getAmountIn({ exchange, blockchain, block, path, pools, amountOut: amountOutMin, tokenIn, tokenOut });
       if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
         return {}
       } else if (amountInMax === undefined) {
         amountInMax = amountIn;
       }
     } else if(amountInMax) {
-      amountOut = await getAmountOut(blockchain, exchange, { path, pools, amountIn: amountInMax, tokenIn, tokenOut });
+      amountOut = await getAmountOut({ exchange, blockchain, path, pools, amountIn: amountInMax, tokenIn, tokenOut });
       if (amountOut == undefined ||amountOutMin && amountOut.lt(amountOutMin)) {
         return {}
       } else if (amountOutMin === undefined) {
@@ -3252,8 +3255,8 @@
   };
 
   let getTransaction$1 = async({
-    blockchain,
     exchange,
+    blockchain,
     pools,
     path,
     amountIn,
@@ -3279,7 +3282,7 @@
     const fullPath = [
       pools.map((pool)=>pool.binSteps[0]),
       pools.map((pool)=>pool.versions[0]),
-      getExchangePath$1(blockchain, exchange, path)
+      getExchangePath$1({ blockchain, path })
     ];
 
     if(path[0] === Blockchains__default['default'][blockchain].currency.address) { // NATIVE START
@@ -3399,13 +3402,10 @@
 
       Object.assign(exchange$a, {
         scope,
-        findPath: ({ blockchain, tokenIn, tokenOut, amountIn, amountOut, amountInMax, amountOutMin })=>
-          TraderJoeV2_1.findPath({ blockchain, exchange: exchange$a, tokenIn, tokenOut, amountIn, amountOut, amountInMax, amountOutMin }),
-        pathExists: (blockchain, path)=>
-          TraderJoeV2_1.pathExists(blockchain, exchange$a, path),
-        getAmounts: ({ blockchain, path, pools, block, tokenIn, tokenOut, amountOut, amountIn, amountInMax, amountOutMin })=>
-          TraderJoeV2_1.getAmounts(blockchain, exchange$a, { path, pools, block, tokenIn, tokenOut, amountOut, amountIn, amountInMax, amountOutMin }),
-        getTransaction: (...args)=> TraderJoeV2_1.getTransaction(...args),
+        findPath: (args)=>TraderJoeV2_1.findPath({ ...args, exchange: exchange$a }),
+        pathExists: (args)=>TraderJoeV2_1.pathExists({ ...args, exchange: exchange$a }),
+        getAmounts: (args)=>TraderJoeV2_1.getAmounts({ ...args, exchange: exchange$a }),
+        getTransaction: (args)=>TraderJoeV2_1.getTransaction({ ...args, exchange: exchange$a }),
       })
     )
   };
@@ -3441,14 +3441,10 @@
 
       Object.assign(exchange$9, {
         scope,
-        findPath: ({ blockchain, tokenIn, tokenOut })=>
-          UniswapV2.findPath(blockchain, exchange$9, { tokenIn, tokenOut }),
-        pathExists: (blockchain, path)=>
-          UniswapV2.pathExists(blockchain, exchange$9, path),
-        getAmounts: ({ blockchain, path, block, tokenIn, tokenOut, amountOut, amountIn, amountInMax, amountOutMin })=>
-          UniswapV2.getAmounts(blockchain, exchange$9, { path, block, tokenIn, tokenOut, amountOut, amountIn, amountInMax, amountOutMin }),
-        getTransaction: ({ blockchain, path, amountIn, amountInMax, amountOut, amountOutMin, amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput, fromAddress })=>
-          UniswapV2.getTransaction(blockchain, exchange$9 ,{ path, amountIn, amountInMax, amountOut, amountOutMin, amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput, fromAddress }),
+        findPath: (args)=>UniswapV2.findPath({ ...args, exchange: exchange$9 }),
+        pathExists: (args)=>UniswapV2.pathExists({ ...args, exchange: exchange$9 }),
+        getAmounts: (args)=>UniswapV2.getAmounts({ ...args, exchange: exchange$9 }),
+        getTransaction: (args)=>UniswapV2.getTransaction({ ...args, exchange: exchange$9 }),
       })
     )
   };
@@ -3562,29 +3558,26 @@
 
       Object.assign(exchange$8, {
         scope,
-        findPath: ({ blockchain, tokenIn, tokenOut, amountIn, amountOut, amountInMax, amountOutMin })=>
-          UniswapV3.findPath({ blockchain, exchange: exchange$8, tokenIn, tokenOut, amountIn, amountOut, amountInMax, amountOutMin }),
-        pathExists: (blockchain, path)=>
-          UniswapV3.pathExists(blockchain, exchange$8, path),
-        getAmounts: ({ blockchain, path, pools, block, tokenIn, tokenOut, amountOut, amountIn, amountInMax, amountOutMin })=>
-          UniswapV3.getAmounts(blockchain, exchange$8, { path, pools, block, tokenIn, tokenOut, amountOut, amountIn, amountInMax, amountOutMin }),
-        getTransaction: (...args)=> UniswapV3.getTransaction(...args),
+        findPath: (args)=>UniswapV3.findPath({ ...args, exchange: exchange$8 }),
+        pathExists: (args)=>UniswapV3.pathExists({ ...args, exchange: exchange$8 }),
+        getAmounts: (args)=>UniswapV3.getAmounts({ ...args, exchange: exchange$8 }),
+        getTransaction: (args)=>UniswapV3.getTransaction({ ...args, exchange: exchange$8 }),
       })
     )
   };
 
   let getExchangePath = (path) => path;
 
-  let pathExists = async (blockchain, path) => {
-    if(getExchangePath(path).length <= 1) { return false }
-    if(getExchangePath(path).length >= 3) { return false }
+  let pathExists = async ({ blockchain, path }) => {
+    const exchangePath = getExchangePath({ path });
+    if(!exchangePath || exchangePath.length !== 2) { return false }
     return (
       path.includes(Blockchains__default['default'][blockchain].currency.address) &&
       path.includes(Blockchains__default['default'][blockchain].wrapped.address)
     )
   };
 
-  let findPath = async (blockchain, { tokenIn, tokenOut }) => {
+  let findPath = async ({ blockchain, tokenIn, tokenOut }) => {
     if(
       ![tokenIn, tokenOut].includes(Blockchains__default['default'][blockchain].currency.address) ||
       ![tokenIn, tokenOut].includes(Blockchains__default['default'][blockchain].wrapped.address)
@@ -3619,7 +3612,9 @@
     return { amountOut, amountIn, amountInMax, amountOutMin }
   };
 
-  let getTransaction = (blockchain, exchange, {
+  let getTransaction = ({
+    exchange,
+    blockchain,
     path,
     amountIn,
     amountInMax,
@@ -3685,13 +3680,10 @@
 
       Object.assign(exchange$7, {
         scope,
-        findPath: ({ blockchain, tokenIn, tokenOut })=>
-          WETH$1.findPath(blockchain, { tokenIn, tokenOut }),
-        pathExists: (blockchain, path)=>
-          WETH$1.pathExists(blockchain, path),
-        getAmounts: WETH$1.getAmounts,
-        getTransaction: ({ blockchain, path, amountIn, amountInMax, amountOut, amountOutMin, amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput, fromAddress })=>
-          WETH$1.getTransaction(blockchain, exchange$7 ,{ path, amountIn, amountInMax, amountOut, amountOutMin, amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput, fromAddress }),
+        findPath: (args)=>WETH$1.findPath({ ...args, exchange: exchange$7 }),
+        pathExists: (args)=>WETH$1.pathExists({ ...args, exchange: exchange$7 }),
+        getAmounts: (args)=>WETH$1.getAmounts({ ...args, exchange: exchange$7 }),
+        getTransaction: (args)=>WETH$1.getTransaction({ ...args, exchange: exchange$7 }),
       })
     )
   };
@@ -3720,13 +3712,10 @@
 
       Object.assign(exchange$6, {
         scope,
-        findPath: ({ blockchain, tokenIn, tokenOut })=>
-          WETH$1.findPath(blockchain, { tokenIn, tokenOut }),
-        pathExists: (blockchain, path)=>
-          WETH$1.pathExists(blockchain, path),
-        getAmounts: WETH$1.getAmounts,
-        getTransaction: ({ blockchain, path, amountIn, amountInMax, amountOut, amountOutMin, amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput, fromAddress })=>
-          WETH$1.getTransaction(blockchain, exchange$6 ,{ path, amountIn, amountInMax, amountOut, amountOutMin, amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput, fromAddress }),
+        findPath: (args)=>WETH$1.findPath({ ...args, exchange: exchange$6 }),
+        pathExists: (args)=>WETH$1.pathExists({ ...args, exchange: exchange$6 }),
+        getAmounts: (args)=>WETH$1.getAmounts({ ...args, exchange: exchange$6 }),
+        getTransaction: (args)=>WETH$1.getTransaction({ ...args, exchange: exchange$6 }),
       })
     )
   };
@@ -3755,13 +3744,10 @@
 
       Object.assign(exchange$5, {
         scope,
-        findPath: ({ blockchain, tokenIn, tokenOut })=>
-          WETH$1.findPath(blockchain, { tokenIn, tokenOut }),
-        pathExists: (blockchain, path)=>
-          WETH$1.pathExists(blockchain, path),
-        getAmounts: WETH$1.getAmounts,
-        getTransaction: ({ blockchain, path, amountIn, amountInMax, amountOut, amountOutMin, amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput, fromAddress })=>
-          WETH$1.getTransaction(blockchain, exchange$5 ,{ path, amountIn, amountInMax, amountOut, amountOutMin, amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput, fromAddress }),
+        findPath: (args)=>WETH$1.findPath({ ...args, exchange: exchange$5 }),
+        pathExists: (args)=>WETH$1.pathExists({ ...args, exchange: exchange$5 }),
+        getAmounts: (args)=>WETH$1.getAmounts({ ...args, exchange: exchange$5 }),
+        getTransaction: (args)=>WETH$1.getTransaction({ ...args, exchange: exchange$5 }),
       })
     )
   };
@@ -3790,13 +3776,10 @@
 
       Object.assign(exchange$4, {
         scope,
-        findPath: ({ blockchain, tokenIn, tokenOut })=>
-          WETH$1.findPath(blockchain, { tokenIn, tokenOut }),
-        pathExists: (blockchain, path)=>
-          WETH$1.pathExists(blockchain, path),
-        getAmounts: WETH$1.getAmounts,
-        getTransaction: ({ blockchain, path, amountIn, amountInMax, amountOut, amountOutMin, amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput, fromAddress })=>
-          WETH$1.getTransaction(blockchain, exchange$4 ,{ path, amountIn, amountInMax, amountOut, amountOutMin, amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput, fromAddress }),
+        findPath: (args)=>WETH$1.findPath({ ...args, exchange: exchange$4 }),
+        pathExists: (args)=>WETH$1.pathExists({ ...args, exchange: exchange$4 }),
+        getAmounts: (args)=>WETH$1.getAmounts({ ...args, exchange: exchange$4 }),
+        getTransaction: (args)=>WETH$1.getTransaction({ ...args, exchange: exchange$4 }),
       })
     )
   };
@@ -3825,13 +3808,10 @@
 
       Object.assign(exchange$3, {
         scope,
-        findPath: ({ blockchain, tokenIn, tokenOut })=>
-          WETH$1.findPath(blockchain, { tokenIn, tokenOut }),
-        pathExists: (blockchain, path)=>
-          WETH$1.pathExists(blockchain, path),
-        getAmounts: WETH$1.getAmounts,
-        getTransaction: ({ blockchain, path, amountIn, amountInMax, amountOut, amountOutMin, amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput, fromAddress })=>
-          WETH$1.getTransaction(blockchain, exchange$3 ,{ path, amountIn, amountInMax, amountOut, amountOutMin, amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput, fromAddress }),
+        findPath: (args)=>WETH$1.findPath({ ...args, exchange: exchange$3 }),
+        pathExists: (args)=>WETH$1.pathExists({ ...args, exchange: exchange$3 }),
+        getAmounts: (args)=>WETH$1.getAmounts({ ...args, exchange: exchange$3 }),
+        getTransaction: (args)=>WETH$1.getTransaction({ ...args, exchange: exchange$3 }),
       })
     )
   };
@@ -3860,13 +3840,10 @@
 
       Object.assign(exchange$2, {
         scope,
-        findPath: ({ blockchain, tokenIn, tokenOut })=>
-          WETH$1.findPath(blockchain, { tokenIn, tokenOut }),
-        pathExists: (blockchain, path)=>
-          WETH$1.pathExists(blockchain, path),
-        getAmounts: WETH$1.getAmounts,
-        getTransaction: ({ blockchain, path, amountIn, amountInMax, amountOut, amountOutMin, amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput, fromAddress })=>
-          WETH$1.getTransaction(blockchain, exchange$2 ,{ path, amountIn, amountInMax, amountOut, amountOutMin, amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput, fromAddress }),
+        findPath: (args)=>WETH$1.findPath({ ...args, exchange: exchange$2 }),
+        pathExists: (args)=>WETH$1.pathExists({ ...args, exchange: exchange$2 }),
+        getAmounts: (args)=>WETH$1.getAmounts({ ...args, exchange: exchange$2 }),
+        getTransaction: (args)=>WETH$1.getTransaction({ ...args, exchange: exchange$2 }),
       })
     )
   };
@@ -3895,13 +3872,10 @@
 
       Object.assign(exchange$1, {
         scope,
-        findPath: ({ blockchain, tokenIn, tokenOut })=>
-          WETH$1.findPath(blockchain, { tokenIn, tokenOut }),
-        pathExists: (blockchain, path)=>
-          WETH$1.pathExists(blockchain, path),
-        getAmounts: WETH$1.getAmounts,
-        getTransaction: ({ blockchain, path, amountIn, amountInMax, amountOut, amountOutMin, amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput, fromAddress })=>
-          WETH$1.getTransaction(blockchain, exchange$1 ,{ path, amountIn, amountInMax, amountOut, amountOutMin, amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput, fromAddress }),
+        findPath: (args)=>WETH$1.findPath({ ...args, exchange: exchange$1 }),
+        pathExists: (args)=>WETH$1.pathExists({ ...args, exchange: exchange$1 }),
+        getAmounts: (args)=>WETH$1.getAmounts({ ...args, exchange: exchange$1 }),
+        getTransaction: (args)=>WETH$1.getTransaction({ ...args, exchange: exchange$1 }),
       })
     )
   };
@@ -3930,13 +3904,10 @@
 
       Object.assign(exchange, {
         scope,
-        findPath: ({ blockchain, tokenIn, tokenOut })=>
-          WETH$1.findPath(blockchain, { tokenIn, tokenOut }),
-        pathExists: (blockchain, path)=>
-          WETH$1.pathExists(blockchain, path),
-        getAmounts: WETH$1.getAmounts,
-        getTransaction: ({ blockchain, path, amountIn, amountInMax, amountOut, amountOutMin, amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput, fromAddress })=>
-          WETH$1.getTransaction(blockchain, exchange ,{ path, amountIn, amountInMax, amountOut, amountOutMin, amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput, fromAddress }),
+        findPath: (args)=>WETH$1.findPath({ ...args, exchange }),
+        pathExists: (args)=>WETH$1.pathExists({ ...args, exchange }),
+        getAmounts: (args)=>WETH$1.getAmounts({ ...args, exchange }),
+        getTransaction: (args)=>WETH$1.getTransaction({ ...args, exchange }),
       })
     )
   };

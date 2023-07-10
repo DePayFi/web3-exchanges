@@ -1,78 +1,14 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('@depay/solana-web3.js'), require('@depay/web3-client-solana'), require('ethers'), require('@depay/web3-tokens-solana'), require('@depay/web3-blockchains'), require('decimal.js')) :
-  typeof define === 'function' && define.amd ? define(['@depay/solana-web3.js', '@depay/web3-client-solana', 'ethers', '@depay/web3-tokens-solana', '@depay/web3-blockchains', 'decimal.js'], factory) :
-  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.Web3Exchanges = factory(global.SolanaWeb3js, global.Web3Client, global.ethers, global.Web3Tokens, global.Web3Blockchains, global.Decimal));
-}(this, (function (solanaWeb3_js, web3ClientSolana, ethers, Token, Blockchains, Decimal) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('@depay/web3-client-solana'), require('ethers'), require('@depay/web3-tokens-solana'), require('@depay/web3-blockchains'), require('@depay/solana-web3.js'), require('decimal.js')) :
+  typeof define === 'function' && define.amd ? define(['@depay/web3-client-solana', 'ethers', '@depay/web3-tokens-solana', '@depay/web3-blockchains', '@depay/solana-web3.js', 'decimal.js'], factory) :
+  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.Web3Exchanges = factory(global.Web3Client, global.ethers, global.Web3Tokens, global.Web3Blockchains, global.SolanaWeb3js, global.Decimal));
+}(this, (function (web3ClientSolana, ethers, Token, Blockchains, solanaWeb3_js, Decimal) { 'use strict';
 
   function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
   var Token__default = /*#__PURE__*/_interopDefaultLegacy(Token);
   var Blockchains__default = /*#__PURE__*/_interopDefaultLegacy(Blockchains);
   var Decimal__default = /*#__PURE__*/_interopDefaultLegacy(Decimal);
-
-  const WHIRLPOOL_REWARD_LAYOUT = solanaWeb3_js.struct([
-    solanaWeb3_js.publicKey("mint"),
-    solanaWeb3_js.publicKey("vault"),
-    solanaWeb3_js.publicKey("authority"),
-    solanaWeb3_js.u128("emissionsPerSecondX64"),
-    solanaWeb3_js.u128("growthGlobalX64"),
-  ]);
-
-  const WHIRLPOOL_LAYOUT = solanaWeb3_js.struct([
-    solanaWeb3_js.u64("anchorDiscriminator"),
-    solanaWeb3_js.publicKey("whirlpoolsConfig"),
-    solanaWeb3_js.seq(solanaWeb3_js.u8(), 1, "whirlpoolBump"),
-    solanaWeb3_js.u16("tickSpacing"),
-    solanaWeb3_js.seq(solanaWeb3_js.u8(), 2, "tickSpacingSeed"),
-    solanaWeb3_js.u16("feeRate"),
-    solanaWeb3_js.u16("protocolFeeRate"),
-    solanaWeb3_js.u128("liquidity"),
-    solanaWeb3_js.u128("sqrtPrice"),
-    solanaWeb3_js.i32("tickCurrentIndex"),
-    solanaWeb3_js.u64("protocolFeeOwedA"),
-    solanaWeb3_js.u64("protocolFeeOwedB"),
-    solanaWeb3_js.publicKey("tokenMintA"),
-    solanaWeb3_js.publicKey("tokenVaultA"),
-    solanaWeb3_js.u128("feeGrowthGlobalA"),
-    solanaWeb3_js.publicKey("tokenMintB"),
-    solanaWeb3_js.publicKey("tokenVaultB"),
-    solanaWeb3_js.u128("feeGrowthGlobalB"),
-    solanaWeb3_js.u64("rewardLastUpdatedTimestamp"),
-    solanaWeb3_js.seq(WHIRLPOOL_REWARD_LAYOUT, 3, "rewardInfos"),
-  ]);
-
-  const TICK_LAYOUT = solanaWeb3_js.struct([
-    solanaWeb3_js.bool("initialized"),
-    solanaWeb3_js.i128("liquidityNet"),
-    solanaWeb3_js.u128("liquidityGross"),
-    solanaWeb3_js.u128("feeGrowthOutsideA"),
-    solanaWeb3_js.u128("feeGrowthOutsideB"),
-    solanaWeb3_js.seq(solanaWeb3_js.u128(), 3, "reward_growths_outside"),
-  ]);
-
-  const TICK_ARRAY_LAYOUT = solanaWeb3_js.struct([
-    solanaWeb3_js.u64("anchorDiscriminator"),
-    solanaWeb3_js.i32("startTickIndex"),
-    solanaWeb3_js.seq(TICK_LAYOUT, 88, "ticks"),
-    solanaWeb3_js.publicKey("whirlpool"),
-  ]);
-
-  var basics = {
-    
-    name: 'orca',
-    label: 'Orca',
-    logo: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPCEtLSBHZW5lcmF0b3I6IEFkb2JlIElsbHVzdHJhdG9yIDI3LjIuMCwgU1ZHIEV4cG9ydCBQbHVnLUluIC4gU1ZHIFZlcnNpb246IDYuMDAgQnVpbGQgMCkgIC0tPgo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9ImthdG1hbl8xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4PSIwcHgiIHk9IjBweCIKCSB2aWV3Qm94PSIwIDAgNjAwIDQ1MCIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgNjAwIDQ1MDsiIHhtbDpzcGFjZT0icHJlc2VydmUiPgo8cGF0aCBmaWxsPSIjRkZEMTVDIiBkPSJNNDg4LjQsMjIyLjljMCwxMDMuOC04NC4xLDE4Ny45LTE4Ny45LDE4Ny45Yy0xMDMuOCwwLTE4Ny45LTg0LjEtMTg3LjktMTg3LjlDMTEyLjYsMTE5LjEsMTk2LjcsMzUsMzAwLjUsMzUKCUM0MDQuMiwzNSw0ODguNCwxMTkuMSw0ODguNCwyMjIuOXoiLz4KPHBhdGggZmlsbD0iI0ZGRkZGRiIgc3Ryb2tlPSIjMDAwMDAwIiBzdHJva2Utd2lkdGg9IjE3LjY3NTUiIGQ9Ik0yMDkuNSwyOTkuOGMxLjYtMS4xLDMuMS0yLjgsMy45LTUuMWMwLjgtMi42LDAuMy00LjksMC02LjJjMCwwLDAtMC4xLDAtMC4xbDAuMy0xLjhjMC45LDAuNSwxLjksMS4xLDMsMS45CgljMC4zLDAuMiwwLjcsMC41LDEuMSwwLjdjMC41LDAuNCwxLjEsMC44LDEuNCwxYzAuNiwwLjQsMS41LDEsMi41LDEuNWMyNS4xLDE1LjYsNDUuOCwyMiw2Mi4yLDIxLjJjMTctMC44LDI4LjktOS40LDM1LjEtMjEuOQoJYzUuOS0xMi4xLDYuMi0yNywyLTQwLjljLTQuMi0xMy45LTEzLTI3LjUtMjYuMi0zNi45Yy0yMi4yLTE1LjgtNDIuNS0zOS44LTUyLjctNjAuM2MtNS4yLTEwLjQtNy4zLTE4LjctNi43LTI0LjIKCWMwLjMtMi41LDEtNC4xLDItNS4xYzAuOS0xLDIuNi0yLjEsNS45LTIuNmM2LjktMS4xLDE1LTMuNiwyMy4xLTYuMmMzLjItMSw2LjMtMiw5LjUtMi45YzExLjctMy40LDI0LjItNi4zLDM3LjItNi4zCgljMjUuMywwLDU1LDExLDg2LjMsNTYuOGM0MC4yLDU4LjgsMTguMSwxMjQuNC0yOC4yLDE1OC45Yy0yMy4xLDE3LjItNTEuOSwyNi4zLTgxLjUsMjIuOUMyNjIuOSwzNDEuMywyMzQuOSwzMjcuOSwyMDkuNSwyOTkuOHoKCSBNMjE0LjIsMjg0LjZDMjE0LjIsMjg0LjYsMjE0LjIsMjg0LjcsMjE0LjIsMjg0LjZDMjE0LjEsMjg0LjcsMjE0LjIsMjg0LjYsMjE0LjIsMjg0LjZ6IE0yMTEuNiwyODUuOAoJQzIxMS42LDI4NS44LDIxMS43LDI4NS44LDIxMS42LDI4NS44QzIxMS43LDI4NS44LDIxMS42LDI4NS44LDIxMS42LDI4NS44eiIvPgo8cGF0aCBkPSJNMjMyLjUsMTI0LjNjMCwwLDcxLjgtMTkuMSw4Ny41LTE5LjFjMTUuNywwLDc4LjYsMzAuNSw5Ni45LDg2LjNjMjYsNzktNDQuNywxMzAuOS01Mi43LDEyNS44CgljNzYuMS02Mi45LTQ4LjQtMTc5LjEtMTA5LjYtMTcwLjRjLTcuNiwxLjEtMy40LDcuNi0zLjQsNy42bC0xLjcsMTdsLTEyLjctMjEuMkwyMzIuNSwxMjQuM3oiLz4KPHBhdGggZD0iTTQwNi41LDE2Ny42YzIyLjcsMzkuOSwxOCwxNy4xLDEyLjksNjIuN2M5LjMtMTUuMSwyMy45LTMuOCwyOS45LDJjMS4xLDEsMi45LDAuNCwyLjgtMS4xYy0wLjItNi44LTIuMi0yMS40LTEzLjQtMzcuMQoJQzQyMy40LDE3Mi42LDQwNi41LDE2Ny42LDQwNi41LDE2Ny42eiIvPgo8cGF0aCBmaWxsPSJub25lIiBzdHJva2U9IiMwMDAwMDAiIHN0cm9rZS13aWR0aD0iMC45OTMiIGQ9Ik00MTkuNCwyMzAuM2M1LTQ1LjYsOS43LTIyLjgtMTIuOS02Mi43YzAsMCwxNi45LDUsMzIuMywyNi41YzExLjIsMTUuNywxMy4xLDMwLjMsMTMuNCwzNy4xCgljMC4xLDEuNS0xLjcsMi4xLTIuOCwxLjFDNDQzLjMsMjI2LjUsNDI4LjcsMjE1LjMsNDE5LjQsMjMwLjN6IE00MTkuNCwyMzAuM2MwLjktMi4xLDIuMi01LjUsMi4yLTUuNSIvPgo8cGF0aCBkPSJNMjI0LDIyNC4yYy05LjYsMTYuMi0yOS4yLDE1LTI4LjgsMzQuM2MxNy41LDM5LDE3LjYsMzYuMiwxNy42LDM2LjJjMzIuNS0xOC4yLDE5LjEtNTguNSwxNC4zLTcwLjQKCUMyMjYuNiwyMjMsMjI0LjcsMjIzLDIyNCwyMjQuMnoiLz4KPHBhdGggZD0iTTE1MC40LDI2MC4xYzE4LjcsMi40LDI5LjgtMTMuOCw0NC44LTEuNmMxOS45LDM3LjgsMTcuNiwzNi4yLDE3LjYsMzYuMmMtMzQuNCwxNC40LTU3LjktMjEtNjQuMy0zMi4xCglDMTQ3LjgsMjYxLjMsMTQ5LDI1OS45LDE1MC40LDI2MC4xeiIvPgo8cGF0aCBkPSJNMzA2LjksMjM2YzAsMCwxOC43LDE5LjEsOC45LDIyLjFjLTEyLjItNy41LTM0LTEuNy00NC43LDEuOWMtMi42LDAuOS01LjItMS40LTQuMy00LjFjMy42LTEwLDEyLjYtMjguNiwyOS45LTMxCglDMzA2LjksMjIyLjQsMzA2LjksMjM2LDMwNi45LDIzNnoiLz4KPHBhdGggZmlsbD0iI0ZGRkZGRiIgZD0iTTMxOC4zLDE0Mi41Yy0yLjEtMy02LjQtMTEsNi44LTExYzEzLjIsMCwzMy4zLDE0LjksMzcuNCwyMC40Yy0xLjMsMy40LTkuOCw0LjEtMTQsMy44Yy00LjItMC4zLTExLjUtMS0xNy0zLjgKCUMzMjYsMTQ5LjIsMzIwLjUsMTQ1LjUsMzE4LjMsMTQyLjV6Ii8+Cjwvc3ZnPgo=',
-    slippage: true,
-
-    blockchains: ['solana'],
-
-    solana: {
-      router: {
-        address: 'whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc',
-        api: WHIRLPOOL_LAYOUT,
-      },
-    }
-  };
 
   function _optionalChain$1(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }class Route {
     constructor({
@@ -131,6 +67,7 @@
 
     const lastAmountsIn = await Promise.all(blocks.map(async (block)=>{
       let { amountIn } = await exchange.getAmounts({
+        exchange,
         blockchain,
         path: exchangePath,
         pools,
@@ -375,7 +312,7 @@
       let [amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput] = [amountIn, amountOut, amountInMax, amountOutMin];
 
       let amounts; // includes intermediary amounts for longer routes
-      ({ amountIn, amountInMax, amountOut, amountOutMin, amounts } = await getAmounts({ blockchain, path, pools, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }));
+      ({ amountIn, amountInMax, amountOut, amountOutMin, amounts } = await getAmounts({ exchange, blockchain, path, pools, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }));
       if([amountIn, amountInMax, amountOut, amountOutMin].every((amount)=>{ return amount == undefined })) { return resolve() }
 
       if(slippage || exchange.slippage) {
@@ -1255,6 +1192,53 @@
     return amountCalculated
   };
 
+  const WHIRLPOOL_REWARD_LAYOUT = solanaWeb3_js.struct([
+    solanaWeb3_js.publicKey("mint"),
+    solanaWeb3_js.publicKey("vault"),
+    solanaWeb3_js.publicKey("authority"),
+    solanaWeb3_js.u128("emissionsPerSecondX64"),
+    solanaWeb3_js.u128("growthGlobalX64"),
+  ]);
+
+  const WHIRLPOOL_LAYOUT = solanaWeb3_js.struct([
+    solanaWeb3_js.u64("anchorDiscriminator"),
+    solanaWeb3_js.publicKey("whirlpoolsConfig"),
+    solanaWeb3_js.seq(solanaWeb3_js.u8(), 1, "whirlpoolBump"),
+    solanaWeb3_js.u16("tickSpacing"),
+    solanaWeb3_js.seq(solanaWeb3_js.u8(), 2, "tickSpacingSeed"),
+    solanaWeb3_js.u16("feeRate"),
+    solanaWeb3_js.u16("protocolFeeRate"),
+    solanaWeb3_js.u128("liquidity"),
+    solanaWeb3_js.u128("sqrtPrice"),
+    solanaWeb3_js.i32("tickCurrentIndex"),
+    solanaWeb3_js.u64("protocolFeeOwedA"),
+    solanaWeb3_js.u64("protocolFeeOwedB"),
+    solanaWeb3_js.publicKey("tokenMintA"),
+    solanaWeb3_js.publicKey("tokenVaultA"),
+    solanaWeb3_js.u128("feeGrowthGlobalA"),
+    solanaWeb3_js.publicKey("tokenMintB"),
+    solanaWeb3_js.publicKey("tokenVaultB"),
+    solanaWeb3_js.u128("feeGrowthGlobalB"),
+    solanaWeb3_js.u64("rewardLastUpdatedTimestamp"),
+    solanaWeb3_js.seq(WHIRLPOOL_REWARD_LAYOUT, 3, "rewardInfos"),
+  ]);
+
+  const TICK_LAYOUT = solanaWeb3_js.struct([
+    solanaWeb3_js.bool("initialized"),
+    solanaWeb3_js.i128("liquidityNet"),
+    solanaWeb3_js.u128("liquidityGross"),
+    solanaWeb3_js.u128("feeGrowthOutsideA"),
+    solanaWeb3_js.u128("feeGrowthOutsideB"),
+    solanaWeb3_js.seq(solanaWeb3_js.u128(), 3, "reward_growths_outside"),
+  ]);
+
+  const TICK_ARRAY_LAYOUT = solanaWeb3_js.struct([
+    solanaWeb3_js.u64("anchorDiscriminator"),
+    solanaWeb3_js.i32("startTickIndex"),
+    solanaWeb3_js.seq(TICK_LAYOUT, 88, "ticks"),
+    solanaWeb3_js.publicKey("whirlpool"),
+  ]);
+
   const MAX_SWAP_TICK_ARRAYS = 3;
   const MAX_TICK_INDEX = 443636; // i32
   const MIN_TICK_INDEX = -443636; // i32
@@ -1289,7 +1273,7 @@
             new solanaWeb3_js.PublicKey(pool.toString()).toBuffer(),
             solanaWeb3_js.Buffer.from(startIndex.toString())
           ],
-          new solanaWeb3_js.PublicKey(basics.router.v1.address)
+          new solanaWeb3_js.PublicKey('whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc')
         )
       )[0];
       tickArrayAddresses.push(pda);
@@ -1528,7 +1512,7 @@
       const freshWhirlpoolData = await web3ClientSolana.request({
         blockchain: 'solana',
         address: account.pubkey.toString(),
-        api: basics.router.v1.api,
+        api: WHIRLPOOL_LAYOUT,
         cache: 10,
       });
 
@@ -1573,14 +1557,14 @@
   // This method is cached and is only to be used to generally existing pools every 24h
   // Do not use for price calulations, fetch accounts for pools individually in order to calculate price 
   let getAccounts = async (base, quote) => {
-    let accounts = await web3ClientSolana.request(`solana://${basics.router.v1.address}/getProgramAccounts`, {
+    let accounts = await web3ClientSolana.request(`solana://whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc/getProgramAccounts`, {
       params: { filters: [
-        { dataSize: basics.router.v1.api.span },
+        { dataSize: WHIRLPOOL_LAYOUT.span },
         { memcmp: { offset: 8, bytes: '2LecshUwdy9xi7meFgHtFJQNSKk4KdTrcpvaB56dP2NQ' }}, // whirlpoolsConfig
         { memcmp: { offset: 101, bytes: base }}, // tokenMintA
         { memcmp: { offset: 181, bytes: quote }} // tokenMintB
       ]},
-      api: basics.router.v1.api,
+      api: WHIRLPOOL_LAYOUT,
       cache: 86400, // 24h,
       cacheKey: ['whirlpool', base.toString(), quote.toString()].join('-')
     });
@@ -1647,7 +1631,7 @@
   // to be able to differentiate between SOL<>Token and WSOL<>Token swaps
   // as they are not the same!
   //
-  let getExchangePath = (path) => {
+  let getExchangePath = ({ path }) => {
     if(!path) { return }
     let exchangePath = path.map((token, index) => {
       if (
@@ -1671,7 +1655,7 @@
 
   let pathExists = async ({ path, amountIn, amountInMax, amountOut, amountOutMin }) => {
     if(path.length == 1) { return false }
-    path = getExchangePath(path);
+    path = getExchangePath({ path });
     if((await getPairsWithPrice({ tokenIn: path[0], tokenOut: path[1], amountIn, amountInMax, amountOut, amountOutMin })).length > 0) {
       return true
     } else {
@@ -1718,7 +1702,7 @@
     } else if(_optionalChain([path, 'optionalAccess', _2 => _2.length]) && path[path.length-1] == blockchain$1.currency.address) {
       path.splice(path.length-1, 0, blockchain$1.wrapped.address);
     }
-    return { path, exchangePath: getExchangePath(path) }
+    return { path, exchangePath: getExchangePath({ path }) }
   };
 
   let getAmountsOut = async ({ path, amountIn, amountInMax }) => {
@@ -1761,7 +1745,7 @@
     amountInMax,
     amountOutMin
   }) => {
-    path = getExchangePath(path);
+    path = getExchangePath({ path });
     let amounts;
     if (amountOut) {
       amounts = await getAmountsIn({ path, amountOut, tokenIn, tokenOut });
@@ -1901,9 +1885,9 @@
       // tick_array_two_2
       { pubkey: onlyInitializedTicksTwo[2].address, isWritable: true, isSigner: false },
       // oracle_one
-      { pubkey: (await solanaWeb3_js.PublicKey.findProgramAddress([ solanaWeb3_js.Buffer.from('oracle'), new solanaWeb3_js.PublicKey(poolOne.toString()).toBuffer() ], new solanaWeb3_js.PublicKey(basics.router.v1.address)))[0], isWritable: false, isSigner: false },
+      { pubkey: (await solanaWeb3_js.PublicKey.findProgramAddress([ solanaWeb3_js.Buffer.from('oracle'), new solanaWeb3_js.PublicKey(poolOne.toString()).toBuffer() ], new solanaWeb3_js.PublicKey('whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc')))[0], isWritable: false, isSigner: false },
       // oracle_two
-      { pubkey: (await solanaWeb3_js.PublicKey.findProgramAddress([ solanaWeb3_js.Buffer.from('oracle'), new solanaWeb3_js.PublicKey(poolTwo.toString()).toBuffer() ], new solanaWeb3_js.PublicKey(basics.router.v1.address)))[0], isWritable: false, isSigner: false },
+      { pubkey: (await solanaWeb3_js.PublicKey.findProgramAddress([ solanaWeb3_js.Buffer.from('oracle'), new solanaWeb3_js.PublicKey(poolTwo.toString()).toBuffer() ], new solanaWeb3_js.PublicKey('whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc')))[0], isWritable: false, isSigner: false },
     ]
   };
   const getTwoHopSwapInstructionData = ({
@@ -1989,7 +1973,7 @@
       // tick_array_2
       { pubkey: onlyInitializedTicks[2].address, isWritable: true, isSigner: false },
       // oracle
-      { pubkey: (await solanaWeb3_js.PublicKey.findProgramAddress([ solanaWeb3_js.Buffer.from('oracle'), new solanaWeb3_js.PublicKey(pool.toString()).toBuffer() ], new solanaWeb3_js.PublicKey(basics.router.v1.address)))[0], isWritable: false, isSigner: false },
+      { pubkey: (await solanaWeb3_js.PublicKey.findProgramAddress([ solanaWeb3_js.Buffer.from('oracle'), new solanaWeb3_js.PublicKey(pool.toString()).toBuffer() ], new solanaWeb3_js.PublicKey('whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc')))[0], isWritable: false, isSigner: false },
     ]
   };
 
@@ -2021,7 +2005,6 @@
   };
 
   const getTransaction = async ({
-    exchange,
     path,
     amountIn,
     amountInMax,
@@ -2037,7 +2020,7 @@
     let transaction = { blockchain: 'solana' };
     let instructions = [];
 
-    const exchangePath = getExchangePath(path);
+    const exchangePath = getExchangePath({ path });
     if(exchangePath.length > 3) { throw 'Orca can only handle fixed paths with a max length of 3 (2 pools)!' }
     const tokenIn = exchangePath[0];
     const tokenMiddle = exchangePath.length == 3 ? exchangePath[1] : undefined;
@@ -2096,7 +2079,7 @@
       }
       instructions.push(
         new solanaWeb3_js.TransactionInstruction({
-          programId: new solanaWeb3_js.PublicKey(exchange.router.v1.address),
+          programId: new solanaWeb3_js.PublicKey('whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc'),
           keys: await getSwapInstructionKeys({
             fromAddress,
             pool: pairs[0].pubkey,
@@ -2130,7 +2113,7 @@
       }
       instructions.push(
         new solanaWeb3_js.TransactionInstruction({
-          programId: new solanaWeb3_js.PublicKey(exchange.router.v1.address),
+          programId: new solanaWeb3_js.PublicKey('whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc'),
           keys: await getTwoHopSwapInstructionKeys({
             fromAddress,
             poolOne: pairs[0].pubkey,
@@ -2174,16 +2157,43 @@
     return transaction
   };
 
+  var Orca = {
+    findPath,
+    pathExists,
+    getAmounts,
+    getTransaction,
+    WHIRLPOOL_LAYOUT,
+  };
+
+  const exchange = {
+    
+    name: 'orca',
+    label: 'Orca',
+    logo: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPCEtLSBHZW5lcmF0b3I6IEFkb2JlIElsbHVzdHJhdG9yIDI3LjIuMCwgU1ZHIEV4cG9ydCBQbHVnLUluIC4gU1ZHIFZlcnNpb246IDYuMDAgQnVpbGQgMCkgIC0tPgo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9ImthdG1hbl8xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4PSIwcHgiIHk9IjBweCIKCSB2aWV3Qm94PSIwIDAgNjAwIDQ1MCIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgNjAwIDQ1MDsiIHhtbDpzcGFjZT0icHJlc2VydmUiPgo8cGF0aCBmaWxsPSIjRkZEMTVDIiBkPSJNNDg4LjQsMjIyLjljMCwxMDMuOC04NC4xLDE4Ny45LTE4Ny45LDE4Ny45Yy0xMDMuOCwwLTE4Ny45LTg0LjEtMTg3LjktMTg3LjlDMTEyLjYsMTE5LjEsMTk2LjcsMzUsMzAwLjUsMzUKCUM0MDQuMiwzNSw0ODguNCwxMTkuMSw0ODguNCwyMjIuOXoiLz4KPHBhdGggZmlsbD0iI0ZGRkZGRiIgc3Ryb2tlPSIjMDAwMDAwIiBzdHJva2Utd2lkdGg9IjE3LjY3NTUiIGQ9Ik0yMDkuNSwyOTkuOGMxLjYtMS4xLDMuMS0yLjgsMy45LTUuMWMwLjgtMi42LDAuMy00LjksMC02LjJjMCwwLDAtMC4xLDAtMC4xbDAuMy0xLjhjMC45LDAuNSwxLjksMS4xLDMsMS45CgljMC4zLDAuMiwwLjcsMC41LDEuMSwwLjdjMC41LDAuNCwxLjEsMC44LDEuNCwxYzAuNiwwLjQsMS41LDEsMi41LDEuNWMyNS4xLDE1LjYsNDUuOCwyMiw2Mi4yLDIxLjJjMTctMC44LDI4LjktOS40LDM1LjEtMjEuOQoJYzUuOS0xMi4xLDYuMi0yNywyLTQwLjljLTQuMi0xMy45LTEzLTI3LjUtMjYuMi0zNi45Yy0yMi4yLTE1LjgtNDIuNS0zOS44LTUyLjctNjAuM2MtNS4yLTEwLjQtNy4zLTE4LjctNi43LTI0LjIKCWMwLjMtMi41LDEtNC4xLDItNS4xYzAuOS0xLDIuNi0yLjEsNS45LTIuNmM2LjktMS4xLDE1LTMuNiwyMy4xLTYuMmMzLjItMSw2LjMtMiw5LjUtMi45YzExLjctMy40LDI0LjItNi4zLDM3LjItNi4zCgljMjUuMywwLDU1LDExLDg2LjMsNTYuOGM0MC4yLDU4LjgsMTguMSwxMjQuNC0yOC4yLDE1OC45Yy0yMy4xLDE3LjItNTEuOSwyNi4zLTgxLjUsMjIuOUMyNjIuOSwzNDEuMywyMzQuOSwzMjcuOSwyMDkuNSwyOTkuOHoKCSBNMjE0LjIsMjg0LjZDMjE0LjIsMjg0LjYsMjE0LjIsMjg0LjcsMjE0LjIsMjg0LjZDMjE0LjEsMjg0LjcsMjE0LjIsMjg0LjYsMjE0LjIsMjg0LjZ6IE0yMTEuNiwyODUuOAoJQzIxMS42LDI4NS44LDIxMS43LDI4NS44LDIxMS42LDI4NS44QzIxMS43LDI4NS44LDIxMS42LDI4NS44LDIxMS42LDI4NS44eiIvPgo8cGF0aCBkPSJNMjMyLjUsMTI0LjNjMCwwLDcxLjgtMTkuMSw4Ny41LTE5LjFjMTUuNywwLDc4LjYsMzAuNSw5Ni45LDg2LjNjMjYsNzktNDQuNywxMzAuOS01Mi43LDEyNS44CgljNzYuMS02Mi45LTQ4LjQtMTc5LjEtMTA5LjYtMTcwLjRjLTcuNiwxLjEtMy40LDcuNi0zLjQsNy42bC0xLjcsMTdsLTEyLjctMjEuMkwyMzIuNSwxMjQuM3oiLz4KPHBhdGggZD0iTTQwNi41LDE2Ny42YzIyLjcsMzkuOSwxOCwxNy4xLDEyLjksNjIuN2M5LjMtMTUuMSwyMy45LTMuOCwyOS45LDJjMS4xLDEsMi45LDAuNCwyLjgtMS4xYy0wLjItNi44LTIuMi0yMS40LTEzLjQtMzcuMQoJQzQyMy40LDE3Mi42LDQwNi41LDE2Ny42LDQwNi41LDE2Ny42eiIvPgo8cGF0aCBmaWxsPSJub25lIiBzdHJva2U9IiMwMDAwMDAiIHN0cm9rZS13aWR0aD0iMC45OTMiIGQ9Ik00MTkuNCwyMzAuM2M1LTQ1LjYsOS43LTIyLjgtMTIuOS02Mi43YzAsMCwxNi45LDUsMzIuMywyNi41YzExLjIsMTUuNywxMy4xLDMwLjMsMTMuNCwzNy4xCgljMC4xLDEuNS0xLjcsMi4xLTIuOCwxLjFDNDQzLjMsMjI2LjUsNDI4LjcsMjE1LjMsNDE5LjQsMjMwLjN6IE00MTkuNCwyMzAuM2MwLjktMi4xLDIuMi01LjUsMi4yLTUuNSIvPgo8cGF0aCBkPSJNMjI0LDIyNC4yYy05LjYsMTYuMi0yOS4yLDE1LTI4LjgsMzQuM2MxNy41LDM5LDE3LjYsMzYuMiwxNy42LDM2LjJjMzIuNS0xOC4yLDE5LjEtNTguNSwxNC4zLTcwLjQKCUMyMjYuNiwyMjMsMjI0LjcsMjIzLDIyNCwyMjQuMnoiLz4KPHBhdGggZD0iTTE1MC40LDI2MC4xYzE4LjcsMi40LDI5LjgtMTMuOCw0NC44LTEuNmMxOS45LDM3LjgsMTcuNiwzNi4yLDE3LjYsMzYuMmMtMzQuNCwxNC40LTU3LjktMjEtNjQuMy0zMi4xCglDMTQ3LjgsMjYxLjMsMTQ5LDI1OS45LDE1MC40LDI2MC4xeiIvPgo8cGF0aCBkPSJNMzA2LjksMjM2YzAsMCwxOC43LDE5LjEsOC45LDIyLjFjLTEyLjItNy41LTM0LTEuNy00NC43LDEuOWMtMi42LDAuOS01LjItMS40LTQuMy00LjFjMy42LTEwLDEyLjYtMjguNiwyOS45LTMxCglDMzA2LjksMjIyLjQsMzA2LjksMjM2LDMwNi45LDIzNnoiLz4KPHBhdGggZmlsbD0iI0ZGRkZGRiIgZD0iTTMxOC4zLDE0Mi41Yy0yLjEtMy02LjQtMTEsNi44LTExYzEzLjIsMCwzMy4zLDE0LjksMzcuNCwyMC40Yy0xLjMsMy40LTkuOCw0LjEtMTQsMy44Yy00LjItMC4zLTExLjUtMS0xNy0zLjgKCUMzMjYsMTQ5LjIsMzIwLjUsMTQ1LjUsMzE4LjMsMTQyLjV6Ii8+Cjwvc3ZnPgo=',
+    
+    slippage: true,
+
+    blockchains: ['solana'],
+
+    solana: {
+      router: {
+        address: 'whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc',
+        api: Orca.WHIRLPOOL_LAYOUT,
+      },
+    }
+  };
+
   var orca = (scope)=>{
     
     return new Exchange(
 
-      Object.assign(basics, {
+      Object.assign(exchange, {
         scope,
-        findPath,
-        pathExists,
-        getAmounts,
-        getTransaction,
+
+        findPath: (args)=>Orca.findPath({ ...args, exchange }),
+        pathExists: (args)=>Orca.pathExists({ ...args, exchange }),
+        getAmounts: (args)=>Orca.getAmounts({ ...args, exchange }),
+        getTransaction: (args)=>Orca.getTransaction({ ...args, exchange }),
       })
     )
   };

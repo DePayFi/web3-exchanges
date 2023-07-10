@@ -13,7 +13,6 @@ import Token from '@depay/web3-tokens'
 //#endif
 
 import Blockchains from '@depay/web3-blockchains'
-import exchange from '../basics'
 import { Buffer, BN, Transaction, TransactionInstruction, SystemProgram, PublicKey, Keypair, struct, u64, u128, bool } from '@depay/solana-web3.js'
 import { getExchangePath } from './path'
 import { getBestPair } from './pairs'
@@ -114,9 +113,9 @@ const getTwoHopSwapInstructionKeys = async ({
     // tick_array_two_2
     { pubkey: onlyInitializedTicksTwo[2].address, isWritable: true, isSigner: false },
     // oracle_one
-    { pubkey: (await PublicKey.findProgramAddress([ Buffer.from('oracle'), new PublicKey(poolOne.toString()).toBuffer() ], new PublicKey(exchange.router.v1.address)))[0], isWritable: false, isSigner: false },
+    { pubkey: (await PublicKey.findProgramAddress([ Buffer.from('oracle'), new PublicKey(poolOne.toString()).toBuffer() ], new PublicKey('whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc')))[0], isWritable: false, isSigner: false },
     // oracle_two
-    { pubkey: (await PublicKey.findProgramAddress([ Buffer.from('oracle'), new PublicKey(poolTwo.toString()).toBuffer() ], new PublicKey(exchange.router.v1.address)))[0], isWritable: false, isSigner: false },
+    { pubkey: (await PublicKey.findProgramAddress([ Buffer.from('oracle'), new PublicKey(poolTwo.toString()).toBuffer() ], new PublicKey('whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc')))[0], isWritable: false, isSigner: false },
   ]
 }
 const getTwoHopSwapInstructionData = ({
@@ -202,7 +201,7 @@ const getSwapInstructionKeys = async ({
     // tick_array_2
     { pubkey: onlyInitializedTicks[2].address, isWritable: true, isSigner: false },
     // oracle
-    { pubkey: (await PublicKey.findProgramAddress([ Buffer.from('oracle'), new PublicKey(pool.toString()).toBuffer() ], new PublicKey(exchange.router.v1.address)))[0], isWritable: false, isSigner: false },
+    { pubkey: (await PublicKey.findProgramAddress([ Buffer.from('oracle'), new PublicKey(pool.toString()).toBuffer() ], new PublicKey('whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc')))[0], isWritable: false, isSigner: false },
   ]
 }
 
@@ -234,7 +233,6 @@ const getSwapInstructionData = ({ amount, otherAmountThreshold, sqrtPriceLimit, 
 }
 
 const getTransaction = async ({
-  exchange,
   path,
   amountIn,
   amountInMax,
@@ -250,7 +248,7 @@ const getTransaction = async ({
   let transaction = { blockchain: 'solana' }
   let instructions = []
 
-  const exchangePath = getExchangePath(path)
+  const exchangePath = getExchangePath({ path })
   if(exchangePath.length > 3) { throw 'Orca can only handle fixed paths with a max length of 3 (2 pools)!' }
   const tokenIn = exchangePath[0]
   const tokenMiddle = exchangePath.length == 3 ? exchangePath[1] : undefined
@@ -309,7 +307,7 @@ const getTransaction = async ({
     }
     instructions.push(
       new TransactionInstruction({
-        programId: new PublicKey(exchange.router.v1.address),
+        programId: new PublicKey('whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc'),
         keys: await getSwapInstructionKeys({
           fromAddress,
           pool: pairs[0].pubkey,
@@ -343,7 +341,7 @@ const getTransaction = async ({
     }
     instructions.push(
       new TransactionInstruction({
-        programId: new PublicKey(exchange.router.v1.address),
+        programId: new PublicKey('whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc'),
         keys: await getTwoHopSwapInstructionKeys({
           fromAddress,
           poolOne: pairs[0].pubkey,

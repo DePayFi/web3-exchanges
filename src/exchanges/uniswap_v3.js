@@ -1,4 +1,3 @@
-import Blockchains from '@depay/web3-blockchains'
 import Exchange from '../classes/Exchange'
 import UniswapV3 from '../platforms/evm/uniswap_v3'
 
@@ -111,13 +110,10 @@ export default (scope)=>{
 
     Object.assign(exchange, {
       scope,
-      findPath: ({ blockchain, tokenIn, tokenOut, amountIn, amountOut, amountInMax, amountOutMin })=>
-        UniswapV3.findPath({ blockchain, exchange, tokenIn, tokenOut, amountIn, amountOut, amountInMax, amountOutMin }),
-      pathExists: (blockchain, path)=>
-        UniswapV3.pathExists(blockchain, exchange, path),
-      getAmounts: ({ blockchain, path, pools, block, tokenIn, tokenOut, amountOut, amountIn, amountInMax, amountOutMin })=>
-        UniswapV3.getAmounts(blockchain, exchange, { path, pools, block, tokenIn, tokenOut, amountOut, amountIn, amountInMax, amountOutMin }),
-      getTransaction: (...args)=> UniswapV3.getTransaction(...args),
+      findPath: (args)=>UniswapV3.findPath({ ...args, exchange }),
+      pathExists: (args)=>UniswapV3.pathExists({ ...args, exchange }),
+      getAmounts: (args)=>UniswapV3.getAmounts({ ...args, exchange }),
+      getTransaction: (args)=>UniswapV3.getTransaction({ ...args, exchange }),
     })
   )
 }
