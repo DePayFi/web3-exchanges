@@ -110,7 +110,7 @@ Avalanche:
 - [WAVAX](https://snowtrace.io/token/0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7)
 
 Gnosis:
-- [Balancer v2](https://app.balancer.fi)
+- [Honeyswap](https://honeyswap.org)
 - [WXDAI](https://gnosisscan.io/token/0xe91d153e0b41518a2ce8dd3d7944fa863463a97d)
 
 

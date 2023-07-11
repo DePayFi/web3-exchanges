@@ -1,15 +1,11 @@
 /*#if _EVM
 
-import Token from '@depay/web3-tokens-evm'
-import { ethers } from 'ethers'
 import { request } from '@depay/web3-client-evm'
 
 /*#elif _SOLANA
 
 //#else */
 
-import Token from '@depay/web3-tokens'
-import { ethers } from 'ethers'
 import { request } from '@depay/web3-client'
 
 //#endif

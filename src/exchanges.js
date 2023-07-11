@@ -1,5 +1,6 @@
 /*#if _EVM
 
+import honeyswap from './exchanges/honeyswap'
 import pancakeswap from './exchanges/pancakeswap'
 import pancakeswap_v3 from './exchanges/pancakeswap_v3'
 import quickswap from './exchanges/quickswap'
@@ -24,6 +25,7 @@ const exchanges = [
   quickswap(),
   trader_joe_v2_1(),
   spookyswap(),
+  honeyswap(),
   weth(),
   weth_optimism(),
   weth_arbitrum(),
@@ -85,6 +87,7 @@ exchanges.avalanche = [
 exchanges.avalanche.forEach((exchange)=>{ exchanges.avalanche[exchange.name] = exchange })
 
 exchanges.gnosis = [
+  honeyswap('gnosis'),
   wxdai('gnosis'),
 ]
 exchanges.gnosis.forEach((exchange)=>{ exchanges.gnosis[exchange.name] = exchange })
@@ -108,6 +111,7 @@ exchanges.solana.forEach((exchange)=>{ exchanges.solana[exchange.name] = exchang
 
 //#else */
 
+import honeyswap from './exchanges/honeyswap'
 import orca from './exchanges/orca'
 import pancakeswap from './exchanges/pancakeswap'
 import pancakeswap_v3 from './exchanges/pancakeswap_v3'
@@ -134,6 +138,7 @@ const exchanges = [
   trader_joe_v2_1(),
   quickswap(),
   spookyswap(),
+  honeyswap(),
   weth(),
   weth_optimism(),
   weth_arbitrum(),
@@ -199,6 +204,7 @@ exchanges.avalanche = [
 exchanges.avalanche.forEach((exchange)=>{ exchanges.avalanche[exchange.name] = exchange })
 
 exchanges.gnosis = [
+  honeyswap('gnosis'),
   wxdai('gnosis'),
 ]
 exchanges.gnosis.forEach((exchange)=>{ exchanges.gnosis[exchange.name] = exchange })
