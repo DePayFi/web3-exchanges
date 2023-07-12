@@ -36,7 +36,7 @@ const createTokenAccountIfNotExisting = async ({ instructions, owner, token, acc
 }
 
 const getTwoHopSwapInstructionKeys = async ({
-  fromAddress,
+  account,
   poolOne,
   tickArraysOne,
   tokenAccountOneA,
@@ -79,7 +79,7 @@ const getTwoHopSwapInstructionKeys = async ({
     // token_program
     { pubkey: new PublicKey(Token.solana.TOKEN_PROGRAM), isWritable: false, isSigner: false },
     // token_authority
-    { pubkey: new PublicKey(fromAddress), isWritable: false, isSigner: true },
+    { pubkey: new PublicKey(account), isWritable: false, isSigner: true },
     // whirlpool_one
     { pubkey: new PublicKey(poolOne.toString()), isWritable: true, isSigner: false },
     // whirlpool_two
@@ -158,7 +158,7 @@ const getTwoHopSwapInstructionData = ({
 }
 
 const getSwapInstructionKeys = async ({
-  fromAddress,
+  account,
   pool,
   tokenAccountA,
   tokenVaultA,
@@ -183,7 +183,7 @@ const getSwapInstructionKeys = async ({
     // token_program
     { pubkey: new PublicKey(Token.solana.TOKEN_PROGRAM), isWritable: false, isSigner: false },
     // token_authority
-    { pubkey: new PublicKey(fromAddress), isWritable: false, isSigner: true },
+    { pubkey: new PublicKey(account), isWritable: false, isSigner: true },
     // whirlpool
     { pubkey: new PublicKey(pool.toString()), isWritable: true, isSigner: false },
     // token_owner_account_a
@@ -243,7 +243,7 @@ const getTransaction = async ({
   amountOutInput,
   amountInMaxInput,
   amountOutMinInput,
-  fromAddress
+  account
 }) => {
   let transaction = { blockchain: 'solana' }
   let instructions = []
@@ -278,7 +278,7 @@ const getTransaction = async ({
     wrappedAccount = keypair.publicKey.toString()
     const lamports = startsWrapped ? new BN(amountIn.toString()).add(new BN(rent)) :  new BN(rent)
     let createAccountInstruction = SystemProgram.createAccount({
-      fromPubkey: new PublicKey(fromAddress),
+      fromPubkey: new PublicKey(account),
       newAccountPubkey: new PublicKey(wrappedAccount),
       programId: new PublicKey(Token.solana.TOKEN_PROGRAM),
       space: Token.solana.TOKEN_LAYOUT.span,
@@ -290,7 +290,7 @@ const getTransaction = async ({
       Token.solana.initializeAccountInstruction({
         account: wrappedAccount,
         token: blockchain.wrapped.address,
-        owner: fromAddress
+        owner: account
       })
     )
   }
@@ -300,16 +300,16 @@ const getTransaction = async ({
     let amountSpecifiedIsInput = !!(amountInInput || amountOutMinInput)
     let amount = amountSpecifiedIsInput ? amountIn : amountOut
     let otherAmountThreshold = amountSpecifiedIsInput ? amountOutMin : amountInMax
-    let tokenAccountIn = startsWrapped ? new PublicKey(wrappedAccount) : new PublicKey(await Token.solana.findProgramAddress({ owner: fromAddress, token: tokenIn }))
-    let tokenAccountOut = endsUnwrapped ? new PublicKey(wrappedAccount) : new PublicKey(await Token.solana.findProgramAddress({ owner: fromAddress, token: tokenOut }))
+    let tokenAccountIn = startsWrapped ? new PublicKey(wrappedAccount) : new PublicKey(await Token.solana.findProgramAddress({ owner: account, token: tokenIn }))
+    let tokenAccountOut = endsUnwrapped ? new PublicKey(wrappedAccount) : new PublicKey(await Token.solana.findProgramAddress({ owner: account, token: tokenOut }))
     if(!endsUnwrapped) {
-      await createTokenAccountIfNotExisting({ instructions, owner: fromAddress, token: tokenOut, account: tokenAccountOut })
+      await createTokenAccountIfNotExisting({ instructions, owner: account, token: tokenOut, account: tokenAccountOut })
     }
     instructions.push(
       new TransactionInstruction({
         programId: new PublicKey('whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc'),
         keys: await getSwapInstructionKeys({
-          fromAddress,
+          account,
           pool: pairs[0].pubkey,
           tokenAccountA: pairs[0].aToB ? tokenAccountIn : tokenAccountOut,
           tokenVaultA: pairs[0].data.tokenVaultA,
@@ -331,19 +331,19 @@ const getTransaction = async ({
     let amountSpecifiedIsInput = !!(amountInInput || amountOutMinInput)
     let amount = amountSpecifiedIsInput ? amountIn : amountOut
     let otherAmountThreshold = amountSpecifiedIsInput ? amountOutMin : amountInMax
-    let tokenAccountIn = startsWrapped ? new PublicKey(wrappedAccount) : new PublicKey(await Token.solana.findProgramAddress({ owner: fromAddress, token: tokenIn }))
+    let tokenAccountIn = startsWrapped ? new PublicKey(wrappedAccount) : new PublicKey(await Token.solana.findProgramAddress({ owner: account, token: tokenIn }))
     let tokenMiddle = exchangePath[1]
-    let tokenAccountMiddle = new PublicKey(await Token.solana.findProgramAddress({ owner: fromAddress, token: tokenMiddle }))
-    await createTokenAccountIfNotExisting({ instructions, owner: fromAddress, token: tokenMiddle, account: tokenAccountMiddle })
-    let tokenAccountOut = endsUnwrapped ? new PublicKey(wrappedAccount) : new PublicKey(await Token.solana.findProgramAddress({ owner: fromAddress, token: tokenOut }))
+    let tokenAccountMiddle = new PublicKey(await Token.solana.findProgramAddress({ owner: account, token: tokenMiddle }))
+    await createTokenAccountIfNotExisting({ instructions, owner: account, token: tokenMiddle, account: tokenAccountMiddle })
+    let tokenAccountOut = endsUnwrapped ? new PublicKey(wrappedAccount) : new PublicKey(await Token.solana.findProgramAddress({ owner: account, token: tokenOut }))
     if(!endsUnwrapped) {
-      await createTokenAccountIfNotExisting({ instructions, owner: fromAddress, token: tokenOut, account: tokenAccountOut })
+      await createTokenAccountIfNotExisting({ instructions, owner: account, token: tokenOut, account: tokenAccountOut })
     }
     instructions.push(
       new TransactionInstruction({
         programId: new PublicKey('whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc'),
         keys: await getTwoHopSwapInstructionKeys({
-          fromAddress,
+          account,
           poolOne: pairs[0].pubkey,
           tickArraysOne: pairs[0].tickArrays,
           tokenAccountOneA: pairs[0].aToB ? tokenAccountIn : tokenAccountMiddle,
@@ -374,7 +374,7 @@ const getTransaction = async ({
     instructions.push(
       Token.solana.closeAccountInstruction({
         account: wrappedAccount,
-        owner: fromAddress
+        owner: account
       })
     )
   }

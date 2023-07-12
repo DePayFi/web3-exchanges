@@ -12,8 +12,8 @@ let route = await exchange.route({
 
 let wallets = await Web3Wallets.getWallets()
 let wallet = wallets[0]
-let from = await wallet.account()
-let transaction = await route.getTransaction({ from })
+let account = await wallet.account()
+let transaction = await route.getTransaction({ account })
 ```
 
 ```javascript
@@ -28,8 +28,8 @@ let route = await exchange.route({
 
 let wallets = await Web3Wallets.getWallets()
 let wallet = wallets[0]
-let from = await wallet.account()
-let transaction = await route.getTransaction({ from })
+let account = await wallet.account()
+let transaction = await route.getTransaction({ account })
 ```
 
 ```javascript
@@ -44,8 +44,8 @@ let route = await exchange.route({
 
 let wallets = await Web3Wallets.getWallets()
 let wallet = wallets[0]
-let from = await wallet.account()
-let transaction = await route.getTransaction({ from })
+let account = await wallet.account()
+let transaction = await route.getTransaction({ account })
 ```
 
 ```javascript
@@ -60,8 +60,8 @@ let route = await exchange.route({
 
 let wallets = await Web3Wallets.getWallets()
 let wallet = wallets[0]
-let from = await wallet.account()
-let transaction = await route.getTransaction({ from })
+let account = await wallet.account()
+let transaction = await route.getTransaction({ account })
 ```
 
 # TOKEN TO NATIVE (1 pool)
@@ -78,8 +78,8 @@ let route = await exchange.route({
 
 let wallets = await Web3Wallets.getWallets()
 let wallet = wallets[0]
-let from = await wallet.account()
-let transaction = await routes[0].getTransaction({ from })
+let account = await wallet.account()
+let transaction = await routes[0].getTransaction({ account })
 ```
 
 ```javascript
@@ -94,8 +94,8 @@ let route = await exchange.route({
 
 let wallets = await Web3Wallets.getWallets()
 let wallet = wallets[0]
-let from = await wallet.account()
-let transaction = await routes[0].getTransaction({ from })
+let account = await wallet.account()
+let transaction = await routes[0].getTransaction({ account })
 ```
 
 ```javascript
@@ -110,8 +110,8 @@ let route = await exchange.route({
 
 let wallets = await Web3Wallets.getWallets()
 let wallet = wallets[0]
-let from = await wallet.account()
-let transaction = await routes[0].getTransaction({ from })
+let account = await wallet.account()
+let transaction = await routes[0].getTransaction({ account })
 ```
 
 ```javascript
@@ -126,8 +126,8 @@ let route = await exchange.route({
 
 let wallets = await Web3Wallets.getWallets()
 let wallet = wallets[0]
-let from = await wallet.account()
-let transaction = await routes[0].getTransaction({ from })
+let account = await wallet.account()
+let transaction = await routes[0].getTransaction({ account })
 ```
 
 # TOKEN TO TOKEN (2 pools)
@@ -144,8 +144,8 @@ let route = await exchange.route({
 
 let wallets = await Web3Wallets.getWallets()
 let wallet = wallets[0]
-let from = await wallet.account()
-let transaction = await route.getTransaction({ from })
+let account = await wallet.account()
+let transaction = await route.getTransaction({ account })
 
 wallet.sendTransaction(transaction)
 ```
@@ -162,8 +162,8 @@ let route = await exchange.route({
 
 let wallets = await Web3Wallets.getWallets()
 let wallet = wallets[0]
-let from = await wallet.account()
-let transaction = await route.getTransaction({ from })
+let account = await wallet.account()
+let transaction = await route.getTransaction({ account })
 
 wallet.sendTransaction(transaction)
 ```
@@ -180,8 +180,8 @@ let route = await exchange.route({
 
 let wallets = await Web3Wallets.getWallets()
 let wallet = wallets[0]
-let from = await wallet.account()
-let transaction = await route.getTransaction({ from })
+let account = await wallet.account()
+let transaction = await route.getTransaction({ account })
 
 wallet.sendTransaction(transaction)
 ```
@@ -198,8 +198,8 @@ let route = await exchange.route({
 
 let wallets = await Web3Wallets.getWallets()
 let wallet = wallets[0]
-let from = await wallet.account()
-let transaction = await route.getTransaction({ from })
+let account = await wallet.account()
+let transaction = await route.getTransaction({ account })
 
 wallet.sendTransaction(transaction)
 ```

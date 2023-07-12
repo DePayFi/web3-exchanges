@@ -1,11 +1,13 @@
 /*#if _EVM
 
+import Token from '@depay/web3-tokens-evm'
 import { request } from '@depay/web3-client-evm'
 
 /*#elif _SOLANA
 
 //#else */
 
+import Token from '@depay/web3-tokens'
 import { request } from '@depay/web3-client'
 
 //#endif
@@ -250,6 +252,41 @@ let getAmounts = async ({
   return { amountOut, amountIn, amountInMax, amountOutMin }
 }
 
+let getPrep = async({
+  exchange,
+  blockchain,
+  tokenIn,
+  amountIn,
+  account
+})=> {
+
+  if(tokenIn === Blockchains[blockchain].currency.address) { return } // NATIVE
+
+  console.log('request', {
+    blockchain,
+    address: tokenIn,
+    method: 'allowance',
+    api: Token[blockchain]['20'],
+    params: {
+      owner: account,
+      spender: exchange[blockchain].router.address,
+    },
+  })
+  const allowance = await request({
+    blockchain,
+    address: tokenIn,
+    method: 'allowance',
+    api: Token[blockchain]['20'],
+    params: {
+      owner: account,
+      spender: exchange[blockchain].router.address,
+    },
+  })
+
+  console.log('allowance', allowance.toString())
+
+}
+
 let getTransaction = async({
   exchange,
   blockchain,
@@ -263,12 +300,12 @@ let getTransaction = async({
   amountOutInput,
   amountInMaxInput,
   amountOutMinInput,
-  fromAddress
+  account
 }) => {
 
   const transaction = {
     blockchain,
-    from: fromAddress,
+    from: account,
     to: exchange[blockchain].router.address,
     api: exchange[blockchain].router.api
   }
@@ -287,7 +324,7 @@ let getTransaction = async({
       transaction.params = {
         amountOut,
         path: fullPath,
-        to: fromAddress,
+        to: account,
         deadline,
       }
       transaction.value = amountInMax
@@ -296,7 +333,7 @@ let getTransaction = async({
       transaction.params = {
         amountOutMin: (amountOutMin || amountOut),
         path: fullPath,
-        to: fromAddress,
+        to: account,
         deadline,
       }
       transaction.value = amountIn
@@ -308,7 +345,7 @@ let getTransaction = async({
         amountNATIVEOut: amountOut,
         amountInMax,
         path: fullPath,
-        to: fromAddress,
+        to: account,
         deadline,
       }
     } else {
@@ -317,7 +354,7 @@ let getTransaction = async({
         amountIn,
         amountOutMinNATIVE: (amountOutMin || amountOut),
         path: fullPath,
-        to: fromAddress,
+        to: account,
         deadline,
       }
     }
@@ -328,7 +365,7 @@ let getTransaction = async({
         amountOut,
         amountInMax,
         path: fullPath,
-        to: fromAddress,
+        to: account,
         deadline,
       }
     } else {
@@ -337,7 +374,7 @@ let getTransaction = async({
         amountIn,
         amountOutMin: (amountOutMin || amountOut),
         path: fullPath,
-        to: fromAddress,
+        to: account,
         deadline,
       }
     }
@@ -356,6 +393,7 @@ export default {
   pathExists,
   getAmounts,
   getTransaction,
+  getPrep,
   ROUTER,
   FACTORY,
   PAIR,

@@ -23,6 +23,7 @@
       exchange,
       approvalRequired,
       getApproval,
+      getPrep,
       getTransaction,
     }) {
       this.tokenIn = tokenIn;
@@ -34,6 +35,7 @@
       this.amountOut = _optionalChain$4([amountOut, 'optionalAccess', _5 => _5.toString, 'call', _6 => _6()]);
       this.amountInMax = _optionalChain$4([amountInMax, 'optionalAccess', _7 => _7.toString, 'call', _8 => _8()]);
       this.exchange = exchange;
+      this.getPrep = getPrep;
       this.getTransaction = getTransaction;
     }
   }
@@ -296,6 +298,7 @@
     amountOutMin = undefined,
     findPath,
     getAmounts,
+    getPrep,
     getTransaction,
     slippage,
   }) => {
@@ -339,7 +342,14 @@
           amountOut,
           amountOutMin,
           exchange,
-          getTransaction: async ({ from })=> await getTransaction({
+          getPrep: async ({ account })=> await getPrep({
+            exchange,
+            blockchain,
+            tokenIn,
+            amountIn: (amountIn || amountInMax),
+            account,
+          }),
+          getTransaction: async ({ account, signature })=> await getTransaction({
             exchange,
             blockchain,
             pools,
@@ -353,7 +363,8 @@
             amountOutInput,
             amountInMaxInput,
             amountOutMinInput,
-            fromAddress: from
+            account,
+            signature,
           }),
         })
       );
@@ -414,6 +425,7 @@
         blockchain,
         findPath: this.findPath,
         getAmounts: this.getAmounts,
+        getPrep: this.getPrep,
         getTransaction: this.getTransaction,
         slippage: this.slippage,
       })
@@ -633,12 +645,12 @@
     amountOutInput,
     amountInMaxInput,
     amountOutMinInput,
-    fromAddress
+    account
   }) => {
 
     let transaction = {
       blockchain,
-      from: fromAddress,
+      from: account,
       to: exchange[blockchain].router.address,
       api: exchange[blockchain].router.api,
     };
@@ -673,7 +685,7 @@
 
     transaction.params = Object.assign({}, transaction.params, {
       path: getExchangePath$3({ blockchain, exchange, path }),
-      to: fromAddress,
+      to: account,
       deadline: Math.round(Date.now() / 1000) + 60 * 60 * 24, // 24 hours
     });
 
@@ -728,6 +740,7 @@
         findPath: (args)=>UniswapV2.findPath({ ...args, exchange: exchange$g }),
         pathExists: (args)=>UniswapV2.pathExists({ ...args, exchange: exchange$g }),
         getAmounts: (args)=>UniswapV2.getAmounts({ ...args, exchange: exchange$g }),
+        getPrep: (args)=>UniswapV2.getPrep({ ...args, exchange: exchange$g }),
         getTransaction: (args)=>UniswapV2.getTransaction({ ...args, exchange: exchange$g }),
       })
     )
@@ -2121,7 +2134,7 @@
   };
 
   const getTwoHopSwapInstructionKeys = async ({
-    fromAddress,
+    account,
     poolOne,
     tickArraysOne,
     tokenAccountOneA,
@@ -2164,7 +2177,7 @@
       // token_program
       { pubkey: new solanaWeb3_js.PublicKey(Token__default['default'].solana.TOKEN_PROGRAM), isWritable: false, isSigner: false },
       // token_authority
-      { pubkey: new solanaWeb3_js.PublicKey(fromAddress), isWritable: false, isSigner: true },
+      { pubkey: new solanaWeb3_js.PublicKey(account), isWritable: false, isSigner: true },
       // whirlpool_one
       { pubkey: new solanaWeb3_js.PublicKey(poolOne.toString()), isWritable: true, isSigner: false },
       // whirlpool_two
@@ -2243,7 +2256,7 @@
   };
 
   const getSwapInstructionKeys = async ({
-    fromAddress,
+    account,
     pool,
     tokenAccountA,
     tokenVaultA,
@@ -2268,7 +2281,7 @@
       // token_program
       { pubkey: new solanaWeb3_js.PublicKey(Token__default['default'].solana.TOKEN_PROGRAM), isWritable: false, isSigner: false },
       // token_authority
-      { pubkey: new solanaWeb3_js.PublicKey(fromAddress), isWritable: false, isSigner: true },
+      { pubkey: new solanaWeb3_js.PublicKey(account), isWritable: false, isSigner: true },
       // whirlpool
       { pubkey: new solanaWeb3_js.PublicKey(pool.toString()), isWritable: true, isSigner: false },
       // token_owner_account_a
@@ -2328,7 +2341,7 @@
     amountOutInput,
     amountInMaxInput,
     amountOutMinInput,
-    fromAddress
+    account
   }) => {
     let transaction = { blockchain: 'solana' };
     let instructions = [];
@@ -2363,7 +2376,7 @@
       wrappedAccount = keypair.publicKey.toString();
       const lamports = startsWrapped ? new solanaWeb3_js.BN(amountIn.toString()).add(new solanaWeb3_js.BN(rent)) :  new solanaWeb3_js.BN(rent);
       let createAccountInstruction = solanaWeb3_js.SystemProgram.createAccount({
-        fromPubkey: new solanaWeb3_js.PublicKey(fromAddress),
+        fromPubkey: new solanaWeb3_js.PublicKey(account),
         newAccountPubkey: new solanaWeb3_js.PublicKey(wrappedAccount),
         programId: new solanaWeb3_js.PublicKey(Token__default['default'].solana.TOKEN_PROGRAM),
         space: Token__default['default'].solana.TOKEN_LAYOUT.span,
@@ -2375,7 +2388,7 @@
         Token__default['default'].solana.initializeAccountInstruction({
           account: wrappedAccount,
           token: blockchain.wrapped.address,
-          owner: fromAddress
+          owner: account
         })
       );
     }
@@ -2385,16 +2398,16 @@
       let amountSpecifiedIsInput = !!(amountInInput || amountOutMinInput);
       let amount = amountSpecifiedIsInput ? amountIn : amountOut;
       let otherAmountThreshold = amountSpecifiedIsInput ? amountOutMin : amountInMax;
-      let tokenAccountIn = startsWrapped ? new solanaWeb3_js.PublicKey(wrappedAccount) : new solanaWeb3_js.PublicKey(await Token__default['default'].solana.findProgramAddress({ owner: fromAddress, token: tokenIn }));
-      let tokenAccountOut = endsUnwrapped ? new solanaWeb3_js.PublicKey(wrappedAccount) : new solanaWeb3_js.PublicKey(await Token__default['default'].solana.findProgramAddress({ owner: fromAddress, token: tokenOut }));
+      let tokenAccountIn = startsWrapped ? new solanaWeb3_js.PublicKey(wrappedAccount) : new solanaWeb3_js.PublicKey(await Token__default['default'].solana.findProgramAddress({ owner: account, token: tokenIn }));
+      let tokenAccountOut = endsUnwrapped ? new solanaWeb3_js.PublicKey(wrappedAccount) : new solanaWeb3_js.PublicKey(await Token__default['default'].solana.findProgramAddress({ owner: account, token: tokenOut }));
       if(!endsUnwrapped) {
-        await createTokenAccountIfNotExisting({ instructions, owner: fromAddress, token: tokenOut, account: tokenAccountOut });
+        await createTokenAccountIfNotExisting({ instructions, owner: account, token: tokenOut, account: tokenAccountOut });
       }
       instructions.push(
         new solanaWeb3_js.TransactionInstruction({
           programId: new solanaWeb3_js.PublicKey('whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc'),
           keys: await getSwapInstructionKeys({
-            fromAddress,
+            account,
             pool: pairs[0].pubkey,
             tokenAccountA: pairs[0].aToB ? tokenAccountIn : tokenAccountOut,
             tokenVaultA: pairs[0].data.tokenVaultA,
@@ -2416,19 +2429,19 @@
       let amountSpecifiedIsInput = !!(amountInInput || amountOutMinInput);
       let amount = amountSpecifiedIsInput ? amountIn : amountOut;
       let otherAmountThreshold = amountSpecifiedIsInput ? amountOutMin : amountInMax;
-      let tokenAccountIn = startsWrapped ? new solanaWeb3_js.PublicKey(wrappedAccount) : new solanaWeb3_js.PublicKey(await Token__default['default'].solana.findProgramAddress({ owner: fromAddress, token: tokenIn }));
+      let tokenAccountIn = startsWrapped ? new solanaWeb3_js.PublicKey(wrappedAccount) : new solanaWeb3_js.PublicKey(await Token__default['default'].solana.findProgramAddress({ owner: account, token: tokenIn }));
       let tokenMiddle = exchangePath[1];
-      let tokenAccountMiddle = new solanaWeb3_js.PublicKey(await Token__default['default'].solana.findProgramAddress({ owner: fromAddress, token: tokenMiddle }));
-      await createTokenAccountIfNotExisting({ instructions, owner: fromAddress, token: tokenMiddle, account: tokenAccountMiddle });
-      let tokenAccountOut = endsUnwrapped ? new solanaWeb3_js.PublicKey(wrappedAccount) : new solanaWeb3_js.PublicKey(await Token__default['default'].solana.findProgramAddress({ owner: fromAddress, token: tokenOut }));
+      let tokenAccountMiddle = new solanaWeb3_js.PublicKey(await Token__default['default'].solana.findProgramAddress({ owner: account, token: tokenMiddle }));
+      await createTokenAccountIfNotExisting({ instructions, owner: account, token: tokenMiddle, account: tokenAccountMiddle });
+      let tokenAccountOut = endsUnwrapped ? new solanaWeb3_js.PublicKey(wrappedAccount) : new solanaWeb3_js.PublicKey(await Token__default['default'].solana.findProgramAddress({ owner: account, token: tokenOut }));
       if(!endsUnwrapped) {
-        await createTokenAccountIfNotExisting({ instructions, owner: fromAddress, token: tokenOut, account: tokenAccountOut });
+        await createTokenAccountIfNotExisting({ instructions, owner: account, token: tokenOut, account: tokenAccountOut });
       }
       instructions.push(
         new solanaWeb3_js.TransactionInstruction({
           programId: new solanaWeb3_js.PublicKey('whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc'),
           keys: await getTwoHopSwapInstructionKeys({
-            fromAddress,
+            account,
             poolOne: pairs[0].pubkey,
             tickArraysOne: pairs[0].tickArrays,
             tokenAccountOneA: pairs[0].aToB ? tokenAccountIn : tokenAccountMiddle,
@@ -2459,7 +2472,7 @@
       instructions.push(
         Token__default['default'].solana.closeAccountInstruction({
           account: wrappedAccount,
-          owner: fromAddress
+          owner: account
         })
       );
     }
@@ -2506,6 +2519,7 @@
         findPath: (args)=>Orca.findPath({ ...args, exchange: exchange$f }),
         pathExists: (args)=>Orca.pathExists({ ...args, exchange: exchange$f }),
         getAmounts: (args)=>Orca.getAmounts({ ...args, exchange: exchange$f }),
+        getPrep: (args)=>{},
         getTransaction: (args)=>Orca.getTransaction({ ...args, exchange: exchange$f }),
       })
     )
@@ -2547,6 +2561,7 @@
         findPath: (args)=>UniswapV2.findPath({ ...args, exchange: exchange$e }),
         pathExists: (args)=>UniswapV2.pathExists({ ...args, exchange: exchange$e }),
         getAmounts: (args)=>UniswapV2.getAmounts({ ...args, exchange: exchange$e }),
+        getPrep: (args)=>UniswapV2.getPrep({ ...args, exchange: exchange$e }),
         getTransaction: (args)=>UniswapV2.getTransaction({ ...args, exchange: exchange$e }),
       })
     )
@@ -2851,7 +2866,7 @@
     amountOutInput,
     amountInMaxInput,
     amountOutMinInput,
-    fromAddress
+    account
   }) => {
 
     let commands = [];
@@ -2863,7 +2878,7 @@
       inputs.push(
         ethers.ethers.utils.solidityPack(
           ["address", "uint256"],
-          [fromAddress, (amountIn || amountInMax).toString()]
+          [account, (amountIn || amountInMax).toString()]
         )
       );
       value = (amountIn || amountInMax).toString();
@@ -2882,7 +2897,7 @@
         ethers.ethers.utils.solidityPack(
           ["address", "uint256", "uint256", "bytes", "bool"],
           [
-            fromAddress,
+            account,
             (amountIn || amountInMax).toString(),
             (amountOut || amountOutMin).toString(),
             packedPath,
@@ -2896,7 +2911,7 @@
         ethers.ethers.utils.solidityPack(
           ["address", "uint256", "uint256", "bytes", "bool"],
           [
-            fromAddress,
+            account,
             (amountOut || amountOutMin).toString(),
             (amountIn || amountInMax).toString(),
             packedPath,
@@ -2911,14 +2926,14 @@
       inputs.push(
         ethers.ethers.utils.solidityPack(
           ["address", "uint256"],
-          [fromAddress, (amountOut || amountOutMin).toString()]
+          [account, (amountOut || amountOutMin).toString()]
         )
       );
     }
 
     const transaction = {
       blockchain,
-      from: fromAddress,
+      from: account,
       to: exchange[blockchain].router.address,
       api: exchange[blockchain].router.api,
       method: 'execute',
@@ -2985,6 +3000,7 @@
         findPath: (args)=>UniswapV3.findPath({ ...args, exchange: exchange$d }),
         pathExists: (args)=>UniswapV3.pathExists({ ...args, exchange: exchange$d }),
         getAmounts: (args)=>UniswapV3.getAmounts({ ...args, exchange: exchange$d }),
+        getPrep: (args)=>UniswapV3.getPrep({ ...args, exchange: exchange$d }),
         getTransaction: (args)=>UniswapV3.getTransaction({ ...args, exchange: exchange$d }),
       })
     )
@@ -3024,6 +3040,7 @@
         findPath: (args)=>UniswapV2.findPath({ ...args, exchange: exchange$c }),
         pathExists: (args)=>UniswapV2.pathExists({ ...args, exchange: exchange$c }),
         getAmounts: (args)=>UniswapV2.getAmounts({ ...args, exchange: exchange$c }),
+        getPrep: (args)=>UniswapV2.getPrep({ ...args, exchange: exchange$c }),
         getTransaction: (args)=>UniswapV2.getTransaction({ ...args, exchange: exchange$c }),
       })
     )
@@ -3063,6 +3080,7 @@
         findPath: (args)=>UniswapV2.findPath({ ...args, exchange: exchange$b }),
         pathExists: (args)=>UniswapV2.pathExists({ ...args, exchange: exchange$b }),
         getAmounts: (args)=>UniswapV2.getAmounts({ ...args, exchange: exchange$b }),
+        getPrep: (args)=>UniswapV2.getPrep({ ...args, exchange: exchange$b }),
         getTransaction: (args)=>UniswapV2.getTransaction({ ...args, exchange: exchange$b }),
       })
     )
@@ -3308,6 +3326,41 @@
     return { amountOut, amountIn, amountInMax, amountOutMin }
   };
 
+  let getPrep = async({
+    exchange,
+    blockchain,
+    tokenIn,
+    amountIn,
+    account
+  })=> {
+
+    if(tokenIn === Blockchains__default['default'][blockchain].currency.address) { return } // NATIVE
+
+    console.log('request', {
+      blockchain,
+      address: tokenIn,
+      method: 'allowance',
+      api: Token__default['default'][blockchain]['20'],
+      params: {
+        owner: account,
+        spender: exchange[blockchain].router.address,
+      },
+    });
+    const allowance = await web3Client.request({
+      blockchain,
+      address: tokenIn,
+      method: 'allowance',
+      api: Token__default['default'][blockchain]['20'],
+      params: {
+        owner: account,
+        spender: exchange[blockchain].router.address,
+      },
+    });
+
+    console.log('allowance', allowance.toString());
+
+  };
+
   let getTransaction$1 = async({
     exchange,
     blockchain,
@@ -3321,12 +3374,12 @@
     amountOutInput,
     amountInMaxInput,
     amountOutMinInput,
-    fromAddress
+    account
   }) => {
 
     const transaction = {
       blockchain,
-      from: fromAddress,
+      from: account,
       to: exchange[blockchain].router.address,
       api: exchange[blockchain].router.api
     };
@@ -3345,7 +3398,7 @@
         transaction.params = {
           amountOut,
           path: fullPath,
-          to: fromAddress,
+          to: account,
           deadline,
         };
         transaction.value = amountInMax;
@@ -3354,7 +3407,7 @@
         transaction.params = {
           amountOutMin: (amountOutMin || amountOut),
           path: fullPath,
-          to: fromAddress,
+          to: account,
           deadline,
         };
         transaction.value = amountIn;
@@ -3366,7 +3419,7 @@
           amountNATIVEOut: amountOut,
           amountInMax,
           path: fullPath,
-          to: fromAddress,
+          to: account,
           deadline,
         };
       } else {
@@ -3375,7 +3428,7 @@
           amountIn,
           amountOutMinNATIVE: (amountOutMin || amountOut),
           path: fullPath,
-          to: fromAddress,
+          to: account,
           deadline,
         };
       }
@@ -3386,7 +3439,7 @@
           amountOut,
           amountInMax,
           path: fullPath,
-          to: fromAddress,
+          to: account,
           deadline,
         };
       } else {
@@ -3395,7 +3448,7 @@
           amountIn,
           amountOutMin: (amountOutMin || amountOut),
           path: fullPath,
-          to: fromAddress,
+          to: account,
           deadline,
         };
       }
@@ -3414,6 +3467,7 @@
     pathExists: pathExists$1,
     getAmounts: getAmounts$1,
     getTransaction: getTransaction$1,
+    getPrep,
     ROUTER,
     FACTORY,
     PAIR,
@@ -3459,6 +3513,7 @@
         findPath: (args)=>TraderJoeV2_1.findPath({ ...args, exchange: exchange$a }),
         pathExists: (args)=>TraderJoeV2_1.pathExists({ ...args, exchange: exchange$a }),
         getAmounts: (args)=>TraderJoeV2_1.getAmounts({ ...args, exchange: exchange$a }),
+        getPrep: (args)=>TraderJoeV2_1.getPrep({ ...args, exchange: exchange$a }),
         getTransaction: (args)=>TraderJoeV2_1.getTransaction({ ...args, exchange: exchange$a }),
       })
     )
@@ -3498,6 +3553,7 @@
         findPath: (args)=>UniswapV2.findPath({ ...args, exchange: exchange$9 }),
         pathExists: (args)=>UniswapV2.pathExists({ ...args, exchange: exchange$9 }),
         getAmounts: (args)=>UniswapV2.getAmounts({ ...args, exchange: exchange$9 }),
+        getPrep: (args)=>UniswapV2.getPrep({ ...args, exchange: exchange$9 }),
         getTransaction: (args)=>UniswapV2.getTransaction({ ...args, exchange: exchange$9 }),
       })
     )
@@ -3615,6 +3671,7 @@
         findPath: (args)=>UniswapV3.findPath({ ...args, exchange: exchange$8 }),
         pathExists: (args)=>UniswapV3.pathExists({ ...args, exchange: exchange$8 }),
         getAmounts: (args)=>UniswapV3.getAmounts({ ...args, exchange: exchange$8 }),
+        getPrep: (args)=>UniswapV3.getPrep({ ...args, exchange: exchange$8 }),
         getTransaction: (args)=>UniswapV3.getTransaction({ ...args, exchange: exchange$8 }),
       })
     )
@@ -3675,12 +3732,12 @@
     amountOutInput,
     amountInMaxInput,
     amountOutMinInput,
-    fromAddress
+    account
   }) => {
     
     let transaction = {
       blockchain: blockchain,
-      from: fromAddress,
+      from: account,
       to: exchange[blockchain].router.address,
       api: exchange[blockchain].router.api,
     };
@@ -3734,6 +3791,7 @@
         findPath: (args)=>WETH$1.findPath({ ...args, exchange: exchange$7 }),
         pathExists: (args)=>WETH$1.pathExists({ ...args, exchange: exchange$7 }),
         getAmounts: (args)=>WETH$1.getAmounts({ ...args, exchange: exchange$7 }),
+        getPrep: (args)=>{},
         getTransaction: (args)=>WETH$1.getTransaction({ ...args, exchange: exchange$7 }),
       })
     )
@@ -3766,6 +3824,7 @@
         findPath: (args)=>WETH$1.findPath({ ...args, exchange: exchange$6 }),
         pathExists: (args)=>WETH$1.pathExists({ ...args, exchange: exchange$6 }),
         getAmounts: (args)=>WETH$1.getAmounts({ ...args, exchange: exchange$6 }),
+        getPrep: (args)=>{},
         getTransaction: (args)=>WETH$1.getTransaction({ ...args, exchange: exchange$6 }),
       })
     )
@@ -3798,6 +3857,7 @@
         findPath: (args)=>WETH$1.findPath({ ...args, exchange: exchange$5 }),
         pathExists: (args)=>WETH$1.pathExists({ ...args, exchange: exchange$5 }),
         getAmounts: (args)=>WETH$1.getAmounts({ ...args, exchange: exchange$5 }),
+        getPrep: (args)=>{},
         getTransaction: (args)=>WETH$1.getTransaction({ ...args, exchange: exchange$5 }),
       })
     )
@@ -3830,6 +3890,7 @@
         findPath: (args)=>WETH$1.findPath({ ...args, exchange: exchange$4 }),
         pathExists: (args)=>WETH$1.pathExists({ ...args, exchange: exchange$4 }),
         getAmounts: (args)=>WETH$1.getAmounts({ ...args, exchange: exchange$4 }),
+        getPrep: (args)=>{},
         getTransaction: (args)=>WETH$1.getTransaction({ ...args, exchange: exchange$4 }),
       })
     )
@@ -3862,6 +3923,7 @@
         findPath: (args)=>WETH$1.findPath({ ...args, exchange: exchange$3 }),
         pathExists: (args)=>WETH$1.pathExists({ ...args, exchange: exchange$3 }),
         getAmounts: (args)=>WETH$1.getAmounts({ ...args, exchange: exchange$3 }),
+        getPrep: (args)=>{},
         getTransaction: (args)=>WETH$1.getTransaction({ ...args, exchange: exchange$3 }),
       })
     )
@@ -3894,6 +3956,7 @@
         findPath: (args)=>WETH$1.findPath({ ...args, exchange: exchange$2 }),
         pathExists: (args)=>WETH$1.pathExists({ ...args, exchange: exchange$2 }),
         getAmounts: (args)=>WETH$1.getAmounts({ ...args, exchange: exchange$2 }),
+        getPrep: (args)=>{},
         getTransaction: (args)=>WETH$1.getTransaction({ ...args, exchange: exchange$2 }),
       })
     )
@@ -3926,6 +3989,7 @@
         findPath: (args)=>WETH$1.findPath({ ...args, exchange: exchange$1 }),
         pathExists: (args)=>WETH$1.pathExists({ ...args, exchange: exchange$1 }),
         getAmounts: (args)=>WETH$1.getAmounts({ ...args, exchange: exchange$1 }),
+        getPrep: (args)=>{},
         getTransaction: (args)=>WETH$1.getTransaction({ ...args, exchange: exchange$1 }),
       })
     )
@@ -3958,6 +4022,7 @@
         findPath: (args)=>WETH$1.findPath({ ...args, exchange }),
         pathExists: (args)=>WETH$1.pathExists({ ...args, exchange }),
         getAmounts: (args)=>WETH$1.getAmounts({ ...args, exchange }),
+        getPrep: (args)=>{},
         getTransaction: (args)=>WETH$1.getTransaction({ ...args, exchange }),
       })
     )

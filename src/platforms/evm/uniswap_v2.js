@@ -226,12 +226,12 @@ let getTransaction = ({
   amountOutInput,
   amountInMaxInput,
   amountOutMinInput,
-  fromAddress
+  account
 }) => {
 
   let transaction = {
     blockchain,
-    from: fromAddress,
+    from: account,
     to: exchange[blockchain].router.address,
     api: exchange[blockchain].router.api,
   }
@@ -266,7 +266,7 @@ let getTransaction = ({
 
   transaction.params = Object.assign({}, transaction.params, {
     path: getExchangePath({ blockchain, exchange, path }),
-    to: fromAddress,
+    to: account,
     deadline: Math.round(Date.now() / 1000) + 60 * 60 * 24, // 24 hours
   })
 

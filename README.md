@@ -43,7 +43,7 @@ const wallet = getWallets()[0]
 const account = await wallet.account()
 
 // check if prep is required to facilitate swap/exchange
-const preparation = await route.getPrep({ from: account })
+const preparation = await route.getPrep({ account })
 
 let signature
 if(prep?.transaction) {
@@ -53,7 +53,7 @@ if(prep?.transaction) {
 }
 
 // use connected wallet to sign and send the swap transaction
-const transaction = await route.getTransaction({ from: account, signature })
+const transaction = await route.getTransaction({ account, signature })
 wallet.sendTransaction(transaction)
 
 ```
@@ -201,6 +201,7 @@ A single `Route` has the following structure:
   amountOut: BigNumber (e.g. '32000000000000000000')
   amountInMax: BigNumber (e.g. '1000000000000000000')
   exchange: Exchange (see [Exchange data structure](#exchange))
+  getPrep: async function (returns transaction object for approvals or signature request for permit2)
   getTransaction: async function (returns transaction object –> see @depay/web3-wallets for details)
 }
 ```

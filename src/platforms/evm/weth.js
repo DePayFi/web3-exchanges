@@ -61,12 +61,12 @@ let getTransaction = ({
   amountOutInput,
   amountInMaxInput,
   amountOutMinInput,
-  fromAddress
+  account
 }) => {
   
   let transaction = {
     blockchain: blockchain,
-    from: fromAddress,
+    from: account,
     to: exchange[blockchain].router.address,
     api: exchange[blockchain].router.api,
   }

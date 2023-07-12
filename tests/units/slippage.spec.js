@@ -44,7 +44,7 @@ describe('slippage', () => {
 
     it('uses default slippage of 0.5%', async ()=> {
       const route = await exchange.route({ amountOutMin: 1, tokenIn, tokenOut })
-      const transaction = await route.getTransaction({ from: accounts[0] })
+      const transaction = await route.getTransaction({ account: accounts[0] })
       expect(transaction.params.amountIn).toEqual(amountInBN.add('25000000000000000').toString())
     })
   })
@@ -62,7 +62,7 @@ describe('slippage', () => {
 
     it('projects price change to cover slippage', async ()=>{
       let route = await exchange.route({ amountOutMin: 1, tokenIn, tokenOut })
-      const transaction = await route.getTransaction({ from: accounts[0] })
+      const transaction = await route.getTransaction({ account: accounts[0] })
       expect(transaction.params.amountIn).toEqual('5060000000000000000')
     })
   })
@@ -80,7 +80,7 @@ describe('slippage', () => {
 
     it('projects extreme volatility to cover slippage', async ()=>{
       let route = await exchange.route({ amountOutMin: 1, tokenIn, tokenOut })
-      const transaction = await route.getTransaction({ from: accounts[0] })
+      const transaction = await route.getTransaction({ account: accounts[0] })
       expect(transaction.params.amountIn).toEqual('5080000000000000000')
     })
   })

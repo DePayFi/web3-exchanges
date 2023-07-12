@@ -173,7 +173,7 @@ describe('orca', () => {
                 sqrtPriceLimit: '79226673515401279992447579055',
                 aToB,
               },
-              keys: await getSwapInstructionKeys({ fromAddress, pool, tokenAccountA, tokenVaultA , tokenAccountB, tokenVaultB, tickArrays })
+              keys: await getSwapInstructionKeys({ account: fromAddress, pool, tokenAccountA, tokenVaultA , tokenAccountB, tokenVaultB, tickArrays })
             }
           ]
         }
@@ -207,7 +207,7 @@ describe('orca', () => {
                 sqrtPriceLimit: '79226673515401279992447579055',
                 aToB,
               },
-              keys: await getSwapInstructionKeys({ fromAddress, pool, tokenAccountA, tokenVaultA , tokenAccountB, tokenVaultB, tickArrays })
+              keys: await getSwapInstructionKeys({ account: fromAddress, pool, tokenAccountA, tokenVaultA , tokenAccountB, tokenVaultB, tickArrays })
             }
           ]
         }
@@ -241,7 +241,7 @@ describe('orca', () => {
                 sqrtPriceLimit: '79226673515401279992447579055',
                 aToB,
               },
-              keys: await getSwapInstructionKeys({ fromAddress, pool, tokenAccountA, tokenVaultA , tokenAccountB, tokenVaultB, tickArrays })
+              keys: await getSwapInstructionKeys({ account: fromAddress, pool, tokenAccountA, tokenVaultA , tokenAccountB, tokenVaultB, tickArrays })
             }
           ]
         }
@@ -275,7 +275,7 @@ describe('orca', () => {
                 sqrtPriceLimit: '79226673515401279992447579055',
                 aToB,
               },
-              keys: await getSwapInstructionKeys({ fromAddress, pool, tokenAccountA, tokenVaultA , tokenAccountB, tokenVaultB, tickArrays })
+              keys: await getSwapInstructionKeys({ account: fromAddress, pool, tokenAccountA, tokenVaultA , tokenAccountB, tokenVaultB, tickArrays })
             }
           ]
         }
@@ -327,7 +327,7 @@ describe('orca', () => {
                   sqrtPriceLimit: '79226673515401279992447579055',
                   aToB,
                 },
-                keys: await getSwapInstructionKeys({ fromAddress, pool, tokenAccountA, tokenVaultA , tokenAccountB, tokenVaultB, tickArrays })
+                keys: await getSwapInstructionKeys({ account: fromAddress, pool, tokenAccountA, tokenVaultA , tokenAccountB, tokenVaultB, tickArrays })
               }
             ]
           }
@@ -372,7 +372,7 @@ describe('orca', () => {
     
     it('WRAPS SOL <> WSOL and creates WSOL temp throw away account to route NATIVE to token', async ()=> {
 
-      let keys = await getSwapInstructionKeys({ fromAddress, pool, tokenAccountA, tokenVaultA , tokenAccountB, tokenVaultB, tickArrays })
+      let keys = await getSwapInstructionKeys({ account: fromAddress, pool, tokenAccountA, tokenVaultA , tokenAccountB, tokenVaultB, tickArrays })
       keys[5] = anything // tokenAccountB
       
       await testRouting({
@@ -474,7 +474,7 @@ describe('orca', () => {
     
     it('unwraps WSOL after routing', async ()=> {
 
-      let keys = await getSwapInstructionKeys({ fromAddress, pool, tokenAccountA, tokenVaultA , tokenAccountB, tokenVaultB, tickArrays })
+      let keys = await getSwapInstructionKeys({ account: fromAddress, pool, tokenAccountA, tokenVaultA , tokenAccountB, tokenVaultB, tickArrays })
       keys[3] = anything // tokenAccountA
 
       await testRouting({
@@ -629,7 +629,7 @@ describe('orca', () => {
                 sqrtPriceLimitOne: '79226673515401279992447579055',
                 sqrtPriceLimitTwo: '79226673515401279992447579055',
               },
-              keys: await getTwoHopSwapInstructionKeys({ fromAddress, poolOne, tickArraysOne, tokenAccountOneA, tokenVaultOneA , tokenAccountOneB, tokenVaultOneB, poolTwo, tickArraysTwo, tokenAccountTwoA, tokenVaultTwoA, tokenAccountTwoB, tokenVaultTwoB })
+              keys: await getTwoHopSwapInstructionKeys({ account: fromAddress, poolOne, tickArraysOne, tokenAccountOneA, tokenVaultOneA , tokenAccountOneB, tokenVaultOneB, poolTwo, tickArraysTwo, tokenAccountTwoA, tokenVaultTwoA, tokenAccountTwoB, tokenVaultTwoB })
             }
           ]
         }
@@ -674,7 +674,7 @@ describe('orca', () => {
                 sqrtPriceLimitOne: '79226673515401279992447579055',
                 sqrtPriceLimitTwo: '79226673515401279992447579055',
               },
-              keys: await getTwoHopSwapInstructionKeys({ fromAddress, poolOne, tickArraysOne, tokenAccountOneA, tokenVaultOneA , tokenAccountOneB, tokenVaultOneB, poolTwo, tickArraysTwo, tokenAccountTwoA, tokenVaultTwoA, tokenAccountTwoB, tokenVaultTwoB })
+              keys: await getTwoHopSwapInstructionKeys({ account: fromAddress, poolOne, tickArraysOne, tokenAccountOneA, tokenVaultOneA , tokenAccountOneB, tokenVaultOneB, poolTwo, tickArraysTwo, tokenAccountTwoA, tokenVaultTwoA, tokenAccountTwoB, tokenVaultTwoB })
             }
           ]
         }
@@ -719,7 +719,7 @@ describe('orca', () => {
                 sqrtPriceLimitOne: '79226673515401279992447579055',
                 sqrtPriceLimitTwo: '79226673515401279992447579055',
               },
-              keys: await getTwoHopSwapInstructionKeys({ fromAddress, poolOne, tickArraysOne, tokenAccountOneA, tokenVaultOneA , tokenAccountOneB, tokenVaultOneB, poolTwo, tickArraysTwo, tokenAccountTwoA, tokenVaultTwoA, tokenAccountTwoB, tokenVaultTwoB })
+              keys: await getTwoHopSwapInstructionKeys({ account: fromAddress, poolOne, tickArraysOne, tokenAccountOneA, tokenVaultOneA , tokenAccountOneB, tokenVaultOneB, poolTwo, tickArraysTwo, tokenAccountTwoA, tokenVaultTwoA, tokenAccountTwoB, tokenVaultTwoB })
             }
           ]
         }
@@ -764,7 +764,7 @@ describe('orca', () => {
                 sqrtPriceLimitOne: '79226673515401279992447579055',
                 sqrtPriceLimitTwo: '79226673515401279992447579055',
               },
-              keys: await getTwoHopSwapInstructionKeys({ fromAddress, poolOne, tickArraysOne, tokenAccountOneA, tokenVaultOneA , tokenAccountOneB, tokenVaultOneB, poolTwo, tickArraysTwo, tokenAccountTwoA, tokenVaultTwoA, tokenAccountTwoB, tokenVaultTwoB })
+              keys: await getTwoHopSwapInstructionKeys({ account: fromAddress, poolOne, tickArraysOne, tokenAccountOneA, tokenVaultOneA , tokenAccountOneB, tokenVaultOneB, poolTwo, tickArraysTwo, tokenAccountTwoA, tokenVaultTwoA, tokenAccountTwoB, tokenVaultTwoB })
             }
           ]
         }
@@ -827,7 +827,7 @@ describe('orca', () => {
                   sqrtPriceLimitOne: '79226673515401279992447579055',
                   sqrtPriceLimitTwo: '79226673515401279992447579055',
                 },
-                keys: await getTwoHopSwapInstructionKeys({ fromAddress, poolOne, tickArraysOne, tokenAccountOneA, tokenVaultOneA , tokenAccountOneB, tokenVaultOneB, poolTwo, tickArraysTwo, tokenAccountTwoA, tokenVaultTwoA, tokenAccountTwoB, tokenVaultTwoB })
+                keys: await getTwoHopSwapInstructionKeys({ account: fromAddress, poolOne, tickArraysOne, tokenAccountOneA, tokenVaultOneA , tokenAccountOneB, tokenVaultOneB, poolTwo, tickArraysTwo, tokenAccountTwoA, tokenVaultTwoA, tokenAccountTwoB, tokenVaultTwoB })
               }
             ]
           }

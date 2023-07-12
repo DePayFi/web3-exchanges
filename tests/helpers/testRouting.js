@@ -98,7 +98,7 @@ async function testRouting({
     tokenOut
   })
 
-  const routeTransaction = await route.getTransaction({ from: fromAddress })
+  const routeTransaction = await route.getTransaction({ account: fromAddress })
 
   expectRoute({
     blockchain,

@@ -14,6 +14,7 @@ const route = ({
   amountOutMin = undefined,
   findPath,
   getAmounts,
+  getPrep,
   getTransaction,
   slippage,
 }) => {
@@ -57,7 +58,14 @@ const route = ({
         amountOut,
         amountOutMin,
         exchange,
-        getTransaction: async ({ from })=> await getTransaction({
+        getPrep: async ({ account })=> await getPrep({
+          exchange,
+          blockchain,
+          tokenIn,
+          amountIn: (amountIn || amountInMax),
+          account,
+        }),
+        getTransaction: async ({ account, signature })=> await getTransaction({
           exchange,
           blockchain,
           pools,
@@ -71,7 +79,8 @@ const route = ({
           amountOutInput,
           amountInMaxInput,
           amountOutMinInput,
-          fromAddress: from
+          account,
+          signature,
         }),
       })
     )
@@ -132,6 +141,7 @@ class Exchange {
       blockchain,
       findPath: this.findPath,
       getAmounts: this.getAmounts,
+      getPrep: this.getPrep,
       getTransaction: this.getTransaction,
       slippage: this.slippage,
     })

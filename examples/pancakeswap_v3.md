@@ -10,6 +10,6 @@ let route = await Web3Exchanges.pancakeswap_v3.route({
 
 let wallets = await Web3Wallets.getWallets()
 let wallet = wallets[0]
-let from = await wallet.account()
-let transaction = await route.getTransaction({ from })
+let account = await wallet.account()
+let transaction = await route.getTransaction({ account })
 ```

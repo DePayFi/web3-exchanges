@@ -40,6 +40,7 @@ export default (scope)=>{
       findPath: (args)=>TraderJoeV2_1.findPath({ ...args, exchange }),
       pathExists: (args)=>TraderJoeV2_1.pathExists({ ...args, exchange }),
       getAmounts: (args)=>TraderJoeV2_1.getAmounts({ ...args, exchange }),
+      getPrep: (args)=>TraderJoeV2_1.getPrep({ ...args, exchange }),
       getTransaction: (args)=>TraderJoeV2_1.getTransaction({ ...args, exchange }),
     })
   )

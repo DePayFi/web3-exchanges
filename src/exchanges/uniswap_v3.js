@@ -113,6 +113,7 @@ export default (scope)=>{
       findPath: (args)=>UniswapV3.findPath({ ...args, exchange }),
       pathExists: (args)=>UniswapV3.pathExists({ ...args, exchange }),
       getAmounts: (args)=>UniswapV3.getAmounts({ ...args, exchange }),
+      getPrep: (args)=>UniswapV3.getPrep({ ...args, exchange }),
       getTransaction: (args)=>UniswapV3.getTransaction({ ...args, exchange }),
     })
   )

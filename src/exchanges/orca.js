@@ -29,6 +29,7 @@ export default (scope)=>{
       findPath: (args)=>Orca.findPath({ ...args, exchange }),
       pathExists: (args)=>Orca.pathExists({ ...args, exchange }),
       getAmounts: (args)=>Orca.getAmounts({ ...args, exchange }),
+      getPrep: (args)=>{},
       getTransaction: (args)=>Orca.getTransaction({ ...args, exchange }),
     })
   )

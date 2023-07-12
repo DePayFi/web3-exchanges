@@ -29,6 +29,7 @@ export default (scope)=>{
       findPath: (args)=>WETH.findPath({ ...args, exchange }),
       pathExists: (args)=>WETH.pathExists({ ...args, exchange }),
       getAmounts: (args)=>WETH.getAmounts({ ...args, exchange }),
+      getPrep: (args)=>{},
       getTransaction: (args)=>WETH.getTransaction({ ...args, exchange }),
     })
   )

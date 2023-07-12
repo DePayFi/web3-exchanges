@@ -313,7 +313,7 @@ let getTransaction = async({
   amountOutInput,
   amountInMaxInput,
   amountOutMinInput,
-  fromAddress
+  account
 }) => {
 
   let commands = []
@@ -325,7 +325,7 @@ let getTransaction = async({
     inputs.push(
       ethers.utils.solidityPack(
         ["address", "uint256"],
-        [fromAddress, (amountIn || amountInMax).toString()]
+        [account, (amountIn || amountInMax).toString()]
       )
     )
     value = (amountIn || amountInMax).toString()
@@ -344,7 +344,7 @@ let getTransaction = async({
       ethers.utils.solidityPack(
         ["address", "uint256", "uint256", "bytes", "bool"],
         [
-          fromAddress,
+          account,
           (amountIn || amountInMax).toString(),
           (amountOut || amountOutMin).toString(),
           packedPath,
@@ -358,7 +358,7 @@ let getTransaction = async({
       ethers.utils.solidityPack(
         ["address", "uint256", "uint256", "bytes", "bool"],
         [
-          fromAddress,
+          account,
           (amountOut || amountOutMin).toString(),
           (amountIn || amountInMax).toString(),
           packedPath,
@@ -373,14 +373,14 @@ let getTransaction = async({
     inputs.push(
       ethers.utils.solidityPack(
         ["address", "uint256"],
-        [fromAddress, (amountOut || amountOutMin).toString()]
+        [account, (amountOut || amountOutMin).toString()]
       )
     )
   }
 
   const transaction = {
     blockchain,
-    from: fromAddress,
+    from: account,
     to: exchange[blockchain].router.address,
     api: exchange[blockchain].router.api,
     method: 'execute',

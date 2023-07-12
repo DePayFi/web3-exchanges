@@ -10,8 +10,8 @@ let route = await Web3Exchanges.ethereum.weth.route({
 
 let wallets = await Web3Wallets.getWallets()
 let wallet = wallets[0]
-let from = await wallet.account()
-let transaction = await route.getTransaction({ from })
+let account = await wallet.account()
+let transaction = await route.getTransaction({ account })
 wallet.sendTransaction(transaction)
 ```
 
@@ -25,8 +25,8 @@ let route = await Web3Exchanges.ethereum.weth.route({
 
 let wallets = await Web3Wallets.getWallets()
 let wallet = wallets[0]
-let from = await wallet.account()
-let transaction = await route.getTransaction({ from })
+let account = await wallet.account()
+let transaction = await route.getTransaction({ account })
 wallet.sendTransaction(transaction)
 ```
 
@@ -42,8 +42,8 @@ let route = await Web3Exchanges.arbitrum.weth_arbitrum.route({
 
 let wallets = await Web3Wallets.getWallets()
 let wallet = wallets[0]
-let from = await wallet.account()
-let transaction = await route.getTransaction({ from })
+let account = await wallet.account()
+let transaction = await route.getTransaction({ account })
 wallet.sendTransaction(transaction)
 ```
 
@@ -57,8 +57,8 @@ let route = await Web3Exchanges.arbitrum.weth_arbitrum.route({
 
 let wallets = await Web3Wallets.getWallets()
 let wallet = wallets[0]
-let from = await wallet.account()
-let transaction = await route.getTransaction({ from })
+let account = await wallet.account()
+let transaction = await route.getTransaction({ account })
 wallet.sendTransaction(transaction)
 ```
 

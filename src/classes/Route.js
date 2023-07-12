@@ -11,6 +11,7 @@ class Route {
     exchange,
     approvalRequired,
     getApproval,
+    getPrep,
     getTransaction,
   }) {
     this.tokenIn = tokenIn
@@ -22,6 +23,7 @@ class Route {
     this.amountOut = amountOut?.toString()
     this.amountInMax = amountInMax?.toString()
     this.exchange = exchange
+    this.getPrep = getPrep
     this.getTransaction = getTransaction
   }
 }

@@ -23,6 +23,7 @@
       exchange,
       approvalRequired,
       getApproval,
+      getPrep,
       getTransaction,
     }) {
       this.tokenIn = tokenIn;
@@ -34,6 +35,7 @@
       this.amountOut = _optionalChain$1([amountOut, 'optionalAccess', _5 => _5.toString, 'call', _6 => _6()]);
       this.amountInMax = _optionalChain$1([amountInMax, 'optionalAccess', _7 => _7.toString, 'call', _8 => _8()]);
       this.exchange = exchange;
+      this.getPrep = getPrep;
       this.getTransaction = getTransaction;
     }
   }
@@ -296,6 +298,7 @@
     amountOutMin = undefined,
     findPath,
     getAmounts,
+    getPrep,
     getTransaction,
     slippage,
   }) => {
@@ -339,7 +342,14 @@
           amountOut,
           amountOutMin,
           exchange,
-          getTransaction: async ({ from })=> await getTransaction({
+          getPrep: async ({ account })=> await getPrep({
+            exchange,
+            blockchain,
+            tokenIn,
+            amountIn: (amountIn || amountInMax),
+            account,
+          }),
+          getTransaction: async ({ account, signature })=> await getTransaction({
             exchange,
             blockchain,
             pools,
@@ -353,7 +363,8 @@
             amountOutInput,
             amountInMaxInput,
             amountOutMinInput,
-            fromAddress: from
+            account,
+            signature,
           }),
         })
       );
@@ -414,6 +425,7 @@
         blockchain,
         findPath: this.findPath,
         getAmounts: this.getAmounts,
+        getPrep: this.getPrep,
         getTransaction: this.getTransaction,
         slippage: this.slippage,
       })
@@ -1808,7 +1820,7 @@
   };
 
   const getTwoHopSwapInstructionKeys = async ({
-    fromAddress,
+    account,
     poolOne,
     tickArraysOne,
     tokenAccountOneA,
@@ -1851,7 +1863,7 @@
       // token_program
       { pubkey: new solanaWeb3_js.PublicKey(Token__default['default'].solana.TOKEN_PROGRAM), isWritable: false, isSigner: false },
       // token_authority
-      { pubkey: new solanaWeb3_js.PublicKey(fromAddress), isWritable: false, isSigner: true },
+      { pubkey: new solanaWeb3_js.PublicKey(account), isWritable: false, isSigner: true },
       // whirlpool_one
       { pubkey: new solanaWeb3_js.PublicKey(poolOne.toString()), isWritable: true, isSigner: false },
       // whirlpool_two
@@ -1930,7 +1942,7 @@
   };
 
   const getSwapInstructionKeys = async ({
-    fromAddress,
+    account,
     pool,
     tokenAccountA,
     tokenVaultA,
@@ -1955,7 +1967,7 @@
       // token_program
       { pubkey: new solanaWeb3_js.PublicKey(Token__default['default'].solana.TOKEN_PROGRAM), isWritable: false, isSigner: false },
       // token_authority
-      { pubkey: new solanaWeb3_js.PublicKey(fromAddress), isWritable: false, isSigner: true },
+      { pubkey: new solanaWeb3_js.PublicKey(account), isWritable: false, isSigner: true },
       // whirlpool
       { pubkey: new solanaWeb3_js.PublicKey(pool.toString()), isWritable: true, isSigner: false },
       // token_owner_account_a
@@ -2015,7 +2027,7 @@
     amountOutInput,
     amountInMaxInput,
     amountOutMinInput,
-    fromAddress
+    account
   }) => {
     let transaction = { blockchain: 'solana' };
     let instructions = [];
@@ -2050,7 +2062,7 @@
       wrappedAccount = keypair.publicKey.toString();
       const lamports = startsWrapped ? new solanaWeb3_js.BN(amountIn.toString()).add(new solanaWeb3_js.BN(rent)) :  new solanaWeb3_js.BN(rent);
       let createAccountInstruction = solanaWeb3_js.SystemProgram.createAccount({
-        fromPubkey: new solanaWeb3_js.PublicKey(fromAddress),
+        fromPubkey: new solanaWeb3_js.PublicKey(account),
         newAccountPubkey: new solanaWeb3_js.PublicKey(wrappedAccount),
         programId: new solanaWeb3_js.PublicKey(Token__default['default'].solana.TOKEN_PROGRAM),
         space: Token__default['default'].solana.TOKEN_LAYOUT.span,
@@ -2062,7 +2074,7 @@
         Token__default['default'].solana.initializeAccountInstruction({
           account: wrappedAccount,
           token: blockchain.wrapped.address,
-          owner: fromAddress
+          owner: account
         })
       );
     }
@@ -2072,16 +2084,16 @@
       let amountSpecifiedIsInput = !!(amountInInput || amountOutMinInput);
       let amount = amountSpecifiedIsInput ? amountIn : amountOut;
       let otherAmountThreshold = amountSpecifiedIsInput ? amountOutMin : amountInMax;
-      let tokenAccountIn = startsWrapped ? new solanaWeb3_js.PublicKey(wrappedAccount) : new solanaWeb3_js.PublicKey(await Token__default['default'].solana.findProgramAddress({ owner: fromAddress, token: tokenIn }));
-      let tokenAccountOut = endsUnwrapped ? new solanaWeb3_js.PublicKey(wrappedAccount) : new solanaWeb3_js.PublicKey(await Token__default['default'].solana.findProgramAddress({ owner: fromAddress, token: tokenOut }));
+      let tokenAccountIn = startsWrapped ? new solanaWeb3_js.PublicKey(wrappedAccount) : new solanaWeb3_js.PublicKey(await Token__default['default'].solana.findProgramAddress({ owner: account, token: tokenIn }));
+      let tokenAccountOut = endsUnwrapped ? new solanaWeb3_js.PublicKey(wrappedAccount) : new solanaWeb3_js.PublicKey(await Token__default['default'].solana.findProgramAddress({ owner: account, token: tokenOut }));
       if(!endsUnwrapped) {
-        await createTokenAccountIfNotExisting({ instructions, owner: fromAddress, token: tokenOut, account: tokenAccountOut });
+        await createTokenAccountIfNotExisting({ instructions, owner: account, token: tokenOut, account: tokenAccountOut });
       }
       instructions.push(
         new solanaWeb3_js.TransactionInstruction({
           programId: new solanaWeb3_js.PublicKey('whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc'),
           keys: await getSwapInstructionKeys({
-            fromAddress,
+            account,
             pool: pairs[0].pubkey,
             tokenAccountA: pairs[0].aToB ? tokenAccountIn : tokenAccountOut,
             tokenVaultA: pairs[0].data.tokenVaultA,
@@ -2103,19 +2115,19 @@
       let amountSpecifiedIsInput = !!(amountInInput || amountOutMinInput);
       let amount = amountSpecifiedIsInput ? amountIn : amountOut;
       let otherAmountThreshold = amountSpecifiedIsInput ? amountOutMin : amountInMax;
-      let tokenAccountIn = startsWrapped ? new solanaWeb3_js.PublicKey(wrappedAccount) : new solanaWeb3_js.PublicKey(await Token__default['default'].solana.findProgramAddress({ owner: fromAddress, token: tokenIn }));
+      let tokenAccountIn = startsWrapped ? new solanaWeb3_js.PublicKey(wrappedAccount) : new solanaWeb3_js.PublicKey(await Token__default['default'].solana.findProgramAddress({ owner: account, token: tokenIn }));
       let tokenMiddle = exchangePath[1];
-      let tokenAccountMiddle = new solanaWeb3_js.PublicKey(await Token__default['default'].solana.findProgramAddress({ owner: fromAddress, token: tokenMiddle }));
-      await createTokenAccountIfNotExisting({ instructions, owner: fromAddress, token: tokenMiddle, account: tokenAccountMiddle });
-      let tokenAccountOut = endsUnwrapped ? new solanaWeb3_js.PublicKey(wrappedAccount) : new solanaWeb3_js.PublicKey(await Token__default['default'].solana.findProgramAddress({ owner: fromAddress, token: tokenOut }));
+      let tokenAccountMiddle = new solanaWeb3_js.PublicKey(await Token__default['default'].solana.findProgramAddress({ owner: account, token: tokenMiddle }));
+      await createTokenAccountIfNotExisting({ instructions, owner: account, token: tokenMiddle, account: tokenAccountMiddle });
+      let tokenAccountOut = endsUnwrapped ? new solanaWeb3_js.PublicKey(wrappedAccount) : new solanaWeb3_js.PublicKey(await Token__default['default'].solana.findProgramAddress({ owner: account, token: tokenOut }));
       if(!endsUnwrapped) {
-        await createTokenAccountIfNotExisting({ instructions, owner: fromAddress, token: tokenOut, account: tokenAccountOut });
+        await createTokenAccountIfNotExisting({ instructions, owner: account, token: tokenOut, account: tokenAccountOut });
       }
       instructions.push(
         new solanaWeb3_js.TransactionInstruction({
           programId: new solanaWeb3_js.PublicKey('whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc'),
           keys: await getTwoHopSwapInstructionKeys({
-            fromAddress,
+            account,
             poolOne: pairs[0].pubkey,
             tickArraysOne: pairs[0].tickArrays,
             tokenAccountOneA: pairs[0].aToB ? tokenAccountIn : tokenAccountMiddle,
@@ -2146,7 +2158,7 @@
       instructions.push(
         Token__default['default'].solana.closeAccountInstruction({
           account: wrappedAccount,
-          owner: fromAddress
+          owner: account
         })
       );
     }
@@ -2193,6 +2205,7 @@
         findPath: (args)=>Orca.findPath({ ...args, exchange }),
         pathExists: (args)=>Orca.pathExists({ ...args, exchange }),
         getAmounts: (args)=>Orca.getAmounts({ ...args, exchange }),
+        getPrep: (args)=>{},
         getTransaction: (args)=>Orca.getTransaction({ ...args, exchange }),
       })
     )

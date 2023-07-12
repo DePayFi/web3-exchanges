@@ -37,6 +37,7 @@ export default (scope)=>{
       findPath: (args)=>UniswapV2.findPath({ ...args, exchange }),
       pathExists: (args)=>UniswapV2.pathExists({ ...args, exchange }),
       getAmounts: (args)=>UniswapV2.getAmounts({ ...args, exchange }),
+      getPrep: (args)=>UniswapV2.getPrep({ ...args, exchange }),
       getTransaction: (args)=>UniswapV2.getTransaction({ ...args, exchange }),
     })
   )

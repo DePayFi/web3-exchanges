@@ -157,7 +157,7 @@ describe('uniswap_v3', () => {
           expect(route.amountInMax).toEqual(fetchedAmountInBN.add(slippage).toString())
           expect(route.exchange).toBeDefined()
 
-          const transaction = await route.getTransaction({ from: fromAddress })
+          const transaction = await route.getTransaction({ account: fromAddress })
 
           expect(transaction.blockchain).toEqual(blockchain)
           expect(transaction.from).toEqual(fromAddress)
@@ -226,7 +226,7 @@ describe('uniswap_v3', () => {
           expect(route.amountInMax).toEqual(fetchedAmountInBN.add(slippage).toString())
           expect(route.exchange).toBeDefined()
 
-          const transaction = await route.getTransaction({ from: fromAddress })
+          const transaction = await route.getTransaction({ account: fromAddress })
 
           expect(transaction.blockchain).toEqual(blockchain)
           expect(transaction.from).toEqual(fromAddress)
@@ -287,7 +287,7 @@ describe('uniswap_v3', () => {
           expect(route.amountInMax).toEqual(undefined)
           expect(route.exchange).toBeDefined()
 
-          const transaction = await route.getTransaction({ from: fromAddress })
+          const transaction = await route.getTransaction({ account: fromAddress })
 
           expect(transaction.blockchain).toEqual(blockchain)
           expect(transaction.from).toEqual(fromAddress)
@@ -348,7 +348,7 @@ describe('uniswap_v3', () => {
           expect(route.amountInMax).toEqual(amountInBN.toString())
           expect(route.exchange).toBeDefined()
 
-          const transaction = await route.getTransaction({ from: fromAddress })
+          const transaction = await route.getTransaction({ account: fromAddress })
 
           expect(transaction.blockchain).toEqual(blockchain)
           expect(transaction.from).toEqual(fromAddress)
@@ -426,7 +426,7 @@ describe('uniswap_v3', () => {
           expect(route.amountInMax).toEqual(fetchedAmountInBN.add(slippage).toString())
           expect(route.exchange).toBeDefined()
 
-          const transaction = await route.getTransaction({ from: fromAddress })
+          const transaction = await route.getTransaction({ account: fromAddress })
 
           expect(transaction.blockchain).toEqual(blockchain)
           expect(transaction.from).toEqual(fromAddress)
@@ -500,7 +500,7 @@ describe('uniswap_v3', () => {
           expect(route.amountInMax).toEqual(fetchedAmountInBN.add(slippage).toString())
           expect(route.exchange).toBeDefined()
 
-          const transaction = await route.getTransaction({ from: fromAddress })
+          const transaction = await route.getTransaction({ account: fromAddress })
 
           expect(transaction.blockchain).toEqual(blockchain)
           expect(transaction.from).toEqual(fromAddress)
@@ -566,7 +566,7 @@ describe('uniswap_v3', () => {
           expect(route.amountInMax).toEqual(undefined)
           expect(route.exchange).toBeDefined()
 
-          const transaction = await route.getTransaction({ from: fromAddress })
+          const transaction = await route.getTransaction({ account: fromAddress })
 
           expect(transaction.blockchain).toEqual(blockchain)
           expect(transaction.from).toEqual(fromAddress)
@@ -632,7 +632,7 @@ describe('uniswap_v3', () => {
           expect(route.amountInMax).toEqual(amountInBN.toString())
           expect(route.exchange).toBeDefined()
 
-          const transaction = await route.getTransaction({ from: fromAddress })
+          const transaction = await route.getTransaction({ account: fromAddress })
 
           expect(transaction.blockchain).toEqual(blockchain)
           expect(transaction.from).toEqual(fromAddress)
@@ -717,7 +717,7 @@ describe('uniswap_v3', () => {
           expect(route.amountInMax).toEqual(fetchedAmountInBN.add(slippage).toString())
           expect(route.exchange).toBeDefined()
 
-          const transaction = await route.getTransaction({ from: fromAddress })
+          const transaction = await route.getTransaction({ account: fromAddress })
 
           expect(transaction.blockchain).toEqual(blockchain)
           expect(transaction.from).toEqual(fromAddress)
@@ -791,7 +791,7 @@ describe('uniswap_v3', () => {
           expect(route.amountInMax).toEqual(fetchedAmountInBN.add(slippage).toString())
           expect(route.exchange).toBeDefined()
 
-          const transaction = await route.getTransaction({ from: fromAddress })
+          const transaction = await route.getTransaction({ account: fromAddress })
 
           expect(transaction.blockchain).toEqual(blockchain)
           expect(transaction.from).toEqual(fromAddress)
@@ -857,7 +857,7 @@ describe('uniswap_v3', () => {
           expect(route.amountInMax).toEqual(undefined)
           expect(route.exchange).toBeDefined()
 
-          const transaction = await route.getTransaction({ from: fromAddress })
+          const transaction = await route.getTransaction({ account: fromAddress })
 
           expect(transaction.blockchain).toEqual(blockchain)
           expect(transaction.from).toEqual(fromAddress)
@@ -923,7 +923,7 @@ describe('uniswap_v3', () => {
           expect(route.amountInMax).toEqual(amountInBN.toString())
           expect(route.exchange).toBeDefined()
 
-          const transaction = await route.getTransaction({ from: fromAddress })
+          const transaction = await route.getTransaction({ account: fromAddress })
 
           expect(transaction.blockchain).toEqual(blockchain)
           expect(transaction.from).toEqual(fromAddress)
@@ -1026,7 +1026,7 @@ describe('uniswap_v3', () => {
           expect(route.amountInMax).toEqual(fetchedAmountInBN.add(slippage).toString())
           expect(route.exchange).toBeDefined()
 
-          const transaction = await route.getTransaction({ from: fromAddress })
+          const transaction = await route.getTransaction({ account: fromAddress })
 
           expect(transaction.blockchain).toEqual(blockchain)
           expect(transaction.from).toEqual(fromAddress)
@@ -1113,7 +1113,7 @@ describe('uniswap_v3', () => {
           expect(route.amountInMax).toEqual(fetchedAmountInBN.add(slippage).toString())
           expect(route.exchange).toBeDefined()
 
-          const transaction = await route.getTransaction({ from: fromAddress })
+          const transaction = await route.getTransaction({ account: fromAddress })
 
           expect(transaction.blockchain).toEqual(blockchain)
           expect(transaction.from).toEqual(fromAddress)
@@ -1190,7 +1190,7 @@ describe('uniswap_v3', () => {
           expect(route.amountInMax).toEqual(undefined)
           expect(route.exchange).toBeDefined()
 
-          const transaction = await route.getTransaction({ from: fromAddress })
+          const transaction = await route.getTransaction({ account: fromAddress })
 
           expect(transaction.blockchain).toEqual(blockchain)
           expect(transaction.from).toEqual(fromAddress)
@@ -1267,7 +1267,7 @@ describe('uniswap_v3', () => {
           expect(route.amountInMax).toEqual(amountInBN.toString())
           expect(route.exchange).toBeDefined()
 
-          const transaction = await route.getTransaction({ from: fromAddress })
+          const transaction = await route.getTransaction({ account: fromAddress })
 
           expect(transaction.blockchain).toEqual(blockchain)
           expect(transaction.from).toEqual(fromAddress)

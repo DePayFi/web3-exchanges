@@ -22,6 +22,7 @@
       exchange,
       approvalRequired,
       getApproval,
+      getPrep,
       getTransaction,
     }) {
       this.tokenIn = tokenIn;
@@ -33,6 +34,7 @@
       this.amountOut = _optionalChain$3([amountOut, 'optionalAccess', _5 => _5.toString, 'call', _6 => _6()]);
       this.amountInMax = _optionalChain$3([amountInMax, 'optionalAccess', _7 => _7.toString, 'call', _8 => _8()]);
       this.exchange = exchange;
+      this.getPrep = getPrep;
       this.getTransaction = getTransaction;
     }
   }
@@ -295,6 +297,7 @@
     amountOutMin = undefined,
     findPath,
     getAmounts,
+    getPrep,
     getTransaction,
     slippage,
   }) => {
@@ -338,7 +341,14 @@
           amountOut,
           amountOutMin,
           exchange,
-          getTransaction: async ({ from })=> await getTransaction({
+          getPrep: async ({ account })=> await getPrep({
+            exchange,
+            blockchain,
+            tokenIn,
+            amountIn: (amountIn || amountInMax),
+            account,
+          }),
+          getTransaction: async ({ account, signature })=> await getTransaction({
             exchange,
             blockchain,
             pools,
@@ -352,7 +362,8 @@
             amountOutInput,
             amountInMaxInput,
             amountOutMinInput,
-            fromAddress: from
+            account,
+            signature,
           }),
         })
       );
@@ -413,6 +424,7 @@
         blockchain,
         findPath: this.findPath,
         getAmounts: this.getAmounts,
+        getPrep: this.getPrep,
         getTransaction: this.getTransaction,
         slippage: this.slippage,
       })
@@ -632,12 +644,12 @@
     amountOutInput,
     amountInMaxInput,
     amountOutMinInput,
-    fromAddress
+    account
   }) => {
 
     let transaction = {
       blockchain,
-      from: fromAddress,
+      from: account,
       to: exchange[blockchain].router.address,
       api: exchange[blockchain].router.api,
     };
@@ -672,7 +684,7 @@
 
     transaction.params = Object.assign({}, transaction.params, {
       path: getExchangePath$2({ blockchain, exchange, path }),
-      to: fromAddress,
+      to: account,
       deadline: Math.round(Date.now() / 1000) + 60 * 60 * 24, // 24 hours
     });
 
@@ -727,6 +739,7 @@
         findPath: (args)=>UniswapV2.findPath({ ...args, exchange: exchange$f }),
         pathExists: (args)=>UniswapV2.pathExists({ ...args, exchange: exchange$f }),
         getAmounts: (args)=>UniswapV2.getAmounts({ ...args, exchange: exchange$f }),
+        getPrep: (args)=>UniswapV2.getPrep({ ...args, exchange: exchange$f }),
         getTransaction: (args)=>UniswapV2.getTransaction({ ...args, exchange: exchange$f }),
       })
     )
@@ -768,6 +781,7 @@
         findPath: (args)=>UniswapV2.findPath({ ...args, exchange: exchange$e }),
         pathExists: (args)=>UniswapV2.pathExists({ ...args, exchange: exchange$e }),
         getAmounts: (args)=>UniswapV2.getAmounts({ ...args, exchange: exchange$e }),
+        getPrep: (args)=>UniswapV2.getPrep({ ...args, exchange: exchange$e }),
         getTransaction: (args)=>UniswapV2.getTransaction({ ...args, exchange: exchange$e }),
       })
     )
@@ -1072,7 +1086,7 @@
     amountOutInput,
     amountInMaxInput,
     amountOutMinInput,
-    fromAddress
+    account
   }) => {
 
     let commands = [];
@@ -1084,7 +1098,7 @@
       inputs.push(
         ethers.ethers.utils.solidityPack(
           ["address", "uint256"],
-          [fromAddress, (amountIn || amountInMax).toString()]
+          [account, (amountIn || amountInMax).toString()]
         )
       );
       value = (amountIn || amountInMax).toString();
@@ -1103,7 +1117,7 @@
         ethers.ethers.utils.solidityPack(
           ["address", "uint256", "uint256", "bytes", "bool"],
           [
-            fromAddress,
+            account,
             (amountIn || amountInMax).toString(),
             (amountOut || amountOutMin).toString(),
             packedPath,
@@ -1117,7 +1131,7 @@
         ethers.ethers.utils.solidityPack(
           ["address", "uint256", "uint256", "bytes", "bool"],
           [
-            fromAddress,
+            account,
             (amountOut || amountOutMin).toString(),
             (amountIn || amountInMax).toString(),
             packedPath,
@@ -1132,14 +1146,14 @@
       inputs.push(
         ethers.ethers.utils.solidityPack(
           ["address", "uint256"],
-          [fromAddress, (amountOut || amountOutMin).toString()]
+          [account, (amountOut || amountOutMin).toString()]
         )
       );
     }
 
     const transaction = {
       blockchain,
-      from: fromAddress,
+      from: account,
       to: exchange[blockchain].router.address,
       api: exchange[blockchain].router.api,
       method: 'execute',
@@ -1206,6 +1220,7 @@
         findPath: (args)=>UniswapV3.findPath({ ...args, exchange: exchange$d }),
         pathExists: (args)=>UniswapV3.pathExists({ ...args, exchange: exchange$d }),
         getAmounts: (args)=>UniswapV3.getAmounts({ ...args, exchange: exchange$d }),
+        getPrep: (args)=>UniswapV3.getPrep({ ...args, exchange: exchange$d }),
         getTransaction: (args)=>UniswapV3.getTransaction({ ...args, exchange: exchange$d }),
       })
     )
@@ -1245,6 +1260,7 @@
         findPath: (args)=>UniswapV2.findPath({ ...args, exchange: exchange$c }),
         pathExists: (args)=>UniswapV2.pathExists({ ...args, exchange: exchange$c }),
         getAmounts: (args)=>UniswapV2.getAmounts({ ...args, exchange: exchange$c }),
+        getPrep: (args)=>UniswapV2.getPrep({ ...args, exchange: exchange$c }),
         getTransaction: (args)=>UniswapV2.getTransaction({ ...args, exchange: exchange$c }),
       })
     )
@@ -1284,6 +1300,7 @@
         findPath: (args)=>UniswapV2.findPath({ ...args, exchange: exchange$b }),
         pathExists: (args)=>UniswapV2.pathExists({ ...args, exchange: exchange$b }),
         getAmounts: (args)=>UniswapV2.getAmounts({ ...args, exchange: exchange$b }),
+        getPrep: (args)=>UniswapV2.getPrep({ ...args, exchange: exchange$b }),
         getTransaction: (args)=>UniswapV2.getTransaction({ ...args, exchange: exchange$b }),
       })
     )
@@ -1529,6 +1546,41 @@
     return { amountOut, amountIn, amountInMax, amountOutMin }
   };
 
+  let getPrep = async({
+    exchange,
+    blockchain,
+    tokenIn,
+    amountIn,
+    account
+  })=> {
+
+    if(tokenIn === Blockchains__default['default'][blockchain].currency.address) { return } // NATIVE
+
+    console.log('request', {
+      blockchain,
+      address: tokenIn,
+      method: 'allowance',
+      api: Token__default['default'][blockchain]['20'],
+      params: {
+        owner: account,
+        spender: exchange[blockchain].router.address,
+      },
+    });
+    const allowance = await web3ClientEvm.request({
+      blockchain,
+      address: tokenIn,
+      method: 'allowance',
+      api: Token__default['default'][blockchain]['20'],
+      params: {
+        owner: account,
+        spender: exchange[blockchain].router.address,
+      },
+    });
+
+    console.log('allowance', allowance.toString());
+
+  };
+
   let getTransaction$1 = async({
     exchange,
     blockchain,
@@ -1542,12 +1594,12 @@
     amountOutInput,
     amountInMaxInput,
     amountOutMinInput,
-    fromAddress
+    account
   }) => {
 
     const transaction = {
       blockchain,
-      from: fromAddress,
+      from: account,
       to: exchange[blockchain].router.address,
       api: exchange[blockchain].router.api
     };
@@ -1566,7 +1618,7 @@
         transaction.params = {
           amountOut,
           path: fullPath,
-          to: fromAddress,
+          to: account,
           deadline,
         };
         transaction.value = amountInMax;
@@ -1575,7 +1627,7 @@
         transaction.params = {
           amountOutMin: (amountOutMin || amountOut),
           path: fullPath,
-          to: fromAddress,
+          to: account,
           deadline,
         };
         transaction.value = amountIn;
@@ -1587,7 +1639,7 @@
           amountNATIVEOut: amountOut,
           amountInMax,
           path: fullPath,
-          to: fromAddress,
+          to: account,
           deadline,
         };
       } else {
@@ -1596,7 +1648,7 @@
           amountIn,
           amountOutMinNATIVE: (amountOutMin || amountOut),
           path: fullPath,
-          to: fromAddress,
+          to: account,
           deadline,
         };
       }
@@ -1607,7 +1659,7 @@
           amountOut,
           amountInMax,
           path: fullPath,
-          to: fromAddress,
+          to: account,
           deadline,
         };
       } else {
@@ -1616,7 +1668,7 @@
           amountIn,
           amountOutMin: (amountOutMin || amountOut),
           path: fullPath,
-          to: fromAddress,
+          to: account,
           deadline,
         };
       }
@@ -1635,6 +1687,7 @@
     pathExists: pathExists$1,
     getAmounts: getAmounts$1,
     getTransaction: getTransaction$1,
+    getPrep,
     ROUTER,
     FACTORY,
     PAIR,
@@ -1680,6 +1733,7 @@
         findPath: (args)=>TraderJoeV2_1.findPath({ ...args, exchange: exchange$a }),
         pathExists: (args)=>TraderJoeV2_1.pathExists({ ...args, exchange: exchange$a }),
         getAmounts: (args)=>TraderJoeV2_1.getAmounts({ ...args, exchange: exchange$a }),
+        getPrep: (args)=>TraderJoeV2_1.getPrep({ ...args, exchange: exchange$a }),
         getTransaction: (args)=>TraderJoeV2_1.getTransaction({ ...args, exchange: exchange$a }),
       })
     )
@@ -1719,6 +1773,7 @@
         findPath: (args)=>UniswapV2.findPath({ ...args, exchange: exchange$9 }),
         pathExists: (args)=>UniswapV2.pathExists({ ...args, exchange: exchange$9 }),
         getAmounts: (args)=>UniswapV2.getAmounts({ ...args, exchange: exchange$9 }),
+        getPrep: (args)=>UniswapV2.getPrep({ ...args, exchange: exchange$9 }),
         getTransaction: (args)=>UniswapV2.getTransaction({ ...args, exchange: exchange$9 }),
       })
     )
@@ -1836,6 +1891,7 @@
         findPath: (args)=>UniswapV3.findPath({ ...args, exchange: exchange$8 }),
         pathExists: (args)=>UniswapV3.pathExists({ ...args, exchange: exchange$8 }),
         getAmounts: (args)=>UniswapV3.getAmounts({ ...args, exchange: exchange$8 }),
+        getPrep: (args)=>UniswapV3.getPrep({ ...args, exchange: exchange$8 }),
         getTransaction: (args)=>UniswapV3.getTransaction({ ...args, exchange: exchange$8 }),
       })
     )
@@ -1896,12 +1952,12 @@
     amountOutInput,
     amountInMaxInput,
     amountOutMinInput,
-    fromAddress
+    account
   }) => {
     
     let transaction = {
       blockchain: blockchain,
-      from: fromAddress,
+      from: account,
       to: exchange[blockchain].router.address,
       api: exchange[blockchain].router.api,
     };
@@ -1955,6 +2011,7 @@
         findPath: (args)=>WETH$1.findPath({ ...args, exchange: exchange$7 }),
         pathExists: (args)=>WETH$1.pathExists({ ...args, exchange: exchange$7 }),
         getAmounts: (args)=>WETH$1.getAmounts({ ...args, exchange: exchange$7 }),
+        getPrep: (args)=>{},
         getTransaction: (args)=>WETH$1.getTransaction({ ...args, exchange: exchange$7 }),
       })
     )
@@ -1987,6 +2044,7 @@
         findPath: (args)=>WETH$1.findPath({ ...args, exchange: exchange$6 }),
         pathExists: (args)=>WETH$1.pathExists({ ...args, exchange: exchange$6 }),
         getAmounts: (args)=>WETH$1.getAmounts({ ...args, exchange: exchange$6 }),
+        getPrep: (args)=>{},
         getTransaction: (args)=>WETH$1.getTransaction({ ...args, exchange: exchange$6 }),
       })
     )
@@ -2019,6 +2077,7 @@
         findPath: (args)=>WETH$1.findPath({ ...args, exchange: exchange$5 }),
         pathExists: (args)=>WETH$1.pathExists({ ...args, exchange: exchange$5 }),
         getAmounts: (args)=>WETH$1.getAmounts({ ...args, exchange: exchange$5 }),
+        getPrep: (args)=>{},
         getTransaction: (args)=>WETH$1.getTransaction({ ...args, exchange: exchange$5 }),
       })
     )
@@ -2051,6 +2110,7 @@
         findPath: (args)=>WETH$1.findPath({ ...args, exchange: exchange$4 }),
         pathExists: (args)=>WETH$1.pathExists({ ...args, exchange: exchange$4 }),
         getAmounts: (args)=>WETH$1.getAmounts({ ...args, exchange: exchange$4 }),
+        getPrep: (args)=>{},
         getTransaction: (args)=>WETH$1.getTransaction({ ...args, exchange: exchange$4 }),
       })
     )
@@ -2083,6 +2143,7 @@
         findPath: (args)=>WETH$1.findPath({ ...args, exchange: exchange$3 }),
         pathExists: (args)=>WETH$1.pathExists({ ...args, exchange: exchange$3 }),
         getAmounts: (args)=>WETH$1.getAmounts({ ...args, exchange: exchange$3 }),
+        getPrep: (args)=>{},
         getTransaction: (args)=>WETH$1.getTransaction({ ...args, exchange: exchange$3 }),
       })
     )
@@ -2115,6 +2176,7 @@
         findPath: (args)=>WETH$1.findPath({ ...args, exchange: exchange$2 }),
         pathExists: (args)=>WETH$1.pathExists({ ...args, exchange: exchange$2 }),
         getAmounts: (args)=>WETH$1.getAmounts({ ...args, exchange: exchange$2 }),
+        getPrep: (args)=>{},
         getTransaction: (args)=>WETH$1.getTransaction({ ...args, exchange: exchange$2 }),
       })
     )
@@ -2147,6 +2209,7 @@
         findPath: (args)=>WETH$1.findPath({ ...args, exchange: exchange$1 }),
         pathExists: (args)=>WETH$1.pathExists({ ...args, exchange: exchange$1 }),
         getAmounts: (args)=>WETH$1.getAmounts({ ...args, exchange: exchange$1 }),
+        getPrep: (args)=>{},
         getTransaction: (args)=>WETH$1.getTransaction({ ...args, exchange: exchange$1 }),
       })
     )
@@ -2179,6 +2242,7 @@
         findPath: (args)=>WETH$1.findPath({ ...args, exchange }),
         pathExists: (args)=>WETH$1.pathExists({ ...args, exchange }),
         getAmounts: (args)=>WETH$1.getAmounts({ ...args, exchange }),
+        getPrep: (args)=>{},
         getTransaction: (args)=>WETH$1.getTransaction({ ...args, exchange }),
       })
     )

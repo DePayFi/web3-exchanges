@@ -49,7 +49,7 @@ describe('wmatic', () => {
       expect(route.amountOut).toEqual(amountOut)
       expect(route.exchange.name).toEqual('wmatic')
 
-      let routeTransaction = await route.getTransaction({ from: fromAddress })
+      let routeTransaction = await route.getTransaction({ account: fromAddress })
 
       let transactionMock = mock({ blockchain, transaction: {
         to: exchange[blockchain].router.address,
@@ -85,7 +85,7 @@ describe('wmatic', () => {
       expect(route.amountOut).toEqual(amountOut)
       expect(route.exchange.name).toEqual('wmatic')
 
-      let routeTransaction = await route.getTransaction({ from: fromAddress })
+      let routeTransaction = await route.getTransaction({ account: fromAddress })
 
       let transactionMock = mock({ blockchain, transaction: {
         to: exchange[blockchain].router.address,
