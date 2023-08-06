@@ -164,11 +164,11 @@ describe('uniswap_v3', () => {
           expect(transaction.to).toEqual(exchange[blockchain].router.address)
           expect(transaction.api).toEqual(exchange[blockchain].router.api)
           expect(transaction.method).toEqual('execute')
-          expect(transaction.params.commands).toEqual(['0x01'])
+          expect(transaction.params.commands).toEqual('0x01')
           expect(transaction.params.inputs).toEqual([
-            ethers.utils.solidityPack(["address", "uint256", "uint256", "bytes", "bool"],
+            ethers.utils.defaultAbiCoder.encode(["address", "uint256", "uint256", "bytes", "bool"],
               [
-                fromAddress,
+                "0x0000000000000000000000000000000000000001",
                 amountOutBN.toString(),
                 fetchedAmountInBN.add(slippage).toString(),
                 ethers.utils.solidityPack(["address","uint24","address"], [tokenIn, fee, tokenOut]),
@@ -233,11 +233,11 @@ describe('uniswap_v3', () => {
           expect(transaction.to).toEqual(exchange[blockchain].router.address)
           expect(transaction.api).toEqual(exchange[blockchain].router.api)
           expect(transaction.method).toEqual('execute')
-          expect(transaction.params.commands).toEqual(['0x00'])
+          expect(transaction.params.commands).toEqual('0x00')
           expect(transaction.params.inputs).toEqual([
-            ethers.utils.solidityPack(["address", "uint256", "uint256", "bytes", "bool"],
+            ethers.utils.defaultAbiCoder.encode(["address", "uint256", "uint256", "bytes", "bool"],
               [
-                fromAddress,
+                "0x0000000000000000000000000000000000000001",
                 fetchedAmountInBN.add(slippage).toString(),
                 amountOutBN.toString(),
                 ethers.utils.solidityPack(["address","uint24","address"], [tokenIn, fee, tokenOut]),
@@ -294,11 +294,11 @@ describe('uniswap_v3', () => {
           expect(transaction.to).toEqual(exchange[blockchain].router.address)
           expect(transaction.api).toEqual(exchange[blockchain].router.api)
           expect(transaction.method).toEqual('execute')
-          expect(transaction.params.commands).toEqual(['0x00'])
+          expect(transaction.params.commands).toEqual('0x00')
           expect(transaction.params.inputs).toEqual([
-            ethers.utils.solidityPack(["address", "uint256", "uint256", "bytes", "bool"],
+            ethers.utils.defaultAbiCoder.encode(["address", "uint256", "uint256", "bytes", "bool"],
               [
-                fromAddress,
+                "0x0000000000000000000000000000000000000001",
                 amountInBN.toString(),
                 fetchedAmountOutBN.toString(),
                 ethers.utils.solidityPack(["address","uint24","address"], [tokenIn, fee, tokenOut]),
@@ -355,11 +355,11 @@ describe('uniswap_v3', () => {
           expect(transaction.to).toEqual(exchange[blockchain].router.address)
           expect(transaction.api).toEqual(exchange[blockchain].router.api)
           expect(transaction.method).toEqual('execute')
-          expect(transaction.params.commands).toEqual(['0x01'])
+          expect(transaction.params.commands).toEqual('0x01')
           expect(transaction.params.inputs).toEqual([
-            ethers.utils.solidityPack(["address", "uint256", "uint256", "bytes", "bool"],
+            ethers.utils.defaultAbiCoder.encode(["address", "uint256", "uint256", "bytes", "bool"],
               [
-                fromAddress,
+                "0x0000000000000000000000000000000000000001",
                 fetchedAmountOutBN.toString(),
                 amountInBN.toString(),
                 ethers.utils.solidityPack(["address","uint24","address"], [tokenIn, fee, tokenOut]),
@@ -433,20 +433,20 @@ describe('uniswap_v3', () => {
           expect(transaction.to).toEqual(exchange[blockchain].router.address)
           expect(transaction.api).toEqual(exchange[blockchain].router.api)
           expect(transaction.method).toEqual('execute')
-          expect(transaction.params.commands).toEqual(['0x01', '0x0c'])
+          expect(transaction.params.commands).toEqual('0x010c')
           expect(transaction.params.inputs).toEqual([
-            ethers.utils.solidityPack(["address", "uint256", "uint256", "bytes", "bool"],
+            ethers.utils.defaultAbiCoder.encode(["address", "uint256", "uint256", "bytes", "bool"],
               [
-                fromAddress,
+                "0x0000000000000000000000000000000000000002",
                 amountOutBN.toString(),
                 fetchedAmountInBN.add(slippage).toString(),
                 ethers.utils.solidityPack(["address","uint24","address"], [tokenIn, fee, Blockchains[blockchain].wrapped.address]),
                 true
               ]
             ),
-            ethers.utils.solidityPack(["address", "uint256"],
+            ethers.utils.defaultAbiCoder.encode(["address", "uint256"],
               [
-                fromAddress,
+                "0x0000000000000000000000000000000000000001",
                 amountOutBN.toString(),
               ]
             )
@@ -507,20 +507,20 @@ describe('uniswap_v3', () => {
           expect(transaction.to).toEqual(exchange[blockchain].router.address)
           expect(transaction.api).toEqual(exchange[blockchain].router.api)
           expect(transaction.method).toEqual('execute')
-          expect(transaction.params.commands).toEqual(['0x00', '0x0c'])
+          expect(transaction.params.commands).toEqual('0x000c')
           expect(transaction.params.inputs).toEqual([
-            ethers.utils.solidityPack(["address", "uint256", "uint256", "bytes", "bool"],
+            ethers.utils.defaultAbiCoder.encode(["address", "uint256", "uint256", "bytes", "bool"],
               [
-                fromAddress,
+                "0x0000000000000000000000000000000000000002",
                 fetchedAmountInBN.add(slippage).toString(),
                 amountOutBN.toString(),
                 ethers.utils.solidityPack(["address","uint24","address"], [tokenIn, fee, Blockchains[blockchain].wrapped.address]),
                 true
               ]
             ),
-            ethers.utils.solidityPack(["address", "uint256"],
+            ethers.utils.defaultAbiCoder.encode(["address", "uint256"],
               [
-                fromAddress,
+                "0x0000000000000000000000000000000000000001",
                 amountOutBN.toString(),
               ]
             )
@@ -573,20 +573,20 @@ describe('uniswap_v3', () => {
           expect(transaction.to).toEqual(exchange[blockchain].router.address)
           expect(transaction.api).toEqual(exchange[blockchain].router.api)
           expect(transaction.method).toEqual('execute')
-          expect(transaction.params.commands).toEqual(['0x00', '0x0c'])
+          expect(transaction.params.commands).toEqual('0x000c')
           expect(transaction.params.inputs).toEqual([
-            ethers.utils.solidityPack(["address", "uint256", "uint256", "bytes", "bool"],
+            ethers.utils.defaultAbiCoder.encode(["address", "uint256", "uint256", "bytes", "bool"],
               [
-                fromAddress,
+                "0x0000000000000000000000000000000000000002",
                 amountInBN.toString(),
                 fetchedAmountOutBN.toString(),
                 ethers.utils.solidityPack(["address","uint24","address"], [tokenIn, fee, Blockchains[blockchain].wrapped.address]),
                 true
               ]
             ),
-            ethers.utils.solidityPack(["address", "uint256"],
+            ethers.utils.defaultAbiCoder.encode(["address", "uint256"],
               [
-                fromAddress,
+                "0x0000000000000000000000000000000000000001",
                 fetchedAmountOutBN.toString(),
               ]
             )
@@ -639,20 +639,20 @@ describe('uniswap_v3', () => {
           expect(transaction.to).toEqual(exchange[blockchain].router.address)
           expect(transaction.api).toEqual(exchange[blockchain].router.api)
           expect(transaction.method).toEqual('execute')
-          expect(transaction.params.commands).toEqual(['0x01', '0x0c'])
+          expect(transaction.params.commands).toEqual('0x010c')
           expect(transaction.params.inputs).toEqual([
-            ethers.utils.solidityPack(["address", "uint256", "uint256", "bytes", "bool"],
+            ethers.utils.defaultAbiCoder.encode(["address", "uint256", "uint256", "bytes", "bool"],
               [
-                fromAddress,
+                "0x0000000000000000000000000000000000000002",
                 fetchedAmountOutBN.toString(),
                 amountInBN.toString(),
                 ethers.utils.solidityPack(["address","uint24","address"], [tokenIn, fee, Blockchains[blockchain].wrapped.address]),
                 true
               ]
             ),
-            ethers.utils.solidityPack(["address", "uint256"],
+            ethers.utils.defaultAbiCoder.encode(["address", "uint256"],
               [
-                fromAddress,
+                "0x0000000000000000000000000000000000000001",
                 fetchedAmountOutBN.toString(),
               ]
             )
@@ -724,21 +724,21 @@ describe('uniswap_v3', () => {
           expect(transaction.to).toEqual(exchange[blockchain].router.address)
           expect(transaction.api).toEqual(exchange[blockchain].router.api)
           expect(transaction.method).toEqual('execute')
-          expect(transaction.params.commands).toEqual(['0x0b', '0x01'])
+          expect(transaction.params.commands).toEqual('0x0b01')
           expect(transaction.params.inputs).toEqual([
-            ethers.utils.solidityPack(["address", "uint256"],
+            ethers.utils.defaultAbiCoder.encode(["address", "uint256"],
               [
-                fromAddress,
+                "0x0000000000000000000000000000000000000002",
                 fetchedAmountInBN.add(slippage).toString(),
               ]
             ),
-            ethers.utils.solidityPack(["address", "uint256", "uint256", "bytes", "bool"],
+            ethers.utils.defaultAbiCoder.encode(["address", "uint256", "uint256", "bytes", "bool"],
               [
-                fromAddress,
+                "0x0000000000000000000000000000000000000001",
                 amountOutBN.toString(),
                 fetchedAmountInBN.add(slippage).toString(),
                 ethers.utils.solidityPack(["address","uint24","address"], [Blockchains[blockchain].wrapped.address, fee, tokenOut]),
-                true
+                false
               ]
             )
           ])
@@ -798,21 +798,21 @@ describe('uniswap_v3', () => {
           expect(transaction.to).toEqual(exchange[blockchain].router.address)
           expect(transaction.api).toEqual(exchange[blockchain].router.api)
           expect(transaction.method).toEqual('execute')
-          expect(transaction.params.commands).toEqual(['0x0b', '0x00'])
+          expect(transaction.params.commands).toEqual('0x0b00')
           expect(transaction.params.inputs).toEqual([
-            ethers.utils.solidityPack(["address", "uint256"],
+            ethers.utils.defaultAbiCoder.encode(["address", "uint256"],
               [
-                fromAddress,
+                "0x0000000000000000000000000000000000000002",
                 fetchedAmountInBN.add(slippage).toString(),
               ]
             ),
-            ethers.utils.solidityPack(["address", "uint256", "uint256", "bytes", "bool"],
+            ethers.utils.defaultAbiCoder.encode(["address", "uint256", "uint256", "bytes", "bool"],
               [
-                fromAddress,
+                "0x0000000000000000000000000000000000000001",
                 fetchedAmountInBN.add(slippage).toString(),
                 amountOutBN.toString(),
                 ethers.utils.solidityPack(["address","uint24","address"], [Blockchains[blockchain].wrapped.address, fee, tokenOut]),
-                true
+                false
               ]
             )
           ])
@@ -864,21 +864,21 @@ describe('uniswap_v3', () => {
           expect(transaction.to).toEqual(exchange[blockchain].router.address)
           expect(transaction.api).toEqual(exchange[blockchain].router.api)
           expect(transaction.method).toEqual('execute')
-          expect(transaction.params.commands).toEqual(['0x0b', '0x00'])
+          expect(transaction.params.commands).toEqual('0x0b00')
           expect(transaction.params.inputs).toEqual([
-            ethers.utils.solidityPack(["address", "uint256"],
+            ethers.utils.defaultAbiCoder.encode(["address", "uint256"],
               [
-                fromAddress,
+                "0x0000000000000000000000000000000000000002",
                 amountInBN.toString(),
               ]
             ),
-            ethers.utils.solidityPack(["address", "uint256", "uint256", "bytes", "bool"],
+            ethers.utils.defaultAbiCoder.encode(["address", "uint256", "uint256", "bytes", "bool"],
               [
-                fromAddress,
+                "0x0000000000000000000000000000000000000001",
                 amountInBN.toString(),
                 fetchedAmountOutBN.toString(),
                 ethers.utils.solidityPack(["address","uint24","address"], [Blockchains[blockchain].wrapped.address, fee, tokenOut]),
-                true
+                false
               ]
             )
           ])
@@ -930,21 +930,21 @@ describe('uniswap_v3', () => {
           expect(transaction.to).toEqual(exchange[blockchain].router.address)
           expect(transaction.api).toEqual(exchange[blockchain].router.api)
           expect(transaction.method).toEqual('execute')
-          expect(transaction.params.commands).toEqual(['0x0b', '0x01'])
+          expect(transaction.params.commands).toEqual('0x0b01')
           expect(transaction.params.inputs).toEqual([
-            ethers.utils.solidityPack(["address", "uint256"],
+            ethers.utils.defaultAbiCoder.encode(["address", "uint256"],
               [
-                fromAddress,
+                "0x0000000000000000000000000000000000000002",
                 amountInBN.toString(),
               ]
             ),
-            ethers.utils.solidityPack(["address", "uint256", "uint256", "bytes", "bool"],
+            ethers.utils.defaultAbiCoder.encode(["address", "uint256", "uint256", "bytes", "bool"],
               [
-                fromAddress,
+                "0x0000000000000000000000000000000000000001",
                 fetchedAmountOutBN.toString(),
                 amountInBN.toString(),
                 ethers.utils.solidityPack(["address","uint24","address"], [Blockchains[blockchain].wrapped.address, fee, tokenOut]),
-                true
+                false
               ]
             )
           ])
@@ -1033,11 +1033,11 @@ describe('uniswap_v3', () => {
           expect(transaction.to).toEqual(exchange[blockchain].router.address)
           expect(transaction.api).toEqual(exchange[blockchain].router.api)
           expect(transaction.method).toEqual('execute')
-          expect(transaction.params.commands).toEqual(['0x01'])
+          expect(transaction.params.commands).toEqual('0x01')
           expect(transaction.params.inputs).toEqual([
-            ethers.utils.solidityPack(["address", "uint256", "uint256", "bytes", "bool"],
+            ethers.utils.defaultAbiCoder.encode(["address", "uint256", "uint256", "bytes", "bool"],
               [
-                fromAddress,
+                "0x0000000000000000000000000000000000000001",
                 amountOutBN.toString(),
                 fetchedAmountInBN.add(slippage).toString(),
                 ethers.utils.solidityPack(["address","uint24","address","uint24","address"], [tokenIn, fee, Blockchains[blockchain].wrapped.address, fee, tokenOut]),
@@ -1120,11 +1120,11 @@ describe('uniswap_v3', () => {
           expect(transaction.to).toEqual(exchange[blockchain].router.address)
           expect(transaction.api).toEqual(exchange[blockchain].router.api)
           expect(transaction.method).toEqual('execute')
-          expect(transaction.params.commands).toEqual(['0x00'])
+          expect(transaction.params.commands).toEqual('0x00')
           expect(transaction.params.inputs).toEqual([
-            ethers.utils.solidityPack(["address", "uint256", "uint256", "bytes", "bool"],
+            ethers.utils.defaultAbiCoder.encode(["address", "uint256", "uint256", "bytes", "bool"],
               [
-                fromAddress,
+                "0x0000000000000000000000000000000000000001",
                 fetchedAmountInBN.add(slippage).toString(),
                 amountOutBN.toString(),
                 ethers.utils.solidityPack(["address","uint24","address","uint24","address"], [tokenIn, fee, Blockchains[blockchain].wrapped.address, fee, tokenOut]),
@@ -1197,11 +1197,11 @@ describe('uniswap_v3', () => {
           expect(transaction.to).toEqual(exchange[blockchain].router.address)
           expect(transaction.api).toEqual(exchange[blockchain].router.api)
           expect(transaction.method).toEqual('execute')
-          expect(transaction.params.commands).toEqual(['0x00'])
+          expect(transaction.params.commands).toEqual('0x00')
           expect(transaction.params.inputs).toEqual([
-            ethers.utils.solidityPack(["address", "uint256", "uint256", "bytes", "bool"],
+            ethers.utils.defaultAbiCoder.encode(["address", "uint256", "uint256", "bytes", "bool"],
               [
-                fromAddress,
+                "0x0000000000000000000000000000000000000001",
                 amountInBN.toString(),
                 fetchedAmountOutBN.toString(),
                 ethers.utils.solidityPack(["address","uint24","address","uint24","address"], [tokenIn, fee, Blockchains[blockchain].wrapped.address, fee, tokenOut]),
@@ -1274,11 +1274,11 @@ describe('uniswap_v3', () => {
           expect(transaction.to).toEqual(exchange[blockchain].router.address)
           expect(transaction.api).toEqual(exchange[blockchain].router.api)
           expect(transaction.method).toEqual('execute')
-          expect(transaction.params.commands).toEqual(['0x01'])
+          expect(transaction.params.commands).toEqual('0x01')
           expect(transaction.params.inputs).toEqual([
-            ethers.utils.solidityPack(["address", "uint256", "uint256", "bytes", "bool"],
+            ethers.utils.defaultAbiCoder.encode(["address", "uint256", "uint256", "bytes", "bool"],
               [
-                fromAddress,
+                "0x0000000000000000000000000000000000000001",
                 fetchedAmountOutBN.toString(),
                 amountInBN.toString(),
                 ethers.utils.solidityPack(["address","uint24","address","uint24","address"], [tokenIn, fee, Blockchains[blockchain].wrapped.address, fee, tokenOut]),
