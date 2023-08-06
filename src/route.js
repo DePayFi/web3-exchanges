@@ -1,5 +1,4 @@
-import all from './all'
-import { fixRouteParams, preflight } from './params'
+import exchanges from './exchanges'
 
 let route = ({
   blockchain,
@@ -13,7 +12,7 @@ let route = ({
   amountInMin,
 }) => {
   return Promise.all(
-    all[blockchain].map((exchange) => {
+    exchanges[blockchain].map((exchange) => {
       return exchange.route({
         tokenIn,
         tokenOut,
@@ -29,4 +28,4 @@ let route = ({
   .then((routes)=>routes.filter(Boolean))
 }
 
-export { route }
+export default route

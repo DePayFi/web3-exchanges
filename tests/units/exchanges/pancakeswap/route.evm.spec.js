@@ -1,10 +1,10 @@
 import Route from 'src/classes/Route'
 import Blockchains from '@depay/web3-blockchains'
 import { ethers } from 'ethers'
-import { find } from 'dist/esm/index.evm'
+import Exchanges from 'dist/esm/index.evm'
 import { mock, resetMocks, anything } from '@depay/web3-mock'
 import { mockDecimals } from 'tests/mocks/token'
-import { mockPair, mockAmounts } from 'tests/mocks/evm/exchange'
+import { mockPair, mockAmounts } from 'tests/mocks/evm/uniswap_v2'
 import { resetCache, getProvider } from '@depay/web3-client-evm'
 import { testRouting } from 'tests/helpers/testRouting'
 
@@ -12,7 +12,7 @@ describe('pancakeswap', () => {
   
   const blockchain = 'bsc'
   const accounts = ['0xd8da6bf26964af9d7eed9e03e53415d37aa96045']
-  const exchange = find('bsc', 'pancakeswap')
+  const exchange = Exchanges.pancakeswap
   const pair = '0x804678fa97d91B974ec2af3c843270886528a9E6'
   const fromAddress = '0x5Af489c8786A018EC4814194dC8048be1007e390'
   const toAddress = '0x5Af489c8786A018EC4814194dC8048be1007e390'
@@ -67,8 +67,8 @@ describe('pancakeswap', () => {
         provider,
         blockchain,
         request: {
-          to: exchange.router.address,
-          api: exchange.router.api,
+          to: exchange[blockchain].router.address,
+          api: exchange[blockchain].router.api,
           method: 'getAmountsIn',
           params: [amountOutBN, path],
           return: Error('Routing Error')
@@ -119,8 +119,8 @@ describe('pancakeswap', () => {
         fromAddress,
         toAddress,
         transaction: {
-          to: exchange.router.address,
-          api: exchange.router.api,
+          to: exchange[blockchain].router.address,
+          api: exchange[blockchain].router.api,
           method: 'swapTokensForExactTokens',
           params: {
             amountInMax: fetchedAmountInBN.add(slippage),
@@ -156,8 +156,8 @@ describe('pancakeswap', () => {
         fromAddress,
         toAddress,
         transaction: {
-          to: exchange.router.address,
-          api: exchange.router.api,
+          to: exchange[blockchain].router.address,
+          api: exchange[blockchain].router.api,
           method: 'swapTokensForExactTokens',
           params: {
             amountInMax: fetchedAmountInBN.add(slippage),
@@ -192,8 +192,8 @@ describe('pancakeswap', () => {
         fromAddress,
         toAddress,
         transaction: {
-          to: exchange.router.address,
-          api: exchange.router.api,
+          to: exchange[blockchain].router.address,
+          api: exchange[blockchain].router.api,
           method: 'swapExactTokensForTokens',
           params: {
             amountIn: fetchedAmountInBN.add(slippage),
@@ -229,8 +229,8 @@ describe('pancakeswap', () => {
         fromAddress,
         toAddress,
         transaction: {
-          to: exchange.router.address,
-          api: exchange.router.api,
+          to: exchange[blockchain].router.address,
+          api: exchange[blockchain].router.api,
           method: 'swapExactTokensForTokens',
           params: {
             amountIn: amountInBN,
@@ -266,8 +266,8 @@ describe('pancakeswap', () => {
         fromAddress,
         toAddress,
         transaction: {
-          to: exchange.router.address,
-          api: exchange.router.api,
+          to: exchange[blockchain].router.address,
+          api: exchange[blockchain].router.api,
           method: 'swapTokensForExactTokens',
           params: {
             amountInMax: amountInMaxBN,
@@ -304,8 +304,8 @@ describe('pancakeswap', () => {
         fromAddress,
         toAddress,
         transaction: {
-          to: exchange.router.address,
-          api: exchange.router.api,
+          to: exchange[blockchain].router.address,
+          api: exchange[blockchain].router.api,
           method: 'swapTokensForExactTokens',
           params: {
             amountInMax: amountInMaxBN.add(slippage),
@@ -341,8 +341,8 @@ describe('pancakeswap', () => {
         fromAddress,
         toAddress,
         transaction: {
-          to: exchange.router.address,
-          api: exchange.router.api,
+          to: exchange[blockchain].router.address,
+          api: exchange[blockchain].router.api,
           method: 'swapExactTokensForTokens',
           params: {
             amountIn: fetchedAmountInBN.add(slippage),
@@ -384,8 +384,8 @@ describe('pancakeswap', () => {
         fromAddress,
         toAddress,
         transaction: {
-          to: exchange.router.address,
-          api: exchange.router.api,
+          to: exchange[blockchain].router.address,
+          api: exchange[blockchain].router.api,
           method: 'swapExactTokensForTokens',
           params: {
             amountIn: fetchedAmountInBN.add(slippage),
@@ -461,8 +461,8 @@ describe('pancakeswap', () => {
         fromAddress,
         toAddress,
         transaction: {
-          to: exchange.router.address,
-          api: exchange.router.api,
+          to: exchange[blockchain].router.address,
+          api: exchange[blockchain].router.api,
           method: 'swapExactTokensForTokens',
           params: {
             amountIn: fetchedAmountInBN.add(slippage),
@@ -516,8 +516,8 @@ describe('pancakeswap', () => {
         fromAddress,
         toAddress,
         transaction: {
-          to: exchange.router.address,
-          api: exchange.router.api,
+          to: exchange[blockchain].router.address,
+          api: exchange[blockchain].router.api,
           method: 'swapExactTokensForTokens',
           params: {
             amountIn: fetchedAmountInBN.add(slippage),
@@ -562,8 +562,8 @@ describe('pancakeswap', () => {
         fromAddress,
         toAddress,
         transaction: {
-          to: exchange.router.address,
-          api: exchange.router.api,
+          to: exchange[blockchain].router.address,
+          api: exchange[blockchain].router.api,
           method: 'swapETHForExactTokens',
           params: {
             amountOut: amountOutBN,
@@ -599,8 +599,8 @@ describe('pancakeswap', () => {
         fromAddress,
         toAddress,
         transaction: {
-          to: exchange.router.address,
-          api: exchange.router.api,
+          to: exchange[blockchain].router.address,
+          api: exchange[blockchain].router.api,
           method: 'swapExactETHForTokens',
           params: {
             amountOutMin: fetchedAmountOutBN,
@@ -637,8 +637,8 @@ describe('pancakeswap', () => {
         fromAddress,
         toAddress,
         transaction: {
-          to: exchange.router.address,
-          api: exchange.router.api,
+          to: exchange[blockchain].router.address,
+          api: exchange[blockchain].router.api,
           method: 'swapETHForExactTokens',
           params: {
             amountOut:  amountOutBN,
@@ -674,8 +674,8 @@ describe('pancakeswap', () => {
         fromAddress,
         toAddress,
         transaction: {
-          to: exchange.router.address,
-          api: exchange.router.api,
+          to: exchange[blockchain].router.address,
+          api: exchange[blockchain].router.api,
           method: 'swapExactETHForTokens',
           params: {
             amountOutMin: amountOutMinBN,
@@ -720,8 +720,8 @@ describe('pancakeswap', () => {
         fromAddress,
         toAddress,
         transaction: {
-          to: exchange.router.address,
-          api: exchange.router.api,
+          to: exchange[blockchain].router.address,
+          api: exchange[blockchain].router.api,
           method: 'swapTokensForExactETH',
           params: {
             amountInMax: fetchedAmountInBN.add(slippage),
@@ -757,8 +757,8 @@ describe('pancakeswap', () => {
         fromAddress,
         toAddress,
         transaction: {
-          to: exchange.router.address,
-          api: exchange.router.api,
+          to: exchange[blockchain].router.address,
+          api: exchange[blockchain].router.api,
           method: 'swapExactTokensForETH',
           params: {
             amountIn: amountInBN,
@@ -795,8 +795,8 @@ describe('pancakeswap', () => {
         fromAddress,
         toAddress,
         transaction: {
-          to: exchange.router.address,
-          api: exchange.router.api,
+          to: exchange[blockchain].router.address,
+          api: exchange[blockchain].router.api,
           method: 'swapTokensForExactETH',
           params: {
             amountInMax: amountInMaxBN.add(slippage),
@@ -832,8 +832,8 @@ describe('pancakeswap', () => {
         fromAddress,
         toAddress,
         transaction: {
-          to: exchange.router.address,
-          api: exchange.router.api,
+          to: exchange[blockchain].router.address,
+          api: exchange[blockchain].router.api,
           method: 'swapExactTokensForETH',
           params: {
             amountIn: fetchedAmountInBN.add(slippage),

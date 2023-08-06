@@ -1,14 +1,14 @@
 import { ethers } from 'ethers'
-import { find } from 'dist/esm/index.evm'
+import Exchanges from 'dist/esm/index.evm'
 import { mock, resetMocks, increaseBlock } from '@depay/web3-mock'
 import { mockDecimals } from 'tests/mocks/token'
-import { mockPair, mockAmounts } from 'tests/mocks/evm/exchange'
+import { mockPair, mockAmounts } from 'tests/mocks/evm/uniswap_v2'
 import { resetCache, getProvider } from '@depay/web3-client-evm'
 
 describe('slippage', () => {
 
   const blockchain = 'ethereum'
-  const exchange = find(blockchain, 'uniswap_v2')
+  const exchange = Exchanges.uniswap_v2
   const accounts = ['0xd8da6bf26964af9d7eed9e03e53415d37aa96045']
   const tokenOut = '0x6b175474e89094c44da98b954eedeac495271d0f'
   const pair = '0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852'
@@ -44,7 +44,7 @@ describe('slippage', () => {
 
     it('uses default slippage of 0.5%', async ()=> {
       const route = await exchange.route({ amountOutMin: 1, tokenIn, tokenOut })
-      const transaction = await route.getTransaction({ from: accounts[0] })
+      const transaction = await route.getTransaction({ account: accounts[0] })
       expect(transaction.params.amountIn).toEqual(amountInBN.add('25000000000000000').toString())
     })
   })
@@ -62,7 +62,7 @@ describe('slippage', () => {
 
     it('projects price change to cover slippage', async ()=>{
       let route = await exchange.route({ amountOutMin: 1, tokenIn, tokenOut })
-      const transaction = await route.getTransaction({ from: accounts[0] })
+      const transaction = await route.getTransaction({ account: accounts[0] })
       expect(transaction.params.amountIn).toEqual('5060000000000000000')
     })
   })
@@ -80,7 +80,7 @@ describe('slippage', () => {
 
     it('projects extreme volatility to cover slippage', async ()=>{
       let route = await exchange.route({ amountOutMin: 1, tokenIn, tokenOut })
-      const transaction = await route.getTransaction({ from: accounts[0] })
+      const transaction = await route.getTransaction({ account: accounts[0] })
       expect(transaction.params.amountIn).toEqual('5080000000000000000')
     })
   })

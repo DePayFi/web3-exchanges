@@ -1,7 +1,7 @@
 import Route from 'src/classes/Route'
 import Blockchains from '@depay/web3-blockchains'
 import { ethers } from 'ethers'
-import { find } from 'src'
+import Exchanges from 'src'
 import { getWallets } from '@depay/web3-wallets'
 import { mock, resetMocks, anything } from '@depay/web3-mock'
 import { mockDecimals } from 'tests/mocks/token'
@@ -12,7 +12,7 @@ describe('wmatic', () => {
   
   const blockchain = 'polygon'
   const accounts = ['0xd8da6bf26964af9d7eed9e03e53415d37aa96045']
-  const exchange = find('polygon', 'wmatic')
+  const exchange = Exchanges.wmatic
   const fromAddress = accounts[0]
   const toAddress = accounts[0]
   
@@ -49,11 +49,11 @@ describe('wmatic', () => {
       expect(route.amountOut).toEqual(amountOut)
       expect(route.exchange.name).toEqual('wmatic')
 
-      let routeTransaction = await route.getTransaction({ from: fromAddress })
+      let routeTransaction = await route.getTransaction({ account: fromAddress })
 
       let transactionMock = mock({ blockchain, transaction: {
-        to: exchange.wrapper.address,
-        api: exchange.wrapper.api,
+        to: exchange[blockchain].router.address,
+        api: exchange[blockchain].router.api,
         method: 'deposit',
         value: amountIn
       }})
@@ -85,11 +85,11 @@ describe('wmatic', () => {
       expect(route.amountOut).toEqual(amountOut)
       expect(route.exchange.name).toEqual('wmatic')
 
-      let routeTransaction = await route.getTransaction({ from: fromAddress })
+      let routeTransaction = await route.getTransaction({ account: fromAddress })
 
       let transactionMock = mock({ blockchain, transaction: {
-        to: exchange.wrapper.address,
-        api: exchange.wrapper.api,
+        to: exchange[blockchain].router.address,
+        api: exchange[blockchain].router.api,
         method: 'withdraw',
         params: { wad: amountIn }
       }})

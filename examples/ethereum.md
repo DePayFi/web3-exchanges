@@ -10,8 +10,8 @@ let routes = await Web3Exchanges.route({
 
 let wallets = await Web3Wallets.getWallets()
 let wallet = wallets[0]
-let from = await wallet.account()
-let transaction = await routes[0].getTransaction({ from })
+let account = await wallet.account()
+let transaction = await routes[0].getTransaction({ account })
 
 wallet.sendTransaction(transaction)
 ```

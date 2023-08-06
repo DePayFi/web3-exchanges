@@ -1,14 +1,14 @@
 /*#if _EVM
 
-import { Token } from '@depay/web3-tokens-evm'
+import Token from '@depay/web3-tokens-evm'
 
 /*#elif _SOLANA
 
-import { Token } from '@depay/web3-tokens-solana'
+import Token from '@depay/web3-tokens-solana'
 
 //#else */
 
-import { Token } from '@depay/web3-tokens'
+import Token from '@depay/web3-tokens'
 
 //#endif
 
@@ -56,6 +56,8 @@ let fixRouteParams = async ({
 }
 
 let preflight = ({
+  blockchain,
+  exchange,
   tokenIn,
   tokenOut,
   amountIn,
@@ -65,6 +67,10 @@ let preflight = ({
   amountOutMax,
   amountInMin,
 }) => {
+  if(blockchain === undefined && exchange.blockchains != undefined && exchange.blockchains.length > 1) {
+    throw 'You need to provide a blockchain when calling route on an exchange that supports multiple blockchains!'
+  }
+
   if (typeof amountOutMax !== 'undefined') {
     throw 'You cannot not set amountOutMax! Only amountInMax or amountOutMin!'
   }

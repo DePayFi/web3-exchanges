@@ -1,6 +1,6 @@
 import Blockchains from '@depay/web3-blockchains'
 import { ethers } from 'ethers'
-import { find } from 'src'
+import Exchanges from 'src'
 import { mock, resetMocks } from '@depay/web3-mock'
 import { mockPool } from 'tests/mocks/solana/orca'
 import { getProvider, resetCache } from '@depay/web3-client'
@@ -18,7 +18,7 @@ describe('orca', () => {
     mock({ provider, blockchain, accounts: { return: accounts } })
   })
 
-  let exchange = find('solana', 'orca')
+  let exchange = Exchanges.orca
   let fromAddress = '2UgCJaHU5y8NC4uWQcZYeV9a5RyYLF7iKYCybCsdFFD1'
 
   it('provides amounts for amountIn, amountInMax, amountOut and amountOutMin', async ()=> {
@@ -114,19 +114,19 @@ describe('orca', () => {
     })
 
     expect(
-      (await exchange.getAmounts({ path, amountOut: amountBN })).amounts.map((amount)=>amount.toString())
+      (await exchange.getAmounts({ blockchain, path, amountOut: amountBN })).amounts.map((amount)=>amount.toString())
     ).toEqual([ '25049159', '1000000000' ])
 
     expect(
-      (await exchange.getAmounts({ path, amountOutMin: amountBN })).amounts.map((amount)=>amount.toString())
+      (await exchange.getAmounts({ blockchain, path, amountOutMin: amountBN })).amounts.map((amount)=>amount.toString())
     ).toEqual([ '25049159', '1000000000' ])
 
     expect(
-      (await exchange.getAmounts({ path, amountIn: amountBN })).amounts.map((amount)=>amount.toString())
+      (await exchange.getAmounts({ blockchain, path, amountIn: amountBN })).amounts.map((amount)=>amount.toString())
     ).toEqual([ '1000000000', '39919706760' ])
 
     expect(
-      (await exchange.getAmounts({ path, amountInMax: amountBN })).amounts.map((amount)=>amount.toString())
+      (await exchange.getAmounts({ blockchain, path, amountInMax: amountBN })).amounts.map((amount)=>amount.toString())
     ).toEqual([ '1000000000', '39919706760' ])
     
   })

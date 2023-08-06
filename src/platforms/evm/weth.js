@@ -1,23 +1,24 @@
-let fixPath = (path) => path
+import Blockchains from '@depay/web3-blockchains'
 
-let pathExists = async (blockchain, path) => {
-  if(fixPath(path).length <= 1) { return false }
-  if(fixPath(path).length >= 3) { return false }
+let getExchangePath = ({ path }) => path
+
+let pathExists = async ({ blockchain, path }) => {
+  if(!path || path.length !== 2) { return false }
   return (
-    path.includes(blockchain.currency.address) &&
-    path.includes(blockchain.wrapped.address)
+    path.includes(Blockchains[blockchain].currency.address) &&
+    path.includes(Blockchains[blockchain].wrapped.address)
   )
 }
 
-let findPath = async (blockchain, { tokenIn, tokenOut }) => {
+let findPath = async ({ blockchain, tokenIn, tokenOut }) => {
   if(
-    ![tokenIn, tokenOut].includes(blockchain.currency.address) ||
-    ![tokenIn, tokenOut].includes(blockchain.wrapped.address)
-  ) { return { path: undefined, fixedPath: undefined } }
+    ![tokenIn, tokenOut].includes(Blockchains[blockchain].currency.address) ||
+    ![tokenIn, tokenOut].includes(Blockchains[blockchain].wrapped.address)
+  ) { return { path: undefined, exchangePath: undefined } }
 
-  let path = [tokenIn, tokenOut];
+  let path = [tokenIn, tokenOut]
 
-  return { path, fixedPath: path }
+  return { path, exchangePath: path }
 }
 
 let getAmountIn = ({ path, amountOut, block }) => {
@@ -48,7 +49,9 @@ let getAmounts = async ({
   return { amountOut, amountIn, amountInMax, amountOutMin }
 }
 
-let getTransaction = (blockchain, exchange, {
+let getTransaction = ({
+  exchange,
+  blockchain,
   path,
   amountIn,
   amountInMax,
@@ -58,21 +61,21 @@ let getTransaction = (blockchain, exchange, {
   amountOutInput,
   amountInMaxInput,
   amountOutMinInput,
-  fromAddress
+  account
 }) => {
   
   let transaction = {
-    blockchain: blockchain.name,
-    from: fromAddress,
-    to: exchange.wrapper.address,
-    api: exchange.wrapper.api,
+    blockchain: blockchain,
+    from: account,
+    to: exchange[blockchain].router.address,
+    api: exchange[blockchain].router.api,
   }
 
-  if (path[0] === blockchain.currency.address && path[1] === blockchain.wrapped.address) {
+  if (path[0] === Blockchains[blockchain].currency.address && path[1] === Blockchains[blockchain].wrapped.address) {
     transaction.method = 'deposit'
     transaction.value = amountIn.toString()
     return transaction
-  } else if (path[0] === blockchain.wrapped.address && path[1] === blockchain.currency.address) {
+  } else if (path[0] === Blockchains[blockchain].wrapped.address && path[1] === Blockchains[blockchain].currency.address) {
     transaction.method = 'withdraw'
     transaction.value = 0
     transaction.params = { wad: amountIn }

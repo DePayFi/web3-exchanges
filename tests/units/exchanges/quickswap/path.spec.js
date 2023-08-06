@@ -1,14 +1,14 @@
 import Blockchains from '@depay/web3-blockchains'
-import { find } from 'src'
+import Exchanges from 'src'
 import { mock, resetMocks } from '@depay/web3-mock'
 import { mockDecimals } from 'tests/mocks/token'
-import { mockPair } from 'tests/mocks/evm/exchange'
+import { mockPair } from 'tests/mocks/evm/uniswap_v2'
 import { getProvider, resetCache } from '@depay/web3-client'
-import { Token } from '@depay/web3-tokens'
+import Token from '@depay/web3-tokens'
 
 describe('quickswap', () => {
   
-  const exchange = find('polygon', 'quickswap')
+  const exchange = Exchanges.quickswap
   const blockchain = 'polygon'
   const accounts = ['0xd8da6bf26964af9d7eed9e03e53415d37aa96045']
   
@@ -29,7 +29,7 @@ describe('quickswap', () => {
       mockPair({ blockchain, exchange, provider, tokenIn, tokenOut: Blockchains[blockchain].wrapped.address, pair: Blockchains[blockchain].zero })
       mockDecimals({ provider, blockchain, address: Blockchains[blockchain].stables.usd[0], value: Blockchains[blockchain].tokens.find((token)=>token.address == tokenIn).decimals })
       let USDtoUSDMock = mockPair({ blockchain, exchange, provider, tokenIn: Blockchains[blockchain].stables.usd[0], tokenOut: Blockchains[blockchain].stables.usd[0], pair: Blockchains[blockchain].zero })
-      let { path } = await exchange.findPath({ tokenIn, tokenOut })
+      let { path } = await exchange.findPath({ blockchain, tokenIn, tokenOut })
       expect(USDtoUSDMock.calls.count()).toEqual(0)
       expect(path).toEqual(undefined)
     })
@@ -44,7 +44,7 @@ describe('quickswap', () => {
         mockPair({ blockchain, exchange, blockchain, exchange, provider, tokenIn, tokenOut: stable , pair: Blockchains[blockchain].zero })
       })
       let USDtoUSDMock = mockPair({ blockchain, exchange, provider, tokenIn: Blockchains[blockchain].stables.usd[0], tokenOut: Blockchains[blockchain].stables.usd[0], pair: Blockchains[blockchain].zero })
-      let { path } = await exchange.findPath({ tokenIn, tokenOut })
+      let { path } = await exchange.findPath({ blockchain, tokenIn, tokenOut })
       expect(USDtoUSDMock.calls.count()).toEqual(0)
       expect(path).toEqual(undefined)
     })
@@ -59,7 +59,7 @@ describe('quickswap', () => {
         mockPair({ blockchain, exchange, blockchain, exchange, provider, tokenIn, tokenOut: stable , pair: Blockchains[blockchain].zero })
       })
       let WRAPPEDtoWRAPPEDMock = mockPair({ blockchain, exchange, provider, tokenIn: Blockchains[blockchain].wrapped.address, tokenOut: Blockchains[blockchain].wrapped.address, pair: Blockchains[blockchain].zero })
-      let { path } = await exchange.findPath({ tokenIn, tokenOut })
+      let { path } = await exchange.findPath({ blockchain, tokenIn, tokenOut })
       expect(WRAPPEDtoWRAPPEDMock.calls.count()).toEqual(0)
       expect(path).toEqual(undefined)
     })
@@ -74,7 +74,7 @@ describe('quickswap', () => {
         mockPair({ blockchain, exchange, blockchain, exchange, provider, tokenIn, tokenOut: stable , pair: Blockchains[blockchain].zero })
       })
       let WRAPPEDtoWRAPPEDMock = mockPair({ blockchain, exchange, provider, tokenIn: Blockchains[blockchain].wrapped.address, tokenOut: Blockchains[blockchain].wrapped.address, pair: Blockchains[blockchain].zero })
-      let { path } = await exchange.findPath({ tokenIn, tokenOut })
+      let { path } = await exchange.findPath({ blockchain, tokenIn, tokenOut })
       expect(WRAPPEDtoWRAPPEDMock.calls.count()).toEqual(0)
       expect(path).toEqual(undefined)
     })
@@ -84,8 +84,8 @@ describe('quickswap', () => {
         blockchain,
         provider,
         request: {
-          to: exchange.factory.address,
-          api: exchange.factory.api,
+          to: exchange[blockchain].factory.address,
+          api: exchange[blockchain].factory.api,
           method: 'getPair',
           params: ['0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a', Blockchains[blockchain].wrapped.address],
           return: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675'
@@ -96,7 +96,7 @@ describe('quickswap', () => {
         provider,
         request: {
           to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
-          api: exchange.pair.api,
+          api: exchange[blockchain].pair.api,
           method: 'getReserves',
           return: ['1115408461069632429', '10031', '1617377350']
         }
@@ -106,7 +106,7 @@ describe('quickswap', () => {
         provider,
         request: {
           to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
-          api: exchange.pair.api,
+          api: exchange[blockchain].pair.api,
           method: 'token0',
           return: '0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a'
         }
@@ -116,12 +116,12 @@ describe('quickswap', () => {
         provider,
         request: {
           to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
-          api: exchange.pair.api,
+          api: exchange[blockchain].pair.api,
           method: 'token1',
           return: Blockchains[blockchain].wrapped.address
         }
       })
-      let exists = await exchange.pathExists(['0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a', Blockchains[blockchain].wrapped.address])
+      let exists = await exchange.pathExists({ blockchain, path: ['0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a', Blockchains[blockchain].wrapped.address] })
       expect(exists).toEqual(false)
     })
 
@@ -130,8 +130,8 @@ describe('quickswap', () => {
         blockchain,
         provider,
         request: {
-          to: exchange.factory.address,
-          api: exchange.factory.api,
+          to: exchange[blockchain].factory.address,
+          api: exchange[blockchain].factory.api,
           method: 'getPair',
           params: ['0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a', Blockchains[blockchain].wrapped.address],
           return: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675'
@@ -142,7 +142,7 @@ describe('quickswap', () => {
         provider,
         request: {
           to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
-          api: exchange.pair.api,
+          api: exchange[blockchain].pair.api,
           method: 'getReserves',
           return: ['10031', '1115408461069632429', '1617377350']
         }
@@ -152,7 +152,7 @@ describe('quickswap', () => {
         provider,
         request: {
           to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
-          api: exchange.pair.api,
+          api: exchange[blockchain].pair.api,
           method: 'token0',
           return: Blockchains[blockchain].wrapped.address
         }
@@ -162,12 +162,12 @@ describe('quickswap', () => {
         provider,
         request: {
           to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
-          api: exchange.pair.api,
+          api: exchange[blockchain].pair.api,
           method: 'token1',
           return: '0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a'
         }
       })
-      let exists = await exchange.pathExists(['0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a', Blockchains[blockchain].wrapped.address])
+      let exists = await exchange.pathExists({ blockchain, path: ['0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a', Blockchains[blockchain].wrapped.address] })
       expect(exists).toEqual(false)
     })
 
@@ -191,8 +191,8 @@ describe('quickswap', () => {
           blockchain,
           provider,
           request: {
-            to: exchange.factory.address,
-            api: exchange.factory.api,
+            to: exchange[blockchain].factory.address,
+            api: exchange[blockchain].factory.api,
             method: 'getPair',
             params: ['0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a', Blockchains[blockchain].stables.usd[0]],
             return: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675'
@@ -203,7 +203,7 @@ describe('quickswap', () => {
           provider,
           request: {
             to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
-            api: exchange.pair.api,
+            api: exchange[blockchain].pair.api,
             method: 'getReserves',
             return: ['1115408461069632429', '10031', '1617377350']
           }
@@ -213,7 +213,7 @@ describe('quickswap', () => {
           provider,
           request: {
             to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
-            api: exchange.pair.api,
+            api: exchange[blockchain].pair.api,
             method: 'token0',
             return: '0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a'
           }
@@ -223,12 +223,12 @@ describe('quickswap', () => {
           provider,
           request: {
             to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
-            api: exchange.pair.api,
+            api: exchange[blockchain].pair.api,
             method: 'token1',
             return: Blockchains[blockchain].stables.usd[0]
           }
         })
-        let exists = await exchange.pathExists(['0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a', Blockchains[blockchain].stables.usd[0]])
+        let exists = await exchange.pathExists({ blockchain, path: ['0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a', Blockchains[blockchain].stables.usd[0]] })
         expect(exists).toEqual(false)
       })
 
@@ -237,8 +237,8 @@ describe('quickswap', () => {
           blockchain,
           provider,
           request: {
-            to: exchange.factory.address,
-            api: exchange.factory.api,
+            to: exchange[blockchain].factory.address,
+            api: exchange[blockchain].factory.api,
             method: 'getPair',
             params: ['0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a', Blockchains[blockchain].stables.usd[0]],
             return: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675'
@@ -249,7 +249,7 @@ describe('quickswap', () => {
           provider,
           request: {
             to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
-            api: exchange.pair.api,
+            api: exchange[blockchain].pair.api,
             method: 'getReserves',
             return: ['10031', '1000000', '1617377350']
           }
@@ -259,7 +259,7 @@ describe('quickswap', () => {
           provider,
           request: {
             to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
-            api: exchange.pair.api,
+            api: exchange[blockchain].pair.api,
             method: 'token0',
             return: Blockchains[blockchain].stables.usd[0]
           }
@@ -269,12 +269,12 @@ describe('quickswap', () => {
           provider,
           request: {
             to: '0x386F5d5B48f791EcBc2fDAE94fE5ED3C27Fe6675',
-            api: exchange.pair.api,
+            api: exchange[blockchain].pair.api,
             method: 'token1',
             return: '0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a'
           }
         })
-        let exists = await exchange.pathExists(['0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a', Blockchains[blockchain].stables.usd[0]])
+        let exists = await exchange.pathExists({ blockchain, path: ['0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a', Blockchains[blockchain].stables.usd[0]] })
         expect(exists).toEqual(false)
       })
     })

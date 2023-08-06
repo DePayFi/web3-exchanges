@@ -1,11 +1,11 @@
 import Blockchains from '@depay/web3-blockchains'
-import { find } from 'src'
+import Exchanges from 'src'
 
 describe('weth', () => {
   
   const blockchain = 'ethereum'
   const accounts = ['0xd8da6bf26964af9d7eed9e03e53415d37aa96045']
-  const exchange = find('ethereum', 'weth')
+  const exchange = Exchanges.weth
   const fromAddress = '0x5Af489c8786A018EC4814194dC8048be1007e390'
   const toAddress = '0x5Af489c8786A018EC4814194dC8048be1007e390'
   
@@ -17,6 +17,7 @@ describe('weth', () => {
       const amount = '100000000000'
       
       let { amountIn, amountOut, amountInMax, amountOutMin } = await exchange.getAmounts({
+        blockchain,
         path,
         amountOut: amount
       })
@@ -33,6 +34,7 @@ describe('weth', () => {
       const amount = '100000000000'
       
       let { amountIn } = await exchange.getAmounts({
+        blockchain,
         path,
         amountOut: amount
       })

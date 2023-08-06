@@ -1,6 +1,5 @@
-import Quickswap from 'src/exchanges/quickswap'
 import { ethers } from 'ethers'
-import { find } from 'src'
+import Exchanges from 'src'
 import { mock, resetMocks } from '@depay/web3-mock'
 import { getProvider, resetCache } from '@depay/web3-client'
 
@@ -8,7 +7,7 @@ describe('quickswap', () => {
   
   const blockchain = 'polygon'
   const accounts = ['0xd8da6bf26964af9d7eed9e03e53415d37aa96045']
-  const exchange = find('polygon', 'quickswap')
+  const exchange = Exchanges.quickswap
   const pair = '0xEF8cD6Cb5c841A4f02986e8A8ab3cC545d1B8B6d'
   const fromAddress = '0x5Af489c8786A018EC4814194dC8048be1007e390'
   const toAddress = '0x5Af489c8786A018EC4814194dC8048be1007e390'
@@ -36,8 +35,8 @@ describe('quickswap', () => {
         blockchain,
         block,
         request: {
-          to: Quickswap.router.address,
-          api: Quickswap.router.api,
+          to: exchange.polygon.router.address,
+          api: exchange.polygon.router.api,
           method: 'getAmountsIn',
           params: { amountOut, path },
           return: amountsIn
@@ -45,6 +44,7 @@ describe('quickswap', () => {
       })
 
       let { amountIn } = await exchange.getAmounts({
+        blockchain,
         path,
         amountOut,
         block

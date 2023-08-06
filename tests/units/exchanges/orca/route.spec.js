@@ -1,22 +1,22 @@
 import Blockchains from '@depay/web3-blockchains'
 import Route from 'src/classes/Route'
 import { ethers } from 'ethers'
-import { find } from 'src'
-import { getTickArrays } from 'src/exchanges/orca/route/price/ticks'
+import Exchanges from 'src'
+import { getTickArrays } from 'src/platforms/solana/orca/price/ticks'
 import { mock, anything, resetMocks } from '@depay/web3-mock'
 import { mockPool, mockPools, mockTransactionKeys, getMockedPool } from 'tests/mocks/solana/orca'
 import { resetCache, getProvider } from '@depay/web3-client'
 import { struct, u128, u64, u32, u8, publicKey, bool, BN, SystemProgram, PublicKey } from '@depay/solana-web3.js'
-import { SWAP_INSTRUCTION, TWO_HOP_SWAP_INSTRUCTION, getSwapInstructionKeys, getTwoHopSwapInstructionKeys } from 'src/exchanges/orca/route/transaction'
+import { SWAP_INSTRUCTION, TWO_HOP_SWAP_INSTRUCTION, getSwapInstructionKeys, getTwoHopSwapInstructionKeys } from 'src/platforms/solana/orca/transaction'
 import { testRouting } from 'tests/helpers/testRouting'
-import { Token } from '@depay/web3-tokens'
+import Token from '@depay/web3-tokens'
 
 describe('orca', () => {
   
   const blockchain = 'solana'
   const fromAddress = '2UgCJaHU5y8NC4uWQcZYeV9a5RyYLF7iKYCybCsdFFD1'
   const accounts = [fromAddress]
-  const exchange = find('solana', 'orca')
+  const exchange = Exchanges.orca
   const decimalsIn = 6
   const decimalsOut = 6
   const aToB = false // current tick mocking only supports aToB false
@@ -92,9 +92,9 @@ describe('orca', () => {
         provider,
         request: {
           method: 'getProgramAccounts',
-          to: exchange.router.v1.address,
+          to: exchange[blockchain].router.address,
           params: { filters: [
-            { dataSize: exchange.router.v1.api.span },
+            { dataSize: exchange[blockchain].router.api.span },
             { memcmp: { offset: 8, bytes: '2LecshUwdy9xi7meFgHtFJQNSKk4KdTrcpvaB56dP2NQ' }},
             { memcmp: { offset: 101, bytes: tokenOut }},
             { memcmp: { offset: 181, bytes: tokenIn }},
@@ -163,7 +163,7 @@ describe('orca', () => {
           blockchain,
           instructions: [
             { // SWAP
-              to: exchange.router.v1.address,
+              to: exchange[blockchain].router.address,
               api: struct([u64("anchorDiscriminator"), u64("amount"), u64("otherAmountThreshold"), u128("sqrtPriceLimit"), bool("amountSpecifiedIsInput"), bool("aToB")]),
               params: {
                 anchorDiscriminator: SWAP_INSTRUCTION.toString(),
@@ -173,7 +173,7 @@ describe('orca', () => {
                 sqrtPriceLimit: '79226673515401279992447579055',
                 aToB,
               },
-              keys: await getSwapInstructionKeys({ fromAddress, pool, tokenAccountA, tokenVaultA , tokenAccountB, tokenVaultB, tickArrays })
+              keys: await getSwapInstructionKeys({ account: fromAddress, pool, tokenAccountA, tokenVaultA , tokenAccountB, tokenVaultB, tickArrays })
             }
           ]
         }
@@ -197,7 +197,7 @@ describe('orca', () => {
           blockchain,
           instructions: [
             { // SWAP
-              to: exchange.router.v1.address,
+              to: exchange[blockchain].router.address,
               api: struct([u64("anchorDiscriminator"), u64("amount"), u64("otherAmountThreshold"), u128("sqrtPriceLimit"), bool("amountSpecifiedIsInput"), bool("aToB")]),
               params: {
                 anchorDiscriminator: SWAP_INSTRUCTION.toString(),
@@ -207,7 +207,7 @@ describe('orca', () => {
                 sqrtPriceLimit: '79226673515401279992447579055',
                 aToB,
               },
-              keys: await getSwapInstructionKeys({ fromAddress, pool, tokenAccountA, tokenVaultA , tokenAccountB, tokenVaultB, tickArrays })
+              keys: await getSwapInstructionKeys({ account: fromAddress, pool, tokenAccountA, tokenVaultA , tokenAccountB, tokenVaultB, tickArrays })
             }
           ]
         }
@@ -231,7 +231,7 @@ describe('orca', () => {
           blockchain,
           instructions: [
             { // SWAP
-              to: exchange.router.v1.address,
+              to: exchange[blockchain].router.address,
               api: struct([u64("anchorDiscriminator"), u64("amount"), u64("otherAmountThreshold"), u128("sqrtPriceLimit"), bool("amountSpecifiedIsInput"), bool("aToB")]),
               params: {
                 anchorDiscriminator: SWAP_INSTRUCTION.toString(),
@@ -241,7 +241,7 @@ describe('orca', () => {
                 sqrtPriceLimit: '79226673515401279992447579055',
                 aToB,
               },
-              keys: await getSwapInstructionKeys({ fromAddress, pool, tokenAccountA, tokenVaultA , tokenAccountB, tokenVaultB, tickArrays })
+              keys: await getSwapInstructionKeys({ account: fromAddress, pool, tokenAccountA, tokenVaultA , tokenAccountB, tokenVaultB, tickArrays })
             }
           ]
         }
@@ -265,7 +265,7 @@ describe('orca', () => {
           blockchain,
           instructions: [
             { // SWAP
-              to: exchange.router.v1.address,
+              to: exchange[blockchain].router.address,
               api: struct([u64("anchorDiscriminator"), u64("amount"), u64("otherAmountThreshold"), u128("sqrtPriceLimit"), bool("amountSpecifiedIsInput"), bool("aToB")]),
               params: {
                 anchorDiscriminator: SWAP_INSTRUCTION.toString(),
@@ -275,7 +275,7 @@ describe('orca', () => {
                 sqrtPriceLimit: '79226673515401279992447579055',
                 aToB,
               },
-              keys: await getSwapInstructionKeys({ fromAddress, pool, tokenAccountA, tokenVaultA , tokenAccountB, tokenVaultB, tickArrays })
+              keys: await getSwapInstructionKeys({ account: fromAddress, pool, tokenAccountA, tokenVaultA , tokenAccountB, tokenVaultB, tickArrays })
             }
           ]
         }
@@ -317,7 +317,7 @@ describe('orca', () => {
                 ]
               },
               { // SWAP
-                to: exchange.router.v1.address,
+                to: exchange[blockchain].router.address,
                 api: struct([u64("anchorDiscriminator"), u64("amount"), u64("otherAmountThreshold"), u128("sqrtPriceLimit"), bool("amountSpecifiedIsInput"), bool("aToB")]),
                 params: {
                   anchorDiscriminator: SWAP_INSTRUCTION.toString(),
@@ -327,7 +327,7 @@ describe('orca', () => {
                   sqrtPriceLimit: '79226673515401279992447579055',
                   aToB,
                 },
-                keys: await getSwapInstructionKeys({ fromAddress, pool, tokenAccountA, tokenVaultA , tokenAccountB, tokenVaultB, tickArrays })
+                keys: await getSwapInstructionKeys({ account: fromAddress, pool, tokenAccountA, tokenVaultA , tokenAccountB, tokenVaultB, tickArrays })
               }
             ]
           }
@@ -372,7 +372,7 @@ describe('orca', () => {
     
     it('WRAPS SOL <> WSOL and creates WSOL temp throw away account to route NATIVE to token', async ()=> {
 
-      let keys = await getSwapInstructionKeys({ fromAddress, pool, tokenAccountA, tokenVaultA , tokenAccountB, tokenVaultB, tickArrays })
+      let keys = await getSwapInstructionKeys({ account: fromAddress, pool, tokenAccountA, tokenVaultA , tokenAccountB, tokenVaultB, tickArrays })
       keys[5] = anything // tokenAccountB
       
       await testRouting({
@@ -413,7 +413,7 @@ describe('orca', () => {
               }
             },
             { // SWAP
-              to: exchange.router.v1.address,
+              to: exchange[blockchain].router.address,
               api: struct([u64("anchorDiscriminator"), u64("amount"), u64("otherAmountThreshold"), u128("sqrtPriceLimit"), bool("amountSpecifiedIsInput"), bool("aToB")]),
               params: {
                 anchorDiscriminator: SWAP_INSTRUCTION.toString(),
@@ -474,7 +474,7 @@ describe('orca', () => {
     
     it('unwraps WSOL after routing', async ()=> {
 
-      let keys = await getSwapInstructionKeys({ fromAddress, pool, tokenAccountA, tokenVaultA , tokenAccountB, tokenVaultB, tickArrays })
+      let keys = await getSwapInstructionKeys({ account: fromAddress, pool, tokenAccountA, tokenVaultA , tokenAccountB, tokenVaultB, tickArrays })
       keys[3] = anything // tokenAccountA
 
       await testRouting({
@@ -515,7 +515,7 @@ describe('orca', () => {
               }
             },
             { // SWAP
-              to: exchange.router.v1.address,
+              to: exchange[blockchain].router.address,
               api: struct([u64("anchorDiscriminator"), u64("amount"), u64("otherAmountThreshold"), u128("sqrtPriceLimit"), bool("amountSpecifiedIsInput"), bool("aToB")]),
               params: {
                 anchorDiscriminator: SWAP_INSTRUCTION.toString(),
@@ -608,7 +608,7 @@ describe('orca', () => {
           blockchain,
           instructions: [
             { // SWAP
-              to: exchange.router.v1.address,
+              to: exchange[blockchain].router.address,
               api: struct([
                 u64("anchorDiscriminator"),
                 u64("amount"),
@@ -629,7 +629,7 @@ describe('orca', () => {
                 sqrtPriceLimitOne: '79226673515401279992447579055',
                 sqrtPriceLimitTwo: '79226673515401279992447579055',
               },
-              keys: await getTwoHopSwapInstructionKeys({ fromAddress, poolOne, tickArraysOne, tokenAccountOneA, tokenVaultOneA , tokenAccountOneB, tokenVaultOneB, poolTwo, tickArraysTwo, tokenAccountTwoA, tokenVaultTwoA, tokenAccountTwoB, tokenVaultTwoB })
+              keys: await getTwoHopSwapInstructionKeys({ account: fromAddress, poolOne, tickArraysOne, tokenAccountOneA, tokenVaultOneA , tokenAccountOneB, tokenVaultOneB, poolTwo, tickArraysTwo, tokenAccountTwoA, tokenVaultTwoA, tokenAccountTwoB, tokenVaultTwoB })
             }
           ]
         }
@@ -653,7 +653,7 @@ describe('orca', () => {
           blockchain,
           instructions: [
             { // SWAP
-              to: exchange.router.v1.address,
+              to: exchange[blockchain].router.address,
               api: struct([
                 u64("anchorDiscriminator"),
                 u64("amount"),
@@ -674,7 +674,7 @@ describe('orca', () => {
                 sqrtPriceLimitOne: '79226673515401279992447579055',
                 sqrtPriceLimitTwo: '79226673515401279992447579055',
               },
-              keys: await getTwoHopSwapInstructionKeys({ fromAddress, poolOne, tickArraysOne, tokenAccountOneA, tokenVaultOneA , tokenAccountOneB, tokenVaultOneB, poolTwo, tickArraysTwo, tokenAccountTwoA, tokenVaultTwoA, tokenAccountTwoB, tokenVaultTwoB })
+              keys: await getTwoHopSwapInstructionKeys({ account: fromAddress, poolOne, tickArraysOne, tokenAccountOneA, tokenVaultOneA , tokenAccountOneB, tokenVaultOneB, poolTwo, tickArraysTwo, tokenAccountTwoA, tokenVaultTwoA, tokenAccountTwoB, tokenVaultTwoB })
             }
           ]
         }
@@ -698,7 +698,7 @@ describe('orca', () => {
           blockchain,
           instructions: [
             { // SWAP
-              to: exchange.router.v1.address,
+              to: exchange[blockchain].router.address,
               api: struct([
                 u64("anchorDiscriminator"),
                 u64("amount"),
@@ -719,7 +719,7 @@ describe('orca', () => {
                 sqrtPriceLimitOne: '79226673515401279992447579055',
                 sqrtPriceLimitTwo: '79226673515401279992447579055',
               },
-              keys: await getTwoHopSwapInstructionKeys({ fromAddress, poolOne, tickArraysOne, tokenAccountOneA, tokenVaultOneA , tokenAccountOneB, tokenVaultOneB, poolTwo, tickArraysTwo, tokenAccountTwoA, tokenVaultTwoA, tokenAccountTwoB, tokenVaultTwoB })
+              keys: await getTwoHopSwapInstructionKeys({ account: fromAddress, poolOne, tickArraysOne, tokenAccountOneA, tokenVaultOneA , tokenAccountOneB, tokenVaultOneB, poolTwo, tickArraysTwo, tokenAccountTwoA, tokenVaultTwoA, tokenAccountTwoB, tokenVaultTwoB })
             }
           ]
         }
@@ -743,7 +743,7 @@ describe('orca', () => {
           blockchain,
           instructions: [
             { // SWAP
-              to: exchange.router.v1.address,
+              to: exchange[blockchain].router.address,
               api: struct([
                 u64("anchorDiscriminator"),
                 u64("amount"),
@@ -764,7 +764,7 @@ describe('orca', () => {
                 sqrtPriceLimitOne: '79226673515401279992447579055',
                 sqrtPriceLimitTwo: '79226673515401279992447579055',
               },
-              keys: await getTwoHopSwapInstructionKeys({ fromAddress, poolOne, tickArraysOne, tokenAccountOneA, tokenVaultOneA , tokenAccountOneB, tokenVaultOneB, poolTwo, tickArraysTwo, tokenAccountTwoA, tokenVaultTwoA, tokenAccountTwoB, tokenVaultTwoB })
+              keys: await getTwoHopSwapInstructionKeys({ account: fromAddress, poolOne, tickArraysOne, tokenAccountOneA, tokenVaultOneA , tokenAccountOneB, tokenVaultOneB, poolTwo, tickArraysTwo, tokenAccountTwoA, tokenVaultTwoA, tokenAccountTwoB, tokenVaultTwoB })
             }
           ]
         }
@@ -806,7 +806,7 @@ describe('orca', () => {
                 ]
               },
               { // SWAP
-                to: exchange.router.v1.address,
+                to: exchange[blockchain].router.address,
                 api: struct([
                   u64("anchorDiscriminator"),
                   u64("amount"),
@@ -827,7 +827,7 @@ describe('orca', () => {
                   sqrtPriceLimitOne: '79226673515401279992447579055',
                   sqrtPriceLimitTwo: '79226673515401279992447579055',
                 },
-                keys: await getTwoHopSwapInstructionKeys({ fromAddress, poolOne, tickArraysOne, tokenAccountOneA, tokenVaultOneA , tokenAccountOneB, tokenVaultOneB, poolTwo, tickArraysTwo, tokenAccountTwoA, tokenVaultTwoA, tokenAccountTwoB, tokenVaultTwoB })
+                keys: await getTwoHopSwapInstructionKeys({ account: fromAddress, poolOne, tickArraysOne, tokenAccountOneA, tokenVaultOneA , tokenAccountOneB, tokenVaultOneB, poolTwo, tickArraysTwo, tokenAccountTwoA, tokenVaultTwoA, tokenAccountTwoB, tokenVaultTwoB })
               }
             ]
           }

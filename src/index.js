@@ -1,9 +1,6 @@
-import all from './all.js'
-import find from './find.js'
-import { route } from './route.js'
+import exchanges from './exchanges.js'
+import route from './route.js'
 
-export {
-  all,
-  find,
-  route
-}
+exchanges.route = route
+
+export default exchanges
