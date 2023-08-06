@@ -45,15 +45,16 @@ const account = await wallet.account()
 // check if prep is required to facilitate swap/exchange
 const preparation = await route.getPrep({ account })
 
-let signature
+let permit2
 if(prep?.transaction) {
   await wallet.sendTransaction(prep.transaction)
 } else if (prep?.signature) {
-  signature = wallet.sign(prep.signature)
+  let signature = await wallet.sign(prep.signature)
+  permit2 = {...prep.signature.message, signature}
 }
 
 // use connected wallet to sign and send the swap transaction
-const transaction = await route.getTransaction({ account, signature })
+const transaction = await route.getTransaction({ account, permit2 })
 wallet.sendTransaction(transaction)
 
 ```
