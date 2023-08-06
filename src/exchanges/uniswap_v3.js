@@ -27,6 +27,10 @@ const exchange = {
     quoter: {
       address: '0x61fFE014bA17989E743c5F6cB21bF9697530B21e',
       api: UniswapV3.QUOTER
+    },
+    permit: {
+      address: '0x000000000022d473030f116ddee9f6b43ac78ba3',
+      api: UniswapV3.PERMIT2
     }
   },
 
@@ -45,6 +49,10 @@ const exchange = {
     quoter: {
       address: '0x78D78E420Da98ad378D7799bE8f4AF69033EB077',
       api: UniswapV3.QUOTER
+    },
+    permit: {
+      address: '0x000000000022d473030f116ddee9f6b43ac78ba3',
+      api: UniswapV3.PERMIT2
     }
   },
 
@@ -63,6 +71,10 @@ const exchange = {
     quoter: {
       address: '0x61fFE014bA17989E743c5F6cB21bF9697530B21e',
       api: UniswapV3.QUOTER
+    },
+    permit: {
+      address: '0x000000000022d473030f116ddee9f6b43ac78ba3',
+      api: UniswapV3.PERMIT2
     }
   },
 
@@ -81,6 +93,10 @@ const exchange = {
     quoter: {
       address: '0x61fFE014bA17989E743c5F6cB21bF9697530B21e',
       api: UniswapV3.QUOTER
+    },
+    permit: {
+      address: '0x000000000022d473030f116ddee9f6b43ac78ba3',
+      api: UniswapV3.PERMIT2
     }
   },
 
@@ -99,6 +115,10 @@ const exchange = {
     quoter: {
       address: '0x61fFE014bA17989E743c5F6cB21bF9697530B21e',
       api: UniswapV3.QUOTER
+    },
+    permit: {
+      address: '0x000000000022d473030f116ddee9f6b43ac78ba3',
+      api: UniswapV3.PERMIT2
     }
   },
 

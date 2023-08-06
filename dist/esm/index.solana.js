@@ -344,7 +344,7 @@ const route$1 = ({
           amountIn: (amountIn || amountInMax),
           account,
         }),
-        getTransaction: async ({ account, signature })=> await getTransaction({
+        getTransaction: async ({ account, permit2 })=> await getTransaction({
           exchange,
           blockchain,
           pools,
@@ -359,7 +359,7 @@ const route$1 = ({
           amountInMaxInput,
           amountOutMinInput,
           account,
-          signature,
+          permit2,
         }),
       })
     );

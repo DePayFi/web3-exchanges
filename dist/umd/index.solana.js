@@ -349,7 +349,7 @@
             amountIn: (amountIn || amountInMax),
             account,
           }),
-          getTransaction: async ({ account, signature })=> await getTransaction({
+          getTransaction: async ({ account, permit2 })=> await getTransaction({
             exchange,
             blockchain,
             pools,
@@ -364,7 +364,7 @@
             amountInMaxInput,
             amountOutMinInput,
             account,
-            signature,
+            permit2,
           }),
         })
       );

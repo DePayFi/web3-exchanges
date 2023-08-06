@@ -262,29 +262,26 @@ let getPrep = async({
 
   if(tokenIn === Blockchains[blockchain].currency.address) { return } // NATIVE
 
-  console.log('request', {
-    blockchain,
-    address: tokenIn,
-    method: 'allowance',
-    api: Token[blockchain]['20'],
-    params: {
-      owner: account,
-      spender: exchange[blockchain].router.address,
-    },
-  })
   const allowance = await request({
     blockchain,
     address: tokenIn,
     method: 'allowance',
     api: Token[blockchain]['20'],
-    params: {
-      owner: account,
-      spender: exchange[blockchain].router.address,
-    },
+    params: [account, exchange[blockchain].router.address]
   })
 
-  console.log('allowance', allowance.toString())
+  if(allowance.gte(amountIn)) { return }
 
+  let transaction = {
+    blockchain,
+    from: account,
+    to: tokenIn,
+    api: Token[blockchain]['20'],
+    method: 'approve',
+    params: [exchange[blockchain].router.address, amountIn.sub(allowance)]
+  }
+  
+  return { transaction }
 }
 
 let getTransaction = async({

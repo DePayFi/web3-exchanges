@@ -214,6 +214,38 @@ let getAmounts = async ({
   return { amountOut, amountIn, amountInMax, amountOutMin }
 }
 
+let getPrep = async({
+  exchange,
+  blockchain,
+  tokenIn,
+  amountIn,
+  account
+})=> {
+
+  if(tokenIn === Blockchains[blockchain].currency.address) { return } // NATIVE
+
+  const allowance = await request({
+    blockchain,
+    address: tokenIn,
+    method: 'allowance',
+    api: Token[blockchain]['20'],
+    params: [account, exchange[blockchain].router.address]
+  })
+
+  if(allowance.gte(amountIn)) { return }
+
+  let transaction = {
+    blockchain,
+    from: account,
+    to: tokenIn,
+    api: Token[blockchain]['20'],
+    method: 'approve',
+    params: [exchange[blockchain].router.address, amountIn.sub(allowance)]
+  }
+  
+  return { transaction }
+}
+
 let getTransaction = ({
   exchange,
   blockchain,
@@ -281,6 +313,7 @@ export default {
   findPath,
   pathExists,
   getAmounts,
+  getPrep,
   getTransaction,
   ROUTER,
   FACTORY,
