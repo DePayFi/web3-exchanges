@@ -8,8 +8,6 @@ let route = ({
   amountOut,
   amountInMax,
   amountOutMin,
-  amountOutMax,
-  amountInMin,
 }) => {
   return Promise.all(
     exchanges[blockchain].map((exchange) => {
@@ -20,12 +18,21 @@ let route = ({
         amountOut,
         amountInMax,
         amountOutMin,
-        amountOutMax,
-        amountInMin,
       })
     }),
   )
-  .then((routes)=>routes.filter(Boolean))
+  .then((routes)=>{
+    return routes.filter(Boolean).sort((a, b)=>{
+      if ((amountIn || amountInMax) ? (BigInt(a.amountOut) < BigInt(b.amountOut)) : (BigInt(a.amountIn) > BigInt(b.amountIn))) {
+        return 1;
+      }
+      if ((amountIn || amountInMax) ? (BigInt(a.amountOut) > BigInt(b.amountOut)) : (BigInt(a.amountIn) < BigInt(b.amountIn))) {
+        return -1;
+      }
+      console.log('a equals b')
+      return 0;
+    })
+  })
 }
 
 export default route

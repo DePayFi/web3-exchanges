@@ -100,8 +100,6 @@ class Exchange {
     amountOut,
     amountInMax,
     amountOutMin,
-    amountOutMax,
-    amountInMin,
   }) {
     if(tokenIn === tokenOut){ return Promise.resolve() }
 
@@ -122,8 +120,6 @@ class Exchange {
       amountOut,
       amountInMax,
       amountOutMin,
-      amountOutMax,
-      amountInMin,
     })
 
     return await route({

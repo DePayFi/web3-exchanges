@@ -64,19 +64,9 @@ let preflight = ({
   amountOut,
   amountInMax,
   amountOutMin,
-  amountOutMax,
-  amountInMin,
 }) => {
   if(blockchain === undefined && exchange.blockchains != undefined && exchange.blockchains.length > 1) {
     throw 'You need to provide a blockchain when calling route on an exchange that supports multiple blockchains!'
-  }
-
-  if (typeof amountOutMax !== 'undefined') {
-    throw 'You cannot not set amountOutMax! Only amountInMax or amountOutMin!'
-  }
-
-  if (typeof amountInMin !== 'undefined') {
-    throw 'You cannot not set amountInMin! Only amountInMax or amountOutMin!'
   }
 
   if (typeof amountOut !== 'undefined' && typeof amountIn !== 'undefined') {
