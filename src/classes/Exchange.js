@@ -65,7 +65,7 @@ const route = ({
           amountIn: (amountIn || amountInMax),
           account,
         }),
-        getTransaction: async ({ account, permit2 })=> await getTransaction({
+        getTransaction: async ({ account, permit2, inputTokenPushed })=> await getTransaction({
           exchange,
           blockchain,
           pools,
@@ -81,6 +81,7 @@ const route = ({
           amountOutMinInput,
           account,
           permit2,
+          inputTokenPushed
         }),
       })
     )

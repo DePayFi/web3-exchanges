@@ -338,7 +338,7 @@
             amountIn: (amountIn || amountInMax),
             account,
           }),
-          getTransaction: async ({ account, permit2 })=> await getTransaction({
+          getTransaction: async ({ account, permit2, inputTokenPushed })=> await getTransaction({
             exchange,
             blockchain,
             pools,
@@ -354,6 +354,7 @@
             amountOutMinInput,
             account,
             permit2,
+            inputTokenPushed
           }),
         })
       );
@@ -1205,6 +1206,7 @@
     amountOutMinInput,
     account,
     permit2,
+    inputTokenPushed,
   }) => {
 
     let commands = [];
@@ -1255,7 +1257,7 @@
             (amountIn || amountInMax).toString(),
             (amountOut || amountOutMin).toString(),
             packedPath,
-            path[0] === Blockchains__default['default'][blockchain].currency.address ? false : true
+            path[0] === Blockchains__default['default'][blockchain].currency.address ? false : !inputTokenPushed
           ]
         )
       );
@@ -1269,7 +1271,7 @@
             (amountOut || amountOutMin).toString(),
             (amountIn || amountInMax).toString(),
             packedPath,
-            path[0] === Blockchains__default['default'][blockchain].currency.address ? false : true
+            path[0] === Blockchains__default['default'][blockchain].currency.address ? false : !inputTokenPushed
           ]
         )
       );

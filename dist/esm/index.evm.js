@@ -332,7 +332,7 @@ const route$1 = ({
           amountIn: (amountIn || amountInMax),
           account,
         }),
-        getTransaction: async ({ account, permit2 })=> await getTransaction({
+        getTransaction: async ({ account, permit2, inputTokenPushed })=> await getTransaction({
           exchange,
           blockchain,
           pools,
@@ -348,6 +348,7 @@ const route$1 = ({
           amountOutMinInput,
           account,
           permit2,
+          inputTokenPushed
         }),
       })
     );
@@ -1199,6 +1200,7 @@ let getTransaction$2 = async({
   amountOutMinInput,
   account,
   permit2,
+  inputTokenPushed,
 }) => {
 
   let commands = [];
@@ -1249,7 +1251,7 @@ let getTransaction$2 = async({
           (amountIn || amountInMax).toString(),
           (amountOut || amountOutMin).toString(),
           packedPath,
-          path[0] === Blockchains[blockchain].currency.address ? false : true
+          path[0] === Blockchains[blockchain].currency.address ? false : !inputTokenPushed
         ]
       )
     );
@@ -1263,7 +1265,7 @@ let getTransaction$2 = async({
           (amountOut || amountOutMin).toString(),
           (amountIn || amountInMax).toString(),
           packedPath,
-          path[0] === Blockchains[blockchain].currency.address ? false : true
+          path[0] === Blockchains[blockchain].currency.address ? false : !inputTokenPushed
         ]
       )
     );

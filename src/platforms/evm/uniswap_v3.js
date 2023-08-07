@@ -413,6 +413,7 @@ let getTransaction = async({
   amountOutMinInput,
   account,
   permit2,
+  inputTokenPushed,
 }) => {
 
   let commands = []
@@ -463,7 +464,7 @@ let getTransaction = async({
           (amountIn || amountInMax).toString(),
           (amountOut || amountOutMin).toString(),
           packedPath,
-          path[0] === Blockchains[blockchain].currency.address ? false : true
+          path[0] === Blockchains[blockchain].currency.address ? false : !inputTokenPushed
         ]
       )
     )
@@ -477,7 +478,7 @@ let getTransaction = async({
           (amountOut || amountOutMin).toString(),
           (amountIn || amountInMax).toString(),
           packedPath,
-          path[0] === Blockchains[blockchain].currency.address ? false : true
+          path[0] === Blockchains[blockchain].currency.address ? false : !inputTokenPushed
         ]
       )
     )
