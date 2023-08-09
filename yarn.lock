@@ -1290,20 +1290,20 @@
   resolved "https://registry.yarnpkg.com/@depay/web3-tokens/-/web3-tokens-10.1.0.tgz#1f034d35b41b0734422045bf48134e86108c04b9"
   integrity sha512-wH5n3x9G2A55tzoIas7fc9quS8Ato7x33CrA8/NUU+qKWpcVpkPQdS+LChuuONhOB9uE729o3z4f1o4LWaty0w==
 
-"@depay/web3-wallets-evm@^15.16.0":
-  version "15.16.0"
-  resolved "https://registry.yarnpkg.com/@depay/web3-wallets-evm/-/web3-wallets-evm-15.16.0.tgz#bcef304fffc86f2297d4c4eaadd8f6279319d381"
-  integrity sha512-sFCj+zaTKGOghf7R57I3k3uECn/SHIKE5pCHxHFivEFBRHorNUYjSdHJocQdiHrhHDT+QwCV353tR5sT/iQo8g==
+"@depay/web3-wallets-evm@^15.16.3":
+  version "15.16.3"
+  resolved "https://registry.yarnpkg.com/@depay/web3-wallets-evm/-/web3-wallets-evm-15.16.3.tgz#e0863bc426bc71b69c590d69c9b59c2db975b212"
+  integrity sha512-ABVQmGVoTExjci89kTvWdzjrpmaxI7S2x4hHDfxFAJy8XWEN0w5NIq+pmw0LhD+DAb+I3N8hA2oDuo4LdrhoSg==
 
-"@depay/web3-wallets-solana@^15.16.0":
-  version "15.16.0"
-  resolved "https://registry.yarnpkg.com/@depay/web3-wallets-solana/-/web3-wallets-solana-15.16.0.tgz#726105d0177865d97bd9a0e29c0af4eca0f1a8c7"
-  integrity sha512-+/ckmO4c9kTbCVUuU2Z9mK5QlobSNx+V1Gf4Am8Y2QQup2SH5V5HJJ4UGEi7TiFN2VciCsMM2hY5X9SAlLQ+hQ==
+"@depay/web3-wallets-solana@^15.16.3":
+  version "15.16.3"
+  resolved "https://registry.yarnpkg.com/@depay/web3-wallets-solana/-/web3-wallets-solana-15.16.3.tgz#80c0d5bf7ff48a3c9757dc130c656328c0a2131d"
+  integrity sha512-1B33OE5OkTTLXqD/UfP4jBzg8kVQmaLs/2a0wKc2OOfie5eL0hmACfrj5OTYS1rd6TcimMS31VXh748buIZDqg==
 
-"@depay/web3-wallets@^15.16.0":
-  version "15.16.0"
-  resolved "https://registry.yarnpkg.com/@depay/web3-wallets/-/web3-wallets-15.16.0.tgz#82c92bc01c11c5caac6e7a89f8d06a043f9bbcd6"
-  integrity sha512-jWCLyn9AbPwZNi0VT+DoVrdbvbzRF1dCWhOoNaL5giC2CHFhxwIYoubThb8T8tZHn3JQYFfUnHnO1gygDNQ4Cw==
+"@depay/web3-wallets@^15.16.3":
+  version "15.16.3"
+  resolved "https://registry.yarnpkg.com/@depay/web3-wallets/-/web3-wallets-15.16.3.tgz#b49933a0ee4cf98ae66160f7af282ea004c8b451"
+  integrity sha512-GpwdIyV0eHOe3gOGSIZEmJbOr0mTSUXaaX+730QsQ7QkwSNdLHA3cZ8K22d10l7sVt7XFx6u/axHcjaPGX7psg==
 
 "@eslint/eslintrc@^0.4.3":
   version "0.4.3"

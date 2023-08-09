@@ -62,6 +62,7 @@ const route = ({
           exchange,
           blockchain,
           tokenIn,
+          tokenOut,
           amountIn: (amountIn || amountInMax),
           account,
         }),

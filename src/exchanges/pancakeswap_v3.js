@@ -1,5 +1,5 @@
 import Exchange from '../classes/Exchange'
-import UniswapV3 from '../platforms/evm/uniswap_v3'
+import PancakeSwapV3 from '../platforms/evm/pancakeswap_v3'
 
 const exchange = {
 
@@ -15,18 +15,22 @@ const exchange = {
   bsc: {
     router: {
       address: '0x1b81D678ffb9C0263b24A97847620C99d213eB14',
-      api: UniswapV3.ROUTER
+      api: PancakeSwapV3.ROUTER
+    },
+    smartRouter: {
+      address: '0x13f4EA83D0bd40E75C8222255bc855a974568Dd4',
+      api: PancakeSwapV3.SMART_ROUTER
     },
     factory: {
       address: '0x0BFbCF9fa4f9C56B0F40a671Ad40E0805A091865',
-      api: UniswapV3.FACTORY
+      api: PancakeSwapV3.FACTORY
     },
     pair: {
-      api: UniswapV3.POOL
+      api: PancakeSwapV3.POOL
     },
     quoter: {
       address: '0xB048Bbc1Ee6b733FFfCFb9e9CeF7375518e25997',
-      api: UniswapV3.QUOTER
+      api: PancakeSwapV3.QUOTER
     }
   },
 
@@ -38,11 +42,11 @@ export default (scope)=>{
 
     Object.assign(exchange, {
       scope,
-      findPath: (args)=>UniswapV3.findPath({ ...args, exchange }),
-      pathExists: (args)=>UniswapV3.pathExists({ ...args, exchange }),
-      getAmounts: (args)=>UniswapV3.getAmounts({ ...args, exchange }),
-      getPrep: (args)=>UniswapV3.getPrep({ ...args, exchange }),
-      getTransaction: (args)=>UniswapV3.getTransaction({ ...args, exchange }),
+      findPath: (args)=>PancakeSwapV3.findPath({ ...args, exchange }),
+      pathExists: (args)=>PancakeSwapV3.pathExists({ ...args, exchange }),
+      getAmounts: (args)=>PancakeSwapV3.getAmounts({ ...args, exchange }),
+      getPrep: (args)=>PancakeSwapV3.getPrep({ ...args, exchange }),
+      getTransaction: (args)=>PancakeSwapV3.getTransaction({ ...args, exchange }),
     })
   )
 }
