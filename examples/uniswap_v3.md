@@ -164,7 +164,7 @@ let route = await exchange.route({
 let wallets = await Web3Wallets.getWallets()
 let wallet = wallets[0]
 let account = await wallet.account()
-let transaction = await routes[0].getTransaction({ account })
+let transaction = await route.getTransaction({ account })
 ```
 
 ```javascript
