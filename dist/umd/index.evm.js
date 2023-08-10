@@ -477,7 +477,7 @@
         web3ClientEvm.request({ blockchain, address: pair, method: 'token0', api: exchange[blockchain].pair.api, cache: 3600000 }),
         web3ClientEvm.request({ blockchain, address: pair, method: 'token1', api: exchange[blockchain].pair.api, cache: 3600000 })
       ]);
-      if(path.includes(Blockchains__default['default'][blockchain].wrapped.address)) {
+      if(exchangePath.includes(Blockchains__default['default'][blockchain].wrapped.address)) {
         return minReserveRequirements({ min: 1, token: Blockchains__default['default'][blockchain].wrapped.address, decimals: Blockchains__default['default'][blockchain].currency.decimals, reserves, token0, token1 })
       } else if (path.find((step)=>Blockchains__default['default'][blockchain].stables.usd.includes(step))) {
         let address = path.find((step)=>Blockchains__default['default'][blockchain].stables.usd.includes(step));

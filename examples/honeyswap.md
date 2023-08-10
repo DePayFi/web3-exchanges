@@ -17,3 +17,25 @@ wallet.sendTransaction(prep.transaction)
 let transaction = await route.getTransaction({ account })
 wallet.sendTransaction(transaction)
 ```
+
+# NATIVE TO TOKEN (1 pool)
+
+```javascript
+let route = await Web3Exchanges.gnosis.honeyswap.route({
+  tokenIn: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', // NATIVE xDAI
+  tokenOut: '0x21a42669643f45bc0e086b8fc2ed70c23d67509d', // FOX
+  amountOut: 1
+})
+
+let wallets = await Web3Wallets.getWallets()
+let wallet = wallets[0]
+let account = await wallet.account()
+
+let prep = await route.getPrep({ account })
+wallet.sendTransaction(prep.transaction)
+
+let transaction = await route.getTransaction({ account })
+wallet.sendTransaction(transaction)
+```
+
+

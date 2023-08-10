@@ -473,7 +473,7 @@ const pathExists$5 = async ({ blockchain, exchange, path }) => {
       request({ blockchain, address: pair, method: 'token0', api: exchange[blockchain].pair.api, cache: 3600000 }),
       request({ blockchain, address: pair, method: 'token1', api: exchange[blockchain].pair.api, cache: 3600000 })
     ]);
-    if(path.includes(Blockchains[blockchain].wrapped.address)) {
+    if(exchangePath.includes(Blockchains[blockchain].wrapped.address)) {
       return minReserveRequirements({ min: 1, token: Blockchains[blockchain].wrapped.address, decimals: Blockchains[blockchain].currency.decimals, reserves, token0, token1 })
     } else if (path.find((step)=>Blockchains[blockchain].stables.usd.includes(step))) {
       let address = path.find((step)=>Blockchains[blockchain].stables.usd.includes(step));
