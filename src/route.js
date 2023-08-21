@@ -29,7 +29,6 @@ let route = ({
       if ((amountIn || amountInMax) ? (BigInt(a.amountOut) > BigInt(b.amountOut)) : (BigInt(a.amountIn) < BigInt(b.amountIn))) {
         return -1;
       }
-      console.log('a equals b')
       return 0;
     })
   })
