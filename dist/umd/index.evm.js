@@ -304,20 +304,24 @@
       let [amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput] = [amountIn, amountOut, amountInMax, amountOutMin];
 
       let amounts; // includes intermediary amounts for longer routes
-      ({ amountIn, amountInMax, amountOut, amountOutMin, amounts } = await getAmounts({ exchange, blockchain, path, pools, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }));
+      try {
+        ;({ amountIn, amountInMax, amountOut, amountOutMin, amounts } = await getAmounts({ exchange, blockchain, path, pools, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }));
+      } catch (e) { return resolve() }
       if([amountIn, amountInMax, amountOut, amountOutMin].every((amount)=>{ return amount == undefined })) { return resolve() }
 
       if(slippage || exchange.slippage) {
-        ({ amountIn, amountInMax, amountOut, amountOutMin, amounts } = await calculateAmountsWithSlippage({
-          exchange,
-          blockchain,
-          pools,
-          exchangePath,
-          amounts,
-          tokenIn, tokenOut,
-          amountIn, amountInMax, amountOut, amountOutMin,
-          amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput,
-        }));
+        try {
+          ({ amountIn, amountInMax, amountOut, amountOutMin, amounts } = await calculateAmountsWithSlippage({
+            exchange,
+            blockchain,
+            pools,
+            exchangePath,
+            amounts,
+            tokenIn, tokenOut,
+            amountIn, amountInMax, amountOut, amountOutMin,
+            amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput,
+          }));
+        } catch (e2) { return resolve() }
       }
 
       resolve(
