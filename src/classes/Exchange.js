@@ -53,6 +53,7 @@ const route = ({
 
     resolve(
       new Route({
+        blockchain,
         tokenIn,
         tokenOut,
         path,

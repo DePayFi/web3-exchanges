@@ -1,5 +1,6 @@
 class Route {
   constructor({
+    blockchain,
     tokenIn,
     tokenOut,
     path,
@@ -14,6 +15,7 @@ class Route {
     getPrep,
     getTransaction,
   }) {
+    this.blockchain = blockchain
     this.tokenIn = tokenIn
     this.tokenOut = tokenOut
     this.path = path

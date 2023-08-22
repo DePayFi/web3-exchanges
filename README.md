@@ -162,6 +162,7 @@ A Swap configuration is fed into the `route` function:
 
 ```
 {
+  blockchain: String (e.g. 'ethereum')
   tokenIn: String (e.g. '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb')
   tokenOut: String (e.g. '0xdAC17F958D2ee523a2206206994597C13D831ec7')
   amountIn: Human Readable Number (e.g. 1.2)
@@ -193,6 +194,7 @@ A single `Route` has the following structure:
 
 ```
 {
+  blockchain: String (e.g. 'ethereum')
   tokenIn: String (e.g. '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb')
   tokenOut: String (e.g. '0xdAC17F958D2ee523a2206206994597C13D831ec7')
   path: Array (e.g. ['0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb', '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2', '0xdAC17F958D2ee523a2206206994597C13D831ec7'])
