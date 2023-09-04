@@ -12,6 +12,7 @@ import wavax from './exchanges/wavax'
 import wbnb from './exchanges/wbnb'
 import weth from './exchanges/weth'
 import weth_arbitrum from './exchanges/weth_arbitrum'
+import weth_base from './exchanges/weth_base'
 import weth_optimism from './exchanges/weth_optimism'
 import wftm from './exchanges/wftm'
 import wmatic from './exchanges/wmatic'
@@ -28,6 +29,7 @@ const exchanges = [
   honeyswap(),
   weth(),
   weth_optimism(),
+  weth_base(),
   weth_arbitrum(),
   wbnb(),
   wmatic(),
@@ -67,6 +69,12 @@ exchanges.optimism = [
   weth_optimism('optimism'),
 ]
 exchanges.optimism.forEach((exchange)=>{ exchanges.optimism[exchange.name] = exchange })
+
+exchanges.base = [
+  uniswap_v3('base'),
+  weth_optimism('base'),
+]
+exchanges.base.forEach((exchange)=>{ exchanges.base[exchange.name] = exchange })
 
 exchanges.arbitrum = [
   uniswap_v3('arbitrum'),
@@ -125,6 +133,7 @@ import wbnb from './exchanges/wbnb'
 import weth from './exchanges/weth'
 import weth_arbitrum from './exchanges/weth_arbitrum'
 import weth_optimism from './exchanges/weth_optimism'
+import weth_base from './exchanges/weth_base'
 import wftm from './exchanges/wftm'
 import wmatic from './exchanges/wmatic'
 import wxdai from './exchanges/wxdai'
@@ -141,6 +150,7 @@ const exchanges = [
   honeyswap(),
   weth(),
   weth_optimism(),
+  weth_base(),
   weth_arbitrum(),
   wbnb(),
   wmatic(),
@@ -184,6 +194,12 @@ exchanges.optimism = [
   weth_optimism('optimism'),
 ]
 exchanges.optimism.forEach((exchange)=>{ exchanges.optimism[exchange.name] = exchange })
+
+exchanges.base = [
+  uniswap_v3('base'),
+  weth_base('base'),
+]
+exchanges.base.forEach((exchange)=>{ exchanges.base[exchange.name] = exchange })
 
 exchanges.arbitrum = [
   uniswap_v3('arbitrum'),

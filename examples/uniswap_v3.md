@@ -1,3 +1,23 @@
+# ETH TO TOKEN (BASE, 1 pool)
+
+```javascript
+let route = await Web3Exchanges.uniswap_v3.route({
+  blockchain: 'base',
+  tokenIn: Web3Blockchains.base.currency.address,
+  tokenOut: '0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA', // USDCb
+  amountOutMin: 1
+})
+
+let wallets = await Web3Wallets.getWallets()
+let wallet = wallets[0]
+let account = await wallet.account()
+
+let prep = await route.getPrep({ account })
+
+let transaction = await route.getTransaction({ account })
+wallet.sendTransaction(transaction)
+```
+
 # ETH TO TOKEN (OPTIMISM, 1 pool)
 
 ```javascript

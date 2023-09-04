@@ -122,6 +122,28 @@ const exchange = {
     }
   },
 
+  base: {
+    router: {
+      address: '0x198EF79F1F515F02dFE9e3115eD9fC07183f02fC',
+      api: UniswapV3.ROUTER
+    },
+    factory: {
+      address: '0x33128a8fC17869897dcE68Ed026d694621f6FDfD',
+      api: UniswapV3.FACTORY
+    },
+    pool: {
+      api: UniswapV3.POOL
+    },
+    quoter: {
+      address: '0x3d4e44Eb1374240CE5F1B871ab261CD16335B76a',
+      api: UniswapV3.QUOTER
+    },
+    permit: {
+      address: '0x000000000022d473030f116ddee9f6b43ac78ba3',
+      api: UniswapV3.PERMIT2
+    }
+  },
+
 }
 
 export default (scope)=>{

@@ -41,8 +41,8 @@
     }
   }
 
-  let supported = ['ethereum', 'bsc', 'polygon', 'fantom', 'arbitrum', 'avalanche', 'gnosis', 'optimism'];
-  supported.evm = ['ethereum', 'bsc', 'polygon', 'fantom', 'arbitrum', 'avalanche', 'gnosis', 'optimism'];
+  let supported = ['ethereum', 'bsc', 'polygon', 'fantom', 'arbitrum', 'avalanche', 'gnosis', 'optimism', 'base'];
+  supported.evm = ['ethereum', 'bsc', 'polygon', 'fantom', 'arbitrum', 'avalanche', 'gnosis', 'optimism', 'base'];
   supported.solana = [];
 
   const DEFAULT_SLIPPAGE = '0.5'; // percent
@@ -733,7 +733,7 @@
     PAIR: PAIR$1,
   };
 
-  const exchange$f = {
+  const exchange$g = {
     
     name: 'honeyswap',
     label: 'Honeyswap',
@@ -762,18 +762,18 @@
     
     return new Exchange(
 
-      Object.assign(exchange$f, {
+      Object.assign(exchange$g, {
         scope,
-        findPath: (args)=>UniswapV2.findPath({ ...args, exchange: exchange$f }),
-        pathExists: (args)=>UniswapV2.pathExists({ ...args, exchange: exchange$f }),
-        getAmounts: (args)=>UniswapV2.getAmounts({ ...args, exchange: exchange$f }),
-        getPrep: (args)=>UniswapV2.getPrep({ ...args, exchange: exchange$f }),
-        getTransaction: (args)=>UniswapV2.getTransaction({ ...args, exchange: exchange$f }),
+        findPath: (args)=>UniswapV2.findPath({ ...args, exchange: exchange$g }),
+        pathExists: (args)=>UniswapV2.pathExists({ ...args, exchange: exchange$g }),
+        getAmounts: (args)=>UniswapV2.getAmounts({ ...args, exchange: exchange$g }),
+        getPrep: (args)=>UniswapV2.getPrep({ ...args, exchange: exchange$g }),
+        getTransaction: (args)=>UniswapV2.getTransaction({ ...args, exchange: exchange$g }),
       })
     )
   };
 
-  const exchange$e = {
+  const exchange$f = {
 
     name: 'pancakeswap',
     label: 'PancakeSwap',
@@ -804,13 +804,13 @@
     
     return new Exchange(
 
-      Object.assign(exchange$e, {
+      Object.assign(exchange$f, {
         scope,
-        findPath: (args)=>UniswapV2.findPath({ ...args, exchange: exchange$e }),
-        pathExists: (args)=>UniswapV2.pathExists({ ...args, exchange: exchange$e }),
-        getAmounts: (args)=>UniswapV2.getAmounts({ ...args, exchange: exchange$e }),
-        getPrep: (args)=>UniswapV2.getPrep({ ...args, exchange: exchange$e }),
-        getTransaction: (args)=>UniswapV2.getTransaction({ ...args, exchange: exchange$e }),
+        findPath: (args)=>UniswapV2.findPath({ ...args, exchange: exchange$f }),
+        pathExists: (args)=>UniswapV2.pathExists({ ...args, exchange: exchange$f }),
+        getAmounts: (args)=>UniswapV2.getAmounts({ ...args, exchange: exchange$f }),
+        getPrep: (args)=>UniswapV2.getPrep({ ...args, exchange: exchange$f }),
+        getTransaction: (args)=>UniswapV2.getTransaction({ ...args, exchange: exchange$f }),
       })
     )
   };
@@ -1341,7 +1341,7 @@
     QUOTER: QUOTER$2,
   };
 
-  const exchange$d = {
+  const exchange$e = {
 
     name: 'pancakeswap_v3',
     label: 'PancakeSwap v3',
@@ -1380,18 +1380,18 @@
     
     return new Exchange(
 
-      Object.assign(exchange$d, {
+      Object.assign(exchange$e, {
         scope,
-        findPath: (args)=>PancakeSwapV3.findPath({ ...args, exchange: exchange$d }),
-        pathExists: (args)=>PancakeSwapV3.pathExists({ ...args, exchange: exchange$d }),
-        getAmounts: (args)=>PancakeSwapV3.getAmounts({ ...args, exchange: exchange$d }),
-        getPrep: (args)=>PancakeSwapV3.getPrep({ ...args, exchange: exchange$d }),
-        getTransaction: (args)=>PancakeSwapV3.getTransaction({ ...args, exchange: exchange$d }),
+        findPath: (args)=>PancakeSwapV3.findPath({ ...args, exchange: exchange$e }),
+        pathExists: (args)=>PancakeSwapV3.pathExists({ ...args, exchange: exchange$e }),
+        getAmounts: (args)=>PancakeSwapV3.getAmounts({ ...args, exchange: exchange$e }),
+        getPrep: (args)=>PancakeSwapV3.getPrep({ ...args, exchange: exchange$e }),
+        getTransaction: (args)=>PancakeSwapV3.getTransaction({ ...args, exchange: exchange$e }),
       })
     )
   };
 
-  const exchange$c = {
+  const exchange$d = {
     
     name: 'quickswap',
     label: 'QuickSwap',
@@ -1420,18 +1420,18 @@
     
     return new Exchange(
 
-      Object.assign(exchange$c, {
+      Object.assign(exchange$d, {
         scope,
-        findPath: (args)=>UniswapV2.findPath({ ...args, exchange: exchange$c }),
-        pathExists: (args)=>UniswapV2.pathExists({ ...args, exchange: exchange$c }),
-        getAmounts: (args)=>UniswapV2.getAmounts({ ...args, exchange: exchange$c }),
-        getPrep: (args)=>UniswapV2.getPrep({ ...args, exchange: exchange$c }),
-        getTransaction: (args)=>UniswapV2.getTransaction({ ...args, exchange: exchange$c }),
+        findPath: (args)=>UniswapV2.findPath({ ...args, exchange: exchange$d }),
+        pathExists: (args)=>UniswapV2.pathExists({ ...args, exchange: exchange$d }),
+        getAmounts: (args)=>UniswapV2.getAmounts({ ...args, exchange: exchange$d }),
+        getPrep: (args)=>UniswapV2.getPrep({ ...args, exchange: exchange$d }),
+        getTransaction: (args)=>UniswapV2.getTransaction({ ...args, exchange: exchange$d }),
       })
     )
   };
 
-  const exchange$b = {
+  const exchange$c = {
     
     name: 'spookyswap',
     label: 'SpookySwap',
@@ -1460,13 +1460,13 @@
     
     return new Exchange(
 
-      Object.assign(exchange$b, {
+      Object.assign(exchange$c, {
         scope,
-        findPath: (args)=>UniswapV2.findPath({ ...args, exchange: exchange$b }),
-        pathExists: (args)=>UniswapV2.pathExists({ ...args, exchange: exchange$b }),
-        getAmounts: (args)=>UniswapV2.getAmounts({ ...args, exchange: exchange$b }),
-        getPrep: (args)=>UniswapV2.getPrep({ ...args, exchange: exchange$b }),
-        getTransaction: (args)=>UniswapV2.getTransaction({ ...args, exchange: exchange$b }),
+        findPath: (args)=>UniswapV2.findPath({ ...args, exchange: exchange$c }),
+        pathExists: (args)=>UniswapV2.pathExists({ ...args, exchange: exchange$c }),
+        getAmounts: (args)=>UniswapV2.getAmounts({ ...args, exchange: exchange$c }),
+        getPrep: (args)=>UniswapV2.getPrep({ ...args, exchange: exchange$c }),
+        getTransaction: (args)=>UniswapV2.getTransaction({ ...args, exchange: exchange$c }),
       })
     )
   };
@@ -1856,7 +1856,7 @@
     QUOTER: QUOTER$1,
   };
 
-  const exchange$a = {
+  const exchange$b = {
 
     name: 'trader_joe_v2_1',
     label: 'Trader Joe v2.1',
@@ -1890,18 +1890,18 @@
     
     return new Exchange(
 
-      Object.assign(exchange$a, {
+      Object.assign(exchange$b, {
         scope,
-        findPath: (args)=>TraderJoeV2_1.findPath({ ...args, exchange: exchange$a }),
-        pathExists: (args)=>TraderJoeV2_1.pathExists({ ...args, exchange: exchange$a }),
-        getAmounts: (args)=>TraderJoeV2_1.getAmounts({ ...args, exchange: exchange$a }),
-        getPrep: (args)=>TraderJoeV2_1.getPrep({ ...args, exchange: exchange$a }),
-        getTransaction: (args)=>TraderJoeV2_1.getTransaction({ ...args, exchange: exchange$a }),
+        findPath: (args)=>TraderJoeV2_1.findPath({ ...args, exchange: exchange$b }),
+        pathExists: (args)=>TraderJoeV2_1.pathExists({ ...args, exchange: exchange$b }),
+        getAmounts: (args)=>TraderJoeV2_1.getAmounts({ ...args, exchange: exchange$b }),
+        getPrep: (args)=>TraderJoeV2_1.getPrep({ ...args, exchange: exchange$b }),
+        getTransaction: (args)=>TraderJoeV2_1.getTransaction({ ...args, exchange: exchange$b }),
       })
     )
   };
 
-  const exchange$9 = {
+  const exchange$a = {
     
     name: 'uniswap_v2',
     label: 'Uniswap v2',
@@ -1930,13 +1930,13 @@
     
     return new Exchange(
 
-      Object.assign(exchange$9, {
+      Object.assign(exchange$a, {
         scope,
-        findPath: (args)=>UniswapV2.findPath({ ...args, exchange: exchange$9 }),
-        pathExists: (args)=>UniswapV2.pathExists({ ...args, exchange: exchange$9 }),
-        getAmounts: (args)=>UniswapV2.getAmounts({ ...args, exchange: exchange$9 }),
-        getPrep: (args)=>UniswapV2.getPrep({ ...args, exchange: exchange$9 }),
-        getTransaction: (args)=>UniswapV2.getTransaction({ ...args, exchange: exchange$9 }),
+        findPath: (args)=>UniswapV2.findPath({ ...args, exchange: exchange$a }),
+        pathExists: (args)=>UniswapV2.pathExists({ ...args, exchange: exchange$a }),
+        getAmounts: (args)=>UniswapV2.getAmounts({ ...args, exchange: exchange$a }),
+        getPrep: (args)=>UniswapV2.getPrep({ ...args, exchange: exchange$a }),
+        getTransaction: (args)=>UniswapV2.getTransaction({ ...args, exchange: exchange$a }),
       })
     )
   };
@@ -2456,7 +2456,7 @@
     PERMIT2,
   };
 
-  const exchange$8 = {
+  const exchange$9 = {
 
     name: 'uniswap_v3',
     label: 'Uniswap v3',
@@ -2577,19 +2577,41 @@
       }
     },
 
+    base: {
+      router: {
+        address: '0x198EF79F1F515F02dFE9e3115eD9fC07183f02fC',
+        api: UniswapV3.ROUTER
+      },
+      factory: {
+        address: '0x33128a8fC17869897dcE68Ed026d694621f6FDfD',
+        api: UniswapV3.FACTORY
+      },
+      pool: {
+        api: UniswapV3.POOL
+      },
+      quoter: {
+        address: '0x3d4e44Eb1374240CE5F1B871ab261CD16335B76a',
+        api: UniswapV3.QUOTER
+      },
+      permit: {
+        address: '0x000000000022d473030f116ddee9f6b43ac78ba3',
+        api: UniswapV3.PERMIT2
+      }
+    },
+
   };
 
   var uniswap_v3 = (scope)=>{
     
     return new Exchange(
 
-      Object.assign(exchange$8, {
+      Object.assign(exchange$9, {
         scope,
-        findPath: (args)=>UniswapV3.findPath({ ...args, exchange: exchange$8 }),
-        pathExists: (args)=>UniswapV3.pathExists({ ...args, exchange: exchange$8 }),
-        getAmounts: (args)=>UniswapV3.getAmounts({ ...args, exchange: exchange$8 }),
-        getPrep: (args)=>UniswapV3.getPrep({ ...args, exchange: exchange$8 }),
-        getTransaction: (args)=>UniswapV3.getTransaction({ ...args, exchange: exchange$8 }),
+        findPath: (args)=>UniswapV3.findPath({ ...args, exchange: exchange$9 }),
+        pathExists: (args)=>UniswapV3.pathExists({ ...args, exchange: exchange$9 }),
+        getAmounts: (args)=>UniswapV3.getAmounts({ ...args, exchange: exchange$9 }),
+        getPrep: (args)=>UniswapV3.getPrep({ ...args, exchange: exchange$9 }),
+        getTransaction: (args)=>UniswapV3.getTransaction({ ...args, exchange: exchange$9 }),
       })
     )
   };
@@ -2681,7 +2703,7 @@
     WETH,
   };
 
-  const exchange$7 = {
+  const exchange$8 = {
     
     name: 'wavax',
     label: 'Wrapped Avax',
@@ -2703,18 +2725,18 @@
     
     return new Exchange(
 
-      Object.assign(exchange$7, {
+      Object.assign(exchange$8, {
         scope,
-        findPath: (args)=>WETH$1.findPath({ ...args, exchange: exchange$7 }),
-        pathExists: (args)=>WETH$1.pathExists({ ...args, exchange: exchange$7 }),
-        getAmounts: (args)=>WETH$1.getAmounts({ ...args, exchange: exchange$7 }),
+        findPath: (args)=>WETH$1.findPath({ ...args, exchange: exchange$8 }),
+        pathExists: (args)=>WETH$1.pathExists({ ...args, exchange: exchange$8 }),
+        getAmounts: (args)=>WETH$1.getAmounts({ ...args, exchange: exchange$8 }),
         getPrep: (args)=>{},
-        getTransaction: (args)=>WETH$1.getTransaction({ ...args, exchange: exchange$7 }),
+        getTransaction: (args)=>WETH$1.getTransaction({ ...args, exchange: exchange$8 }),
       })
     )
   };
 
-  const exchange$6 = {
+  const exchange$7 = {
     
     name: 'wbnb',
     label: 'Wrapped BNB',
@@ -2736,18 +2758,18 @@
     
     return new Exchange(
 
-      Object.assign(exchange$6, {
+      Object.assign(exchange$7, {
         scope,
-        findPath: (args)=>WETH$1.findPath({ ...args, exchange: exchange$6 }),
-        pathExists: (args)=>WETH$1.pathExists({ ...args, exchange: exchange$6 }),
-        getAmounts: (args)=>WETH$1.getAmounts({ ...args, exchange: exchange$6 }),
+        findPath: (args)=>WETH$1.findPath({ ...args, exchange: exchange$7 }),
+        pathExists: (args)=>WETH$1.pathExists({ ...args, exchange: exchange$7 }),
+        getAmounts: (args)=>WETH$1.getAmounts({ ...args, exchange: exchange$7 }),
         getPrep: (args)=>{},
-        getTransaction: (args)=>WETH$1.getTransaction({ ...args, exchange: exchange$6 }),
+        getTransaction: (args)=>WETH$1.getTransaction({ ...args, exchange: exchange$7 }),
       })
     )
   };
 
-  const exchange$5 = {
+  const exchange$6 = {
     
     name: 'weth',
     label: 'Wrapped Ethereum',
@@ -2769,18 +2791,18 @@
     
     return new Exchange(
 
-      Object.assign(exchange$5, {
+      Object.assign(exchange$6, {
         scope,
-        findPath: (args)=>WETH$1.findPath({ ...args, exchange: exchange$5 }),
-        pathExists: (args)=>WETH$1.pathExists({ ...args, exchange: exchange$5 }),
-        getAmounts: (args)=>WETH$1.getAmounts({ ...args, exchange: exchange$5 }),
+        findPath: (args)=>WETH$1.findPath({ ...args, exchange: exchange$6 }),
+        pathExists: (args)=>WETH$1.pathExists({ ...args, exchange: exchange$6 }),
+        getAmounts: (args)=>WETH$1.getAmounts({ ...args, exchange: exchange$6 }),
         getPrep: (args)=>{},
-        getTransaction: (args)=>WETH$1.getTransaction({ ...args, exchange: exchange$5 }),
+        getTransaction: (args)=>WETH$1.getTransaction({ ...args, exchange: exchange$6 }),
       })
     )
   };
 
-  const exchange$4 = {
+  const exchange$5 = {
     
     name: 'weth_arbitrum',
     label: 'Wrapped Ethereum',
@@ -2799,6 +2821,39 @@
   };
 
   var weth_arbitrum = (scope)=>{
+    
+    return new Exchange(
+
+      Object.assign(exchange$5, {
+        scope,
+        findPath: (args)=>WETH$1.findPath({ ...args, exchange: exchange$5 }),
+        pathExists: (args)=>WETH$1.pathExists({ ...args, exchange: exchange$5 }),
+        getAmounts: (args)=>WETH$1.getAmounts({ ...args, exchange: exchange$5 }),
+        getPrep: (args)=>{},
+        getTransaction: (args)=>WETH$1.getTransaction({ ...args, exchange: exchange$5 }),
+      })
+    )
+  };
+
+  const exchange$4 = {
+    
+    name: 'weth_base',
+    label: 'Wrapped Ethereum',
+    logo: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPCEtLSBHZW5lcmF0b3I6IEFkb2JlIElsbHVzdHJhdG9yIDI2LjAuMSwgU1ZHIEV4cG9ydCBQbHVnLUluIC4gU1ZHIFZlcnNpb246IDYuMDAgQnVpbGQgMCkgIC0tPgo8c3ZnIHZlcnNpb249IjEuMSIKCSBpZD0iTGF5ZXJfMSIgaW1hZ2UtcmVuZGVyaW5nPSJvcHRpbWl6ZVF1YWxpdHkiIHNoYXBlLXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIiB0ZXh0LXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIgoJIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IiB2aWV3Qm94PSIwIDAgMjgzLjUgMjgzLjUiCgkgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgMjgzLjUgMjgzLjU7IiB4bWw6c3BhY2U9InByZXNlcnZlIj4KPHN0eWxlIHR5cGU9InRleHQvY3NzIj4KCS5zdDB7ZmlsbDojMzQzNDM0O30KCS5zdDF7ZmlsbDojOEM4QzhDO30KCS5zdDJ7ZmlsbDojM0MzQzNCO30KCS5zdDN7ZmlsbDojMTQxNDE0O30KCS5zdDR7ZmlsbDojMzkzOTM5O30KPC9zdHlsZT4KPGc+Cgk8Zz4KCQk8cGF0aCBjbGFzcz0ic3QwIiBkPSJNMTQxLjcsMjUuOWwtMS41LDUuMnYxNTMuM2wxLjUsMS41bDcxLjItNDIuMUwxNDEuNywyNS45eiIvPgoJCTxwYXRoIGNsYXNzPSJzdDEiIGQ9Ik0xNDEuNywyNS45TDcwLjYsMTQzLjhsNzEuMSw0Mi4xdi03NC40VjI1Ljl6Ii8+CgkJPHBhdGggY2xhc3M9InN0MiIgZD0iTTE0MS43LDE5OS40bC0wLjgsMS4xdjU0LjZsMC44LDIuNWw3MS4yLTEwMC4zTDE0MS43LDE5OS40eiIvPgoJCTxwYXRoIGNsYXNzPSJzdDEiIGQ9Ik0xNDEuNywyNTcuNnYtNTguMmwtNzEuMS00Mi4xTDE0MS43LDI1Ny42eiIvPgoJCTxwYXRoIGNsYXNzPSJzdDMiIGQ9Ik0xNDEuNywxODUuOWw3MS4yLTQyLjFsLTcxLjItMzIuM1YxODUuOXoiLz4KCQk8cGF0aCBjbGFzcz0ic3Q0IiBkPSJNNzAuNiwxNDMuOGw3MS4xLDQyLjF2LTc0LjRMNzAuNiwxNDMuOHoiLz4KCTwvZz4KPC9nPgo8L3N2Zz4K',
+    
+    slippage: false,
+
+    blockchains: ['base'],
+
+    base: {
+      router: {
+        address: Blockchains__default['default'].base.wrapped.address,
+        api: WETH$1.WETH
+      },
+    }
+  };
+
+  var weth_base = (scope)=>{
     
     return new Exchange(
 
@@ -2956,6 +3011,7 @@
     honeyswap(),
     weth(),
     weth_optimism(),
+    weth_base(),
     weth_arbitrum(),
     wbnb(),
     wmatic(),
@@ -2995,6 +3051,12 @@
     weth_optimism('optimism'),
   ];
   exchanges.optimism.forEach((exchange)=>{ exchanges.optimism[exchange.name] = exchange; });
+
+  exchanges.base = [
+    uniswap_v3('base'),
+    weth_optimism('base'),
+  ];
+  exchanges.base.forEach((exchange)=>{ exchanges.base[exchange.name] = exchange; });
 
   exchanges.arbitrum = [
     uniswap_v3('arbitrum'),

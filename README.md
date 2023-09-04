@@ -72,6 +72,7 @@ This library supports the following blockchains:
 - [Fantom](https://fantom.foundation)
 - [Avalanche](https://www.avax.network)
 - [Gnosis](https://gnosis.io)
+- [Base](https://base.org)
 
 This library supports the following decentralized exchanges:
 
@@ -95,6 +96,10 @@ Solana:
 - [Orca](https://orca.so)
 
 Optimism:
+- [Uniswap v3](https://uniswap.org)
+- [WETH](https://optimistic.etherscan.io/address/0x4200000000000000000000000000000000000006)
+
+Base:
 - [Uniswap v3](https://uniswap.org)
 - [WETH](https://optimistic.etherscan.io/address/0x4200000000000000000000000000000000000006)
 
