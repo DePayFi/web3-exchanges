@@ -7,6 +7,7 @@ const exchange = {
   name: 'wxdai',
   label: 'Wrapped XDAI',
   logo: Blockchains.gnosis.wrapped.logo,
+  protocol: 'weth',
 
   slippage: false,
 

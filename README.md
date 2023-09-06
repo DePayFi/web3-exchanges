@@ -147,6 +147,7 @@ Decentralized exchange data is provided in the following structure:
   name: String (e.g. uniswap_v2)
   label: String (e.g. Uniswap v2)
   logo: String (base64 encoded PNG)
+  protocol: String (uniswap_v2, uniswap_v3 etc.)
 
   fee: Array (e.g. [100, 500, 3000, 10000]; available fee teirs on the exchange)
   slippage: Boolean (indicates if exchange has slippage)

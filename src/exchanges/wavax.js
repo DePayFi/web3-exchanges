@@ -7,6 +7,7 @@ const exchange = {
   name: 'wavax',
   label: 'Wrapped Avax',
   logo: Blockchains.avalanche.wrapped.logo,
+  protocol: 'weth',
   
   slippage: false,
   
