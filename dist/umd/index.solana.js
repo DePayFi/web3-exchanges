@@ -1,8 +1,8 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('@depay/web3-client-solana'), require('ethers'), require('@depay/web3-tokens-solana'), require('@depay/web3-blockchains'), require('@depay/solana-web3.js'), require('decimal.js')) :
-  typeof define === 'function' && define.amd ? define(['@depay/web3-client-solana', 'ethers', '@depay/web3-tokens-solana', '@depay/web3-blockchains', '@depay/solana-web3.js', 'decimal.js'], factory) :
-  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.Web3Exchanges = factory(global.Web3Client, global.ethers, global.Web3Tokens, global.Web3Blockchains, global.SolanaWeb3js, global.Decimal));
-}(this, (function (web3ClientSolana, ethers, Token, Blockchains, solanaWeb3_js, Decimal) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('@depay/web3-tokens-solana'), require('@depay/web3-client-solana'), require('ethers'), require('@depay/web3-blockchains'), require('@depay/solana-web3.js'), require('decimal.js')) :
+  typeof define === 'function' && define.amd ? define(['@depay/web3-tokens-solana', '@depay/web3-client-solana', 'ethers', '@depay/web3-blockchains', '@depay/solana-web3.js', 'decimal.js'], factory) :
+  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.Web3Exchanges = factory(global.Web3Tokens, global.Web3Client, global.ethers, global.Web3Blockchains, global.SolanaWeb3js, global.Decimal));
+}(this, (function (Token, web3ClientSolana, ethers, Blockchains, solanaWeb3_js, Decimal) { 'use strict';
 
   function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
@@ -14,7 +14,9 @@
     constructor({
       blockchain,
       tokenIn,
+      decimalsIn,
       tokenOut,
+      decimalsOut,
       path,
       pools,
       amountIn,
@@ -29,7 +31,9 @@
     }) {
       this.blockchain = blockchain;
       this.tokenIn = tokenIn;
+      this.decimalsIn = decimalsIn;
       this.tokenOut = tokenOut;
+      this.decimalsOut = decimalsOut;
       this.path = path;
       this.pools = pools;
       this.amountIn = _optionalChain$1([amountIn, 'optionalAccess', _ => _.toString, 'call', _2 => _2()]);
@@ -327,11 +331,16 @@
         } catch (e2) { return resolve() }
       }
 
+      const decimalsIn = await new Token__default['default']({ blockchain, address: tokenIn }).decimals();
+      const decimalsOut = await new Token__default['default']({ blockchain, address: tokenOut }).decimals();
+
       resolve(
         new Route({
           blockchain,
           tokenIn,
+          decimalsIn,
           tokenOut,
+          decimalsOut,
           path,
           pools,
           amountIn,

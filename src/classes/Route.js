@@ -2,7 +2,9 @@ class Route {
   constructor({
     blockchain,
     tokenIn,
+    decimalsIn,
     tokenOut,
+    decimalsOut,
     path,
     pools,
     amountIn,
@@ -17,7 +19,9 @@ class Route {
   }) {
     this.blockchain = blockchain
     this.tokenIn = tokenIn
+    this.decimalsIn = decimalsIn
     this.tokenOut = tokenOut
+    this.decimalsOut = decimalsOut
     this.path = path
     this.pools = pools
     this.amountIn = amountIn?.toString()

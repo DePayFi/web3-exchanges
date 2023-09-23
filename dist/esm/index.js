@@ -1,6 +1,6 @@
+import Token from '@depay/web3-tokens';
 import { request, getProvider } from '@depay/web3-client';
 import { ethers } from 'ethers';
-import Token from '@depay/web3-tokens';
 import Blockchains from '@depay/web3-blockchains';
 import { BN, struct, publicKey, u128, u64 as u64$1, seq, u8, u16, i32, bool, i128, PublicKey, Buffer, Keypair, SystemProgram, TransactionInstruction } from '@depay/solana-web3.js';
 import Decimal from 'decimal.js';
@@ -9,7 +9,9 @@ function _optionalChain$5(ops) { let lastAccessLHS = undefined; let value = ops[
   constructor({
     blockchain,
     tokenIn,
+    decimalsIn,
     tokenOut,
+    decimalsOut,
     path,
     pools,
     amountIn,
@@ -24,7 +26,9 @@ function _optionalChain$5(ops) { let lastAccessLHS = undefined; let value = ops[
   }) {
     this.blockchain = blockchain;
     this.tokenIn = tokenIn;
+    this.decimalsIn = decimalsIn;
     this.tokenOut = tokenOut;
+    this.decimalsOut = decimalsOut;
     this.path = path;
     this.pools = pools;
     this.amountIn = _optionalChain$5([amountIn, 'optionalAccess', _ => _.toString, 'call', _2 => _2()]);
@@ -322,11 +326,16 @@ const route$1 = ({
       } catch (e2) { return resolve() }
     }
 
+    const decimalsIn = await new Token({ blockchain, address: tokenIn }).decimals();
+    const decimalsOut = await new Token({ blockchain, address: tokenOut }).decimals();
+
     resolve(
       new Route({
         blockchain,
         tokenIn,
+        decimalsIn,
         tokenOut,
+        decimalsOut,
         path,
         pools,
         amountIn,

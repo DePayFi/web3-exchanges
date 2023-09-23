@@ -1,13 +1,15 @@
+import Token from '@depay/web3-tokens-evm';
 import { request } from '@depay/web3-client-evm';
 import { ethers } from 'ethers';
-import Token from '@depay/web3-tokens-evm';
 import Blockchains from '@depay/web3-blockchains';
 
 function _optionalChain$4(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }class Route {
   constructor({
     blockchain,
     tokenIn,
+    decimalsIn,
     tokenOut,
+    decimalsOut,
     path,
     pools,
     amountIn,
@@ -22,7 +24,9 @@ function _optionalChain$4(ops) { let lastAccessLHS = undefined; let value = ops[
   }) {
     this.blockchain = blockchain;
     this.tokenIn = tokenIn;
+    this.decimalsIn = decimalsIn;
     this.tokenOut = tokenOut;
+    this.decimalsOut = decimalsOut;
     this.path = path;
     this.pools = pools;
     this.amountIn = _optionalChain$4([amountIn, 'optionalAccess', _ => _.toString, 'call', _2 => _2()]);
@@ -320,11 +324,16 @@ const route$1 = ({
       } catch (e2) { return resolve() }
     }
 
+    const decimalsIn = await new Token({ blockchain, address: tokenIn }).decimals();
+    const decimalsOut = await new Token({ blockchain, address: tokenOut }).decimals();
+
     resolve(
       new Route({
         blockchain,
         tokenIn,
+        decimalsIn,
         tokenOut,
+        decimalsOut,
         path,
         pools,
         amountIn,

@@ -1,8 +1,8 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('@depay/web3-client-evm'), require('ethers'), require('@depay/web3-tokens-evm'), require('@depay/web3-blockchains')) :
-  typeof define === 'function' && define.amd ? define(['@depay/web3-client-evm', 'ethers', '@depay/web3-tokens-evm', '@depay/web3-blockchains'], factory) :
-  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.Web3Exchanges = factory(global.Web3Client, global.ethers, global.Web3Tokens, global.Web3Blockchains));
-}(this, (function (web3ClientEvm, ethers, Token, Blockchains) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('@depay/web3-tokens-evm'), require('@depay/web3-client-evm'), require('ethers'), require('@depay/web3-blockchains')) :
+  typeof define === 'function' && define.amd ? define(['@depay/web3-tokens-evm', '@depay/web3-client-evm', 'ethers', '@depay/web3-blockchains'], factory) :
+  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.Web3Exchanges = factory(global.Web3Tokens, global.Web3Client, global.ethers, global.Web3Blockchains));
+}(this, (function (Token, web3ClientEvm, ethers, Blockchains) { 'use strict';
 
   function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
@@ -13,7 +13,9 @@
     constructor({
       blockchain,
       tokenIn,
+      decimalsIn,
       tokenOut,
+      decimalsOut,
       path,
       pools,
       amountIn,
@@ -28,7 +30,9 @@
     }) {
       this.blockchain = blockchain;
       this.tokenIn = tokenIn;
+      this.decimalsIn = decimalsIn;
       this.tokenOut = tokenOut;
+      this.decimalsOut = decimalsOut;
       this.path = path;
       this.pools = pools;
       this.amountIn = _optionalChain$4([amountIn, 'optionalAccess', _ => _.toString, 'call', _2 => _2()]);
@@ -326,11 +330,16 @@
         } catch (e2) { return resolve() }
       }
 
+      const decimalsIn = await new Token__default['default']({ blockchain, address: tokenIn }).decimals();
+      const decimalsOut = await new Token__default['default']({ blockchain, address: tokenOut }).decimals();
+
       resolve(
         new Route({
           blockchain,
           tokenIn,
+          decimalsIn,
           tokenOut,
+          decimalsOut,
           path,
           pools,
           amountIn,

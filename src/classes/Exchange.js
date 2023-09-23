@@ -1,3 +1,17 @@
+/*#if _EVM
+
+import Token from '@depay/web3-tokens-evm'
+
+/*#elif _SOLANA
+
+import Token from '@depay/web3-tokens-solana'
+
+//#else */
+
+import Token from '@depay/web3-tokens'
+
+//#endif
+
 import Route from './Route'
 import { calculateAmountsWithSlippage } from '../slippage'
 import { fixAddress } from '../address'
@@ -51,11 +65,16 @@ const route = ({
       } catch { return resolve() }
     }
 
+    const decimalsIn = await new Token({ blockchain, address: tokenIn }).decimals()
+    const decimalsOut = await new Token({ blockchain, address: tokenOut }).decimals()
+
     resolve(
       new Route({
         blockchain,
         tokenIn,
+        decimalsIn,
         tokenOut,
+        decimalsOut,
         path,
         pools,
         amountIn,
