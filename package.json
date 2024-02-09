@@ -1,7 +1,7 @@
 {
   "name": "@depay/web3-exchanges",
   "moduleName": "Web3Exchanges",
-  "version": "13.8.0",
+  "version": "13.8.1",
   "description": "JavaScript library simplifying decentralized web3 exchange routing for multiple blockchains and exchanges.",
   "main": "dist/umd/index.js",
   "module": "dist/esm/index.js",
@@ -34,7 +34,7 @@
   "private": false,
   "peerDependencies": {
     "@depay/solana-web3.js": "^1.26.0",
-    "@depay/web3-blockchains": "^9.3.1",
+    "@depay/web3-blockchains": "^9.3.2",
     "@depay/web3-client": "^10.18.4",
     "@depay/web3-tokens": "^10.3.0",
     "decimal.js": "^10.4.3",
@@ -50,7 +50,7 @@
     "@depay/solana-web3.js": "^1.26.0",
     "@depay/walletconnect-v1": "^1.8.0",
     "@depay/walletconnect-v2": "^2.9.2",
-    "@depay/web3-blockchains": "^9.3.1",
+    "@depay/web3-blockchains": "^9.3.2",
     "@depay/web3-client": "^10.18.4",
     "@depay/web3-client-evm": "^10.18.4",
     "@depay/web3-client-solana": "^10.18.4",
