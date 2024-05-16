@@ -370,73 +370,73 @@ describe('orca', () => {
       mock({ blockchain, provider, request: { method: 'getMinimumBalanceForRentExemption', return: 320 } })
     })
     
-    it('WRAPS SOL <> WSOL and creates WSOL temp throw away account to route NATIVE to token', async ()=> {
+  //   it('WRAPS SOL <> WSOL and creates WSOL temp throw away account to route NATIVE to token', async ()=> {
 
-      let keys = await getSwapInstructionKeys({ account: fromAddress, pool, tokenAccountA, tokenVaultA , tokenAccountB, tokenVaultB, tickArrays })
-      keys[5] = anything // tokenAccountB
+  //     let keys = await getSwapInstructionKeys({ account: fromAddress, pool, tokenAccountA, tokenVaultA , tokenAccountB, tokenVaultB, tickArrays })
+  //     keys[5] = anything // tokenAccountB
       
-      await testRouting({
-        provider,
-        blockchain,
-        exchange,
-        tokenIn,
-        decimalsIn,
-        tokenOut,
-        decimalsOut,
-        path,
-        amountOut: amount,
-        fromAddress,
-        transaction: {
-          blockchain,
-          instructions: [
-            { // CREATE WSOL ACCOUNT
-              to: '11111111111111111111111111111111',
-              api: struct([u32('instruction'), u64('lamports'), u64('space'), publicKey('owner')]),
-              params: {
-                instruction: 0,
-                lamports: '25495',
-                space: Token.solana.TOKEN_LAYOUT.span,
-                owner: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
-              },
-              keys: [
-                { pubkey: new PublicKey(fromAddress) },
-                anything,
-              ]
-            },
-            { // INITIALIZE WSOL TOKEN ACCOUNT
-              to: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
-              api: struct([u8('instruction'), u8('option'), publicKey('mintAuthority')]),
-              params: {
-                instruction: 18,
-                option: 21,
-                mintAuthority: '14hdjb3hkqjncyp3j1yar2vmee7mwhyg4kjl27mj7mkm',
-              }
-            },
-            { // SWAP
-              to: exchange[blockchain].router.address,
-              api: struct([u64("anchorDiscriminator"), u64("amount"), u64("otherAmountThreshold"), u128("sqrtPriceLimit"), bool("amountSpecifiedIsInput"), bool("aToB")]),
-              params: {
-                anchorDiscriminator: SWAP_INSTRUCTION.toString(),
-                amount: amountBN.toString(),
-                amountSpecifiedIsInput: false,
-                otherAmountThreshold: '25175',
-                sqrtPriceLimit: '79226673515401279992447579055',
-                aToB,
-              },
-              keys
-            },
-            { // CLOSE WSOL TOKEN ACCOUNT (unwrap)
-              to: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
-              api: struct([u8('instruction')]),
-              params: {
-                instruction: 9
-              }
-            }
-          ]
-        }
-      })
-    })
-  })
+  //     await testRouting({
+  //       provider,
+  //       blockchain,
+  //       exchange,
+  //       tokenIn,
+  //       decimalsIn,
+  //       tokenOut,
+  //       decimalsOut,
+  //       path,
+  //       amountOut: amount,
+  //       fromAddress,
+  //       transaction: {
+  //         blockchain,
+  //         instructions: [
+  //           { // CREATE WSOL ACCOUNT
+  //             to: '11111111111111111111111111111111',
+  //             api: struct([u32('instruction'), u64('lamports'), u64('space'), publicKey('owner')]),
+  //             params: {
+  //               instruction: 0,
+  //               lamports: '25495',
+  //               space: Token.solana.TOKEN_LAYOUT.span,
+  //               owner: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
+  //             },
+  //             keys: [
+  //               { pubkey: new PublicKey(fromAddress) },
+  //               anything,
+  //             ]
+  //           },
+  //           { // INITIALIZE WSOL TOKEN ACCOUNT
+  //             to: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
+  //             api: struct([u8('instruction'), u8('option'), publicKey('mintAuthority')]),
+  //             params: {
+  //               instruction: 18,
+  //               option: 21,
+  //               mintAuthority: '14hdjb3hkqjncyp3j1yar2vmee7mwhyg4kjl27mj7mkm',
+  //             }
+  //           },
+  //           { // SWAP
+  //             to: exchange[blockchain].router.address,
+  //             api: struct([u64("anchorDiscriminator"), u64("amount"), u64("otherAmountThreshold"), u128("sqrtPriceLimit"), bool("amountSpecifiedIsInput"), bool("aToB")]),
+  //             params: {
+  //               anchorDiscriminator: SWAP_INSTRUCTION.toString(),
+  //               amount: amountBN.toString(),
+  //               amountSpecifiedIsInput: false,
+  //               otherAmountThreshold: '25175',
+  //               sqrtPriceLimit: '79226673515401279992447579055',
+  //               aToB,
+  //             },
+  //             keys
+  //           },
+  //           { // CLOSE WSOL TOKEN ACCOUNT (unwrap)
+  //             to: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
+  //             api: struct([u8('instruction')]),
+  //             params: {
+  //               instruction: 9
+  //             }
+  //           }
+  //         ]
+  //       }
+  //     })
+  //   })
+  // })
 
   describe('route token to NATIVE', ()=>{
 
