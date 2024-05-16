@@ -13,6 +13,7 @@ import Token from '@depay/web3-tokens'
 
 //#endif
 
+import Blockchains from '@depay/web3-blockchains'
 import { ethers } from 'ethers'
 import { getPrice } from './price'
 import { WHIRLPOOL_LAYOUT } from './layouts'
@@ -20,6 +21,7 @@ import { WHIRLPOOL_LAYOUT } from './layouts'
 // This method is cached and is only to be used to generally existing pools every 24h
 // Do not use for price calulations, fetch accounts for pools individually in order to calculate price 
 let getAccounts = async (base, quote) => {
+  if(quote === Blockchains.solana.wrapped.address) { return [] } // WSOL is base not QUOTE!
   let accounts = await request(`solana://whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc/getProgramAccounts`, {
     params: { filters: [
       { dataSize: WHIRLPOOL_LAYOUT.span },
