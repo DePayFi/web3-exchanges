@@ -336,39 +336,39 @@ describe('orca', () => {
     })
   })
 
-  describe('route NATIVE to token', ()=>{
+  // describe('route NATIVE to token', ()=>{
 
-    const tokenIn = '11111111111111111111111111111111'
-    const tokenAccountA = 'FeRWtXU91EFnT5PGFfHcD5hBXRXsgBw8YutdjgwboRrK'
-    const tokenVaultA = 'BVNo8ftg2LkkssnWT4ZWdtoFaevnfD6ExYeramwM27pe'
-    const tokenOut = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'
-    const tokenAccountB = 'F7e4iBrxoSmHhEzhuBcXXs1KAknYvEoZWieiocPvrCD9'
-    const tokenVaultB = '9RfZwn2Prux6QesG1Noo4HzMEBv3rPndJ2bN2Wwd6a7p'
-    const path = [tokenIn, tokenOut]
-    const pool = '58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2'
-    const amount = 1
-    const amountBN = ethers.utils.parseUnits(amount.toString(), decimalsIn)
-    const tokenAccountOut = 'F7e4iBrxoSmHhEzhuBcXXs1KAknYvEoZWieiocPvrCD9'
-    let tickArrays
+  //   const tokenIn = '11111111111111111111111111111111'
+  //   const tokenAccountA = 'FeRWtXU91EFnT5PGFfHcD5hBXRXsgBw8YutdjgwboRrK'
+  //   const tokenVaultA = 'BVNo8ftg2LkkssnWT4ZWdtoFaevnfD6ExYeramwM27pe'
+  //   const tokenOut = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'
+  //   const tokenAccountB = 'F7e4iBrxoSmHhEzhuBcXXs1KAknYvEoZWieiocPvrCD9'
+  //   const tokenVaultB = '9RfZwn2Prux6QesG1Noo4HzMEBv3rPndJ2bN2Wwd6a7p'
+  //   const path = [tokenIn, tokenOut]
+  //   const pool = '58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2'
+  //   const amount = 1
+  //   const amountBN = ethers.utils.parseUnits(amount.toString(), decimalsIn)
+  //   const tokenAccountOut = 'F7e4iBrxoSmHhEzhuBcXXs1KAknYvEoZWieiocPvrCD9'
+  //   let tickArrays
 
-    beforeEach(async()=>{
+  //   beforeEach(async()=>{
       
-      await mockPool({
-        provider,
-        tokenA: 'So11111111111111111111111111111111111111112',
-        tokenVaultA,
-        tokenB: tokenOut,
-        tokenVaultB,
-        aToB,
-        pool,
-      })
+  //     await mockPool({
+  //       provider,
+  //       tokenA: 'So11111111111111111111111111111111111111112',
+  //       tokenVaultA,
+  //       tokenB: tokenOut,
+  //       tokenVaultB,
+  //       aToB,
+  //       pool,
+  //     })
 
-      freshWhirlpoolData = await getMockedPool(pool)
-      tickArrays = await getTickArrays({ pool, freshWhirlpoolData, aToB })
+  //     freshWhirlpoolData = await getMockedPool(pool)
+  //     tickArrays = await getTickArrays({ pool, freshWhirlpoolData, aToB })
 
-      mock({ blockchain, provider, request: { method: 'getAccountInfo', to: tokenAccountOut, api: Token.solana.TOKEN_LAYOUT, return: { mint: tokenOut, owner: fromAddress, amount: '2511210038936013080', delegateOption: 70962703, delegate: 'BSFGxQ38xesdoUd3qsvNhjRu2FLPq9CwCBiGE42fc9hR', state: 0, isNativeOption: 0, isNative: '0', delegatedAmount: '0', closeAuthorityOption: 0, closeAuthority: '11111111111111111111111111111111' }}})
-      mock({ blockchain, provider, request: { method: 'getMinimumBalanceForRentExemption', return: 320 } })
-    })
+  //     mock({ blockchain, provider, request: { method: 'getAccountInfo', to: tokenAccountOut, api: Token.solana.TOKEN_LAYOUT, return: { mint: tokenOut, owner: fromAddress, amount: '2511210038936013080', delegateOption: 70962703, delegate: 'BSFGxQ38xesdoUd3qsvNhjRu2FLPq9CwCBiGE42fc9hR', state: 0, isNativeOption: 0, isNative: '0', delegatedAmount: '0', closeAuthorityOption: 0, closeAuthority: '11111111111111111111111111111111' }}})
+  //     mock({ blockchain, provider, request: { method: 'getMinimumBalanceForRentExemption', return: 320 } })
+  //   })
     
   //   it('WRAPS SOL <> WSOL and creates WSOL temp throw away account to route NATIVE to token', async ()=> {
 
@@ -436,8 +436,7 @@ describe('orca', () => {
   //       }
   //     })
   //   })
-  
-  })
+  // })
 
   describe('route token to NATIVE', ()=>{
 
