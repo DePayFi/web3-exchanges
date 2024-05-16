@@ -339,11 +339,11 @@ describe('orca', () => {
   describe('route NATIVE to token', ()=>{
 
     const tokenIn = '11111111111111111111111111111111'
-    const tokenAccountA = 'F7e4iBrxoSmHhEzhuBcXXs1KAknYvEoZWieiocPvrCD9'
-    const tokenVaultA = '9RfZwn2Prux6QesG1Noo4HzMEBv3rPndJ2bN2Wwd6a7p'
+    const tokenAccountA = 'FeRWtXU91EFnT5PGFfHcD5hBXRXsgBw8YutdjgwboRrK'
+    const tokenVaultA = 'BVNo8ftg2LkkssnWT4ZWdtoFaevnfD6ExYeramwM27pe'
     const tokenOut = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'
-    const tokenAccountB = 'FeRWtXU91EFnT5PGFfHcD5hBXRXsgBw8YutdjgwboRrK'
-    const tokenVaultB = 'BVNo8ftg2LkkssnWT4ZWdtoFaevnfD6ExYeramwM27pe'
+    const tokenAccountB = 'F7e4iBrxoSmHhEzhuBcXXs1KAknYvEoZWieiocPvrCD9'
+    const tokenVaultB = '9RfZwn2Prux6QesG1Noo4HzMEBv3rPndJ2bN2Wwd6a7p'
     const path = [tokenIn, tokenOut]
     const pool = '58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2'
     const amount = 1
@@ -355,9 +355,9 @@ describe('orca', () => {
       
       await mockPool({
         provider,
-        tokenA: tokenOut,
+        tokenA: 'So11111111111111111111111111111111111111112',
         tokenVaultA,
-        tokenB: 'So11111111111111111111111111111111111111112',
+        tokenB: tokenOut,
         tokenVaultB,
         aToB,
         pool,
