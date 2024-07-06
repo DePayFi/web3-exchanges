@@ -32,8 +32,5 @@
   },
   "engines": {
     "node": ">=14"
-  },
-  "resolutions": {
-    "clipboardy": "3.0.0"
   }
 }
