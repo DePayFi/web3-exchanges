@@ -85,5 +85,8 @@
     "typescript": "^5.0.2",
     "util": "^0.12.5",
     "webpack": "^5.74.0"
+  },
+  "resolutions": {
+    "clipboardy": "3.0.0"
   }
 }

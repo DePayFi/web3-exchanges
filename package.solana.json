@@ -31,6 +31,9 @@
     "decimal.js": "^10.4.3",
     "ethers": "^5.7.1"
   },
+  "resolutions": {
+    "clipboardy": "3.0.0"
+  },
   "engines": {
     "node": ">=14"
   }
