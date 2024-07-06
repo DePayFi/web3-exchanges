@@ -27,6 +27,20 @@ function mockPair({ blockchain, exchange, provider, tokenIn, tokenOut, fee, pair
 }
 
 function mockAmounts({ blockchain, exchange, block, provider, method, params, amount }){
+  const scaledParams = [...params]
+  scaledParams[scaledParams.length-1] = scaledParams[scaledParams.length-1].mul(ethers.BigNumber.from(10))
+  mock({
+    provider,
+    blockchain,
+    block,
+    request: {
+      to: exchange[blockchain].quoter.address,
+      api: exchange[blockchain].quoter.api,
+      method: method,
+      params: scaledParams,
+      return: [amount._hex ? amount.mul(ethers.BigNumber.from(10)) : amount*10, ['185849718823265608423170047175'], ['0'], '80518']
+    }
+  })
   return mock({
     provider,
     blockchain,

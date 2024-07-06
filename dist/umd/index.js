@@ -3844,12 +3844,22 @@
           let amount;
           if(amountIn) {
             amount = await getOutputAmount({ exchange, pool, inputAmount: amountIn });
+            const amountScaled = await getOutputAmount({ exchange, pool, inputAmount: amountIn.mul(ethers.ethers.BigNumber.from(10)) });
+            const amountScaledDown = amountScaled.div(ethers.ethers.BigNumber.from(10));
+            const difference = amountScaledDown.sub(amount).abs();
+            const enoughLiquidity = !difference.gt(amount.div(ethers.ethers.BigNumber.from(100)));
+            if(!enoughLiquidity) { return }
           } else {
             amount = await getInputAmount({ exchange, pool, outputAmount: amountOut });
+            const amountScaled = await getInputAmount({ exchange, pool, outputAmount: amountOut.mul(ethers.ethers.BigNumber.from(10)) });
+            const amountScaledDown = amountScaled.div(ethers.ethers.BigNumber.from(10));
+            const difference = amountScaledDown.sub(amount).abs();
+            const enoughLiquidity = !difference.gt(amount.div(ethers.ethers.BigNumber.from(100)));
+            if(!enoughLiquidity) { return }
           }
 
           return { ...pool, amountIn: amountIn || amount, amountOut: amountOut || amount }
-        } catch (e) {}
+        } catch(e) {console.log('!!!', e);}
 
       }))).filter(Boolean);
       
