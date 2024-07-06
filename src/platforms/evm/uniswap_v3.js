@@ -134,7 +134,7 @@ const getBestPool = async ({ blockchain, exchange, path, amountIn, amountOut, bl
         }
 
         return { ...pool, amountIn: amountIn || amount, amountOut: amountOut || amount }
-      } catch {}
+      } catch(e) {console.log('!!!', e)}
 
     }))).filter(Boolean)
     
