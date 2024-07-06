@@ -24,13 +24,16 @@
   "homepage": "https://depay.com",
   "private": false,
   "peerDependencies": {
-    "@depay/web3-blockchains": "^9.3.6",
-    "@depay/web3-client-evm": "^10.18.4",
+    "@depay/web3-blockchains": "^9.4.2",
+    "@depay/web3-client-evm": "^10.18.7",
     "@depay/web3-tokens-evm": "^10.3.0",
     "decimal.js": "^10.4.3",
     "ethers": "^5.7.1"
   },
   "engines": {
     "node": ">=14"
+  },
+  "resolutions": {
+    "clipboardy": "3.0.0"
   }
 }
