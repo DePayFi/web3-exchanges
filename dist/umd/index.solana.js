@@ -1553,6 +1553,10 @@
         amountSpecifiedIsInput,
       });
 
+      if(amountCalculated.toString() == "0"){
+        throw('amountCalculated cant be zero!')
+      }
+
       return {
         price: amountCalculated.toString(),
         tickArrays,
