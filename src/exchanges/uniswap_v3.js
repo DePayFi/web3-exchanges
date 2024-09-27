@@ -11,11 +11,11 @@ const exchange = {
   slippage: true,
   fees: [100, 500, 3000, 10000],
   
-  blockchains: ['ethereum', 'bsc', 'polygon', 'optimism', 'arbitrum'],
+  blockchains: ['ethereum', 'bsc', 'polygon', 'optimism', 'arbitrum', 'base'],
   
   ethereum: {
     router: {
-      address: '0x3fc91a3afd70395cd496c647d5a6cc9d4b2b7fad',
+      address: '0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45',
       api: UniswapV3.ROUTER
     },
     factory: {
@@ -37,7 +37,7 @@ const exchange = {
 
   bsc: {
     router: {
-      address: '0x3fc91a3afd70395cd496c647d5a6cc9d4b2b7fad',
+      address: '0xB971eF87ede563556b2ED4b1C0b0019111Dd85d2',
       api: UniswapV3.ROUTER
     },
     factory: {
@@ -59,7 +59,7 @@ const exchange = {
 
   polygon: {
     router: {
-      address: '0x3fc91a3afd70395cd496c647d5a6cc9d4b2b7fad',
+      address: '0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45',
       api: UniswapV3.ROUTER
     },
     factory: {
@@ -81,7 +81,7 @@ const exchange = {
 
   optimism: {
     router: {
-      address: '0x3fc91a3afd70395cd496c647d5a6cc9d4b2b7fad',
+      address: '0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45',
       api: UniswapV3.ROUTER
     },
     factory: {
@@ -103,7 +103,7 @@ const exchange = {
 
   arbitrum: {
     router: {
-      address: '0x3fc91a3afd70395cd496c647d5a6cc9d4b2b7fad',
+      address: '0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45',
       api: UniswapV3.ROUTER
     },
     factory: {
@@ -125,7 +125,7 @@ const exchange = {
 
   base: {
     router: {
-      address: '0x198EF79F1F515F02dFE9e3115eD9fC07183f02fC',
+      address: '0x2626664c2603336E57B271c5C0b26F421741e481',
       api: UniswapV3.ROUTER
     },
     factory: {
