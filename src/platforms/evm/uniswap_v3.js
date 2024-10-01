@@ -385,20 +385,24 @@ let getTransaction = async({
 
   let value = "0"
   const contract = new ethers.Contract(exchange[blockchain].router.address, exchange[blockchain].router.api)
+  const exactInput = !!(amountOutMinInput || amountInInput)
   const wrapETH = path[0] === Blockchains[blockchain].currency.address
   const unwrapETH = path[path.length-1] === Blockchains[blockchain].currency.address
   const recipient = unwrapETH ? ROUTER_AS_RECIPIENT : SENDER_AS_RECIPIENT
-  
+  const refundETH = wrapETH || unwrapETH
+
   let multicalls = []
 
   if (wrapETH) {
     value = amountIn.toString()
-    multicalls.push(
-      contract.interface.encodeFunctionData('wrapETH', [amountIn])
-    )
+    if(exactInput) { // exactOut does not need to wrapETH!
+      multicalls.push(
+        contract.interface.encodeFunctionData('wrapETH', [amountIn])
+      )
+    }
   }
 
-  if (amountOutMinInput || amountInInput) {
+  if (exactInput) {
     multicalls.push(
       contract.interface.encodeFunctionData('exactInput', [{
         path: packPath(pools),
@@ -421,6 +425,12 @@ let getTransaction = async({
   if (unwrapETH) {
     multicalls.push(
       contract.interface.encodeFunctionData('unwrapWETH9(uint256)', [amountOut || amountOutMin])
+    )
+  }
+
+  if(refundETH) {
+    multicalls.push(
+      contract.interface.encodeFunctionData('refundETH')
     )
   }
 
