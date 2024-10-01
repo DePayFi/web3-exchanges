@@ -11,7 +11,7 @@ const exchange = {
   slippage: true,
   fees: [100, 500, 3000, 10000],
   
-  blockchains: ['ethereum', 'bsc', 'polygon', 'optimism', 'arbitrum', 'base'],
+  blockchains: ['ethereum', 'bsc', 'polygon', 'optimism', 'arbitrum', 'base', 'avalanche'],
   
   ethereum: {
     router: {
@@ -137,6 +137,28 @@ const exchange = {
     },
     quoter: {
       address: '0x3d4e44Eb1374240CE5F1B871ab261CD16335B76a',
+      api: UniswapV3.QUOTER
+    },
+    permit: {
+      address: '0x000000000022d473030f116ddee9f6b43ac78ba3',
+      api: UniswapV3.PERMIT2
+    }
+  },
+
+  avalanche: {
+    router: {
+      address: '0xbb00FF08d01D300023C629E8fFfFcb65A5a578cE',
+      api: UniswapV3.ROUTER
+    },
+    factory: {
+      address: '0x740b1c1de25031C31FF4fC9A62f554A55cdC1baD',
+      api: UniswapV3.FACTORY
+    },
+    pool: {
+      api: UniswapV3.POOL
+    },
+    quoter: {
+      address: '0xbe0F5544EC67e9B3b2D979aaA43f18Fd87E6257F',
       api: UniswapV3.QUOTER
     },
     permit: {

@@ -311,7 +311,7 @@ const route$1 = ({
     } catch (e) { return resolve() }
     if([amountIn, amountInMax, amountOut, amountOutMin].every((amount)=>{ return amount == undefined })) { return resolve() }
 
-    if(slippage || exchange.slippage) {
+    if(exchange.slippage && slippage !== false) {
       try {
         ({ amountIn, amountInMax, amountOut, amountOutMin, amounts } = await calculateAmountsWithSlippage({
           exchange,
@@ -387,6 +387,7 @@ class Exchange {
     amountOut,
     amountInMax,
     amountOutMin,
+    slippage,
   }) {
     if(tokenIn === tokenOut){ return Promise.resolve() }
 
@@ -426,7 +427,7 @@ class Exchange {
       getAmounts: this.getAmounts,
       getPrep: this.getPrep,
       getTransaction: this.getTransaction,
-      slippage: this.slippage,
+      slippage,
     })
   }
 }

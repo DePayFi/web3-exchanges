@@ -18,7 +18,6 @@ import Blockchains from '@depay/web3-blockchains'
 
 const SENDER_AS_RECIPIENT = '0x0000000000000000000000000000000000000001'
 const ROUTER_AS_RECIPIENT = '0x0000000000000000000000000000000000000002'
-const ETH_TO_WETH_PATH = '0x0000000000000000000000000000000000000001'
 
 // Replaces 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE with the wrapped token and implies wrapping.
 //
@@ -357,6 +356,16 @@ let packPath = (pools)=>{
   }
 }
 
+let packPathReverse = (pools)=>{
+  if(pools.length == 1) {
+    return ethers.utils.solidityPack(["address","uint24","address"], [pools[0].path[1], pools[0].fee, pools[0].path[0]])
+  } else if (pools.length == 2) {
+    return ethers.utils.solidityPack(["address","uint24","address","uint24","address"], [pools[1].path[1], pools[1].fee, pools[1].path[0], pools[0].fee, pools[0].path[0]])
+  } else {
+    throw 'more than 2 pools not supported!'
+  }
+}
+
 let getTransaction = async({
   blockchain,
   exchange,
@@ -376,38 +385,42 @@ let getTransaction = async({
 
   let value = "0"
   const contract = new ethers.Contract(exchange[blockchain].router.address, exchange[blockchain].router.api)
+  const wrapETH = path[0] === Blockchains[blockchain].currency.address
+  const unwrapETH = path[path.length-1] === Blockchains[blockchain].currency.address
+  const recipient = unwrapETH ? ROUTER_AS_RECIPIENT : SENDER_AS_RECIPIENT
+  
   let multicalls = []
 
-  if (path[0] === Blockchains[blockchain].currency.address) { // wrapETH
+  if (wrapETH) {
     value = amountIn.toString()
     multicalls.push(
       contract.interface.encodeFunctionData('wrapETH', [amountIn])
     )
   }
 
-  if (amountOutMinInput || amountInInput) { // exactInput
+  if (amountOutMinInput || amountInInput) {
     multicalls.push(
       contract.interface.encodeFunctionData('exactInput', [{
         path: packPath(pools),
-        amountIn: path[0] === Blockchains[blockchain].currency.address ? 0 : amountIn,
+        amountIn: wrapETH ? 0 : amountIn,
         amountOutMinimum: amountOutMin,
-        recipient: SENDER_AS_RECIPIENT
+        recipient
       }])
     )
-  } else { // exactOutput
-    console.log({
-      path: packPath(pools),
-      amountOut: amountOut.toString(),
-      amountInMaximum: amountInMax.toString(),
-      recipient: SENDER_AS_RECIPIENT
-    })
+  } else {
     multicalls.push(
       contract.interface.encodeFunctionData('exactOutput', [{
-        path: packPath(pools),
+        path: packPathReverse(pools),
         amountOut,
         amountInMaximum: amountInMax,
-        recipient: SENDER_AS_RECIPIENT
+        recipient
       }])
+    )
+  }
+
+  if (unwrapETH) {
+    multicalls.push(
+      contract.interface.encodeFunctionData('unwrapWETH9(uint256)', [amountOut || amountOutMin])
     )
   }
 
@@ -417,7 +430,7 @@ let getTransaction = async({
     to: exchange[blockchain].router.address,
     api: exchange[blockchain].router.api,
     method: 'multicall',
-    params: {data: multicalls},
+    params: { data: multicalls },
     value
   }
 
