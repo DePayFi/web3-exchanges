@@ -394,10 +394,10 @@ let getTransaction = async({
   let multicalls = []
 
   if (wrapETH) {
-    value = amountIn.toString()
+    value = (amountIn || amountInMax).toString()
     if(exactInput) { // exactOut does not need to wrapETH!
       multicalls.push(
-        contract.interface.encodeFunctionData('wrapETH', [amountIn])
+        contract.interface.encodeFunctionData('wrapETH', [(amountIn || amountInMax)])
       )
     }
   }
@@ -406,7 +406,7 @@ let getTransaction = async({
     multicalls.push(
       contract.interface.encodeFunctionData('exactInput', [{
         path: packPath(pools),
-        amountIn: wrapETH ? 0 : amountIn,
+        amountIn: wrapETH ? 0 : (amountIn || amountInMax),
         amountOutMinimum: amountOutMin,
         recipient
       }])

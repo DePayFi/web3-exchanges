@@ -2330,24 +2330,28 @@
 
     let value = "0";
     const contract = new ethers.ethers.Contract(exchange[blockchain].router.address, exchange[blockchain].router.api);
+    const exactInput = !!(amountOutMinInput || amountInInput);
     const wrapETH = path[0] === Blockchains__default['default'][blockchain].currency.address;
     const unwrapETH = path[path.length-1] === Blockchains__default['default'][blockchain].currency.address;
     const recipient = unwrapETH ? ROUTER_AS_RECIPIENT : SENDER_AS_RECIPIENT;
-    
+    const refundETH = wrapETH || unwrapETH;
+
     let multicalls = [];
 
     if (wrapETH) {
-      value = amountIn.toString();
-      multicalls.push(
-        contract.interface.encodeFunctionData('wrapETH', [amountIn])
-      );
+      value = (amountIn || amountInMax).toString();
+      if(exactInput) { // exactOut does not need to wrapETH!
+        multicalls.push(
+          contract.interface.encodeFunctionData('wrapETH', [(amountIn || amountInMax)])
+        );
+      }
     }
 
-    if (amountOutMinInput || amountInInput) {
+    if (exactInput) {
       multicalls.push(
         contract.interface.encodeFunctionData('exactInput', [{
           path: packPath(pools),
-          amountIn: wrapETH ? 0 : amountIn,
+          amountIn: wrapETH ? 0 : (amountIn || amountInMax),
           amountOutMinimum: amountOutMin,
           recipient
         }])
@@ -2366,6 +2370,12 @@
     if (unwrapETH) {
       multicalls.push(
         contract.interface.encodeFunctionData('unwrapWETH9(uint256)', [amountOut || amountOutMin])
+      );
+    }
+
+    if(refundETH) {
+      multicalls.push(
+        contract.interface.encodeFunctionData('refundETH')
       );
     }
 
