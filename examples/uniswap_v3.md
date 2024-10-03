@@ -24,8 +24,8 @@ wallet.sendTransaction(transaction)
 let route = await Web3Exchanges.uniswap_v3.route({
   blockchain: 'optimism',
   tokenIn: Web3Blockchains.optimism.currency.address,
-  tokenOut: '0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1', // DAI
-  amountOutMin: 1
+  tokenOut: '0x94b008aA00579c1307B0EF2c499aD98a8ce58e58', // USDT
+  amountOutMin: 0.01
 })
 
 let wallets = await Web3Wallets.getWallets()
@@ -63,8 +63,48 @@ wallet.sendTransaction(transaction)
 ```javascript
 let route = await Web3Exchanges.uniswap_v3.route({
   blockchain: 'optimism',
-  tokenIn: '0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1', // DAI
-  tokenOut: '0x4200000000000000000000000000000000000042', // OPTIMSM
+  tokenIn: '0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85',
+  tokenOut: '0x94b008aA00579c1307B0EF2c499aD98a8ce58e58',
+  amountOutMin: 0.01
+})
+
+let wallets = await Web3Wallets.getWallets()
+let wallet = wallets[0]
+let account = await wallet.account()
+
+let prep = await route.getPrep({ account })
+
+let transaction = await route.getTransaction({ account })
+wallet.sendTransaction(transaction)
+```
+
+# NATIVE TO TOKEN (OPTIMISM, 1 pool)
+
+```javascript
+let route = await Web3Exchanges.uniswap_v3.route({
+  blockchain: 'optimism',
+  tokenIn: "0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85",
+  tokenOut: '0x94b008aA00579c1307B0EF2c499aD98a8ce58e58',
+  amountInMax: 0.1
+})
+
+let wallets = await Web3Wallets.getWallets()
+let wallet = wallets[0]
+let account = await wallet.account()
+
+let prep = await route.getPrep({ account })
+
+let transaction = await route.getTransaction({ account })
+wallet.sendTransaction(transaction)
+```
+
+# TOKEN TO TOKEN (OPTIMISM, 2 pools)
+
+```javascript
+let route = await Web3Exchanges.uniswap_v3.route({
+  blockchain: 'optimism',
+  tokenIn: '0x76FB31fb4af56892A25e32cFC43De717950c9278',
+  tokenOut: '0xdC6fF44d5d932Cbd77B52E5612Ba0529DC6226F1',
   amountOutMin: 0.01
 })
 
