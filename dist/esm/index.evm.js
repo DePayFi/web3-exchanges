@@ -3051,6 +3051,7 @@ exchanges.fantom = [
 exchanges.fantom.forEach((exchange)=>{ exchanges.fantom[exchange.name] = exchange; });
 
 exchanges.avalanche = [
+  uniswap_v3('avalanche'),
   trader_joe_v2_1('avalanche'),
   wavax('avalanche'),
 ];
