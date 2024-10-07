@@ -73,6 +73,7 @@ This library supports the following blockchains:
 - [Avalanche](https://www.avax.network)
 - [Gnosis](https://gnosis.io)
 - [Base](https://base.org)
+- [Worldchain](https://worldcoin.org/world-chain)
 
 This library supports the following decentralized exchanges:
 
