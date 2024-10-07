@@ -179,18 +179,18 @@ A Swap configuration is fed into the `route` function:
 ```
 
 - `tokenIn`: The token put into the swap (out of wallet)
-- `amountIn`: The amount of tokenIn put into the swap (out of wallet)
+- `amountIn`: The exact amount of tokenIn put into the swap (out of wallet)
 - `amountInMax`: The max. amount of tokenIn put into the swap (out of wallet)
 - `tokenOut`: The token expected to come out of the swap (into wallet)
-- `amountOut`: The amount of tokenOut expected to come out of the swap (into wallet)
+- `amountOut`: The exact amount of tokenOut expected to come out of the swap (into wallet)
 - `amountOutMin`: The min. amount of tokenOut expected to come out of the swap (into wallet)
 
 The following combinations of provided amounts are possible:
 
 - Pass `amountOutMin`. Swap will return at least `amountOutMin` into the wallet. `amountIn` will be calculated automatically and can vary.
-- Pass `amountOut`. Swap will take at max `amountInMax` out of the wallet (calculated based on provided `amountOut`). `amountInMax` will be calculated automatically and can vary.
+- Pass `amountOut`. Swap will take at max `amountInMax` out of the wallet (calculated based on provided, exact `amountOut`). `amountInMax` will be calculated automatically and can vary.
 - Pass `amountInMax`. Swap will take at max `amountInMax` out of the wallet. `amountOut` will be calculated automatically and can vary.
-- Pass `amountIn`. Swap will return at least `amountOutMin` into the the wallet (calculated based on provided `amountIn`). `amountOutMin` will be calculated automatically and can vary.
+- Pass `amountIn`. Swap will return at least `amountOutMin` into the the wallet (calculated based on provided, exact `amountIn`). `amountOutMin` will be calculated automatically and can vary.
 
 ### Route
 
