@@ -101,6 +101,11 @@ exchanges.gnosis = [
 ]
 exchanges.gnosis.forEach((exchange)=>{ exchanges.gnosis[exchange.name] = exchange })
 
+exchanges.worldchain = [
+  uniswap_v3('worldchain'),
+]
+exchanges.worldchain.forEach((exchange)=>{ exchanges.worldchain[exchange.name] = exchange })
+
 
 /*#elif _SOLANA
 
@@ -226,6 +231,11 @@ exchanges.gnosis = [
   wxdai('gnosis'),
 ]
 exchanges.gnosis.forEach((exchange)=>{ exchanges.gnosis[exchange.name] = exchange })
+
+exchanges.worldchain = [
+  uniswap_v3('worldchain'),
+]
+exchanges.worldchain.forEach((exchange)=>{ exchanges.worldchain[exchange.name] = exchange })
 
 //#endif
 
