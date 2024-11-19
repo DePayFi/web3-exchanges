@@ -1930,10 +1930,11 @@
   // Do not use for price calulations, fetch accounts for pools individually in order to calculate price 
   let getAccounts = async (base, quote) => {
     if(quote === Blockchains__default['default'].solana.wrapped.address) { return [] } // WSOL is base not QUOTE!
+    let whirlpoolsConfig = _optionalChain$4([(typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : undefined), 'optionalAccess', _ => _._whirlpoolsConfig]) || '2LecshUwdy9xi7meFgHtFJQNSKk4KdTrcpvaB56dP2NQ';
     let accounts = await web3Client.request(`solana://whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc/getProgramAccounts`, {
       params: { filters: [
         { dataSize: WHIRLPOOL_LAYOUT.span },
-        { memcmp: { offset: 8, bytes: _optionalChain$4([(window||global), 'optionalAccess', _ => _._whirlpoolsConfig]) || '2LecshUwdy9xi7meFgHtFJQNSKk4KdTrcpvaB56dP2NQ' }}, // whirlpoolsConfig
+        { memcmp: { offset: 8, bytes: whirlpoolsConfig }},
         { memcmp: { offset: 101, bytes: base }}, // tokenMintA
         { memcmp: { offset: 181, bytes: quote }} // tokenMintB
       ]},

@@ -22,10 +22,11 @@ import { WHIRLPOOL_LAYOUT } from './layouts'
 // Do not use for price calulations, fetch accounts for pools individually in order to calculate price 
 let getAccounts = async (base, quote) => {
   if(quote === Blockchains.solana.wrapped.address) { return [] } // WSOL is base not QUOTE!
+  let whirlpoolsConfig = (typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : undefined)?._whirlpoolsConfig || '2LecshUwdy9xi7meFgHtFJQNSKk4KdTrcpvaB56dP2NQ';
   let accounts = await request(`solana://whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc/getProgramAccounts`, {
     params: { filters: [
       { dataSize: WHIRLPOOL_LAYOUT.span },
-      { memcmp: { offset: 8, bytes: (window||global)?._whirlpoolsConfig || '2LecshUwdy9xi7meFgHtFJQNSKk4KdTrcpvaB56dP2NQ' }}, // whirlpoolsConfig
+      { memcmp: { offset: 8, bytes: whirlpoolsConfig }},
       { memcmp: { offset: 101, bytes: base }}, // tokenMintA
       { memcmp: { offset: 181, bytes: quote }} // tokenMintB
     ]},
