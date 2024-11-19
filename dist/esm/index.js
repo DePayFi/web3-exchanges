@@ -1928,7 +1928,7 @@ let getAccounts = async (base, quote) => {
   let accounts = await request(`solana://whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc/getProgramAccounts`, {
     params: { filters: [
       { dataSize: WHIRLPOOL_LAYOUT.span },
-      { memcmp: { offset: 8, bytes: _optionalChain$4([(window||global), 'optionalAccess', _ => _._whirlpoolsConfig]) ? whirlpoolsConfig : '2LecshUwdy9xi7meFgHtFJQNSKk4KdTrcpvaB56dP2NQ' }}, // whirlpoolsConfig
+      { memcmp: { offset: 8, bytes: _optionalChain$4([(window||global), 'optionalAccess', _ => _._whirlpoolsConfig]) || '2LecshUwdy9xi7meFgHtFJQNSKk4KdTrcpvaB56dP2NQ' }}, // whirlpoolsConfig
       { memcmp: { offset: 101, bytes: base }}, // tokenMintA
       { memcmp: { offset: 181, bytes: quote }} // tokenMintB
     ]},
