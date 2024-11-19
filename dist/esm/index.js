@@ -5,7 +5,7 @@ import Blockchains from '@depay/web3-blockchains';
 import { BN, struct, publicKey, u128, u64 as u64$1, seq, u8, u16, i32, bool, i128, PublicKey, Buffer, Keypair, SystemProgram, TransactionInstruction } from '@depay/solana-web3.js';
 import Decimal from 'decimal.js';
 
-function _optionalChain$5(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }class Route {
+function _optionalChain$6(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }class Route {
   constructor({
     blockchain,
     tokenIn,
@@ -31,10 +31,10 @@ function _optionalChain$5(ops) { let lastAccessLHS = undefined; let value = ops[
     this.decimalsOut = decimalsOut;
     this.path = path;
     this.pools = pools;
-    this.amountIn = _optionalChain$5([amountIn, 'optionalAccess', _ => _.toString, 'call', _2 => _2()]);
-    this.amountOutMin = _optionalChain$5([amountOutMin, 'optionalAccess', _3 => _3.toString, 'call', _4 => _4()]);
-    this.amountOut = _optionalChain$5([amountOut, 'optionalAccess', _5 => _5.toString, 'call', _6 => _6()]);
-    this.amountInMax = _optionalChain$5([amountInMax, 'optionalAccess', _7 => _7.toString, 'call', _8 => _8()]);
+    this.amountIn = _optionalChain$6([amountIn, 'optionalAccess', _ => _.toString, 'call', _2 => _2()]);
+    this.amountOutMin = _optionalChain$6([amountOutMin, 'optionalAccess', _3 => _3.toString, 'call', _4 => _4()]);
+    this.amountOut = _optionalChain$6([amountOut, 'optionalAccess', _5 => _5.toString, 'call', _6 => _6()]);
+    this.amountInMax = _optionalChain$6([amountInMax, 'optionalAccess', _7 => _7.toString, 'call', _8 => _8()]);
     this.exchange = exchange;
     this.getPrep = getPrep;
     this.getTransaction = getTransaction;
@@ -432,7 +432,7 @@ class Exchange {
   }
 }
 
-function _optionalChain$4(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
+function _optionalChain$5(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
 
 // Replaces 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE with the wrapped token and implies wrapping.
 //
@@ -543,9 +543,9 @@ const findPath$5 = async ({ blockchain, exchange, tokenIn, tokenOut }) => {
 
   // Add WRAPPED to route path if things start or end with NATIVE
   // because that actually reflects how things are routed in reality:
-  if(_optionalChain$4([path, 'optionalAccess', _ => _.length]) && path[0] == Blockchains[blockchain].currency.address) {
+  if(_optionalChain$5([path, 'optionalAccess', _ => _.length]) && path[0] == Blockchains[blockchain].currency.address) {
     path.splice(1, 0, Blockchains[blockchain].wrapped.address);
-  } else if(_optionalChain$4([path, 'optionalAccess', _2 => _2.length]) && path[path.length-1] == Blockchains[blockchain].currency.address) {
+  } else if(_optionalChain$5([path, 'optionalAccess', _2 => _2.length]) && path[path.length-1] == Blockchains[blockchain].currency.address) {
     path.splice(path.length-1, 0, Blockchains[blockchain].wrapped.address);
   }
 
@@ -1919,6 +1919,8 @@ const getPrice = async ({
   }
 };
 
+function _optionalChain$4(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
+
 // This method is cached and is only to be used to generally existing pools every 24h
 // Do not use for price calulations, fetch accounts for pools individually in order to calculate price 
 let getAccounts = async (base, quote) => {
@@ -1926,7 +1928,7 @@ let getAccounts = async (base, quote) => {
   let accounts = await request(`solana://whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc/getProgramAccounts`, {
     params: { filters: [
       { dataSize: WHIRLPOOL_LAYOUT.span },
-      { memcmp: { offset: 8, bytes: '2LecshUwdy9xi7meFgHtFJQNSKk4KdTrcpvaB56dP2NQ' }}, // whirlpoolsConfig
+      { memcmp: { offset: 8, bytes: _optionalChain$4([(window||global), 'optionalAccess', _ => _._whirlpoolsConfig]) ? whirlpoolsConfig : '2LecshUwdy9xi7meFgHtFJQNSKk4KdTrcpvaB56dP2NQ' }}, // whirlpoolsConfig
       { memcmp: { offset: 101, bytes: base }}, // tokenMintA
       { memcmp: { offset: 181, bytes: quote }} // tokenMintB
     ]},
