@@ -120,6 +120,14 @@ const findPath = async ({ blockchain, exchange, tokenIn, tokenOut }) => {
     // path via tokenIn -> WRAPPED -> USD -> tokenOut
     let USD = (await Promise.all(Blockchains[blockchain].stables.usd.map(async (stable)=>{ return(await pathExists({ blockchain, exchange, path: [stable, tokenOut] }) ? stable : undefined) }))).find(Boolean)
     path = [tokenIn, Blockchains[blockchain].wrapped.address, USD, tokenOut]
+  } else if (
+    tokenIn != Blockchains[blockchain].wrapped.address &&
+    tokenIn === Blockchains[blockchain].currency.address &&
+    !Blockchains[blockchain].stables.usd.includes(tokenOut) &&
+    (await Promise.all(Blockchains[blockchain].stables.usd.map((stable)=>pathExists({ blockchain, exchange, path: [stable, tokenOut] })))).filter(Boolean).length
+  ) {
+    let USD = (await Promise.all(Blockchains[blockchain].stables.usd.map(async (stable)=>{ return(await pathExists({ blockchain, exchange, path: [stable, tokenOut] }) ? stable : undefined) }))).find(Boolean)
+    path = [tokenIn, USD, tokenOut]
   }
 
   // Add WRAPPED to route path if things start or end with NATIVE

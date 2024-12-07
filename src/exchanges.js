@@ -72,6 +72,7 @@ exchanges.optimism.forEach((exchange)=>{ exchanges.optimism[exchange.name] = exc
 
 exchanges.base = [
   uniswap_v3('base'),
+  uniswap_v2('base'),
   weth_optimism('base'),
 ]
 exchanges.base.forEach((exchange)=>{ exchanges.base[exchange.name] = exchange })
@@ -203,6 +204,7 @@ exchanges.optimism.forEach((exchange)=>{ exchanges.optimism[exchange.name] = exc
 
 exchanges.base = [
   uniswap_v3('base'),
+  uniswap_v2('base'),
   weth_base('base'),
 ]
 exchanges.base.forEach((exchange)=>{ exchanges.base[exchange.name] = exchange })

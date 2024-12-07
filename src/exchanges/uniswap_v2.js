@@ -24,6 +24,20 @@ const exchange = {
     pair: {
       api: UniswapV2.PAIR
     },
+  },
+
+  base: {
+    router: {
+      address: '0x4752ba5DBc23f44D87826276BF6Fd6b1C372aD24',
+      api: UniswapV2.ROUTER
+    },
+    factory: {
+      address: '0x8909Dc15e40173Ff4699343b6eB8132c65e18eC6',
+      api: UniswapV2.FACTORY
+    },
+    pair: {
+      api: UniswapV2.PAIR
+    },
   }
 }
 

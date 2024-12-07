@@ -539,6 +539,14 @@ const findPath$5 = async ({ blockchain, exchange, tokenIn, tokenOut }) => {
     // path via tokenIn -> WRAPPED -> USD -> tokenOut
     let USD = (await Promise.all(Blockchains[blockchain].stables.usd.map(async (stable)=>{ return(await pathExists$5({ blockchain, exchange, path: [stable, tokenOut] }) ? stable : undefined) }))).find(Boolean);
     path = [tokenIn, Blockchains[blockchain].wrapped.address, USD, tokenOut];
+  } else if (
+    tokenIn != Blockchains[blockchain].wrapped.address &&
+    tokenIn === Blockchains[blockchain].currency.address &&
+    !Blockchains[blockchain].stables.usd.includes(tokenOut) &&
+    (await Promise.all(Blockchains[blockchain].stables.usd.map((stable)=>pathExists$5({ blockchain, exchange, path: [stable, tokenOut] })))).filter(Boolean).length
+  ) {
+    let USD = (await Promise.all(Blockchains[blockchain].stables.usd.map(async (stable)=>{ return(await pathExists$5({ blockchain, exchange, path: [stable, tokenOut] }) ? stable : undefined) }))).find(Boolean);
+    path = [tokenIn, USD, tokenOut];
   }
 
   // Add WRAPPED to route path if things start or end with NATIVE
@@ -3725,6 +3733,20 @@ const exchange$a = {
     pair: {
       api: UniswapV2.PAIR
     },
+  },
+
+  base: {
+    router: {
+      address: '0x4752ba5DBc23f44D87826276BF6Fd6b1C372aD24',
+      api: UniswapV2.ROUTER
+    },
+    factory: {
+      address: '0x8909Dc15e40173Ff4699343b6eB8132c65e18eC6',
+      api: UniswapV2.FACTORY
+    },
+    pair: {
+      api: UniswapV2.PAIR
+    },
   }
 };
 
@@ -4851,6 +4873,7 @@ exchanges.optimism.forEach((exchange)=>{ exchanges.optimism[exchange.name] = exc
 
 exchanges.base = [
   uniswap_v3('base'),
+  uniswap_v2('base'),
   weth_base('base'),
 ];
 exchanges.base.forEach((exchange)=>{ exchanges.base[exchange.name] = exchange; });
