@@ -32,9 +32,6 @@ let wallets = await Web3Wallets.getWallets()
 let wallet = wallets[0]
 let account = await wallet.account()
 
-let prep = await route.getPrep({ account })
-wallet.sendTransaction(prep.transaction)
-
 let transaction = await route.getTransaction({ account })
 
 wallet.sendTransaction(transaction)
