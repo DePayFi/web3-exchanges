@@ -10,7 +10,7 @@
   var Blockchains__default = /*#__PURE__*/_interopDefaultLegacy(Blockchains);
   var Decimal__default = /*#__PURE__*/_interopDefaultLegacy(Decimal);
 
-  function _optionalChain$2(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }class Route {
+  function _optionalChain$1(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }class Route {
     constructor({
       blockchain,
       tokenIn,
@@ -36,10 +36,10 @@
       this.decimalsOut = decimalsOut;
       this.path = path;
       this.pools = pools;
-      this.amountIn = _optionalChain$2([amountIn, 'optionalAccess', _ => _.toString, 'call', _2 => _2()]);
-      this.amountOutMin = _optionalChain$2([amountOutMin, 'optionalAccess', _3 => _3.toString, 'call', _4 => _4()]);
-      this.amountOut = _optionalChain$2([amountOut, 'optionalAccess', _5 => _5.toString, 'call', _6 => _6()]);
-      this.amountInMax = _optionalChain$2([amountInMax, 'optionalAccess', _7 => _7.toString, 'call', _8 => _8()]);
+      this.amountIn = _optionalChain$1([amountIn, 'optionalAccess', _ => _.toString, 'call', _2 => _2()]);
+      this.amountOutMin = _optionalChain$1([amountOutMin, 'optionalAccess', _3 => _3.toString, 'call', _4 => _4()]);
+      this.amountOut = _optionalChain$1([amountOut, 'optionalAccess', _5 => _5.toString, 'call', _6 => _6()]);
+      this.amountInMax = _optionalChain$1([amountInMax, 'optionalAccess', _7 => _7.toString, 'call', _8 => _8()]);
       this.exchange = exchange;
       this.getPrep = getPrep;
       this.getTransaction = getTransaction;
@@ -1575,17 +1575,13 @@
     }
   };
 
-  function _optionalChain$1(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
-
   // This method is cached and is only to be used to generally existing pools every 24h
   // Do not use for price calulations, fetch accounts for pools individually in order to calculate price 
   let getAccounts = async (base, quote) => {
     if(quote === Blockchains__default['default'].solana.wrapped.address) { return [] } // WSOL is base not QUOTE!
-    let whirlpoolsConfig = _optionalChain$1([(typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : undefined), 'optionalAccess', _ => _._whirlpoolsConfig]) || '2LecshUwdy9xi7meFgHtFJQNSKk4KdTrcpvaB56dP2NQ';
     let accounts = await web3ClientSolana.request(`solana://whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc/getProgramAccounts`, {
       params: { filters: [
         { dataSize: WHIRLPOOL_LAYOUT.span },
-        { memcmp: { offset: 8, bytes: whirlpoolsConfig }},
         { memcmp: { offset: 101, bytes: base }}, // tokenMintA
         { memcmp: { offset: 181, bytes: quote }} // tokenMintB
       ]},
