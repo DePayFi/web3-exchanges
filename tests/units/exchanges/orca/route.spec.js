@@ -95,7 +95,6 @@ describe('orca', () => {
           to: exchange[blockchain].router.address,
           params: { filters: [
             { dataSize: exchange[blockchain].router.api.span },
-            { memcmp: { offset: 8, bytes: '2LecshUwdy9xi7meFgHtFJQNSKk4KdTrcpvaB56dP2NQ' }},
             { memcmp: { offset: 101, bytes: tokenOut }},
             { memcmp: { offset: 181, bytes: tokenIn }},
           ]},
