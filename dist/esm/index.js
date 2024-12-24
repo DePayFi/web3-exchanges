@@ -2,10 +2,10 @@ import Token from '@depay/web3-tokens';
 import { request, getProvider } from '@depay/web3-client';
 import { ethers } from 'ethers';
 import Blockchains from '@depay/web3-blockchains';
-import { BN, struct, publicKey, u128, u64 as u64$1, seq, u8, u16, i32, bool, i128, PublicKey, Buffer, Keypair, SystemProgram, TransactionInstruction } from '@depay/solana-web3.js';
+import { BN, struct, publicKey, u128, u64 as u64$1, seq, u8, u16, i32, bool, i128, PublicKey, Buffer, Keypair, SystemProgram, TransactionInstruction, blob, u32 } from '@depay/solana-web3.js';
 import Decimal from 'decimal.js';
 
-function _optionalChain$5(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }class Route {
+function _optionalChain$7(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }class Route {
   constructor({
     blockchain,
     tokenIn,
@@ -31,10 +31,10 @@ function _optionalChain$5(ops) { let lastAccessLHS = undefined; let value = ops[
     this.decimalsOut = decimalsOut;
     this.path = path;
     this.pools = pools;
-    this.amountIn = _optionalChain$5([amountIn, 'optionalAccess', _ => _.toString, 'call', _2 => _2()]);
-    this.amountOutMin = _optionalChain$5([amountOutMin, 'optionalAccess', _3 => _3.toString, 'call', _4 => _4()]);
-    this.amountOut = _optionalChain$5([amountOut, 'optionalAccess', _5 => _5.toString, 'call', _6 => _6()]);
-    this.amountInMax = _optionalChain$5([amountInMax, 'optionalAccess', _7 => _7.toString, 'call', _8 => _8()]);
+    this.amountIn = _optionalChain$7([amountIn, 'optionalAccess', _ => _.toString, 'call', _2 => _2()]);
+    this.amountOutMin = _optionalChain$7([amountOutMin, 'optionalAccess', _3 => _3.toString, 'call', _4 => _4()]);
+    this.amountOut = _optionalChain$7([amountOut, 'optionalAccess', _5 => _5.toString, 'call', _6 => _6()]);
+    this.amountInMax = _optionalChain$7([amountInMax, 'optionalAccess', _7 => _7.toString, 'call', _8 => _8()]);
     this.exchange = exchange;
     this.getPrep = getPrep;
     this.getTransaction = getTransaction;
@@ -308,7 +308,10 @@ const route$1 = ({
     let amounts; // includes intermediary amounts for longer routes
     try {
       ;({ amountIn, amountInMax, amountOut, amountOutMin, amounts } = await getAmounts({ exchange, blockchain, path, pools, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }));
-    } catch (e) { return resolve() }
+    } catch(e) {
+      console.log(e);
+      return resolve()
+    }
     if([amountIn, amountInMax, amountOut, amountOutMin].every((amount)=>{ return amount == undefined })) { return resolve() }
 
     if(exchange.slippage && slippage !== false) {
@@ -432,7 +435,7 @@ class Exchange {
   }
 }
 
-function _optionalChain$4(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
+function _optionalChain$6(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
 
 // Replaces 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE with the wrapped token and implies wrapping.
 //
@@ -440,7 +443,7 @@ function _optionalChain$4(ops) { let lastAccessLHS = undefined; let value = ops[
 // to be able to differentiate between ETH<>Token and WETH<>Token swaps
 // as they are not the same!
 //
-const getExchangePath$4 = ({ blockchain, exchange, path }) => {
+const getExchangePath$5 = ({ blockchain, exchange, path }) => {
   if(!path) { return }
   let exchangePath = path.map((token, index) => {
     if (
@@ -472,8 +475,8 @@ const minReserveRequirements = ({ reserves, min, token, token0, token1, decimals
   }
 };
 
-const pathExists$5 = async ({ blockchain, exchange, path }) => {
-  const exchangePath = getExchangePath$4({ blockchain, exchange, path });
+const pathExists$6 = async ({ blockchain, exchange, path }) => {
+  const exchangePath = getExchangePath$5({ blockchain, exchange, path });
   if(!exchangePath || exchangePath.length === 1) { return false }
   try {
     let pair = await request({
@@ -482,7 +485,7 @@ const pathExists$5 = async ({ blockchain, exchange, path }) => {
       method: 'getPair',
       api: exchange[blockchain].factory.api,
       cache: 3600000,
-      params: getExchangePath$4({ blockchain, exchange, path }),
+      params: getExchangePath$5({ blockchain, exchange, path }),
     });
     if(!pair || pair == Blockchains[blockchain].zero) { return false }
     let [reserves, token0, token1] = await Promise.all([
@@ -503,61 +506,61 @@ const pathExists$5 = async ({ blockchain, exchange, path }) => {
   } catch (e){ console.log('e', e); return false }
 };
 
-const findPath$5 = async ({ blockchain, exchange, tokenIn, tokenOut }) => {
+const findPath$6 = async ({ blockchain, exchange, tokenIn, tokenOut }) => {
   if(
     [tokenIn, tokenOut].includes(Blockchains[blockchain].currency.address) &&
     [tokenIn, tokenOut].includes(Blockchains[blockchain].wrapped.address)
   ) { return { path: undefined, exchangePath: undefined } }
 
   let path;
-  if (await pathExists$5({ blockchain, exchange, path: [tokenIn, tokenOut] })) {
+  if (await pathExists$6({ blockchain, exchange, path: [tokenIn, tokenOut] })) {
     // direct path
     path = [tokenIn, tokenOut];
   } else if (
     tokenIn != Blockchains[blockchain].wrapped.address &&
-    await pathExists$5({ blockchain, exchange, path: [tokenIn, Blockchains[blockchain].wrapped.address] }) &&
+    await pathExists$6({ blockchain, exchange, path: [tokenIn, Blockchains[blockchain].wrapped.address] }) &&
     tokenOut != Blockchains[blockchain].wrapped.address &&
-    await pathExists$5({ blockchain, exchange, path: [tokenOut, Blockchains[blockchain].wrapped.address] })
+    await pathExists$6({ blockchain, exchange, path: [tokenOut, Blockchains[blockchain].wrapped.address] })
   ) {
     // path via WRAPPED
     path = [tokenIn, Blockchains[blockchain].wrapped.address, tokenOut];
   } else if (
     !Blockchains[blockchain].stables.usd.includes(tokenIn) &&
-    (await Promise.all(Blockchains[blockchain].stables.usd.map((stable)=>pathExists$5({ blockchain, exchange, path: [tokenIn, stable] })))).filter(Boolean).length &&
+    (await Promise.all(Blockchains[blockchain].stables.usd.map((stable)=>pathExists$6({ blockchain, exchange, path: [tokenIn, stable] })))).filter(Boolean).length &&
     tokenOut != Blockchains[blockchain].wrapped.address &&
-    await pathExists$5({ blockchain, exchange, path: [Blockchains[blockchain].wrapped.address, tokenOut] })
+    await pathExists$6({ blockchain, exchange, path: [Blockchains[blockchain].wrapped.address, tokenOut] })
   ) {
     // path via tokenIn -> USD -> WRAPPED -> tokenOut
-    let USD = (await Promise.all(Blockchains[blockchain].stables.usd.map(async (stable)=>{ return(await pathExists$5({ blockchain, exchange, path: [tokenIn, stable] }) ? stable : undefined) }))).find(Boolean);
+    let USD = (await Promise.all(Blockchains[blockchain].stables.usd.map(async (stable)=>{ return(await pathExists$6({ blockchain, exchange, path: [tokenIn, stable] }) ? stable : undefined) }))).find(Boolean);
     path = [tokenIn, USD, Blockchains[blockchain].wrapped.address, tokenOut];
   } else if (
     tokenIn != Blockchains[blockchain].wrapped.address &&
-    await pathExists$5({ blockchain, exchange, path: [tokenIn, Blockchains[blockchain].wrapped.address] }) &&
+    await pathExists$6({ blockchain, exchange, path: [tokenIn, Blockchains[blockchain].wrapped.address] }) &&
     !Blockchains[blockchain].stables.usd.includes(tokenOut) &&
-    (await Promise.all(Blockchains[blockchain].stables.usd.map((stable)=>pathExists$5({ blockchain, exchange, path: [stable, tokenOut] })))).filter(Boolean).length
+    (await Promise.all(Blockchains[blockchain].stables.usd.map((stable)=>pathExists$6({ blockchain, exchange, path: [stable, tokenOut] })))).filter(Boolean).length
   ) {
     // path via tokenIn -> WRAPPED -> USD -> tokenOut
-    let USD = (await Promise.all(Blockchains[blockchain].stables.usd.map(async (stable)=>{ return(await pathExists$5({ blockchain, exchange, path: [stable, tokenOut] }) ? stable : undefined) }))).find(Boolean);
+    let USD = (await Promise.all(Blockchains[blockchain].stables.usd.map(async (stable)=>{ return(await pathExists$6({ blockchain, exchange, path: [stable, tokenOut] }) ? stable : undefined) }))).find(Boolean);
     path = [tokenIn, Blockchains[blockchain].wrapped.address, USD, tokenOut];
   } else if (
     tokenIn != Blockchains[blockchain].wrapped.address &&
     tokenIn === Blockchains[blockchain].currency.address &&
     !Blockchains[blockchain].stables.usd.includes(tokenOut) &&
-    (await Promise.all(Blockchains[blockchain].stables.usd.map((stable)=>pathExists$5({ blockchain, exchange, path: [stable, tokenOut] })))).filter(Boolean).length
+    (await Promise.all(Blockchains[blockchain].stables.usd.map((stable)=>pathExists$6({ blockchain, exchange, path: [stable, tokenOut] })))).filter(Boolean).length
   ) {
-    let USD = (await Promise.all(Blockchains[blockchain].stables.usd.map(async (stable)=>{ return(await pathExists$5({ blockchain, exchange, path: [stable, tokenOut] }) ? stable : undefined) }))).find(Boolean);
+    let USD = (await Promise.all(Blockchains[blockchain].stables.usd.map(async (stable)=>{ return(await pathExists$6({ blockchain, exchange, path: [stable, tokenOut] }) ? stable : undefined) }))).find(Boolean);
     path = [tokenIn, USD, tokenOut];
   }
 
   // Add WRAPPED to route path if things start or end with NATIVE
   // because that actually reflects how things are routed in reality:
-  if(_optionalChain$4([path, 'optionalAccess', _ => _.length]) && path[0] == Blockchains[blockchain].currency.address) {
+  if(_optionalChain$6([path, 'optionalAccess', _ => _.length]) && path[0] == Blockchains[blockchain].currency.address) {
     path.splice(1, 0, Blockchains[blockchain].wrapped.address);
-  } else if(_optionalChain$4([path, 'optionalAccess', _2 => _2.length]) && path[path.length-1] == Blockchains[blockchain].currency.address) {
+  } else if(_optionalChain$6([path, 'optionalAccess', _2 => _2.length]) && path[path.length-1] == Blockchains[blockchain].currency.address) {
     path.splice(path.length-1, 0, Blockchains[blockchain].wrapped.address);
   }
 
-  return { path, exchangePath: getExchangePath$4({ blockchain, exchange, path }) }
+  return { path, exchangePath: getExchangePath$5({ blockchain, exchange, path }) }
 };
 
 let getAmountOut$3 = ({ blockchain, exchange, path, amountIn, tokenIn, tokenOut }) => {
@@ -569,7 +572,7 @@ let getAmountOut$3 = ({ blockchain, exchange, path, amountIn, tokenIn, tokenOut 
       api: exchange[blockchain].router.api,
       params: {
         amountIn: amountIn,
-        path: getExchangePath$4({ blockchain, exchange, path }),
+        path: getExchangePath$5({ blockchain, exchange, path }),
       },
     })
     .then((amountsOut)=>{
@@ -588,7 +591,7 @@ let getAmountIn$3 = ({ blockchain, exchange, path, amountOut, block }) => {
       api: exchange[blockchain].router.api,
       params: {
         amountOut: amountOut,
-        path: getExchangePath$4({ blockchain, exchange, path }),
+        path: getExchangePath$5({ blockchain, exchange, path }),
       },
       block
     })
@@ -597,7 +600,7 @@ let getAmountIn$3 = ({ blockchain, exchange, path, amountOut, block }) => {
   })
 };
 
-let getAmounts$5 = async ({
+let getAmounts$6 = async ({
   blockchain,
   exchange,
   path,
@@ -674,7 +677,7 @@ let getPrep$3 = async({
 
 };
 
-let getTransaction$5 = ({
+let getTransaction$6 = ({
   exchange,
   blockchain,
   path,
@@ -725,7 +728,7 @@ let getTransaction$5 = ({
   }
 
   transaction.params = Object.assign({}, transaction.params, {
-    path: getExchangePath$4({ blockchain, exchange, path }),
+    path: getExchangePath$5({ blockchain, exchange, path }),
     to: account,
     deadline: Math.round(Date.now() / 1000) + 60 * 60 * 24, // 24 hours
   });
@@ -738,17 +741,17 @@ const FACTORY$3 = [{"inputs":[{"internalType":"address","name":"_feeToSetter","t
 const PAIR$1 = [{"inputs":[],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"spender","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"sender","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount0","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount1","type":"uint256"},{"indexed":true,"internalType":"address","name":"to","type":"address"}],"name":"Burn","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"sender","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount0","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount1","type":"uint256"}],"name":"Mint","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"sender","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount0In","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount1In","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount0Out","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount1Out","type":"uint256"},{"indexed":true,"internalType":"address","name":"to","type":"address"}],"name":"Swap","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint112","name":"reserve0","type":"uint112"},{"indexed":false,"internalType":"uint112","name":"reserve1","type":"uint112"}],"name":"Sync","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Transfer","type":"event"},{"constant":true,"inputs":[],"name":"DOMAIN_SEPARATOR","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"MINIMUM_LIQUIDITY","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"PERMIT_TYPEHASH","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"address","name":"","type":"address"}],"name":"allowance","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"}],"name":"approve","outputs":[{"internalType":"bool","name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"to","type":"address"}],"name":"burn","outputs":[{"internalType":"uint256","name":"amount0","type":"uint256"},{"internalType":"uint256","name":"amount1","type":"uint256"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"decimals","outputs":[{"internalType":"uint8","name":"","type":"uint8"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"factory","outputs":[{"internalType":"address","name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"getReserves","outputs":[{"internalType":"uint112","name":"_reserve0","type":"uint112"},{"internalType":"uint112","name":"_reserve1","type":"uint112"},{"internalType":"uint32","name":"_blockTimestampLast","type":"uint32"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"_token0","type":"address"},{"internalType":"address","name":"_token1","type":"address"}],"name":"initialize","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"kLast","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"to","type":"address"}],"name":"mint","outputs":[{"internalType":"uint256","name":"liquidity","type":"uint256"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"nonces","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"},{"internalType":"uint256","name":"deadline","type":"uint256"},{"internalType":"uint8","name":"v","type":"uint8"},{"internalType":"bytes32","name":"r","type":"bytes32"},{"internalType":"bytes32","name":"s","type":"bytes32"}],"name":"permit","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"price0CumulativeLast","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"price1CumulativeLast","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"to","type":"address"}],"name":"skim","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"internalType":"uint256","name":"amount0Out","type":"uint256"},{"internalType":"uint256","name":"amount1Out","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"swap","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"sync","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"token0","outputs":[{"internalType":"address","name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"token1","outputs":[{"internalType":"address","name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"totalSupply","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"}],"name":"transfer","outputs":[{"internalType":"bool","name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"}],"name":"transferFrom","outputs":[{"internalType":"bool","name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"}];
 
 var UniswapV2 = {
-  findPath: findPath$5,
-  pathExists: pathExists$5,
-  getAmounts: getAmounts$5,
+  findPath: findPath$6,
+  pathExists: pathExists$6,
+  getAmounts: getAmounts$6,
   getPrep: getPrep$3,
-  getTransaction: getTransaction$5,
+  getTransaction: getTransaction$6,
   ROUTER: ROUTER$3,
   FACTORY: FACTORY$3,
   PAIR: PAIR$1,
 };
 
-const exchange$h = {
+const exchange$i = {
   
   name: 'honeyswap',
   label: 'Honeyswap',
@@ -778,13 +781,13 @@ var honeyswap = (scope)=>{
   
   return new Exchange(
 
-    Object.assign(exchange$h, {
+    Object.assign(exchange$i, {
       scope,
-      findPath: (args)=>UniswapV2.findPath({ ...args, exchange: exchange$h }),
-      pathExists: (args)=>UniswapV2.pathExists({ ...args, exchange: exchange$h }),
-      getAmounts: (args)=>UniswapV2.getAmounts({ ...args, exchange: exchange$h }),
-      getPrep: (args)=>UniswapV2.getPrep({ ...args, exchange: exchange$h }),
-      getTransaction: (args)=>UniswapV2.getTransaction({ ...args, exchange: exchange$h }),
+      findPath: (args)=>UniswapV2.findPath({ ...args, exchange: exchange$i }),
+      pathExists: (args)=>UniswapV2.pathExists({ ...args, exchange: exchange$i }),
+      getAmounts: (args)=>UniswapV2.getAmounts({ ...args, exchange: exchange$i }),
+      getPrep: (args)=>UniswapV2.getPrep({ ...args, exchange: exchange$i }),
+      getTransaction: (args)=>UniswapV2.getTransaction({ ...args, exchange: exchange$i }),
     })
   )
 };
@@ -1944,7 +1947,7 @@ let getAccounts = async (base, quote) => {
   return accounts
 };
 
-let getPairsWithPrice = async({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }) => {
+let getPairsWithPrice$4 = async({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }) => {
   try {
     let accounts = await getAccounts(tokenIn, tokenOut);
     if(accounts.length === 0) { accounts = await getAccounts(tokenOut, tokenIn); }
@@ -1971,32 +1974,31 @@ let getPairsWithPrice = async({ tokenIn, tokenOut, amountIn, amountInMax, amount
   }
 };
 
-let getHighestPrice = (pairs)=>{
+let getHighestPrice$1 = (pairs)=>{
   return pairs.reduce((bestPricePair, currentPair)=> ethers.BigNumber.from(currentPair.price).gt(ethers.BigNumber.from(bestPricePair.price)) ? currentPair : bestPricePair)
 };
 
-let getLowestPrice = (pairs)=>{
+let getLowestPrice$1 = (pairs)=>{
   return pairs.reduce((bestPricePair, currentPair)=> ethers.BigNumber.from(currentPair.price).lt(ethers.BigNumber.from(bestPricePair.price)) ? currentPair : bestPricePair)
 };
 
-let getBestPair = async({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }) => {
-  const pairs = await getPairsWithPrice({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin });
+let getBestPair$1 = async({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }) => {
+  const pairs = await getPairsWithPrice$4({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin });
 
   if(!pairs || pairs.length === 0) { return }
 
   let bestPair;
 
   if(amountIn || amountInMax) {
-    bestPair = getHighestPrice(pairs);
+    bestPair = getHighestPrice$1(pairs);
   } else { // amount out
-    bestPair = getLowestPrice(pairs);
+    bestPair = getLowestPrice$1(pairs);
   }
-
   return bestPair
 };
 
-function _optionalChain$3(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
-const blockchain$1 = Blockchains.solana;
+function _optionalChain$5(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
+const blockchain$3 = Blockchains.solana;
 
 // Replaces 11111111111111111111111111111111 with the wrapped token and implies wrapping.
 //
@@ -2004,64 +2006,64 @@ const blockchain$1 = Blockchains.solana;
 // to be able to differentiate between SOL<>Token and WSOL<>Token swaps
 // as they are not the same!
 //
-let getExchangePath$3 = ({ path }) => {
+let getExchangePath$4 = ({ path }) => {
   if(!path) { return }
   let exchangePath = path.map((token, index) => {
     if (
-      token === blockchain$1.currency.address && path[index+1] != blockchain$1.wrapped.address &&
-      path[index-1] != blockchain$1.wrapped.address
+      token === blockchain$3.currency.address && path[index+1] != blockchain$3.wrapped.address &&
+      path[index-1] != blockchain$3.wrapped.address
     ) {
-      return blockchain$1.wrapped.address
+      return blockchain$3.wrapped.address
     } else {
       return token
     }
   });
 
-  if(exchangePath[0] == blockchain$1.currency.address && exchangePath[1] == blockchain$1.wrapped.address) {
+  if(exchangePath[0] == blockchain$3.currency.address && exchangePath[1] == blockchain$3.wrapped.address) {
     exchangePath.splice(0, 1);
-  } else if(exchangePath[exchangePath.length-1] == blockchain$1.currency.address && exchangePath[exchangePath.length-2] == blockchain$1.wrapped.address) {
+  } else if(exchangePath[exchangePath.length-1] == blockchain$3.currency.address && exchangePath[exchangePath.length-2] == blockchain$3.wrapped.address) {
     exchangePath.splice(exchangePath.length-1, 1);
   }
 
   return exchangePath
 };
 
-let pathExists$4 = async ({ path, amountIn, amountInMax, amountOut, amountOutMin }) => {
+let pathExists$5 = async ({ path, amountIn, amountInMax, amountOut, amountOutMin }) => {
   if(path.length == 1) { return false }
-  path = getExchangePath$3({ path });
-  if((await getPairsWithPrice({ tokenIn: path[0], tokenOut: path[1], amountIn, amountInMax, amountOut, amountOutMin })).length > 0) {
+  path = getExchangePath$4({ path });
+  if((await getPairsWithPrice$4({ tokenIn: path[0], tokenOut: path[1], amountIn, amountInMax, amountOut, amountOutMin })).length > 0) {
     return true
   } else {
     return false
   }
 };
 
-let findPath$4 = async ({ tokenIn, tokenOut, amountIn, amountOut, amountInMax, amountOutMin }) => {
+let findPath$5 = async ({ tokenIn, tokenOut, amountIn, amountOut, amountInMax, amountOutMin }) => {
   if(
-    [tokenIn, tokenOut].includes(blockchain$1.currency.address) &&
-    [tokenIn, tokenOut].includes(blockchain$1.wrapped.address)
+    [tokenIn, tokenOut].includes(blockchain$3.currency.address) &&
+    [tokenIn, tokenOut].includes(blockchain$3.wrapped.address)
   ) { return { path: undefined, exchangePath: undefined } }
 
   let path, stablesIn, stablesOut, stable;
 
-  if (await pathExists$4({ path: [tokenIn, tokenOut], amountIn, amountInMax, amountOut, amountOutMin })) {
+  if (await pathExists$5({ path: [tokenIn, tokenOut], amountIn, amountInMax, amountOut, amountOutMin })) {
     // direct path
     path = [tokenIn, tokenOut];
   } else if (
-    tokenIn != blockchain$1.wrapped.address &&
-    tokenIn != blockchain$1.currency.address &&
-    await pathExists$4({ path: [tokenIn, blockchain$1.wrapped.address], amountIn, amountInMax, amountOut, amountOutMin }) &&
-    tokenOut != blockchain$1.wrapped.address &&
-    tokenOut != blockchain$1.currency.address &&
-    await pathExists$4({ path: [tokenOut, blockchain$1.wrapped.address], amountIn: (amountOut||amountOutMin), amountInMax: (amountOut||amountOutMin), amountOut: (amountIn||amountInMax), amountOutMin: (amountIn||amountInMax) })
+    tokenIn != blockchain$3.wrapped.address &&
+    tokenIn != blockchain$3.currency.address &&
+    await pathExists$5({ path: [tokenIn, blockchain$3.wrapped.address], amountIn, amountInMax, amountOut, amountOutMin }) &&
+    tokenOut != blockchain$3.wrapped.address &&
+    tokenOut != blockchain$3.currency.address &&
+    await pathExists$5({ path: [tokenOut, blockchain$3.wrapped.address], amountIn: (amountOut||amountOutMin), amountInMax: (amountOut||amountOutMin), amountOut: (amountIn||amountInMax), amountOutMin: (amountIn||amountInMax) })
   ) {
     // path via blockchain.wrapped.address
-    path = [tokenIn, blockchain$1.wrapped.address, tokenOut];
+    path = [tokenIn, blockchain$3.wrapped.address, tokenOut];
   } else if (
-    !blockchain$1.stables.usd.includes(tokenIn) &&
-    (stablesIn = (await Promise.all(blockchain$1.stables.usd.map(async(stable)=>await pathExists$4({ path: [tokenIn, stable], amountIn, amountInMax, amountOut, amountOutMin }) ? stable : undefined))).filter(Boolean)) &&
-    !blockchain$1.stables.usd.includes(tokenOut) &&
-    (stablesOut = (await Promise.all(blockchain$1.stables.usd.map(async(stable)=>await pathExists$4({ path: [tokenOut, stable], amountIn: (amountOut||amountOutMin), amountInMax: (amountOut||amountOutMin), amountOut: (amountIn||amountInMax), amountOutMin: (amountIn||amountInMax) })  ? stable : undefined))).filter(Boolean)) &&
+    !blockchain$3.stables.usd.includes(tokenIn) &&
+    (stablesIn = (await Promise.all(blockchain$3.stables.usd.map(async(stable)=>await pathExists$5({ path: [tokenIn, stable], amountIn, amountInMax, amountOut, amountOutMin }) ? stable : undefined))).filter(Boolean)) &&
+    !blockchain$3.stables.usd.includes(tokenOut) &&
+    (stablesOut = (await Promise.all(blockchain$3.stables.usd.map(async(stable)=>await pathExists$5({ path: [tokenOut, stable], amountIn: (amountOut||amountOutMin), amountInMax: (amountOut||amountOutMin), amountOut: (amountIn||amountInMax), amountOutMin: (amountIn||amountInMax) })  ? stable : undefined))).filter(Boolean)) &&
     (stable = stablesIn.filter((stable)=> stablesOut.includes(stable))[0])
   ) {
     // path via TOKEN_IN <> STABLE <> TOKEN_OUT
@@ -2070,22 +2072,26 @@ let findPath$4 = async ({ tokenIn, tokenOut, amountIn, amountOut, amountInMax, a
 
   // Add blockchain.wrapped.address to route path if things start or end with blockchain.currency.address
   // because that actually reflects how things are routed in reality:
-  if(_optionalChain$3([path, 'optionalAccess', _ => _.length]) && path[0] == blockchain$1.currency.address) {
-    path.splice(1, 0, blockchain$1.wrapped.address);
-  } else if(_optionalChain$3([path, 'optionalAccess', _2 => _2.length]) && path[path.length-1] == blockchain$1.currency.address) {
-    path.splice(path.length-1, 0, blockchain$1.wrapped.address);
+  if(_optionalChain$5([path, 'optionalAccess', _ => _.length]) && path[0] == blockchain$3.currency.address) {
+    path.splice(1, 0, blockchain$3.wrapped.address);
+  } else if(_optionalChain$5([path, 'optionalAccess', _2 => _2.length]) && path[path.length-1] == blockchain$3.currency.address) {
+    path.splice(path.length-1, 0, blockchain$3.wrapped.address);
   }
-  return { path, exchangePath: getExchangePath$3({ path }) }
+  return { path, exchangePath: getExchangePath$4({ path }) }
 };
 
-let getAmountsOut = async ({ path, amountIn, amountInMax }) => {
+let getAmountsOut$1 = async ({ path, amountIn, amountInMax }) => {
 
   let amounts = [ethers.BigNumber.from(amountIn || amountInMax)];
 
-  amounts.push(ethers.BigNumber.from((await getBestPair({ tokenIn: path[0], tokenOut: path[1], amountIn, amountInMax })).price));
+  let bestPair = await getBestPair$1({ tokenIn: path[0], tokenOut: path[1], amountIn, amountInMax });
+  if(!bestPair){ return }
+  amounts.push(ethers.BigNumber.from(bestPair.price));
   
   if (path.length === 3) {
-    amounts.push(ethers.BigNumber.from((await getBestPair({ tokenIn: path[1], tokenOut: path[2], amountIn: amountIn ? amounts[1] : undefined, amountInMax: amountInMax ? amounts[1] : undefined })).price));
+    let bestPair = await getBestPair$1({ tokenIn: path[1], tokenOut: path[2], amountIn: amountIn ? amounts[1] : undefined, amountInMax: amountInMax ? amounts[1] : undefined });
+    if(!bestPair){ return }
+    amounts.push(ethers.BigNumber.from(bestPair.price));
   }
 
   if(amounts.length != path.length) { return }
@@ -2093,15 +2099,19 @@ let getAmountsOut = async ({ path, amountIn, amountInMax }) => {
   return amounts
 };
 
-let getAmountsIn = async({ path, amountOut, amountOutMin }) => {
+let getAmountsIn$1 = async({ path, amountOut, amountOutMin }) => {
 
   path = path.slice().reverse();
   let amounts = [ethers.BigNumber.from(amountOut || amountOutMin)];
 
-  amounts.push(ethers.BigNumber.from((await getBestPair({ tokenIn: path[1], tokenOut: path[0], amountOut, amountOutMin })).price));
+  let bestPair = await getBestPair$1({ tokenIn: path[1], tokenOut: path[0], amountOut, amountOutMin });
+  if(!bestPair){ return }
+  amounts.push(ethers.BigNumber.from(bestPair.price));
   
   if (path.length === 3) {
-    amounts.push(ethers.BigNumber.from((await getBestPair({ tokenIn: path[2], tokenOut: path[1], amountOut: amountOut ? amounts[1] : undefined, amountOutMin: amountOutMin ? amounts[1] : undefined })).price));
+    let bestPair = await getBestPair$1({ tokenIn: path[2], tokenOut: path[1], amountOut: amountOut ? amounts[1] : undefined, amountOutMin: amountOutMin ? amounts[1] : undefined });
+    if(!bestPair){ return }
+    amounts.push(ethers.BigNumber.from(bestPair.price));
   }
   
   if(amounts.length != path.length) { return }
@@ -2109,7 +2119,7 @@ let getAmountsIn = async({ path, amountOut, amountOutMin }) => {
   return amounts.slice().reverse()
 };
 
-let getAmounts$4 = async ({
+let getAmounts$5 = async ({
   path,
   tokenIn,
   tokenOut,
@@ -2118,10 +2128,10 @@ let getAmounts$4 = async ({
   amountInMax,
   amountOutMin
 }) => {
-  path = getExchangePath$3({ path });
+  path = getExchangePath$4({ path });
   let amounts;
   if (amountOut) {
-    amounts = await getAmountsIn({ path, amountOut, tokenIn, tokenOut });
+    amounts = await getAmountsIn$1({ path, amountOut, tokenIn, tokenOut });
     amountIn = amounts ? amounts[0] : undefined;
     if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
       return {}
@@ -2129,7 +2139,7 @@ let getAmounts$4 = async ({
       amountInMax = amountIn;
     }
   } else if (amountIn) {
-    amounts = await getAmountsOut({ path, amountIn, tokenIn, tokenOut });
+    amounts = await getAmountsOut$1({ path, amountIn, tokenIn, tokenOut });
     amountOut = amounts ? amounts[amounts.length-1] : undefined;
     if (amountOut == undefined || amountOutMin && amountOut.lt(amountOutMin)) {
       return {}
@@ -2137,7 +2147,7 @@ let getAmounts$4 = async ({
       amountOutMin = amountOut;
     }
   } else if(amountOutMin) {
-    amounts = await getAmountsIn({ path, amountOutMin, tokenIn, tokenOut });
+    amounts = await getAmountsIn$1({ path, amountOutMin, tokenIn, tokenOut });
     amountIn = amounts ? amounts[0] : undefined;
     if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
       return {}
@@ -2145,7 +2155,7 @@ let getAmounts$4 = async ({
       amountInMax = amountIn;
     }
   } else if(amountInMax) {
-    amounts = await getAmountsOut({ path, amountInMax, tokenIn, tokenOut });
+    amounts = await getAmountsOut$1({ path, amountInMax, tokenIn, tokenOut });
     amountOut = amounts ? amounts[amounts.length-1] : undefined;
     if (amountOut == undefined ||amountOutMin && amountOut.lt(amountOutMin)) {
       return {}
@@ -2162,7 +2172,7 @@ let getAmounts$4 = async ({
   }
 };
 
-const blockchain = Blockchains.solana;
+const blockchain$2 = Blockchains.solana;
 const SWAP_INSTRUCTION = new BN("14449647541112719096");
 const TWO_HOP_SWAP_INSTRUCTION = new BN("16635068063392030915");
 
@@ -2377,7 +2387,7 @@ const getSwapInstructionData = ({ amount, otherAmountThreshold, sqrtPriceLimit, 
   return data
 };
 
-const getTransaction$4 = async ({
+const getTransaction$5 = async ({
   path,
   amountIn,
   amountInMax,
@@ -2393,7 +2403,7 @@ const getTransaction$4 = async ({
   let transaction = { blockchain: 'solana' };
   let instructions = [];
 
-  const exchangePath = getExchangePath$3({ path });
+  const exchangePath = getExchangePath$4({ path });
   if(exchangePath.length > 3) { throw 'Orca can only handle fixed paths with a max length of 3 (2 pools)!' }
   const tokenIn = exchangePath[0];
   const tokenMiddle = exchangePath.length == 3 ? exchangePath[1] : undefined;
@@ -2401,19 +2411,19 @@ const getTransaction$4 = async ({
 
   let pairs;
   if(exchangePath.length == 2) {
-    pairs = [await getBestPair({ tokenIn, tokenOut, amountIn: (amountInInput || amountInMaxInput), amountOut: (amountOutInput || amountOutMinInput) })];
+    pairs = [await getBestPair$1({ tokenIn, tokenOut, amountIn: (amountInInput || amountInMaxInput), amountOut: (amountOutInput || amountOutMinInput) })];
   } else {
     if(amountInInput || amountInMaxInput) {
-      pairs = [await getBestPair({ tokenIn, tokenOut: tokenMiddle, amountIn: (amountInInput || amountInMaxInput) })];
-      pairs.push(await getBestPair({ tokenIn: tokenMiddle, tokenOut, amountIn: pairs[0].price }));
+      pairs = [await getBestPair$1({ tokenIn, tokenOut: tokenMiddle, amountIn: (amountInInput || amountInMaxInput) })];
+      pairs.push(await getBestPair$1({ tokenIn: tokenMiddle, tokenOut, amountIn: pairs[0].price }));
     } else { // originally amountOut
-      pairs = [await getBestPair({ tokenIn: tokenMiddle, tokenOut, amountOut: (amountOutInput || amountOutMinInput) })];
-      pairs.unshift(await getBestPair({ tokenIn, tokenOut: tokenMiddle, amountOut: pairs[0].price }));
+      pairs = [await getBestPair$1({ tokenIn: tokenMiddle, tokenOut, amountOut: (amountOutInput || amountOutMinInput) })];
+      pairs.unshift(await getBestPair$1({ tokenIn, tokenOut: tokenMiddle, amountOut: pairs[0].price }));
     }
   }
 
-  let startsWrapped = (path[0] === blockchain.currency.address && exchangePath[0] === blockchain.wrapped.address);
-  let endsUnwrapped = (path[path.length-1] === blockchain.currency.address && exchangePath[exchangePath.length-1] === blockchain.wrapped.address);
+  let startsWrapped = (path[0] === blockchain$2.currency.address && exchangePath[0] === blockchain$2.wrapped.address);
+  let endsUnwrapped = (path[path.length-1] === blockchain$2.currency.address && exchangePath[exchangePath.length-1] === blockchain$2.wrapped.address);
   let wrappedAccount;
   const provider = await getProvider('solana');
   
@@ -2434,7 +2444,7 @@ const getTransaction$4 = async ({
     instructions.push(
       Token.solana.initializeAccountInstruction({
         account: wrappedAccount,
-        token: blockchain.wrapped.address,
+        token: blockchain$2.wrapped.address,
         owner: account
       })
     );
@@ -2531,14 +2541,14 @@ const getTransaction$4 = async ({
 };
 
 var Orca = {
-  findPath: findPath$4,
-  pathExists: pathExists$4,
-  getAmounts: getAmounts$4,
-  getTransaction: getTransaction$4,
+  findPath: findPath$5,
+  pathExists: pathExists$5,
+  getAmounts: getAmounts$5,
+  getTransaction: getTransaction$5,
   WHIRLPOOL_LAYOUT,
 };
 
-const exchange$g = {
+const exchange$h = {
   
   name: 'orca',
   label: 'Orca',
@@ -2561,14 +2571,813 @@ var orca = (scope)=>{
   
   return new Exchange(
 
+    Object.assign(exchange$h, {
+      scope,
+
+      findPath: (args)=>Orca.findPath({ ...args, exchange: exchange$h }),
+      pathExists: (args)=>Orca.pathExists({ ...args, exchange: exchange$h }),
+      getAmounts: (args)=>Orca.getAmounts({ ...args, exchange: exchange$h }),
+      getPrep: (args)=>{},
+      getTransaction: (args)=>Orca.getTransaction({ ...args, exchange: exchange$h }),
+    })
+  )
+};
+
+// OpenBook Market
+const MARKET_LAYOUT = struct([
+  blob(5),
+  blob(8), // accountFlagsLayout('accountFlags'),
+  publicKey('ownAddress'),
+  u64$1('vaultSignerNonce'),
+  publicKey('baseMint'),
+  publicKey('quoteMint'),
+  publicKey('baseVault'),
+  u64$1('baseDepositsTotal'),
+  u64$1('baseFeesAccrued'),
+  publicKey('quoteVault'),
+  u64$1('quoteDepositsTotal'),
+  u64$1('quoteFeesAccrued'),
+  u64$1('quoteDustThreshold'),
+  publicKey('requestQueue'),
+  publicKey('eventQueue'),
+  publicKey('bids'),
+  publicKey('asks'),
+  u64$1('baseLotSize'),
+  u64$1('quoteLotSize'),
+  u64$1('feeRateBps'),
+  u64$1('referrerRebatesAccrued'),
+  blob(7),
+]);
+
+// AMM 675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8
+const AMM_LAYOUT = struct([
+  u64$1('status'),
+  u64$1('nonce'),
+  u64$1('maxOrder'),
+  u64$1('depth'),
+  u64$1('baseDecimal'),
+  u64$1('quoteDecimal'),
+  u64$1('state'),
+  u64$1('resetFlag'),
+  u64$1('minSize'),
+  u64$1('volMaxCutRatio'),
+  u64$1('amountWaveRatio'),
+  u64$1('baseLotSize'),
+  u64$1('quoteLotSize'),
+  u64$1('minPriceMultiplier'),
+  u64$1('maxPriceMultiplier'),
+  u64$1('systemDecimalValue'),
+  u64$1('minSeparateNumerator'),
+  u64$1('minSeparateDenominator'),
+  u64$1('tradeFeeNumerator'),
+  u64$1('tradeFeeDenominator'),
+  u64$1('pnlNumerator'),
+  u64$1('pnlDenominator'),
+  u64$1('swapFeeNumerator'),
+  u64$1('swapFeeDenominator'),
+  u64$1('baseNeedTakePnl'),
+  u64$1('quoteNeedTakePnl'),
+  u64$1('quoteTotalPnl'),
+  u64$1('baseTotalPnl'),
+  u64$1('poolOpenTime'),
+  u64$1('punishPcAmount'),
+  u64$1('punishCoinAmount'),
+  u64$1('orderbookToInitTime'),
+  u128('swapBaseInAmount'),
+  u128('swapQuoteOutAmount'),
+  u64$1('swapBase2QuoteFee'),
+  u128('swapQuoteInAmount'),
+  u128('swapBaseOutAmount'),
+  u64$1('swapQuote2BaseFee'),
+  // amm vault
+  publicKey('baseVault'),
+  publicKey('quoteVault'),
+  // mint
+  publicKey('baseMint'),
+  publicKey('quoteMint'),
+  publicKey('lpMint'),
+  // market
+  publicKey('openOrders'),
+  publicKey('marketId'),
+  publicKey('marketProgramId'),
+  publicKey('targetOrders'),
+  publicKey('withdrawQueue'),
+  publicKey('lpVault'),
+  publicKey('owner'),
+  // true circulating supply without lock up
+  u64$1('lpReserve'),
+  seq(u64$1(), 3, 'padding'),
+]);
+
+// CP_AMM CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C
+const CPAMM_LAYOUT = struct([
+  blob(8),
+  publicKey("configId"),
+  publicKey("poolCreator"),
+  publicKey("vaultA"),
+  publicKey("vaultB"),
+  publicKey("mintLp"),
+  publicKey("mintA"),
+  publicKey("mintB"),
+  publicKey("mintProgramA"),
+  publicKey("mintProgramB"),
+  publicKey("observationId"),
+  u8("bump"),
+  u8("status"),
+  u8("lpDecimals"),
+  u8("mintDecimalA"),
+  u8("mintDecimalB"),
+  u64$1("lpAmount"),
+  u64$1("protocolFeesMintA"),
+  u64$1("protocolFeesMintB"),
+  u64$1("fundFeesMintA"),
+  u64$1("fundFeesMintB"),
+  u64$1("openTime"),
+  seq(u64$1(), 32),
+]);
+
+// CLMM 
+
+const RewardInfo = struct([
+  u8("rewardState"),
+  u64$1("openTime"),
+  u64$1("endTime"),
+  u64$1("lastUpdateTime"),
+  u128("emissionsPerSecondX64"),
+  u64$1("rewardTotalEmissioned"),
+  u64$1("rewardClaimed"),
+  publicKey("tokenMint"),
+  publicKey("tokenVault"),
+  publicKey("creator"),
+  u128("rewardGrowthGlobalX64"),
+]);
+
+const CLMM_LAYOUT = struct([
+  blob(8),
+  u8("bump"),
+  publicKey("ammConfig"),
+  publicKey("creator"),
+  publicKey("mintA"),
+  publicKey("mintB"),
+  publicKey("vaultA"),
+  publicKey("vaultB"),
+  publicKey("observationId"),
+  u8("mintDecimalsA"),
+  u8("mintDecimalsB"),
+  u16("tickSpacing"),
+  u128("liquidity"),
+  u128("sqrtPriceX64"),
+  i32("tickCurrent"),
+  u32(),
+  u128("feeGrowthGlobalX64A"),
+  u128("feeGrowthGlobalX64B"),
+  u64$1("protocolFeesTokenA"),
+  u64$1("protocolFeesTokenB"),
+  u128("swapInAmountTokenA"),
+  u128("swapOutAmountTokenB"),
+  u128("swapInAmountTokenB"),
+  u128("swapOutAmountTokenA"),
+  u8("status"),
+  seq(u8(), 7, ""),
+  seq(RewardInfo, 3, "rewardInfos"),
+  seq(u64$1(), 16, "tickArrayBitmap"),
+  u64$1("totalFeesTokenA"),
+  u64$1("totalFeesClaimedTokenA"),
+  u64$1("totalFeesTokenB"),
+  u64$1("totalFeesClaimedTokenB"),
+  u64$1("fundFeesTokenA"),
+  u64$1("fundFeesTokenB"),
+  u64$1("startTime"),
+  seq(u64$1(), 15 * 4 - 3, "padding"),
+]);
+
+function _optionalChain$4(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
+
+const LIQUIDITY_FEES_NUMERATOR = new BN(25);
+const LIQUIDITY_FEES_DENOMINATOR = new BN(10000);
+
+const BNDivCeil = (bn1, bn2)=> {
+  const { div, mod } = bn1.divmod(bn2);
+
+  if (mod.gt(new BN(0))) {
+    return div.add(new BN(1))
+  } else {
+    return div
+  }
+};
+
+const getPairs = (base, quote)=>{
+  return request(`solana://675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8/getProgramAccounts`, {
+    params: { filters: [
+      { dataSize: AMM_LAYOUT.span },
+      { memcmp: { offset: 0, bytes: [6,0,0] }}, // filters for status 6 (Swap)
+      { memcmp: { offset: 400, bytes: base }},
+      { memcmp: { offset: 432, bytes: quote }},
+    ]},
+    api: AMM_LAYOUT,
+    cache: 86400, // 24h,
+    cacheKey: ['raydium', base.toString(), quote.toString()].join('-')
+  })
+};
+
+const getPairsWithPrice$3 = async({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin })=>{
+
+  let accounts = await getPairs(tokenIn, tokenOut);
+
+  if(accounts.length == 0) {
+    accounts = await getPairs(tokenOut, tokenIn);
+  }
+
+  const pairs = await Promise.all(accounts.map(async(account)=>{
+
+    const baseMint = account.data.baseMint.toString();
+    const quoteMint = account.data.quoteMint.toString();
+
+    const balances = await Promise.all([
+      request(`solana://${account.data.baseVault.toString()}/getTokenAccountBalance`, { cache: 5 }),
+      request(`solana://${account.data.quoteVault.toString()}/getTokenAccountBalance`, { cache: 5 })
+    ]);
+    const baseReserve = (_optionalChain$4([balances, 'access', _ => _[0], 'optionalAccess', _2 => _2.value, 'optionalAccess', _3 => _3.amount]) ? new BN(_optionalChain$4([balances, 'access', _4 => _4[0], 'optionalAccess', _5 => _5.value, 'optionalAccess', _6 => _6.amount])) : new BN(0)).sub(account.data.baseNeedTakePnl);
+    const quoteReserve = (_optionalChain$4([balances, 'access', _7 => _7[1], 'optionalAccess', _8 => _8.value, 'optionalAccess', _9 => _9.amount]) ? new BN(_optionalChain$4([balances, 'access', _10 => _10[1], 'optionalAccess', _11 => _11.value, 'optionalAccess', _12 => _12.amount])) : new BN(0)).sub(account.data.quoteNeedTakePnl);
+
+    if(baseMint === Blockchains.solana.wrapped.address) {
+      if(baseReserve.lt(new BN(50000000))) {
+        return // to little liquidity
+      }
+    } else if (quoteMint === Blockchains.solana.wrapped.address) {
+      if(quoteReserve.lt(new BN(50000000))) {
+        return // to little liquidity
+      }
+    } else if (Blockchains.solana.stables.usd.includes(baseMint)) {
+      if((parseFloat(baseReserve.toString()) / 10 ** account.data.baseDecimal.toNumber()) < 10000) {
+        return // to little liquidity
+      }
+    } else if (Blockchains.solana.stables.usd.includes(quoteMint)) {
+      if((parseFloat(quoteReserve.toString()) / 10 ** account.data.quoteDecimal.toNumber()) < 10000) {
+        return // to little liquidity
+      }
+    }
+
+    const reserves = [baseReserve, quoteReserve];
+
+    if(tokenOut === baseMint) {
+      reserves.reverse();
+    }
+
+    const [reserveIn, reserveOut] = reserves;
+
+    let price;
+    if(amountOut || amountOutMin) { // compute amountIn
+
+      new BN(0);
+      let amountOutRaw = new BN((amountOut || amountOutMin).toString());
+
+      if (amountOutRaw.gt(reserveOut)) {
+        amountOutRaw = reserveOut.sub(new BN(1));
+      }
+
+      const denominator = reserveOut.sub(amountOutRaw);
+      const amountInWithoutFee = reserveIn.mul(amountOutRaw).div(denominator);
+
+      price = amountInWithoutFee
+        .mul(LIQUIDITY_FEES_DENOMINATOR)
+        .div(LIQUIDITY_FEES_DENOMINATOR.sub(LIQUIDITY_FEES_NUMERATOR))
+        .toString();
+
+    } else { // compute amountOut
+
+      new BN(0);
+      const amountInRaw = new BN((amountIn || amountInMin).toString());
+      const feeRaw = BNDivCeil(amountInRaw.mul(LIQUIDITY_FEES_NUMERATOR), LIQUIDITY_FEES_DENOMINATOR);
+      
+      const amountInWithFee = amountInRaw.sub(feeRaw);
+      const denominator = reserveIn.add(amountInWithFee);
+
+      price = reserveOut.mul(amountInWithFee).div(denominator).toString();
+    }
+
+    return {
+      publicKey: account.pubkey.toString(),
+      baseMint,
+      quoteMint,
+      price,
+      data: account.data
+    }
+
+  }));
+
+  return pairs.filter(Boolean)
+};
+
+const getPairsWithPrice$2 = ({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin })=>{
+
+};
+
+const getPairsWithPrice$1 = ({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin })=>{
+
+};
+
+const getParisWithPriceForAllTypes = ({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin })=>{
+  return Promise.all([
+    getPairsWithPrice$3({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }),
+    getPairsWithPrice$2({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }),
+    getPairsWithPrice$1({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }),
+  ]).then((pairsAMM, pairsCPAMM, pairsCLMNN)=>{
+    return [
+      (pairsAMM || []).filter(Boolean).flat(),
+      (pairsCPAMM || []).filter(Boolean).flat(),
+      (pairsCLMNN || []).filter(Boolean).flat()
+    ].flat()
+  })
+};
+
+const getPairsWithPrice = async({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin })=>{
+  try {
+    return await getParisWithPriceForAllTypes({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin })
+  } catch (e) {
+    return []
+  }
+};
+
+let getHighestPrice = (pairs)=>{
+  return pairs.reduce((bestPricePair, currentPair)=> ethers.BigNumber.from(currentPair.price).gt(ethers.BigNumber.from(bestPricePair.price)) ? currentPair : bestPricePair)
+};
+
+let getLowestPrice = (pairs)=>{
+  return pairs.reduce((bestPricePair, currentPair)=> ethers.BigNumber.from(currentPair.price).lt(ethers.BigNumber.from(bestPricePair.price)) ? currentPair : bestPricePair)
+};
+
+let getBestPair = async({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }) => {
+  const pairs = await getPairsWithPrice({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin });
+
+  if(!pairs || pairs.length === 0) { return }
+
+  let bestPair;
+
+  if(amountIn || amountInMax) {
+    bestPair = getHighestPrice(pairs);
+  } else { // amount out
+    bestPair = getLowestPrice(pairs);
+  }
+
+  return bestPair
+};
+
+function _optionalChain$3(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
+const blockchain$1 = Blockchains.solana;
+
+// Replaces 11111111111111111111111111111111 with the wrapped token and implies wrapping.
+//
+// We keep 11111111111111111111111111111111 internally
+// to be able to differentiate between SOL<>Token and WSOL<>Token swaps
+// as they are not the same!
+//
+let getExchangePath$3 = ({ path }) => {
+  if(!path) { return }
+  let exchangePath = path.map((token, index) => {
+    if (
+      token === blockchain$1.currency.address && path[index+1] != blockchain$1.wrapped.address &&
+      path[index-1] != blockchain$1.wrapped.address
+    ) {
+      return blockchain$1.wrapped.address
+    } else {
+      return token
+    }
+  });
+
+  if(exchangePath[0] == blockchain$1.currency.address && exchangePath[1] == blockchain$1.wrapped.address) {
+    exchangePath.splice(0, 1);
+  } else if(exchangePath[exchangePath.length-1] == blockchain$1.currency.address && exchangePath[exchangePath.length-2] == blockchain$1.wrapped.address) {
+    exchangePath.splice(exchangePath.length-1, 1);
+  }
+
+  return exchangePath
+};
+
+let pathExists$4 = async ({ path, amountIn, amountInMax, amountOut, amountOutMin }) => {
+  if(path.length == 1) { return false }
+  path = getExchangePath$3({ path });
+  if((await getPairsWithPrice({ tokenIn: path[0], tokenOut: path[1], amountIn, amountInMax, amountOut, amountOutMin })).length > 0) {
+    return true
+  } else {
+    return false
+  }
+};
+
+let findPath$4 = async ({ tokenIn, tokenOut, amountIn, amountOut, amountInMax, amountOutMin }) => {
+  if(
+    [tokenIn, tokenOut].includes(blockchain$1.currency.address) &&
+    [tokenIn, tokenOut].includes(blockchain$1.wrapped.address)
+  ) { return { path: undefined, exchangePath: undefined } }
+
+  let path, stablesIn, stablesOut, stable;
+
+  if (await pathExists$4({ path: [tokenIn, tokenOut], amountIn, amountInMax, amountOut, amountOutMin })) {
+    // direct path
+    path = [tokenIn, tokenOut];
+  } else if (
+    tokenIn != blockchain$1.wrapped.address &&
+    tokenIn != blockchain$1.currency.address &&
+    await pathExists$4({ path: [tokenIn, blockchain$1.wrapped.address], amountIn, amountInMax, amountOut, amountOutMin }) &&
+    tokenOut != blockchain$1.wrapped.address &&
+    tokenOut != blockchain$1.currency.address &&
+    await pathExists$4({ path: [tokenOut, blockchain$1.wrapped.address], amountIn: (amountOut||amountOutMin), amountInMax: (amountOut||amountOutMin), amountOut: (amountIn||amountInMax), amountOutMin: (amountIn||amountInMax) })
+  ) {
+    // path via blockchain.wrapped.address
+    path = [tokenIn, blockchain$1.wrapped.address, tokenOut];
+  } else if (
+    !blockchain$1.stables.usd.includes(tokenIn) &&
+    (stablesIn = (await Promise.all(blockchain$1.stables.usd.map(async(stable)=>await pathExists$4({ path: [tokenIn, stable], amountIn, amountInMax, amountOut, amountOutMin }) ? stable : undefined))).filter(Boolean)) &&
+    !blockchain$1.stables.usd.includes(tokenOut) &&
+    (stablesOut = (await Promise.all(blockchain$1.stables.usd.map(async(stable)=>await pathExists$4({ path: [tokenOut, stable], amountIn: (amountOut||amountOutMin), amountInMax: (amountOut||amountOutMin), amountOut: (amountIn||amountInMax), amountOutMin: (amountIn||amountInMax) })  ? stable : undefined))).filter(Boolean)) &&
+    (stable = stablesIn.filter((stable)=> stablesOut.includes(stable))[0])
+  ) {
+    // path via TOKEN_IN <> STABLE <> TOKEN_OUT
+    path = [tokenIn, stable, tokenOut];
+  }
+
+  // Add blockchain.wrapped.address to route path if things start or end with blockchain.currency.address
+  // because that actually reflects how things are routed in reality:
+  if(_optionalChain$3([path, 'optionalAccess', _ => _.length]) && path[0] == blockchain$1.currency.address) {
+    path.splice(1, 0, blockchain$1.wrapped.address);
+  } else if(_optionalChain$3([path, 'optionalAccess', _2 => _2.length]) && path[path.length-1] == blockchain$1.currency.address) {
+    path.splice(path.length-1, 0, blockchain$1.wrapped.address);
+  }
+  return { path, exchangePath: getExchangePath$3({ path }) }
+};
+
+let getAmountsOut = async ({ path, amountIn, amountInMax }) => {
+
+  let amounts = [ethers.BigNumber.from(amountIn || amountInMax)];
+
+  let bestPair = await getBestPair({ tokenIn: path[0], tokenOut: path[1], amountIn, amountInMax });
+  if(!bestPair){ return }
+  amounts.push(ethers.BigNumber.from(bestPair.price));
+  
+  if (path.length === 3) {
+    let bestPair = await getBestPair({ tokenIn: path[1], tokenOut: path[2], amountIn: amountIn ? amounts[1] : undefined, amountInMax: amountInMax ? amounts[1] : undefined });
+    if(!bestPair){ return }
+    amounts.push(ethers.BigNumber.from(bestPair.price));
+  }
+
+  if(amounts.length != path.length) { return }
+
+  return amounts
+};
+
+let getAmountsIn = async({ path, amountOut, amountOutMin }) => {
+
+  path = path.slice().reverse();
+  let amounts = [ethers.BigNumber.from(amountOut || amountOutMin)];
+
+  let bestPair = await getBestPair({ tokenIn: path[1], tokenOut: path[0], amountOut, amountOutMin });
+  if(!bestPair){ return }
+  amounts.push(ethers.BigNumber.from(bestPair.price));
+  
+  if (path.length === 3) {
+    let bestPair = await getBestPair({ tokenIn: path[2], tokenOut: path[1], amountOut: amountOut ? amounts[1] : undefined, amountOutMin: amountOutMin ? amounts[1] : undefined });
+    if(!bestPair){ return }
+    amounts.push(ethers.BigNumber.from(bestPair.price));
+  }
+  
+  if(amounts.length != path.length) { return }
+
+  return amounts.slice().reverse()
+};
+
+let getAmounts$4 = async ({
+  path,
+  tokenIn,
+  tokenOut,
+  amountOut,
+  amountIn,
+  amountInMax,
+  amountOutMin
+}) => {
+  path = getExchangePath$3({ path });
+  let amounts;
+  if (amountOut) {
+    amounts = await getAmountsIn({ path, amountOut, tokenIn, tokenOut });
+    amountIn = amounts ? amounts[0] : undefined;
+    if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
+      return {}
+    } else if (amountInMax === undefined) {
+      amountInMax = amountIn;
+    }
+  } else if (amountIn) {
+    amounts = await getAmountsOut({ path, amountIn, tokenIn, tokenOut });
+    amountOut = amounts ? amounts[amounts.length-1] : undefined;
+    if (amountOut == undefined || amountOutMin && amountOut.lt(amountOutMin)) {
+      return {}
+    } else if (amountOutMin === undefined) {
+      amountOutMin = amountOut;
+    }
+  } else if(amountOutMin) {
+    amounts = await getAmountsIn({ path, amountOutMin, tokenIn, tokenOut });
+    amountIn = amounts ? amounts[0] : undefined;
+    if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
+      return {}
+    } else if (amountInMax === undefined) {
+      amountInMax = amountIn;
+    }
+  } else if(amountInMax) {
+    amounts = await getAmountsOut({ path, amountInMax, tokenIn, tokenOut });
+    amountOut = amounts ? amounts[amounts.length-1] : undefined;
+    if (amountOut == undefined ||amountOutMin && amountOut.lt(amountOutMin)) {
+      return {}
+    } else if (amountOutMin === undefined) {
+      amountOutMin = amountOut;
+    }
+  }
+  return {
+    amountOut: (amountOut || amountOutMin),
+    amountIn: (amountIn || amountInMax),
+    amountInMax: (amountInMax || amountIn),
+    amountOutMin: (amountOutMin || amountOut),
+    amounts
+  }
+};
+
+const blockchain = Blockchains.solana;
+
+const getTransaction$4 = async({
+  path,
+  amountIn,
+  amountInMax,
+  amountOut,
+  amountOutMin,
+  amounts,
+  amountInInput,
+  amountOutInput,
+  amountInMaxInput,
+  amountOutMinInput,
+  account
+})=>{
+  let transaction = { blockchain: 'solana' };
+  let instructions = [];
+
+  const exchangePath = getExchangePath$3({ path });
+  if(exchangePath.length > 3) { throw 'Raydium can only handle fixed paths with a max length of 3 (2 pools)!' }
+  const tokenIn = exchangePath[0];
+  const tokenMiddle = exchangePath.length == 3 ? exchangePath[1] : undefined;
+  const tokenOut = exchangePath[exchangePath.length-1];
+
+  let pairs;
+  if(exchangePath.length == 2) {
+    pairs = [await getBestPair({ tokenIn, tokenOut, amountIn: (amountInInput || amountInMaxInput), amountOut: (amountOutInput || amountOutMinInput) })];
+  } else {
+    if(amountInInput || amountInMaxInput) {
+      pairs = [await getBestPair({ tokenIn, tokenOut: tokenMiddle, amountIn: (amountInInput || amountInMaxInput) })];
+      pairs.push(await getBestPair({ tokenIn: tokenMiddle, tokenOut, amountIn: pairs[0].price }));
+    } else { // originally amountOut
+      pairs = [await getBestPair({ tokenIn: tokenMiddle, tokenOut, amountOut: (amountOutInput || amountOutMinInput) })];
+      pairs.unshift(await getBestPair({ tokenIn, tokenOut: tokenMiddle, amountOut: pairs[0].price }));
+    }
+  }
+
+  let startsWrapped = (path[0] === blockchain.currency.address && exchangePath[0] === blockchain.wrapped.address);
+  let endsUnwrapped = (path[path.length-1] === blockchain.currency.address && exchangePath[exchangePath.length-1] === blockchain.wrapped.address);
+  let wrappedAccount;
+  const provider = await getProvider('solana');
+  
+  if(startsWrapped || endsUnwrapped) {
+    const rent = await provider.getMinimumBalanceForRentExemption(Token.solana.TOKEN_LAYOUT.span);
+    const keypair = Keypair.generate();
+    wrappedAccount = keypair.publicKey.toString();
+    const lamports = startsWrapped ? new BN(amountIn.toString()).add(new BN(rent)) :  new BN(rent);
+    let createAccountInstruction = SystemProgram.createAccount({
+      fromPubkey: new PublicKey(account),
+      newAccountPubkey: new PublicKey(wrappedAccount),
+      programId: new PublicKey(Token.solana.TOKEN_PROGRAM),
+      space: Token.solana.TOKEN_LAYOUT.span,
+      lamports
+    });
+    createAccountInstruction.signers = [keypair];
+    instructions.push(createAccountInstruction);
+    instructions.push(
+      Token.solana.initializeAccountInstruction({
+        account: wrappedAccount,
+        token: blockchain.wrapped.address,
+        owner: account
+      })
+    );
+  }
+
+  if(pairs.length === 1) { // single hop
+    const tokenAccountIn = startsWrapped ? new PublicKey(wrappedAccount) : new PublicKey(await Token.solana.findProgramAddress({ owner: account, token: tokenIn }));
+    const tokenAccountOut = endsUnwrapped ? new PublicKey(wrappedAccount) : new PublicKey(await Token.solana.findProgramAddress({ owner: account, token: tokenOut }));
+    const pool = pairs[0];
+    await request(`solana://${pool.data.marketId}/getAccountInfo`, { api: MARKET_LAYOUT });
+
+    let LAYOUT, data;
+    LAYOUT = struct([
+      u8('instruction'),
+      u64$1('amountIn'),
+      u64$1('minAmountOut')
+    ]);
+    data = Buffer.alloc(LAYOUT.span);
+    LAYOUT.encode(
+      {
+        instruction: 9,
+        amountIn: new BN((amountIn || amountInMax).toString()),
+        minAmountOut: new BN((amountOutMin || amountOut).toString()),
+      },
+      data,
+    );
+
+    // if(!endsUnwrapped) {
+    //   await createTokenAccountIfNotExisting({ instructions, owner: account, token: tokenOut, account: tokenAccountOut })
+    // }
+
+    // let keys = [
+    //   // token_program
+    //   { pubkey: new PublicKey(Token.solana.TOKEN_PROGRAM), isWritable: false, isSigner: false },
+    //   // amm
+    //   { pubkey: new PublicKey(pool.publicKey), isWritable: true, isSigner: false },
+    //   // amm authority
+    //   { pubkey: await getAssociatedAuthority(new PublicKey(pool.publicKey)), isWritable: false, isSigner: false },
+    //   // amm openOrders
+    //   { pubkey: new PublicKey(pool.data.openOrders), isWritable: true, isSigner: false },
+    //   // amm baseVault
+    //   { pubkey: new PublicKey(pool.data.baseVault), isWritable: true, isSigner: false },
+    //   // amm quoteVault
+    //   { pubkey: new PublicKey(pool.data.quoteVault), isWritable: true, isSigner: false },
+    //   // openbook marketProgramId
+    //   { pubkey: new PublicKey(pool.data.marketProgramId), isWritable: false, isSigner: false },
+    //   // openbook marketId
+    //   { pubkey: new PublicKey(pool.data.marketId), isWritable: true, isSigner: false },
+    //   // openbook marketBids
+    //   { pubkey: market.bids, isWritable: true, isSigner: false },
+    //   // openbook marketAsks
+    //   { pubkey: market.asks, isWritable: true, isSigner: false },
+    //   // openbook eventQueue
+    //   { pubkey: market.eventQueue, isWritable: true, isSigner: false },
+    //   // openbook baseVault
+    //   { pubkey: market.baseVault, isWritable: true, isSigner: false },
+    //   // openbook quoteVault
+    //   { pubkey: market.quoteVault, isWritable: true, isSigner: false },
+    //   // openbook marketAuthority
+    //   { pubkey: await getAssociatedMarketAuthority(pool.data.marketProgramId, pool.data.marketId), isWritable: false, isSigner: false },
+    //   // user tokenAccountIn
+    //   { pubkey: tokenAccountIn, isWritable: true, isSigner: false },
+    //   // user tokenAccountOut
+    //   { pubkey: tokenAccountOut, isWritable: true, isSigner: false },
+    //   // user owner
+    //   { pubkey: new PublicKey(account), isWritable: true, isSigner: true }
+    // ]
+
+    let keys = [
+      // token_program
+      { pubkey: new PublicKey(Token.solana.TOKEN_PROGRAM), isWritable: false, isSigner: false },
+      // amm
+      { pubkey: new PublicKey(pool.publicKey), isWritable: true, isSigner: false },
+      // amm authority
+      { pubkey: new PublicKey('5Q544fKrFoe6tsEbD7S8EmxGTJYAKtTVhAW5Q5pge4j1'), isWritable: false, isSigner: false },
+      // amm openOrders
+      { pubkey: new PublicKey(pool.publicKey), isWritable: true, isSigner: false },
+      // amm baseVault
+      { pubkey: new PublicKey(pool.data.baseVault), isWritable: true, isSigner: false },
+      // amm quoteVault
+      { pubkey: new PublicKey(pool.data.quoteVault), isWritable: true, isSigner: false },
+      // openbook marketProgramId
+      { pubkey: new PublicKey(pool.publicKey), isWritable: false, isSigner: false },
+      // openbook marketId
+      { pubkey: new PublicKey(pool.publicKey), isWritable: true, isSigner: false },
+      // openbook marketBids
+      { pubkey: new PublicKey(pool.publicKey), isWritable: true, isSigner: false },
+      // openbook marketAsks
+      { pubkey: new PublicKey(pool.publicKey), isWritable: true, isSigner: false },
+      // openbook eventQueue
+      { pubkey: new PublicKey(pool.publicKey), isWritable: true, isSigner: false },
+      // openbook baseVault
+      { pubkey: new PublicKey(pool.publicKey), isWritable: true, isSigner: false },
+      // openbook quoteVault
+      { pubkey: new PublicKey(pool.publicKey), isWritable: true, isSigner: false },
+      // openbook marketAuthority
+      { pubkey: new PublicKey(pool.publicKey), isWritable: true, isSigner: false },
+      // user tokenAccountIn
+      { pubkey: tokenAccountIn, isWritable: true, isSigner: false },
+      // user tokenAccountOut
+      { pubkey: tokenAccountOut, isWritable: true, isSigner: false },
+      // user owner
+      { pubkey: new PublicKey(account), isWritable: true, isSigner: true }
+    ];
+
+    console.log('keys', JSON.stringify(keys));
+
+    instructions.push(
+      new TransactionInstruction({
+        programId: new PublicKey('675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8'),
+        keys,
+        data,
+      })
+    );
+  } else if (pairs.length === 2) ;
+  
+  if(startsWrapped || endsUnwrapped) {
+    instructions.push(
+      Token.solana.closeAccountInstruction({
+        account: wrappedAccount,
+        owner: account
+      })
+    );
+  }
+
+  // await debug(instructions, provider)
+
+  transaction.instructions = instructions;
+  return transaction
+};
+
+var Raydium = {
+  findPath: findPath$4,
+  pathExists: pathExists$4,
+  getAmounts: getAmounts$4,
+  getTransaction: getTransaction$4,
+  AMM_LAYOUT,
+  CPAMM_LAYOUT,
+  CLMM_LAYOUT,
+  MARKET_LAYOUT,
+};
+
+// // AMM
+// let accounts = await Web3Client.request(`solana://${Web3Exchanges.raydium.solana.router_amm.address}/getProgramAccounts`, {
+//   params: { filters: [
+//     { dataSize: Web3Exchanges.raydium.solana.router_amm.api.span },
+//     { memcmp: { offset: 0, bytes: [6,0,0] }}, // filters for status 6
+//     { memcmp: { offset: 400, bytes: "So11111111111111111111111111111111111111112" }},
+//     { memcmp: { offset: 432, bytes: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v" }},
+//   ]},
+//   api:  Web3Exchanges.raydium.solana.router_amm.api,
+// })
+// console.log(accounts)
+
+
+// // CPAMM
+// let accounts = await Web3Client.request(`solana://${Web3Exchanges.raydium.solana.router_cpamm.address}/getProgramAccounts`, {
+//   params: { filters: [
+//     { dataSize: Web3Exchanges.raydium.solana.router_cpamm.api.span },
+//     { memcmp: { offset: 168, bytes: "So11111111111111111111111111111111111111112" }},
+//     { memcmp: { offset: 200, bytes: "2zMMhcVQEXDtdE6vsFS7S7D5oUodfJHE8vd1gnBouauv" }},
+//   ]},
+//   api:  Web3Exchanges.raydium.solana.router_cpamm.api,
+// })
+// console.log(accounts)
+
+
+// // CLMM
+// let accounts = await Web3Client.request(`solana://${Web3Exchanges.raydium.solana.router_clmm.address}/getProgramAccounts`, {
+//   params: { filters: [
+//     { dataSize: Web3Exchanges.raydium.solana.router_clmm.api.span },
+//     { memcmp: { offset: 73, bytes: "So11111111111111111111111111111111111111112" }},
+//     { memcmp: { offset: 105, bytes: "2zMMhcVQEXDtdE6vsFS7S7D5oUodfJHE8vd1gnBouauv" }},
+//   ]},
+//   api:  Web3Exchanges.raydium.solana.router_clmm.api,
+// })
+// console.log(accounts)
+
+const exchange$g = {
+  
+  name: 'raydium',
+  label: 'Raydium',
+  logo: 'data:image/svg+xml;base64,PHN2ZyBmaWxsPSJub25lIiBoZWlnaHQ9IjMzIiB2aWV3Qm94PSIwIDAgMjkgMzMiIHdpZHRoPSIyOSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGxpbmVhckdyYWRpZW50IGlkPSJhIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjI4LjMxNjgiIHgyPSItMS43MzMzNiIgeTE9IjguMTkxNjIiIHkyPSIyMC4yMDg2Ij48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNjMjAwZmIiLz48c3RvcCBvZmZzZXQ9Ii40ODk2NTgiIHN0b3AtY29sb3I9IiMzNzcyZmYiLz48c3RvcCBvZmZzZXQ9Ii40ODk3NTgiIHN0b3AtY29sb3I9IiMzNzczZmUiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiM1YWM0YmUiLz48L2xpbmVhckdyYWRpZW50PjxnIGZpbGw9InVybCgjYSkiPjxwYXRoIGQ9Im0yNi44NjI1IDEyLjI4MXYxMS40MTA0bC0xMi42OTE2IDcuMzI2MS0xMi42OTg1OS03LjMyNjF2LTE0LjY1OTM3bDEyLjY5ODU5LTcuMzMzMjIgOS43NTQxIDUuNjM0NDEgMS40NzIzLS44NDk0MS0xMS4yMjY0LTYuNDgzODEtMTQuMTcwOSA4LjE4MjYydjE2LjM1ODE4bDE0LjE3MDkgOC4xODI2IDE0LjE3MS04LjE4MjZ2LTEzLjEwOTJ6Ii8+PHBhdGggZD0ibTEwLjYxNzYgMjMuNjk4NWgtMi4xMjM1M3YtNy4xMjA5aDcuMDc4NDNjLjY2OTctLjAwNzQgMS4zMDk1LS4yNzgyIDEuNzgxMS0uNzUzOC40NzE2LS40NzU1LjczNy0xLjExNzYuNzM4OC0xLjc4NzQuMDAzOC0uMzMxMS0uMDYwMS0uNjU5Ni0uMTg3OS0uOTY1MS0uMTI3OS0uMzA1Ni0uMzE2OC0uNTgxNy0uNTU1NC0uODExNS0uMjMwOC0uMjM3Mi0uNTA3MS0uNDI1My0uODEyNC0uNTUzLS4zMDUzLS4xMjc4LS42MzMzLS4xOTI1LS45NjQyLS4xOTAzaC03LjA3ODQzdi0yLjE2NTk1aDcuMDg1NDNjMS4yNDA1LjAwNzQzIDIuNDI4MS41MDM1MSAzLjMwNTMgMS4zODA2NS44NzcxLjg3NzIgMS4zNzMyIDIuMDY0OCAxLjM4MDYgMy4zMDUyLjAwNzYuOTQ5Ni0uMjgxOSAxLjg3NzctLjgyODEgMi42NTQ0LS41MDI3Ljc0MzItMS4yMTExIDEuMzIzNy0yLjAzODYgMS42NzA1LS44MTk0LjI1OTktMS42NzQ1LjM4ODktMi41MzQxLjM4MjNoLTQuMjQ3eiIvPjxwYXRoIGQ9Im0yMC4yMTU5IDIzLjUyMTVoLTIuNDc3NWwtMS45MTExLTMuMzMzOWMuNzU2MS0uMDQ2MyAxLjUwMTktLjE5ODggMi4yMTU1LS40NTN6Ii8+PHBhdGggZD0ibTI1LjM4MzEgOS45MDk3NSAxLjQ2NTIuODE0MDUgMS40NjUzLS44MTQwNXYtMS43MjAwNWwtMS40NjUzLS44NDk0MS0xLjQ2NTIuODQ5NDF6Ii8+PC9nPjwvc3ZnPg==',
+  protocol: 'raydium',
+  
+  slippage: true,
+
+  blockchains: ['solana'],
+
+  solana: {
+    
+    router_amm: {
+      address: '675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8',
+      api: Raydium.AMM_LAYOUT,
+    },
+
+    router_cpamm: {
+      address: 'CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C',
+      api: Raydium.CPAMM_LAYOUT
+    },
+
+    router_clmm: {
+      address: 'CAMMCzo5YL8w4VFF8KVHrK22GGUsp5VTaW7grrKgrWqK',
+      api: Raydium.CLMM_LAYOUT
+    },
+  }
+};
+
+var raydium = (scope)=>{
+  
+  return new Exchange(
+
     Object.assign(exchange$g, {
       scope,
 
-      findPath: (args)=>Orca.findPath({ ...args, exchange: exchange$g }),
-      pathExists: (args)=>Orca.pathExists({ ...args, exchange: exchange$g }),
-      getAmounts: (args)=>Orca.getAmounts({ ...args, exchange: exchange$g }),
+      findPath: (args)=>Raydium.findPath({ ...args, exchange: exchange$g }),
+      pathExists: (args)=>Raydium.pathExists({ ...args, exchange: exchange$g }),
+      getAmounts: (args)=>Raydium.getAmounts({ ...args, exchange: exchange$g }),
       getPrep: (args)=>{},
-      getTransaction: (args)=>Orca.getTransaction({ ...args, exchange: exchange$g }),
+      getTransaction: (args)=>Raydium.getTransaction({ ...args, exchange: exchange$g }),
     })
   )
 };
@@ -4812,6 +5621,7 @@ var wxdai = (scope)=>{
 
 const exchanges = [
   orca(),
+  raydium(),
   uniswap_v3(),
   pancakeswap_v3(),
   uniswap_v2(),
@@ -4858,6 +5668,7 @@ exchanges.polygon.forEach((exchange)=>{ exchanges.polygon[exchange.name] = excha
 
 exchanges.solana = [
   orca('solana'),
+  raydium('solana'),
 ];
 exchanges.solana.forEach((exchange)=>{ exchanges.solana[exchange.name] = exchange; });
 
