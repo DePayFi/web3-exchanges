@@ -47,7 +47,10 @@ const route = ({
     let amounts // includes intermediary amounts for longer routes
     try {
       ;({ amountIn, amountInMax, amountOut, amountOutMin, amounts } = await getAmounts({ exchange, blockchain, path, pools, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }));
-    } catch { return resolve() }
+    } catch(e) {
+      console.log(e);
+      return resolve()
+    }
     if([amountIn, amountInMax, amountOut, amountOutMin].every((amount)=>{ return amount == undefined })) { return resolve() }
 
     if(exchange.slippage && slippage !== false) {
