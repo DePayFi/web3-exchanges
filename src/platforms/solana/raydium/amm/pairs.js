@@ -63,19 +63,19 @@ const getPairsWithPrice = async({ tokenIn, tokenOut, amountIn, amountInMax, amou
     const quoteReserve = (balances[1]?.value?.amount ? new BN(balances[1]?.value?.amount) : new BN(0)).sub(account.data.quoteNeedTakePnl)
 
     if(baseMint === Blockchains.solana.wrapped.address) {
-      if(baseReserve.lt(new BN(50_000_000))) {
+      if(baseReserve.lt(new BN(50000000))) {
         return // to little liquidity
       }
     } else if (quoteMint === Blockchains.solana.wrapped.address) {
-      if(quoteReserve.lt(new BN(50_000_000))) {
+      if(quoteReserve.lt(new BN(50000000))) {
         return // to little liquidity
       }
     } else if (Blockchains.solana.stables.usd.includes(baseMint)) {
-      if((parseFloat(baseReserve.toString()) / 10 ** account.data.baseDecimal.toNumber()) < 10_000) {
+      if((parseFloat(baseReserve.toString()) / 10 ** account.data.baseDecimal.toNumber()) < 10000) {
         return // to little liquidity
       }
     } else if (Blockchains.solana.stables.usd.includes(quoteMint)) {
-      if((parseFloat(quoteReserve.toString()) / 10 ** account.data.quoteDecimal.toNumber()) < 10_000) {
+      if((parseFloat(quoteReserve.toString()) / 10 ** account.data.quoteDecimal.toNumber()) < 10000) {
         return // to little liquidity
       }
     }
