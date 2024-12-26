@@ -119,14 +119,14 @@ const getBestPool = async ({ blockchain, exchange, path, amountIn, amountOut, bl
           const amountScaled = await getOutputAmount({ exchange, pool, inputAmount: ethers.BigNumber.from(amountIn).mul(ethers.BigNumber.from(10)).toString() })
           const amountScaledDown = amountScaled.div(ethers.BigNumber.from(10))
           const difference = amountScaledDown.sub(amount).abs()
-          const enoughLiquidity = !difference.gt(amount.div(ethers.BigNumber.from(100)).mul(ethers.BigNumber.from(5))) // up to 5% diff allowed
+          const enoughLiquidity = !difference.gt(amount.mul(ethers.BigNumber.from(5)).div(ethers.BigNumber.from(100))) // up to 5% diff allowed
           if(!enoughLiquidity) { return }
         } else {
           amount = await getInputAmount({ exchange, pool, outputAmount: amountOut })
           const amountScaled = await getInputAmount({ exchange, pool, outputAmount: ethers.BigNumber.from(amountOut).mul(ethers.BigNumber.from(10)).toString() })
           const amountScaledDown = amountScaled.div(ethers.BigNumber.from(10))
           const difference = amountScaledDown.sub(amount).abs()
-          const enoughLiquidity = !difference.gt(amount.div(ethers.BigNumber.from(100)).mul(ethers.BigNumber.from(5))) // up to 5% diff allowed
+          const enoughLiquidity = !difference.gt(amount.mul(ethers.BigNumber.from(5)).div(ethers.BigNumber.from(100))) // up to 5% diff allowed
           if(!enoughLiquidity) { return }
         }
 

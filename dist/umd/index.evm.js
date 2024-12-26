@@ -2089,14 +2089,14 @@
             const amountScaled = await getOutputAmount({ exchange, pool, inputAmount: ethers.ethers.BigNumber.from(amountIn).mul(ethers.ethers.BigNumber.from(10)).toString() });
             const amountScaledDown = amountScaled.div(ethers.ethers.BigNumber.from(10));
             const difference = amountScaledDown.sub(amount).abs();
-            const enoughLiquidity = !difference.gt(amount.div(ethers.ethers.BigNumber.from(100)).mul(ethers.ethers.BigNumber.from(5))); // up to 5% diff allowed
+            const enoughLiquidity = !difference.gt(amount.mul(ethers.ethers.BigNumber.from(5)).div(ethers.ethers.BigNumber.from(100))); // up to 5% diff allowed
             if(!enoughLiquidity) { return }
           } else {
             amount = await getInputAmount({ exchange, pool, outputAmount: amountOut });
             const amountScaled = await getInputAmount({ exchange, pool, outputAmount: ethers.ethers.BigNumber.from(amountOut).mul(ethers.ethers.BigNumber.from(10)).toString() });
             const amountScaledDown = amountScaled.div(ethers.ethers.BigNumber.from(10));
             const difference = amountScaledDown.sub(amount).abs();
-            const enoughLiquidity = !difference.gt(amount.div(ethers.ethers.BigNumber.from(100)).mul(ethers.ethers.BigNumber.from(5))); // up to 5% diff allowed
+            const enoughLiquidity = !difference.gt(amount.mul(ethers.ethers.BigNumber.from(5)).div(ethers.ethers.BigNumber.from(100))); // up to 5% diff allowed
             if(!enoughLiquidity) { return }
           }
 
