@@ -16,24 +16,42 @@ import Blockchains from '@depay/web3-blockchains'
 import { Buffer, BN, Transaction, TransactionInstruction, SystemProgram, PublicKey, Keypair, struct, u8, u64, u128, bool } from '@depay/solana-web3.js'
 import { getExchangePath } from './path'
 import { getBestPair } from './pairs'
-import { MARKET_LAYOUT } from './layouts'
 
 const blockchain = Blockchains.solana
 
-const getAssociatedAuthority = async(programId)=> {
+const CP_PROGRAM_ID = new PublicKey('CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C')
+
+const swapBaseInputInstruction = [143, 190, 90, 218, 196, 30, 51, 222]
+const swapBaseOutputInstruction = [55, 217, 98, 86, 163, 74, 180, 173]
+
+const createTokenAccountIfNotExisting = async ({ instructions, owner, token, account })=>{
+  let outAccountExists
+  try{ outAccountExists = !!(await request({ blockchain: 'solana', address: account.toString() })) } catch {}
+  if(!outAccountExists) {
+    instructions.push(
+      await Token.solana.createAssociatedTokenAccountInstruction({
+        token,
+        owner,
+        payer: owner,
+      })
+    )
+  }
+}
+
+const getPdaPoolAuthority = async(programId)=> {
   let [publicKey, nonce] = await PublicKey.findProgramAddress(
-    // new Uint8Array(Buffer.from('amm authority'.replace('\u00A0', ' '), 'utf-8'))
-    [Buffer.from([97, 109, 109, 32, 97, 117, 116, 104, 111, 114, 105, 116, 121])],
-    programId,
+    [Buffer.from("vault_and_lp_mint_auth_seed", "utf8")],
+    programId
   )
   return publicKey
 }
 
-const getAssociatedMarketAuthority = async(programId, marketId)=> {
+const getPdaObservationId = async(programId, poolId)=> {
   let [publicKey, nonce] = await PublicKey.findProgramAddress(
-    // Seed is the marketId
-    [marketId.toBuffer()],
-    // Program ID for OpenBook/Serum
+    [
+      Buffer.from("observation", "utf8"),
+      poolId.toBuffer()
+    ],
     programId
   )
   return publicKey
@@ -60,7 +78,7 @@ const getTransaction = async({
   const tokenIn = exchangePath[0]
   const tokenMiddle = exchangePath.length == 3 ? exchangePath[1] : undefined
   const tokenOut = exchangePath[exchangePath.length-1]
-
+    
   let pairs, amountMiddle
   if(exchangePath.length == 2) {
     pairs = [await getBestPair({ tokenIn, tokenOut, amountIn: (amountInInput || amountInMaxInput), amountOut: (amountOutInput || amountOutMinInput) })]
@@ -103,156 +121,116 @@ const getTransaction = async({
   }
 
   if(pairs.length === 1) { // single hop
+
     const tokenAccountIn = startsWrapped ? new PublicKey(wrappedAccount) : new PublicKey(await Token.solana.findProgramAddress({ owner: account, token: tokenIn }))
     const tokenAccountOut = endsUnwrapped ? new PublicKey(wrappedAccount) : new PublicKey(await Token.solana.findProgramAddress({ owner: account, token: tokenOut }))
+    if(!endsUnwrapped) {
+      await createTokenAccountIfNotExisting({ instructions, owner: account, token: tokenOut, account: tokenAccountOut })
+    }
     const pool = pairs[0]
-    const market = await request(`solana://${pool.data.marketId}/getAccountInfo`, { api: MARKET_LAYOUT })
+    const inputMint = tokenIn == pool.mintA ? pool.data.mintA : pool.data.mintB
+    const outputMint = tokenIn == pool.mintA ? pool.data.mintB : pool.data.mintA
+    const inputVault = tokenIn == pool.mintA ? pool.data.vaultA : pool.data.vaultB
+    const outputVault = tokenIn == pool.mintA ? pool.data.vaultB : pool.data.vaultA
+    const poolId = new PublicKey(pool.publicKey)
 
-    let LAYOUT, data
-    LAYOUT = struct([
-      u8('instruction'),
-      u64('amountIn'),
-      u64('minAmountOut')
-    ])
-    data = Buffer.alloc(LAYOUT.span)
-    LAYOUT.encode(
-      {
-        instruction: 9,
+    if(amountInInput || amountOutMinInput) { // fixed amountIn, variable amountOut (amountOutMin)
+
+      const dataLayout = struct([u64("amountIn"), u64("amounOutMin")]);
+
+      const keys = [
+        // payer
+        { pubkey: new PublicKey(account), isSigner: true, isWritable: false },
+        // authority
+        { pubkey: await getPdaPoolAuthority(CP_PROGRAM_ID), isSigner: false, isWritable: false },
+        // configId
+        { pubkey: pool.data.configId, isSigner: false, isWritable: false },
+        // poolId
+        { pubkey: poolId, isSigner: false, isWritable: true },
+        // userInputAccount
+        { pubkey: tokenAccountIn, isSigner: false, isWritable: true },
+        // userOutputAccount
+        { pubkey: tokenAccountOut, isSigner: false, isWritable: true },
+        // inputVault
+        { pubkey: inputVault, isSigner: false, isWritable: true },
+        // outputVault
+        { pubkey: outputVault, isSigner: false, isWritable: true },
+        // inputTokenProgram
+        { pubkey: new PublicKey(Token.solana.TOKEN_PROGRAM), isSigner: false, isWritable: false },
+        // outputTokenProgram
+        { pubkey: new PublicKey(Token.solana.TOKEN_PROGRAM), isSigner: false, isWritable: false },
+        // inputMint
+        { pubkey: inputMint, isSigner: false, isWritable: false },
+        // outputMint
+        { pubkey: outputMint, isSigner: false, isWritable: false },
+        // observationId
+        { pubkey: await getPdaObservationId(CP_PROGRAM_ID, poolId), isSigner: false, isWritable: true },
+      ]
+
+      const data = Buffer.alloc(dataLayout.span)
+      dataLayout.encode({ 
         amountIn: new BN((amountIn || amountInMax).toString()),
-        minAmountOut: new BN((amountOutMin || amountOut).toString()),
-      },
-      data,
-    )
+        amounOutMin: new BN((amountOut || amountOutMin).toString())
+      }, data)
 
-    // if(!endsUnwrapped) {
-    //   await createTokenAccountIfNotExisting({ instructions, owner: account, token: tokenOut, account: tokenAccountOut })
-    // }
+      instructions.push(
+        new TransactionInstruction({
+          programId: CP_PROGRAM_ID,
+          keys,
+          data: Buffer.from([...swapBaseInputInstruction, ...data]),
+        })
+      )
 
-    // let keys = [
-    //   // token_program
-    //   { pubkey: new PublicKey(Token.solana.TOKEN_PROGRAM), isWritable: false, isSigner: false },
-    //   // amm
-    //   { pubkey: new PublicKey(pool.publicKey), isWritable: true, isSigner: false },
-    //   // amm authority
-    //   { pubkey: await getAssociatedAuthority(new PublicKey(pool.publicKey)), isWritable: false, isSigner: false },
-    //   // amm openOrders
-    //   { pubkey: new PublicKey(pool.data.openOrders), isWritable: true, isSigner: false },
-    //   // amm baseVault
-    //   { pubkey: new PublicKey(pool.data.baseVault), isWritable: true, isSigner: false },
-    //   // amm quoteVault
-    //   { pubkey: new PublicKey(pool.data.quoteVault), isWritable: true, isSigner: false },
-    //   // openbook marketProgramId
-    //   { pubkey: new PublicKey(pool.data.marketProgramId), isWritable: false, isSigner: false },
-    //   // openbook marketId
-    //   { pubkey: new PublicKey(pool.data.marketId), isWritable: true, isSigner: false },
-    //   // openbook marketBids
-    //   { pubkey: market.bids, isWritable: true, isSigner: false },
-    //   // openbook marketAsks
-    //   { pubkey: market.asks, isWritable: true, isSigner: false },
-    //   // openbook eventQueue
-    //   { pubkey: market.eventQueue, isWritable: true, isSigner: false },
-    //   // openbook baseVault
-    //   { pubkey: market.baseVault, isWritable: true, isSigner: false },
-    //   // openbook quoteVault
-    //   { pubkey: market.quoteVault, isWritable: true, isSigner: false },
-    //   // openbook marketAuthority
-    //   { pubkey: await getAssociatedMarketAuthority(pool.data.marketProgramId, pool.data.marketId), isWritable: false, isSigner: false },
-    //   // user tokenAccountIn
-    //   { pubkey: tokenAccountIn, isWritable: true, isSigner: false },
-    //   // user tokenAccountOut
-    //   { pubkey: tokenAccountOut, isWritable: true, isSigner: false },
-    //   // user owner
-    //   { pubkey: new PublicKey(account), isWritable: true, isSigner: true }
-    // ]
+    } else { // fixed amountOut, variable amountIn (amountInMax)
 
-    let keys = [
-      // token_program
-      { pubkey: new PublicKey(Token.solana.TOKEN_PROGRAM), isWritable: false, isSigner: false },
-      // amm
-      { pubkey: new PublicKey(pool.publicKey), isWritable: true, isSigner: false },
-      // amm authority
-      { pubkey: new PublicKey('5Q544fKrFoe6tsEbD7S8EmxGTJYAKtTVhAW5Q5pge4j1'), isWritable: false, isSigner: false },
-      // amm openOrders
-      { pubkey: new PublicKey(pool.publicKey), isWritable: true, isSigner: false },
-      // amm baseVault
-      { pubkey: new PublicKey(pool.data.baseVault), isWritable: true, isSigner: false },
-      // amm quoteVault
-      { pubkey: new PublicKey(pool.data.quoteVault), isWritable: true, isSigner: false },
-      // openbook marketProgramId
-      { pubkey: new PublicKey(pool.publicKey), isWritable: false, isSigner: false },
-      // openbook marketId
-      { pubkey: new PublicKey(pool.publicKey), isWritable: true, isSigner: false },
-      // openbook marketBids
-      { pubkey: new PublicKey(pool.publicKey), isWritable: true, isSigner: false },
-      // openbook marketAsks
-      { pubkey: new PublicKey(pool.publicKey), isWritable: true, isSigner: false },
-      // openbook eventQueue
-      { pubkey: new PublicKey(pool.publicKey), isWritable: true, isSigner: false },
-      // openbook baseVault
-      { pubkey: new PublicKey(pool.publicKey), isWritable: true, isSigner: false },
-      // openbook quoteVault
-      { pubkey: new PublicKey(pool.publicKey), isWritable: true, isSigner: false },
-      // openbook marketAuthority
-      { pubkey: new PublicKey(pool.publicKey), isWritable: true, isSigner: false },
-      // user tokenAccountIn
-      { pubkey: tokenAccountIn, isWritable: true, isSigner: false },
-      // user tokenAccountOut
-      { pubkey: tokenAccountOut, isWritable: true, isSigner: false },
-      // user owner
-      { pubkey: new PublicKey(account), isWritable: true, isSigner: true }
-    ]
+      const dataLayout = struct([u64("amountInMax"), u64("amountOut")]);
 
-    console.log('keys', JSON.stringify(keys))
+      const keys = [
+        // payer
+        { pubkey: new PublicKey(account), isSigner: true, isWritable: false },
+        // authority
+        { pubkey: await getPdaPoolAuthority(CP_PROGRAM_ID), isSigner: false, isWritable: false },
+        // configId
+        { pubkey: pool.data.configId, isSigner: false, isWritable: false },
+        // poolId
+        { pubkey: poolId, isSigner: false, isWritable: true },
+        // userInputAccount
+        { pubkey: tokenAccountIn, isSigner: false, isWritable: true },
+        // userOutputAccount
+        { pubkey: tokenAccountOut, isSigner: false, isWritable: true },
+        // inputVault
+        { pubkey: inputVault, isSigner: false, isWritable: true },
+        // outputVault
+        { pubkey: outputVault, isSigner: false, isWritable: true },
+        // inputTokenProgram
+        { pubkey: new PublicKey(Token.solana.TOKEN_PROGRAM), isSigner: false, isWritable: false },
+        // outputTokenProgram
+        { pubkey: new PublicKey(Token.solana.TOKEN_PROGRAM), isSigner: false, isWritable: false },
+        // inputMint
+        { pubkey: inputMint, isSigner: false, isWritable: false },
+        // outputMint
+        { pubkey: outputMint, isSigner: false, isWritable: false },
+        // observationId
+        { pubkey: await getPdaObservationId(CP_PROGRAM_ID, poolId), isSigner: false, isWritable: true },
+      ]
 
-    instructions.push(
-      new TransactionInstruction({
-        programId: new PublicKey('675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8'),
-        keys,
-        data,
-      })
-    )
+      const data = Buffer.alloc(dataLayout.span)
+      dataLayout.encode({ 
+        amountInMax: new BN((amountIn || amountInMax).toString()),
+        amountOut: new BN((amountOut || amountOutMin).toString())
+      }, data)
+
+      instructions.push(
+        new TransactionInstruction({
+          programId: CP_PROGRAM_ID,
+          keys,
+          data: Buffer.from([...swapBaseOutputInstruction, ...data]),
+        })
+      )
+    }
+
   } else if (pairs.length === 2) { // two hop
-    // // amount is NOT the precise part of the swap (otherAmountThreshold is)
-    // let amountSpecifiedIsInput = !!(amountInInput || amountOutMinInput)
-    // let amount = amountSpecifiedIsInput ? amountIn : amountOut
-    // let otherAmountThreshold = amountSpecifiedIsInput ? amountOutMin : amountInMax
-    // let tokenAccountIn = startsWrapped ? new PublicKey(wrappedAccount) : new PublicKey(await Token.solana.findProgramAddress({ owner: account, token: tokenIn }))
-    // let tokenMiddle = exchangePath[1]
-    // let tokenAccountMiddle = new PublicKey(await Token.solana.findProgramAddress({ owner: account, token: tokenMiddle }))
-    // await createTokenAccountIfNotExisting({ instructions, owner: account, token: tokenMiddle, account: tokenAccountMiddle })
-    // let tokenAccountOut = endsUnwrapped ? new PublicKey(wrappedAccount) : new PublicKey(await Token.solana.findProgramAddress({ owner: account, token: tokenOut }))
-    // if(!endsUnwrapped) {
-    //   await createTokenAccountIfNotExisting({ instructions, owner: account, token: tokenOut, account: tokenAccountOut })
-    // }
-    // instructions.push(
-    //   new TransactionInstruction({
-    //     programId: new PublicKey('whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc'),
-    //     keys: await getTwoHopSwapInstructionKeys({
-    //       account,
-    //       poolOne: pairs[0].pubkey,
-    //       tickArraysOne: pairs[0].tickArrays,
-    //       tokenAccountOneA: pairs[0].aToB ? tokenAccountIn : tokenAccountMiddle,
-    //       tokenVaultOneA: pairs[0].data.tokenVaultA,
-    //       tokenAccountOneB: pairs[0].aToB ? tokenAccountMiddle : tokenAccountIn,
-    //       tokenVaultOneB: pairs[0].data.tokenVaultB,
-    //       poolTwo: pairs[1].pubkey,
-    //       tickArraysTwo: pairs[1].tickArrays,
-    //       tokenAccountTwoA: pairs[1].aToB ? tokenAccountMiddle : tokenAccountOut,
-    //       tokenVaultTwoA: pairs[1].data.tokenVaultA,
-    //       tokenAccountTwoB: pairs[1].aToB ? tokenAccountOut : tokenAccountMiddle,
-    //       tokenVaultTwoB: pairs[1].data.tokenVaultB,
-    //     }),
-    //     data: getTwoHopSwapInstructionData({
-    //       amount,
-    //       otherAmountThreshold,
-    //       amountSpecifiedIsInput,
-    //       aToBOne: pairs[0].aToB,
-    //       aToBTwo: pairs[1].aToB,
-    //       sqrtPriceLimitOne: pairs[0].sqrtPriceLimit,
-    //       sqrtPriceLimitTwo: pairs[1].sqrtPriceLimit,
-    //     }),
-    //   })
-    // )
+
   }
   
   if(startsWrapped || endsUnwrapped) {
@@ -264,7 +242,7 @@ const getTransaction = async({
     )
   }
 
-  // await debug(instructions, provider)
+  await debug(instructions, provider)
 
   transaction.instructions = instructions
   return transaction

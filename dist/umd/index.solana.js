@@ -2,7 +2,7 @@
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('@depay/web3-tokens-solana'), require('@depay/web3-client-solana'), require('ethers'), require('@depay/web3-blockchains'), require('@depay/solana-web3.js'), require('decimal.js')) :
   typeof define === 'function' && define.amd ? define(['@depay/web3-tokens-solana', '@depay/web3-client-solana', 'ethers', '@depay/web3-blockchains', '@depay/solana-web3.js', 'decimal.js'], factory) :
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.Web3Exchanges = factory(global.Web3Tokens, global.Web3Client, global.ethers, global.Web3Blockchains, global.SolanaWeb3js, global.Decimal));
-}(this, (function (Token, web3ClientSolana, ethers, Blockchains, solanaWeb3_js, Decimal) { 'use strict';
+}(this, (function (Token, web3ClientSolana, ethers$1, Blockchains, solanaWeb3_js, Decimal) { 'use strict';
 
   function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
@@ -10,7 +10,7 @@
   var Blockchains__default = /*#__PURE__*/_interopDefaultLegacy(Blockchains);
   var Decimal__default = /*#__PURE__*/_interopDefaultLegacy(Decimal);
 
-  function _optionalChain$3(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }class Route {
+  function _optionalChain$2(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }class Route {
     constructor({
       blockchain,
       tokenIn,
@@ -36,10 +36,10 @@
       this.decimalsOut = decimalsOut;
       this.path = path;
       this.pools = pools;
-      this.amountIn = _optionalChain$3([amountIn, 'optionalAccess', _ => _.toString, 'call', _2 => _2()]);
-      this.amountOutMin = _optionalChain$3([amountOutMin, 'optionalAccess', _3 => _3.toString, 'call', _4 => _4()]);
-      this.amountOut = _optionalChain$3([amountOut, 'optionalAccess', _5 => _5.toString, 'call', _6 => _6()]);
-      this.amountInMax = _optionalChain$3([amountInMax, 'optionalAccess', _7 => _7.toString, 'call', _8 => _8()]);
+      this.amountIn = _optionalChain$2([amountIn, 'optionalAccess', _ => _.toString, 'call', _2 => _2()]);
+      this.amountOutMin = _optionalChain$2([amountOutMin, 'optionalAccess', _3 => _3.toString, 'call', _4 => _4()]);
+      this.amountOut = _optionalChain$2([amountOut, 'optionalAccess', _5 => _5.toString, 'call', _6 => _6()]);
+      this.amountInMax = _optionalChain$2([amountInMax, 'optionalAccess', _7 => _7.toString, 'call', _8 => _8()]);
       this.exchange = exchange;
       this.getPrep = getPrep;
       this.getTransaction = getTransaction;
@@ -203,7 +203,7 @@
 
   const fixAddress = (address)=>{
     if(address.match('0x')) {
-      return ethers.ethers.utils.getAddress(address)
+      return ethers$1.ethers.utils.getAddress(address)
     } else {
       return address
     }
@@ -755,7 +755,7 @@
 
   const PROTOCOL_FEE_RATE_MUL_VALUE = new solanaWeb3_js.BN(10000);
   const FEE_RATE_MUL_VALUE = new solanaWeb3_js.BN(1000000);
-  const ZERO = new solanaWeb3_js.BN(0);
+  const ZERO$1 = new solanaWeb3_js.BN(0);
   const ONE = new solanaWeb3_js.BN(1);
   const TWO = new solanaWeb3_js.BN(2);
   const U64_MAX = TWO.pow(new solanaWeb3_js.BN(64)).sub(ONE);
@@ -814,14 +814,14 @@
     }
 
     static mulDivRoundUpIf(n0, n1, d, roundUp, limit) {
-      if (d.eq(ZERO)) {
+      if (d.eq(ZERO$1)) {
         throw new Error("mulDiv denominator is zero");
       }
 
       const p = this.mul(n0, n1, limit);
       const n = p.div(d);
 
-      return roundUp && p.mod(d).gt(ZERO) ? n.add(ONE) : n;
+      return roundUp && p.mod(d).gt(ZERO$1) ? n.add(ONE) : n;
     }
 
     static checked_mul_shift_right(n0, n1, limit) {
@@ -829,8 +829,8 @@
     }
 
     static checked_mul_shift_right_round_up_if(n0, n1, roundUp, limit) {
-      if (n0.eq(ZERO) || n1.eq(ZERO)) {
-        return ZERO;
+      if (n0.eq(ZERO$1) || n1.eq(ZERO$1)) {
+        return ZERO$1;
       }
 
       const p = this.mul(n0, n1, limit);
@@ -840,7 +840,7 @@
         );
       }
       const result = fromX64_BN(p);
-      const shouldRound = roundUp && result.and(U64_MAX).gt(ZERO);
+      const shouldRound = roundUp && result.and(U64_MAX).gt(ZERO$1);
       if (shouldRound && result.eq(U64_MAX)) {
         throw new Error(
           `MulShiftRight overflowed u${limit}.`
@@ -860,13 +860,13 @@
     }
 
     static divRoundUpIf(n, d, roundUp) {
-      if (d.eq(ZERO)) {
+      if (d.eq(ZERO$1)) {
         throw new Error("divRoundUpIf - divide by zero");
       }
 
       let q = n.div(d);
 
-      return roundUp && n.mod(d).gt(ZERO) ? q.add(ONE) : q;
+      return roundUp && n.mod(d).gt(ZERO$1) ? q.add(ONE) : q;
     }
   }
 
@@ -895,7 +895,7 @@
     amount,
     amountSpecifiedIsInput
   ) => {
-    if (amount.eq(ZERO)) {
+    if (amount.eq(ZERO$1)) {
       return sqrtPrice;
     }
 
@@ -962,7 +962,7 @@
     let quotient = numerator.div(denominator);
     let remainder = numerator.mod(denominator);
 
-    let result = roundUp && !remainder.eq(ZERO) ? quotient.add(ONE) : quotient;
+    let result = roundUp && !remainder.eq(ZERO$1) ? quotient.add(ONE) : quotient;
 
     if (result.gt(U64_MAX)) {
       throw new Error("Results larger than U64");
@@ -1124,7 +1124,7 @@
       nextProtocolFee = nextProtocolFee.add(currProtocolFee);
     }
 
-    if (currLiquidity.gt(ZERO)) {
+    if (currLiquidity.gt(ZERO$1)) {
       const globalFeeIncrement = globalFee.shln(64).div(currLiquidity);
       nextFeeGrowthGlobalInput = nextFeeGrowthGlobalInput.add(globalFeeIncrement);
     }
@@ -1145,17 +1145,17 @@
   })=> {
     
     let amountRemaining = tokenAmount;
-    let amountCalculated = ZERO;
+    let amountCalculated = ZERO$1;
     let currSqrtPrice = freshWhirlpoolData.sqrtPrice;
     let currLiquidity = freshWhirlpoolData.liquidity;
     let currTickIndex = freshWhirlpoolData.tickCurrentIndex;
-    let totalFeeAmount = ZERO;
+    let totalFeeAmount = ZERO$1;
     const feeRate = freshWhirlpoolData.feeRate;
     const protocolFeeRate = freshWhirlpoolData.protocolFeeRate;
     let currProtocolFee = new u64(0);
     let currFeeGrowthGlobalInput = aToB ? freshWhirlpoolData.feeGrowthGlobalA : freshWhirlpoolData.feeGrowthGlobalB;
 
-    while (amountRemaining.gt(ZERO) && !sqrtPriceLimit.eq(currSqrtPrice)) {
+    while (amountRemaining.gt(ZERO$1) && !sqrtPriceLimit.eq(currSqrtPrice)) {
       let { nextIndex: nextTickIndex } = tickSequence.findNextInitializedTickIndex(currTickIndex);
 
       let { nextTickPrice, nextSqrtPriceLimit: targetSqrtPrice } = getNextSqrtPrices(
@@ -1595,7 +1595,7 @@
     return accounts
   };
 
-  let getPairsWithPrice$4 = async({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }) => {
+  let getPairsWithPrice$3 = async({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }) => {
     try {
       let accounts = await getAccounts(tokenIn, tokenOut);
       if(accounts.length === 0) { accounts = await getAccounts(tokenOut, tokenIn); }
@@ -1623,15 +1623,15 @@
   };
 
   let getHighestPrice$1 = (pairs)=>{
-    return pairs.reduce((bestPricePair, currentPair)=> ethers.ethers.BigNumber.from(currentPair.price).gt(ethers.ethers.BigNumber.from(bestPricePair.price)) ? currentPair : bestPricePair)
+    return pairs.reduce((bestPricePair, currentPair)=> ethers$1.ethers.BigNumber.from(currentPair.price).gt(ethers$1.ethers.BigNumber.from(bestPricePair.price)) ? currentPair : bestPricePair)
   };
 
   let getLowestPrice$1 = (pairs)=>{
-    return pairs.reduce((bestPricePair, currentPair)=> ethers.ethers.BigNumber.from(currentPair.price).lt(ethers.ethers.BigNumber.from(bestPricePair.price)) ? currentPair : bestPricePair)
+    return pairs.reduce((bestPricePair, currentPair)=> ethers$1.ethers.BigNumber.from(currentPair.price).lt(ethers$1.ethers.BigNumber.from(bestPricePair.price)) ? currentPair : bestPricePair)
   };
 
   let getBestPair$1 = async({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }) => {
-    const pairs = await getPairsWithPrice$4({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin });
+    const pairs = await getPairsWithPrice$3({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin });
 
     if(!pairs || pairs.length === 0) { return }
 
@@ -1645,7 +1645,7 @@
     return bestPair
   };
 
-  function _optionalChain$2(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
+  function _optionalChain$1(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
   const blockchain$3 = Blockchains__default['default'].solana;
 
   // Replaces 11111111111111111111111111111111 with the wrapped token and implies wrapping.
@@ -1679,7 +1679,7 @@
   let pathExists$1 = async ({ path, amountIn, amountInMax, amountOut, amountOutMin }) => {
     if(path.length == 1) { return false }
     path = getExchangePath$1({ path });
-    if((await getPairsWithPrice$4({ tokenIn: path[0], tokenOut: path[1], amountIn, amountInMax, amountOut, amountOutMin })).length > 0) {
+    if((await getPairsWithPrice$3({ tokenIn: path[0], tokenOut: path[1], amountIn, amountInMax, amountOut, amountOutMin })).length > 0) {
       return true
     } else {
       return false
@@ -1720,9 +1720,9 @@
 
     // Add blockchain.wrapped.address to route path if things start or end with blockchain.currency.address
     // because that actually reflects how things are routed in reality:
-    if(_optionalChain$2([path, 'optionalAccess', _ => _.length]) && path[0] == blockchain$3.currency.address) {
+    if(_optionalChain$1([path, 'optionalAccess', _ => _.length]) && path[0] == blockchain$3.currency.address) {
       path.splice(1, 0, blockchain$3.wrapped.address);
-    } else if(_optionalChain$2([path, 'optionalAccess', _2 => _2.length]) && path[path.length-1] == blockchain$3.currency.address) {
+    } else if(_optionalChain$1([path, 'optionalAccess', _2 => _2.length]) && path[path.length-1] == blockchain$3.currency.address) {
       path.splice(path.length-1, 0, blockchain$3.wrapped.address);
     }
     return { path, exchangePath: getExchangePath$1({ path }) }
@@ -1730,16 +1730,16 @@
 
   let getAmountsOut$1 = async ({ path, amountIn, amountInMax }) => {
 
-    let amounts = [ethers.ethers.BigNumber.from(amountIn || amountInMax)];
+    let amounts = [ethers$1.ethers.BigNumber.from(amountIn || amountInMax)];
 
     let bestPair = await getBestPair$1({ tokenIn: path[0], tokenOut: path[1], amountIn, amountInMax });
     if(!bestPair){ return }
-    amounts.push(ethers.ethers.BigNumber.from(bestPair.price));
+    amounts.push(ethers$1.ethers.BigNumber.from(bestPair.price));
     
     if (path.length === 3) {
       let bestPair = await getBestPair$1({ tokenIn: path[1], tokenOut: path[2], amountIn: amountIn ? amounts[1] : undefined, amountInMax: amountInMax ? amounts[1] : undefined });
       if(!bestPair){ return }
-      amounts.push(ethers.ethers.BigNumber.from(bestPair.price));
+      amounts.push(ethers$1.ethers.BigNumber.from(bestPair.price));
     }
 
     if(amounts.length != path.length) { return }
@@ -1750,16 +1750,16 @@
   let getAmountsIn$1 = async({ path, amountOut, amountOutMin }) => {
 
     path = path.slice().reverse();
-    let amounts = [ethers.ethers.BigNumber.from(amountOut || amountOutMin)];
+    let amounts = [ethers$1.ethers.BigNumber.from(amountOut || amountOutMin)];
 
     let bestPair = await getBestPair$1({ tokenIn: path[1], tokenOut: path[0], amountOut, amountOutMin });
     if(!bestPair){ return }
-    amounts.push(ethers.ethers.BigNumber.from(bestPair.price));
+    amounts.push(ethers$1.ethers.BigNumber.from(bestPair.price));
     
     if (path.length === 3) {
       let bestPair = await getBestPair$1({ tokenIn: path[2], tokenOut: path[1], amountOut: amountOut ? amounts[1] : undefined, amountOutMin: amountOutMin ? amounts[1] : undefined });
       if(!bestPair){ return }
-      amounts.push(ethers.ethers.BigNumber.from(bestPair.price));
+      amounts.push(ethers$1.ethers.BigNumber.from(bestPair.price));
     }
     
     if(amounts.length != path.length) { return }
@@ -1824,7 +1824,7 @@
   const SWAP_INSTRUCTION = new solanaWeb3_js.BN("14449647541112719096");
   const TWO_HOP_SWAP_INSTRUCTION = new solanaWeb3_js.BN("16635068063392030915");
 
-  const createTokenAccountIfNotExisting = async ({ instructions, owner, token, account })=>{
+  const createTokenAccountIfNotExisting$1 = async ({ instructions, owner, token, account })=>{
     let outAccountExists;
     try{ outAccountExists = !!(await web3ClientSolana.request({ blockchain: 'solana', address: account.toString() })); } catch (e2) {}
     if(!outAccountExists) {
@@ -2106,7 +2106,7 @@
       let tokenAccountIn = startsWrapped ? new solanaWeb3_js.PublicKey(wrappedAccount) : new solanaWeb3_js.PublicKey(await Token__default['default'].solana.findProgramAddress({ owner: account, token: tokenIn }));
       let tokenAccountOut = endsUnwrapped ? new solanaWeb3_js.PublicKey(wrappedAccount) : new solanaWeb3_js.PublicKey(await Token__default['default'].solana.findProgramAddress({ owner: account, token: tokenOut }));
       if(!endsUnwrapped) {
-        await createTokenAccountIfNotExisting({ instructions, owner: account, token: tokenOut, account: tokenAccountOut });
+        await createTokenAccountIfNotExisting$1({ instructions, owner: account, token: tokenOut, account: tokenAccountOut });
       }
       instructions.push(
         new solanaWeb3_js.TransactionInstruction({
@@ -2137,10 +2137,10 @@
       let tokenAccountIn = startsWrapped ? new solanaWeb3_js.PublicKey(wrappedAccount) : new solanaWeb3_js.PublicKey(await Token__default['default'].solana.findProgramAddress({ owner: account, token: tokenIn }));
       let tokenMiddle = exchangePath[1];
       let tokenAccountMiddle = new solanaWeb3_js.PublicKey(await Token__default['default'].solana.findProgramAddress({ owner: account, token: tokenMiddle }));
-      await createTokenAccountIfNotExisting({ instructions, owner: account, token: tokenMiddle, account: tokenAccountMiddle });
+      await createTokenAccountIfNotExisting$1({ instructions, owner: account, token: tokenMiddle, account: tokenAccountMiddle });
       let tokenAccountOut = endsUnwrapped ? new solanaWeb3_js.PublicKey(wrappedAccount) : new solanaWeb3_js.PublicKey(await Token__default['default'].solana.findProgramAddress({ owner: account, token: tokenOut }));
       if(!endsUnwrapped) {
-        await createTokenAccountIfNotExisting({ instructions, owner: account, token: tokenOut, account: tokenAccountOut });
+        await createTokenAccountIfNotExisting$1({ instructions, owner: account, token: tokenOut, account: tokenAccountOut });
       }
       instructions.push(
         new solanaWeb3_js.TransactionInstruction({
@@ -2231,94 +2231,8 @@
     )
   };
 
-  // OpenBook Market
-  const MARKET_LAYOUT = solanaWeb3_js.struct([
-    solanaWeb3_js.blob(5),
-    solanaWeb3_js.blob(8), // accountFlagsLayout('accountFlags'),
-    solanaWeb3_js.publicKey('ownAddress'),
-    solanaWeb3_js.u64('vaultSignerNonce'),
-    solanaWeb3_js.publicKey('baseMint'),
-    solanaWeb3_js.publicKey('quoteMint'),
-    solanaWeb3_js.publicKey('baseVault'),
-    solanaWeb3_js.u64('baseDepositsTotal'),
-    solanaWeb3_js.u64('baseFeesAccrued'),
-    solanaWeb3_js.publicKey('quoteVault'),
-    solanaWeb3_js.u64('quoteDepositsTotal'),
-    solanaWeb3_js.u64('quoteFeesAccrued'),
-    solanaWeb3_js.u64('quoteDustThreshold'),
-    solanaWeb3_js.publicKey('requestQueue'),
-    solanaWeb3_js.publicKey('eventQueue'),
-    solanaWeb3_js.publicKey('bids'),
-    solanaWeb3_js.publicKey('asks'),
-    solanaWeb3_js.u64('baseLotSize'),
-    solanaWeb3_js.u64('quoteLotSize'),
-    solanaWeb3_js.u64('feeRateBps'),
-    solanaWeb3_js.u64('referrerRebatesAccrued'),
-    solanaWeb3_js.blob(7),
-  ]);
-
-  // AMM 675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8
-  const AMM_LAYOUT = solanaWeb3_js.struct([
-    solanaWeb3_js.u64('status'),
-    solanaWeb3_js.u64('nonce'),
-    solanaWeb3_js.u64('maxOrder'),
-    solanaWeb3_js.u64('depth'),
-    solanaWeb3_js.u64('baseDecimal'),
-    solanaWeb3_js.u64('quoteDecimal'),
-    solanaWeb3_js.u64('state'),
-    solanaWeb3_js.u64('resetFlag'),
-    solanaWeb3_js.u64('minSize'),
-    solanaWeb3_js.u64('volMaxCutRatio'),
-    solanaWeb3_js.u64('amountWaveRatio'),
-    solanaWeb3_js.u64('baseLotSize'),
-    solanaWeb3_js.u64('quoteLotSize'),
-    solanaWeb3_js.u64('minPriceMultiplier'),
-    solanaWeb3_js.u64('maxPriceMultiplier'),
-    solanaWeb3_js.u64('systemDecimalValue'),
-    solanaWeb3_js.u64('minSeparateNumerator'),
-    solanaWeb3_js.u64('minSeparateDenominator'),
-    solanaWeb3_js.u64('tradeFeeNumerator'),
-    solanaWeb3_js.u64('tradeFeeDenominator'),
-    solanaWeb3_js.u64('pnlNumerator'),
-    solanaWeb3_js.u64('pnlDenominator'),
-    solanaWeb3_js.u64('swapFeeNumerator'),
-    solanaWeb3_js.u64('swapFeeDenominator'),
-    solanaWeb3_js.u64('baseNeedTakePnl'),
-    solanaWeb3_js.u64('quoteNeedTakePnl'),
-    solanaWeb3_js.u64('quoteTotalPnl'),
-    solanaWeb3_js.u64('baseTotalPnl'),
-    solanaWeb3_js.u64('poolOpenTime'),
-    solanaWeb3_js.u64('punishPcAmount'),
-    solanaWeb3_js.u64('punishCoinAmount'),
-    solanaWeb3_js.u64('orderbookToInitTime'),
-    solanaWeb3_js.u128('swapBaseInAmount'),
-    solanaWeb3_js.u128('swapQuoteOutAmount'),
-    solanaWeb3_js.u64('swapBase2QuoteFee'),
-    solanaWeb3_js.u128('swapQuoteInAmount'),
-    solanaWeb3_js.u128('swapBaseOutAmount'),
-    solanaWeb3_js.u64('swapQuote2BaseFee'),
-    // amm vault
-    solanaWeb3_js.publicKey('baseVault'),
-    solanaWeb3_js.publicKey('quoteVault'),
-    // mint
-    solanaWeb3_js.publicKey('baseMint'),
-    solanaWeb3_js.publicKey('quoteMint'),
-    solanaWeb3_js.publicKey('lpMint'),
-    // market
-    solanaWeb3_js.publicKey('openOrders'),
-    solanaWeb3_js.publicKey('marketId'),
-    solanaWeb3_js.publicKey('marketProgramId'),
-    solanaWeb3_js.publicKey('targetOrders'),
-    solanaWeb3_js.publicKey('withdrawQueue'),
-    solanaWeb3_js.publicKey('lpVault'),
-    solanaWeb3_js.publicKey('owner'),
-    // true circulating supply without lock up
-    solanaWeb3_js.u64('lpReserve'),
-    solanaWeb3_js.seq(solanaWeb3_js.u64(), 3, 'padding'),
-  ]);
-
-  // CP_AMM CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C
-  const CPAMM_LAYOUT = solanaWeb3_js.struct([
+  // CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C
+  const CPMM_LAYOUT = solanaWeb3_js.struct([
     solanaWeb3_js.blob(8),
     solanaWeb3_js.publicKey("configId"),
     solanaWeb3_js.publicKey("poolCreator"),
@@ -2344,8 +2258,22 @@
     solanaWeb3_js.seq(solanaWeb3_js.u64(), 32),
   ]);
 
-  // CLMM 
+  const CPMM_CONFIG_LAYOUT = solanaWeb3_js.struct([
+    solanaWeb3_js.blob(8),
+    solanaWeb3_js.u8("bump"),
+    solanaWeb3_js.bool("disableCreatePool"),
+    solanaWeb3_js.u16("index"),
+    solanaWeb3_js.u64("tradeFeeRate"),
+    solanaWeb3_js.u64("protocolFeeRate"),
+    solanaWeb3_js.u64("fundFeeRate"),
+    solanaWeb3_js.u64("createPoolFee"),
 
+    solanaWeb3_js.publicKey("protocolOwner"),
+    solanaWeb3_js.publicKey("fundOwner"),
+    solanaWeb3_js.seq(solanaWeb3_js.u64(), 16),
+  ]);
+
+  // CLMM 
   const RewardInfo = solanaWeb3_js.struct([
     solanaWeb3_js.u8("rewardState"),
     solanaWeb3_js.u64("openTime"),
@@ -2399,36 +2327,208 @@
     solanaWeb3_js.seq(solanaWeb3_js.u64(), 15 * 4 - 3, "padding"),
   ]);
 
-  function _optionalChain$1(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
-
-  const LIQUIDITY_FEES_NUMERATOR = new solanaWeb3_js.BN(25);
-  const LIQUIDITY_FEES_DENOMINATOR = new solanaWeb3_js.BN(10000);
-
-  const BNDivCeil = (bn1, bn2)=> {
+  function BNDivCeil(bn1, bn2) {
     const { div, mod } = bn1.divmod(bn2);
 
     if (mod.gt(new solanaWeb3_js.BN(0))) {
-      return div.add(new solanaWeb3_js.BN(1))
+      return div.add(new solanaWeb3_js.BN(1));
     } else {
-      return div
+      return div;
     }
-  };
+  }
 
-  const getPairs = (base, quote)=>{
-    return web3ClientSolana.request(`solana://675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8/getProgramAccounts`, {
-      params: { filters: [
-        { dataSize: AMM_LAYOUT.span },
-        { memcmp: { offset: 0, bytes: [6,0,0] }}, // filters for status 6 (Swap)
-        { memcmp: { offset: 400, bytes: base }},
-        { memcmp: { offset: 432, bytes: quote }},
-      ]},
-      api: AMM_LAYOUT,
+  function checkedRem(dividend, divisor) {
+    
+    if (divisor.isZero()) throw Error("divisor is zero");
+
+    const result = dividend.mod(divisor);
+    return result;
+  }
+
+  function checkedCeilDiv(dividend, rhs) {
+    if (rhs.isZero()) throw Error("rhs is zero");
+
+    let quotient = dividend.div(rhs);
+
+    if (quotient.isZero()) throw Error("quotient is zero");
+
+    let remainder = checkedRem(dividend, rhs);
+
+    if (remainder.gt(ZERO)) {
+      quotient = quotient.add(new solanaWeb3_js.BN(1));
+
+      rhs = dividend.div(quotient);
+      remainder = checkedRem(dividend, quotient);
+      if (remainder.gt(ZERO)) {
+        rhs = rhs.add(new solanaWeb3_js.BN(1));
+      }
+    }
+    return [quotient, rhs];
+  }
+
+  const ZERO = new solanaWeb3_js.BN(0);
+
+  class ConstantProductCurve {
+    
+    static swapWithoutFees(sourceAmount, swapSourceAmount, swapDestinationAmount) {
+      const invariant = swapSourceAmount.mul(swapDestinationAmount);
+
+      const newSwapSourceAmount = swapSourceAmount.add(sourceAmount);
+      const [newSwapDestinationAmount, _newSwapSourceAmount] = checkedCeilDiv(invariant, newSwapSourceAmount);
+
+      const sourceAmountSwapped = _newSwapSourceAmount.sub(swapSourceAmount);
+      const destinationAmountSwapped = swapDestinationAmount.sub(newSwapDestinationAmount);
+      if (destinationAmountSwapped.isZero()) throw Error("destinationAmountSwapped is zero");
+
+      return {
+        sourceAmountSwapped,
+        destinationAmountSwapped,
+      };
+    }
+
+    static lpTokensToTradingTokens(
+      lpTokenAmount,
+      lpTokenSupply,
+      swapTokenAmount0,
+      swapTokenAmount1,
+      roundDirection,
+    ) {
+      let tokenAmount0 = lpTokenAmount.mul(swapTokenAmount0).div(lpTokenSupply);
+      let tokenAmount1 = lpTokenAmount.mul(swapTokenAmount1).div(lpTokenSupply);
+
+      if (roundDirection === RoundDirection.Floor) {
+        return { tokenAmount0, tokenAmount1 };
+      } else if (roundDirection === RoundDirection.Ceiling) {
+        const tokenRemainder0 = checkedRem(lpTokenAmount.mul(swapTokenAmount0), lpTokenSupply);
+
+        if (tokenRemainder0.gt(ZERO) && tokenAmount0.gt(ZERO)) {
+          tokenAmount0 = tokenAmount0.add(new solanaWeb3_js.BN(1));
+        }
+
+        const token1Remainder = checkedRem(lpTokenAmount.mul(swapTokenAmount1), lpTokenSupply);
+
+        if (token1Remainder.gt(ZERO) && tokenAmount1.gt(ZERO)) {
+          tokenAmount1 = tokenAmount1.add(new solanaWeb3_js.BN(1));
+        }
+
+        return { tokenAmount0, tokenAmount1 };
+      }
+      throw Error("roundDirection value error");
+    }
+  }
+
+  const FEE_RATE_DENOMINATOR_VALUE = new solanaWeb3_js.BN(1000000);
+
+  function ceilDiv(tokenAmount, feeNumerator, feeDenominator) {
+    return tokenAmount.mul(feeNumerator).add(feeDenominator).sub(new solanaWeb3_js.BN(1)).div(feeDenominator);
+  }
+
+  function floorDiv(tokenAmount, feeNumerator, feeDenominator) {
+    return tokenAmount.mul(feeNumerator).div(feeDenominator);
+  }
+
+  class CpmmFee {
+    
+    static tradingFee(amount, tradeFeeRate) {
+      return ceilDiv(amount, tradeFeeRate, FEE_RATE_DENOMINATOR_VALUE);
+    }
+    static protocolFee(amount, protocolFeeRate) {
+      return floorDiv(amount, protocolFeeRate, FEE_RATE_DENOMINATOR_VALUE);
+    }
+    static fundFee(amount, fundFeeRate) {
+      return floorDiv(amount, fundFeeRate, FEE_RATE_DENOMINATOR_VALUE);
+    }
+  }
+
+  class CurveCalculator {
+
+    static validate_supply(tokenAmount0, tokenAmount1) {
+      if (tokenAmount0.isZero()) throw Error("tokenAmount0 is zero");
+      if (tokenAmount1.isZero()) throw Error("tokenAmount1 is zero");
+    }
+
+    static swap(sourceAmount, swapSourceAmount, swapDestinationAmount, tradeFeeRate) {
+      const tradeFee = CpmmFee.tradingFee(sourceAmount, tradeFeeRate);
+
+      const sourceAmountLessFees = sourceAmount.sub(tradeFee);
+
+      const { sourceAmountSwapped, destinationAmountSwapped } = ConstantProductCurve.swapWithoutFees(
+        sourceAmountLessFees,
+        swapSourceAmount,
+        swapDestinationAmount,
+      );
+
+      const _sourceAmountSwapped = sourceAmountSwapped.add(tradeFee);
+      return {
+        newSwapSourceAmount: swapSourceAmount.add(_sourceAmountSwapped),
+        newSwapDestinationAmount: swapDestinationAmount.sub(destinationAmountSwapped),
+        sourceAmountSwapped: _sourceAmountSwapped,
+        destinationAmountSwapped,
+        tradeFee,
+      };
+    }
+
+    static swapBaseOut({
+      poolMintA,
+      poolMintB,
+      tradeFeeRate,
+      baseReserve,
+      quoteReserve,
+      outputMint,
+      outputAmount,
+    }) {
+      const [reserveInAmount, reserveOutAmount, reserveInDecimals, reserveOutDecimals, inputMint] =
+        poolMintB.address === outputMint.toString()
+          ? [baseReserve, quoteReserve, poolMintA.decimals, poolMintB.decimals, poolMintA.address]
+          : [quoteReserve, baseReserve, poolMintB.decimals, poolMintA.decimals, poolMintB.address];
+      const currentPrice = new Decimal__default['default'](reserveOutAmount.toString())
+        .div(10 ** reserveOutDecimals)
+        .div(new Decimal__default['default'](reserveInAmount.toString()).div(10 ** reserveInDecimals));
+      const amountRealOut = outputAmount.gte(reserveOutAmount) ? reserveOutAmount.sub(new solanaWeb3_js.BN(1)) : outputAmount;
+
+      const denominator = reserveOutAmount.sub(amountRealOut);
+      const amountInWithoutFee = BNDivCeil(reserveInAmount.mul(amountRealOut), denominator);
+      const amountIn = BNDivCeil(amountInWithoutFee.mul(new solanaWeb3_js.BN(1000000)), new solanaWeb3_js.BN(1000000).sub(tradeFeeRate));
+      const fee = amountIn.sub(amountInWithoutFee);
+      const executionPrice = new Decimal__default['default'](amountRealOut.toString())
+        .div(10 ** reserveOutDecimals)
+        .div(new Decimal__default['default'](amountIn.toString()).div(10 ** reserveInDecimals));
+      const priceImpact = currentPrice.isZero() ? 0 : executionPrice.sub(currentPrice).div(currentPrice).abs().toNumber();
+
+      return {
+        amountRealOut,
+
+        amountIn,
+        amountInWithoutFee,
+
+        tradeFee: fee,
+        priceImpact,
+      };
+    }
+  }
+
+  const getConfig = (address)=>{
+    return web3ClientSolana.request(`solana://${address}/getAccountInfo`, {
+      api: CPMM_CONFIG_LAYOUT,
       cache: 86400, // 24h,
-      cacheKey: ['raydium', base.toString(), quote.toString()].join('-')
+      cacheKey: ['raydium/cpmm/config/', address.toString()].join('/')
     })
   };
 
-  const getPairsWithPrice$3 = async({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin })=>{
+  const getPairs = (base, quote)=>{
+    return web3ClientSolana.request(`solana://CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C/getProgramAccounts`, {
+      params: { filters: [
+        { dataSize: CPMM_LAYOUT.span },
+        { memcmp: { offset: 168, bytes: base }},
+        { memcmp: { offset: 200, bytes: quote }},
+      ]},
+      api: CPMM_LAYOUT,
+      cache: 86400, // 24h,
+      cacheKey: ['raydium/cpmm/', base.toString(), quote.toString()].join('/')
+    })
+  };
+
+  const getPairsWithPrice$2 = async({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin })=>{
 
     let accounts = await getPairs(tokenIn, tokenOut);
 
@@ -2438,86 +2538,93 @@
 
     const pairs = await Promise.all(accounts.map(async(account)=>{
 
-      const baseMint = account.data.baseMint.toString();
-      const quoteMint = account.data.quoteMint.toString();
+      let config = await getConfig(account.data.configId.toString());
 
-      const balances = await Promise.all([
-        web3ClientSolana.request(`solana://${account.data.baseVault.toString()}/getTokenAccountBalance`, { cache: 5 }),
-        web3ClientSolana.request(`solana://${account.data.quoteVault.toString()}/getTokenAccountBalance`, { cache: 5 })
-      ]);
-      const baseReserve = (_optionalChain$1([balances, 'access', _ => _[0], 'optionalAccess', _2 => _2.value, 'optionalAccess', _3 => _3.amount]) ? new solanaWeb3_js.BN(_optionalChain$1([balances, 'access', _4 => _4[0], 'optionalAccess', _5 => _5.value, 'optionalAccess', _6 => _6.amount])) : new solanaWeb3_js.BN(0)).sub(account.data.baseNeedTakePnl);
-      const quoteReserve = (_optionalChain$1([balances, 'access', _7 => _7[1], 'optionalAccess', _8 => _8.value, 'optionalAccess', _9 => _9.amount]) ? new solanaWeb3_js.BN(_optionalChain$1([balances, 'access', _10 => _10[1], 'optionalAccess', _11 => _11.value, 'optionalAccess', _12 => _12.amount])) : new solanaWeb3_js.BN(0)).sub(account.data.quoteNeedTakePnl);
+      // BASE == A
 
-      if(baseMint === Blockchains__default['default'].solana.wrapped.address) {
-        if(baseReserve.lt(new solanaWeb3_js.BN(50000000))) {
-          return // to little liquidity
-        }
-      } else if (quoteMint === Blockchains__default['default'].solana.wrapped.address) {
-        if(quoteReserve.lt(new solanaWeb3_js.BN(50000000))) {
-          return // to little liquidity
-        }
-      } else if (Blockchains__default['default'].solana.stables.usd.includes(baseMint)) {
-        if((parseFloat(baseReserve.toString()) / 10 ** account.data.baseDecimal.toNumber()) < 10000) {
-          return // to little liquidity
-        }
-      } else if (Blockchains__default['default'].solana.stables.usd.includes(quoteMint)) {
-        if((parseFloat(quoteReserve.toString()) / 10 ** account.data.quoteDecimal.toNumber()) < 10000) {
-          return // to little liquidity
-        }
-      }
+      const baseVaultAmountData = await web3ClientSolana.request(`solana://${account.data.vaultA.toString()}/getTokenAccountBalance`, { cache: 3 });
+      const baseReserve = ethers.BigNumber.from(baseVaultAmountData.value.amount).sub(
+        ethers.BigNumber.from(account.data.protocolFeesMintA.toString())
+      ).sub(
+        ethers.BigNumber.from(account.data.fundFeesMintA.toString())
+      );
 
-      const reserves = [baseReserve, quoteReserve];
+      if( // min liquidity SOL
+        (
+          tokenIn === Blockchains__default['default'].solana.currency.address || 
+          tokenIn === Blockchains__default['default'].solana.wrapped.address
+        ) && ( baseVaultAmountData.value.uiAmount < 50 )
+      ) { return }
 
-      if(tokenOut === baseMint) {
-        reserves.reverse();
-      }
+      if( // min liquidity stable usd
+        (
+          Blockchains__default['default'].solana.stables.usd.includes(tokenIn)
+        ) && ( baseVaultAmountData.value.uiAmount < 10000 )
+      ) { return }
 
-      const [reserveIn, reserveOut] = reserves;
+      // QUOTE == B
 
-      let price;
-      if(amountOut || amountOutMin) { // compute amountIn
+      const quoteVaultAmountData = await web3ClientSolana.request(`solana://${account.data.vaultB.toString()}/getTokenAccountBalance`, { cache: 3 });
+      const quoteReserve = ethers.BigNumber.from(quoteVaultAmountData.value.amount).sub(
+        ethers.BigNumber.from(account.data.protocolFeesMintB.toString())
+      ).sub(
+        ethers.BigNumber.from(account.data.fundFeesMintB.toString())
+      );
 
-        new solanaWeb3_js.BN(0);
-        let amountOutRaw = new solanaWeb3_js.BN((amountOut || amountOutMin).toString());
+      if( // min liquidity SOL
+        (
+          tokenIn === Blockchains__default['default'].solana.currency.address || 
+          tokenIn === Blockchains__default['default'].solana.wrapped.address
+        ) && ( quoteVaultAmountData.value.uiAmount < 50 )
+      ) { return }
 
-        if (amountOutRaw.gt(reserveOut)) {
-          amountOutRaw = reserveOut.sub(new solanaWeb3_js.BN(1));
-        }
+      if( // min liquidity stable usd
+        (
+          Blockchains__default['default'].solana.stables.usd.includes(tokenIn)
+        ) && ( quoteVaultAmountData.value.uiAmount < 10000 )
+      ) { return }
 
-        const denominator = reserveOut.sub(amountOutRaw);
-        const amountInWithoutFee = reserveIn.mul(amountOutRaw).div(denominator);
+      let price = 0;
 
-        price = amountInWithoutFee
-          .mul(LIQUIDITY_FEES_DENOMINATOR)
-          .div(LIQUIDITY_FEES_DENOMINATOR.sub(LIQUIDITY_FEES_NUMERATOR))
-          .toString();
+      if(amountIn || amountInMax) { // uses CurveCalculator.swap: Given an input amount, compute how much comes out.
 
-      } else { // compute amountOut
+        const isBaseIn = tokenOut.toString() === account.data.mintB.toString();
 
-        new solanaWeb3_js.BN(0);
-        const amountInRaw = new solanaWeb3_js.BN((amountIn || amountInMin).toString());
-        const feeRaw = BNDivCeil(amountInRaw.mul(LIQUIDITY_FEES_NUMERATOR), LIQUIDITY_FEES_DENOMINATOR);
-        
-        const amountInWithFee = amountInRaw.sub(feeRaw);
-        const denominator = reserveIn.add(amountInWithFee);
+        const swapResult = CurveCalculator.swap(
+          new solanaWeb3_js.BN((amountIn || amountInMax).toString()),
+          new solanaWeb3_js.BN((isBaseIn ? baseReserve : quoteReserve).toString()),
+          new solanaWeb3_js.BN((isBaseIn ? quoteReserve : baseReserve).toString()),
+          config.tradeFeeRate,
+        );
 
-        price = reserveOut.mul(amountInWithFee).div(denominator).toString();
+        price = swapResult.destinationAmountSwapped.toString();
+
+      } else { // uses CurveCalculator.swapBaseOut: Given a desired output amount, compute how much you need to put in (and some extra info like price impact).
+
+        const swapResult = CurveCalculator.swapBaseOut({
+          poolMintA: { decimals: account.data.mintDecimalA, address: account.data.mintA.toString() },
+          poolMintB: { decimals: account.data.mintDecimalB, address: account.data.mintB.toString() },
+          tradeFeeRate: config.tradeFeeRate,
+          baseReserve: new solanaWeb3_js.BN(baseReserve.toString()),
+          quoteReserve: new solanaWeb3_js.BN(quoteReserve.toString()),
+          outputMint: tokenOut,
+          outputAmount: new solanaWeb3_js.BN((amountOut || amountOutMin).toString())
+        });
+
+        price = swapResult.amountIn.toString();
+
       }
 
       return {
         publicKey: account.pubkey.toString(),
-        baseMint,
-        quoteMint,
+        mintA: account.data.mintA.toString(),
+        mintB: account.data.mintB.toString(),
         price,
         data: account.data
       }
-
     }));
 
     return pairs.filter(Boolean)
-  };
-
-  const getPairsWithPrice$2 = ({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin })=>{
 
   };
 
@@ -2527,13 +2634,11 @@
 
   const getParisWithPriceForAllTypes = ({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin })=>{
     return Promise.all([
-      getPairsWithPrice$3({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }),
       getPairsWithPrice$2({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }),
       getPairsWithPrice$1({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }),
-    ]).then((pairsAMM, pairsCPAMM, pairsCLMNN)=>{
+    ]).then((pairsCPMM, pairsCLMNN)=>{
       return [
-        (pairsAMM || []).filter(Boolean).flat(),
-        (pairsCPAMM || []).filter(Boolean).flat(),
+        (pairsCPMM || []).filter(Boolean).flat(),
         (pairsCLMNN || []).filter(Boolean).flat()
       ].flat()
     })
@@ -2548,11 +2653,11 @@
   };
 
   let getHighestPrice = (pairs)=>{
-    return pairs.reduce((bestPricePair, currentPair)=> ethers.ethers.BigNumber.from(currentPair.price).gt(ethers.ethers.BigNumber.from(bestPricePair.price)) ? currentPair : bestPricePair)
+    return pairs.reduce((bestPricePair, currentPair)=> ethers$1.ethers.BigNumber.from(currentPair.price).gt(ethers$1.ethers.BigNumber.from(bestPricePair.price)) ? currentPair : bestPricePair)
   };
 
   let getLowestPrice = (pairs)=>{
-    return pairs.reduce((bestPricePair, currentPair)=> ethers.ethers.BigNumber.from(currentPair.price).lt(ethers.ethers.BigNumber.from(bestPricePair.price)) ? currentPair : bestPricePair)
+    return pairs.reduce((bestPricePair, currentPair)=> ethers$1.ethers.BigNumber.from(currentPair.price).lt(ethers$1.ethers.BigNumber.from(bestPricePair.price)) ? currentPair : bestPricePair)
   };
 
   let getBestPair = async({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }) => {
@@ -2656,16 +2761,16 @@
 
   let getAmountsOut = async ({ path, amountIn, amountInMax }) => {
 
-    let amounts = [ethers.ethers.BigNumber.from(amountIn || amountInMax)];
+    let amounts = [ethers$1.ethers.BigNumber.from(amountIn || amountInMax)];
 
     let bestPair = await getBestPair({ tokenIn: path[0], tokenOut: path[1], amountIn, amountInMax });
     if(!bestPair){ return }
-    amounts.push(ethers.ethers.BigNumber.from(bestPair.price));
+    amounts.push(ethers$1.ethers.BigNumber.from(bestPair.price));
     
     if (path.length === 3) {
       let bestPair = await getBestPair({ tokenIn: path[1], tokenOut: path[2], amountIn: amountIn ? amounts[1] : undefined, amountInMax: amountInMax ? amounts[1] : undefined });
       if(!bestPair){ return }
-      amounts.push(ethers.ethers.BigNumber.from(bestPair.price));
+      amounts.push(ethers$1.ethers.BigNumber.from(bestPair.price));
     }
 
     if(amounts.length != path.length) { return }
@@ -2676,16 +2781,16 @@
   let getAmountsIn = async({ path, amountOut, amountOutMin }) => {
 
     path = path.slice().reverse();
-    let amounts = [ethers.ethers.BigNumber.from(amountOut || amountOutMin)];
+    let amounts = [ethers$1.ethers.BigNumber.from(amountOut || amountOutMin)];
 
     let bestPair = await getBestPair({ tokenIn: path[1], tokenOut: path[0], amountOut, amountOutMin });
     if(!bestPair){ return }
-    amounts.push(ethers.ethers.BigNumber.from(bestPair.price));
+    amounts.push(ethers$1.ethers.BigNumber.from(bestPair.price));
     
     if (path.length === 3) {
       let bestPair = await getBestPair({ tokenIn: path[2], tokenOut: path[1], amountOut: amountOut ? amounts[1] : undefined, amountOutMin: amountOutMin ? amounts[1] : undefined });
       if(!bestPair){ return }
-      amounts.push(ethers.ethers.BigNumber.from(bestPair.price));
+      amounts.push(ethers$1.ethers.BigNumber.from(bestPair.price));
     }
     
     if(amounts.length != path.length) { return }
@@ -2748,6 +2853,44 @@
 
   const blockchain = Blockchains__default['default'].solana;
 
+  const CP_PROGRAM_ID = new solanaWeb3_js.PublicKey('CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C');
+
+  const swapBaseInputInstruction = [143, 190, 90, 218, 196, 30, 51, 222];
+  const swapBaseOutputInstruction = [55, 217, 98, 86, 163, 74, 180, 173];
+
+  const createTokenAccountIfNotExisting = async ({ instructions, owner, token, account })=>{
+    let outAccountExists;
+    try{ outAccountExists = !!(await web3ClientSolana.request({ blockchain: 'solana', address: account.toString() })); } catch (e2) {}
+    if(!outAccountExists) {
+      instructions.push(
+        await Token__default['default'].solana.createAssociatedTokenAccountInstruction({
+          token,
+          owner,
+          payer: owner,
+        })
+      );
+    }
+  };
+
+  const getPdaPoolAuthority = async(programId)=> {
+    let [publicKey, nonce] = await solanaWeb3_js.PublicKey.findProgramAddress(
+      [solanaWeb3_js.Buffer.from("vault_and_lp_mint_auth_seed", "utf8")],
+      programId
+    );
+    return publicKey
+  };
+
+  const getPdaObservationId = async(programId, poolId)=> {
+    let [publicKey, nonce] = await solanaWeb3_js.PublicKey.findProgramAddress(
+      [
+        solanaWeb3_js.Buffer.from("observation", "utf8"),
+        poolId.toBuffer()
+      ],
+      programId
+    );
+    return publicKey
+  };
+
   const getTransaction = async({
     path,
     amountIn,
@@ -2769,7 +2912,7 @@
     const tokenIn = exchangePath[0];
     const tokenMiddle = exchangePath.length == 3 ? exchangePath[1] : undefined;
     const tokenOut = exchangePath[exchangePath.length-1];
-
+      
     let pairs;
     if(exchangePath.length == 2) {
       pairs = [await getBestPair({ tokenIn, tokenOut, amountIn: (amountInInput || amountInMaxInput), amountOut: (amountOutInput || amountOutMinInput) })];
@@ -2812,114 +2955,114 @@
     }
 
     if(pairs.length === 1) { // single hop
+
       const tokenAccountIn = startsWrapped ? new solanaWeb3_js.PublicKey(wrappedAccount) : new solanaWeb3_js.PublicKey(await Token__default['default'].solana.findProgramAddress({ owner: account, token: tokenIn }));
       const tokenAccountOut = endsUnwrapped ? new solanaWeb3_js.PublicKey(wrappedAccount) : new solanaWeb3_js.PublicKey(await Token__default['default'].solana.findProgramAddress({ owner: account, token: tokenOut }));
+      if(!endsUnwrapped) {
+        await createTokenAccountIfNotExisting({ instructions, owner: account, token: tokenOut, account: tokenAccountOut });
+      }
       const pool = pairs[0];
-      await web3ClientSolana.request(`solana://${pool.data.marketId}/getAccountInfo`, { api: MARKET_LAYOUT });
+      const inputMint = tokenIn == pool.mintA ? pool.data.mintA : pool.data.mintB;
+      const outputMint = tokenIn == pool.mintA ? pool.data.mintB : pool.data.mintA;
+      const inputVault = tokenIn == pool.mintA ? pool.data.vaultA : pool.data.vaultB;
+      const outputVault = tokenIn == pool.mintA ? pool.data.vaultB : pool.data.vaultA;
+      const poolId = new solanaWeb3_js.PublicKey(pool.publicKey);
 
-      let LAYOUT, data;
-      LAYOUT = solanaWeb3_js.struct([
-        solanaWeb3_js.u8('instruction'),
-        solanaWeb3_js.u64('amountIn'),
-        solanaWeb3_js.u64('minAmountOut')
-      ]);
-      data = solanaWeb3_js.Buffer.alloc(LAYOUT.span);
-      LAYOUT.encode(
-        {
-          instruction: 9,
+      if(amountInInput || amountOutMinInput) { // fixed amountIn, variable amountOut (amountOutMin)
+
+        const dataLayout = solanaWeb3_js.struct([solanaWeb3_js.u64("amountIn"), solanaWeb3_js.u64("amounOutMin")]);
+
+        const keys = [
+          // payer
+          { pubkey: new solanaWeb3_js.PublicKey(account), isSigner: true, isWritable: false },
+          // authority
+          { pubkey: await getPdaPoolAuthority(CP_PROGRAM_ID), isSigner: false, isWritable: false },
+          // configId
+          { pubkey: pool.data.configId, isSigner: false, isWritable: false },
+          // poolId
+          { pubkey: poolId, isSigner: false, isWritable: true },
+          // userInputAccount
+          { pubkey: tokenAccountIn, isSigner: false, isWritable: true },
+          // userOutputAccount
+          { pubkey: tokenAccountOut, isSigner: false, isWritable: true },
+          // inputVault
+          { pubkey: inputVault, isSigner: false, isWritable: true },
+          // outputVault
+          { pubkey: outputVault, isSigner: false, isWritable: true },
+          // inputTokenProgram
+          { pubkey: new solanaWeb3_js.PublicKey(Token__default['default'].solana.TOKEN_PROGRAM), isSigner: false, isWritable: false },
+          // outputTokenProgram
+          { pubkey: new solanaWeb3_js.PublicKey(Token__default['default'].solana.TOKEN_PROGRAM), isSigner: false, isWritable: false },
+          // inputMint
+          { pubkey: inputMint, isSigner: false, isWritable: false },
+          // outputMint
+          { pubkey: outputMint, isSigner: false, isWritable: false },
+          // observationId
+          { pubkey: await getPdaObservationId(CP_PROGRAM_ID, poolId), isSigner: false, isWritable: true },
+        ];
+
+        const data = solanaWeb3_js.Buffer.alloc(dataLayout.span);
+        dataLayout.encode({ 
           amountIn: new solanaWeb3_js.BN((amountIn || amountInMax).toString()),
-          minAmountOut: new solanaWeb3_js.BN((amountOutMin || amountOut).toString()),
-        },
-        data,
-      );
+          amounOutMin: new solanaWeb3_js.BN((amountOut || amountOutMin).toString())
+        }, data);
 
-      // if(!endsUnwrapped) {
-      //   await createTokenAccountIfNotExisting({ instructions, owner: account, token: tokenOut, account: tokenAccountOut })
-      // }
+        instructions.push(
+          new solanaWeb3_js.TransactionInstruction({
+            programId: CP_PROGRAM_ID,
+            keys,
+            data: solanaWeb3_js.Buffer.from([...swapBaseInputInstruction, ...data]),
+          })
+        );
 
-      // let keys = [
-      //   // token_program
-      //   { pubkey: new PublicKey(Token.solana.TOKEN_PROGRAM), isWritable: false, isSigner: false },
-      //   // amm
-      //   { pubkey: new PublicKey(pool.publicKey), isWritable: true, isSigner: false },
-      //   // amm authority
-      //   { pubkey: await getAssociatedAuthority(new PublicKey(pool.publicKey)), isWritable: false, isSigner: false },
-      //   // amm openOrders
-      //   { pubkey: new PublicKey(pool.data.openOrders), isWritable: true, isSigner: false },
-      //   // amm baseVault
-      //   { pubkey: new PublicKey(pool.data.baseVault), isWritable: true, isSigner: false },
-      //   // amm quoteVault
-      //   { pubkey: new PublicKey(pool.data.quoteVault), isWritable: true, isSigner: false },
-      //   // openbook marketProgramId
-      //   { pubkey: new PublicKey(pool.data.marketProgramId), isWritable: false, isSigner: false },
-      //   // openbook marketId
-      //   { pubkey: new PublicKey(pool.data.marketId), isWritable: true, isSigner: false },
-      //   // openbook marketBids
-      //   { pubkey: market.bids, isWritable: true, isSigner: false },
-      //   // openbook marketAsks
-      //   { pubkey: market.asks, isWritable: true, isSigner: false },
-      //   // openbook eventQueue
-      //   { pubkey: market.eventQueue, isWritable: true, isSigner: false },
-      //   // openbook baseVault
-      //   { pubkey: market.baseVault, isWritable: true, isSigner: false },
-      //   // openbook quoteVault
-      //   { pubkey: market.quoteVault, isWritable: true, isSigner: false },
-      //   // openbook marketAuthority
-      //   { pubkey: await getAssociatedMarketAuthority(pool.data.marketProgramId, pool.data.marketId), isWritable: false, isSigner: false },
-      //   // user tokenAccountIn
-      //   { pubkey: tokenAccountIn, isWritable: true, isSigner: false },
-      //   // user tokenAccountOut
-      //   { pubkey: tokenAccountOut, isWritable: true, isSigner: false },
-      //   // user owner
-      //   { pubkey: new PublicKey(account), isWritable: true, isSigner: true }
-      // ]
+      } else { // fixed amountOut, variable amountIn (amountInMax)
 
-      let keys = [
-        // token_program
-        { pubkey: new solanaWeb3_js.PublicKey(Token__default['default'].solana.TOKEN_PROGRAM), isWritable: false, isSigner: false },
-        // amm
-        { pubkey: new solanaWeb3_js.PublicKey(pool.publicKey), isWritable: true, isSigner: false },
-        // amm authority
-        { pubkey: new solanaWeb3_js.PublicKey('5Q544fKrFoe6tsEbD7S8EmxGTJYAKtTVhAW5Q5pge4j1'), isWritable: false, isSigner: false },
-        // amm openOrders
-        { pubkey: new solanaWeb3_js.PublicKey(pool.publicKey), isWritable: true, isSigner: false },
-        // amm baseVault
-        { pubkey: new solanaWeb3_js.PublicKey(pool.data.baseVault), isWritable: true, isSigner: false },
-        // amm quoteVault
-        { pubkey: new solanaWeb3_js.PublicKey(pool.data.quoteVault), isWritable: true, isSigner: false },
-        // openbook marketProgramId
-        { pubkey: new solanaWeb3_js.PublicKey(pool.publicKey), isWritable: false, isSigner: false },
-        // openbook marketId
-        { pubkey: new solanaWeb3_js.PublicKey(pool.publicKey), isWritable: true, isSigner: false },
-        // openbook marketBids
-        { pubkey: new solanaWeb3_js.PublicKey(pool.publicKey), isWritable: true, isSigner: false },
-        // openbook marketAsks
-        { pubkey: new solanaWeb3_js.PublicKey(pool.publicKey), isWritable: true, isSigner: false },
-        // openbook eventQueue
-        { pubkey: new solanaWeb3_js.PublicKey(pool.publicKey), isWritable: true, isSigner: false },
-        // openbook baseVault
-        { pubkey: new solanaWeb3_js.PublicKey(pool.publicKey), isWritable: true, isSigner: false },
-        // openbook quoteVault
-        { pubkey: new solanaWeb3_js.PublicKey(pool.publicKey), isWritable: true, isSigner: false },
-        // openbook marketAuthority
-        { pubkey: new solanaWeb3_js.PublicKey(pool.publicKey), isWritable: true, isSigner: false },
-        // user tokenAccountIn
-        { pubkey: tokenAccountIn, isWritable: true, isSigner: false },
-        // user tokenAccountOut
-        { pubkey: tokenAccountOut, isWritable: true, isSigner: false },
-        // user owner
-        { pubkey: new solanaWeb3_js.PublicKey(account), isWritable: true, isSigner: true }
-      ];
+        const dataLayout = solanaWeb3_js.struct([solanaWeb3_js.u64("amountInMax"), solanaWeb3_js.u64("amountOut")]);
 
-      console.log('keys', JSON.stringify(keys));
+        const keys = [
+          // payer
+          { pubkey: new solanaWeb3_js.PublicKey(account), isSigner: true, isWritable: false },
+          // authority
+          { pubkey: await getPdaPoolAuthority(CP_PROGRAM_ID), isSigner: false, isWritable: false },
+          // configId
+          { pubkey: pool.data.configId, isSigner: false, isWritable: false },
+          // poolId
+          { pubkey: poolId, isSigner: false, isWritable: true },
+          // userInputAccount
+          { pubkey: tokenAccountIn, isSigner: false, isWritable: true },
+          // userOutputAccount
+          { pubkey: tokenAccountOut, isSigner: false, isWritable: true },
+          // inputVault
+          { pubkey: inputVault, isSigner: false, isWritable: true },
+          // outputVault
+          { pubkey: outputVault, isSigner: false, isWritable: true },
+          // inputTokenProgram
+          { pubkey: new solanaWeb3_js.PublicKey(Token__default['default'].solana.TOKEN_PROGRAM), isSigner: false, isWritable: false },
+          // outputTokenProgram
+          { pubkey: new solanaWeb3_js.PublicKey(Token__default['default'].solana.TOKEN_PROGRAM), isSigner: false, isWritable: false },
+          // inputMint
+          { pubkey: inputMint, isSigner: false, isWritable: false },
+          // outputMint
+          { pubkey: outputMint, isSigner: false, isWritable: false },
+          // observationId
+          { pubkey: await getPdaObservationId(CP_PROGRAM_ID, poolId), isSigner: false, isWritable: true },
+        ];
 
-      instructions.push(
-        new solanaWeb3_js.TransactionInstruction({
-          programId: new solanaWeb3_js.PublicKey('675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8'),
-          keys,
-          data,
-        })
-      );
+        const data = solanaWeb3_js.Buffer.alloc(dataLayout.span);
+        dataLayout.encode({ 
+          amountInMax: new solanaWeb3_js.BN((amountIn || amountInMax).toString()),
+          amountOut: new solanaWeb3_js.BN((amountOut || amountOutMin).toString())
+        }, data);
+
+        instructions.push(
+          new solanaWeb3_js.TransactionInstruction({
+            programId: CP_PROGRAM_ID,
+            keys,
+            data: solanaWeb3_js.Buffer.from([...swapBaseOutputInstruction, ...data]),
+          })
+        );
+      }
+
     } else if (pairs.length === 2) ;
     
     if(startsWrapped || endsUnwrapped) {
@@ -2931,10 +3074,42 @@
       );
     }
 
-    // await debug(instructions, provider)
+    await debug(instructions, provider);
 
     transaction.instructions = instructions;
     return transaction
+  };
+
+  const debug = async(instructions, provider)=>{
+    console.log('instructions.length', instructions.length);
+    let data;
+    instructions.forEach((instruction)=>{
+      console.log('INSTRUCTION.programId', instruction.programId.toString());
+      console.log('INSTRUCTION.keys', instruction.keys);
+      try {
+        const LAYOUT = solanaWeb3_js.struct([
+          solanaWeb3_js.u64("anchorDiscriminator"),
+          solanaWeb3_js.u64("amount"),
+          solanaWeb3_js.u64("otherAmountThreshold"),
+          solanaWeb3_js.u128("sqrtPriceLimit"),
+          solanaWeb3_js.bool("amountSpecifiedIsInput"),
+          solanaWeb3_js.bool("aToB"),
+        ]);
+        data = LAYOUT.decode(instruction.data);
+      } catch (e3) {}
+    });
+    if(data) {
+      console.log('INSTRUCTION.data', data);
+      console.log('amount', data.amount.toString());
+      console.log('otherAmountThreshold', data.otherAmountThreshold.toString());
+      console.log('sqrtPriceLimit', data.sqrtPriceLimit.toString());
+    }
+    let simulation = new solanaWeb3_js.Transaction({ feePayer: new solanaWeb3_js.PublicKey('2UgCJaHU5y8NC4uWQcZYeV9a5RyYLF7iKYCybCsdFFD1') });
+    instructions.forEach((instruction)=>simulation.add(instruction));
+    let result;
+    console.log('SIMULATE');
+    try{ result = await provider.simulateTransaction(simulation); } catch(e) { console.log('error', e); }
+    console.log('SIMULATION RESULT', result);
   };
 
   var Raydium = {
@@ -2942,10 +3117,8 @@
     pathExists,
     getAmounts,
     getTransaction,
-    AMM_LAYOUT,
-    CPAMM_LAYOUT,
+    CPMM_LAYOUT,
     CLMM_LAYOUT,
-    MARKET_LAYOUT,
   };
 
   // // AMM
@@ -2961,14 +3134,14 @@
   // console.log(accounts)
 
 
-  // // CPAMM
-  // let accounts = await Web3Client.request(`solana://${Web3Exchanges.raydium.solana.router_cpamm.address}/getProgramAccounts`, {
+  // // CPMM
+  // let accounts = await Web3Client.request(`solana://${Web3Exchanges.raydium.solana.router_cpmm.address}/getProgramAccounts`, {
   //   params: { filters: [
-  //     { dataSize: Web3Exchanges.raydium.solana.router_cpamm.api.span },
+  //     { dataSize: Web3Exchanges.raydium.solana.router_cpmm.api.span },
   //     { memcmp: { offset: 168, bytes: "So11111111111111111111111111111111111111112" }},
   //     { memcmp: { offset: 200, bytes: "2zMMhcVQEXDtdE6vsFS7S7D5oUodfJHE8vd1gnBouauv" }},
   //   ]},
-  //   api:  Web3Exchanges.raydium.solana.router_cpamm.api,
+  //   api:  Web3Exchanges.raydium.solana.router_cpmm.api,
   // })
   // console.log(accounts)
 
@@ -2997,14 +3170,9 @@
 
     solana: {
       
-      router_amm: {
-        address: '675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8',
-        api: Raydium.AMM_LAYOUT,
-      },
-
-      router_cpamm: {
+      router_cpmm: {
         address: 'CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C',
-        api: Raydium.CPAMM_LAYOUT
+        api: Raydium.CPMM_LAYOUT
       },
 
       router_clmm: {

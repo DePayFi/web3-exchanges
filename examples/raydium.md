@@ -1,13 +1,13 @@
-## AMM v4 (Legacy)
+## CPMM (constant product)
 
 ### 1 Pool
 
 ```javascript
 let route = await Web3Exchanges.raydium.route({
   blockchain: 'solana',
-  tokenIn: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
-  tokenOut: 'HhJpBhRRn4g56VsyLuT8DL5Bv31HkXqsrahTTUCZeZg4',
-  amountOutMin: 0.01
+  tokenIn: '9wvorGtBJ8gyLorFTmwXWcymPoGVUBn6MRzHwFpCdCeC',
+  tokenOut: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
+  amountInMax: 0.01
 })
 
 let wallets = await Web3Wallets.getWallets()
@@ -17,4 +17,3 @@ let transaction = await route.getTransaction({ account })
 
 wallet.sendTransaction(transaction)
 ```
- 

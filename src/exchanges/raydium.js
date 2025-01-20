@@ -14,14 +14,9 @@ const exchange = {
 
   solana: {
     
-    router_amm: {
-      address: '675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8',
-      api: Raydium.AMM_LAYOUT,
-    },
-
-    router_cpamm: {
+    router_cpmm: {
       address: 'CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C',
-      api: Raydium.CPAMM_LAYOUT
+      api: Raydium.CPMM_LAYOUT
     },
 
     router_clmm: {

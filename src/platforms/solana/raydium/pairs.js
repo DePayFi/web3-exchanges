@@ -7,19 +7,16 @@
 //#endif
 
 import { ethers } from 'ethers'
-import { getPairsWithPrice as getPairsWithPriceAMM } from './amm/pairs'
-import { getPairsWithPrice as getPairsWithPriceCPAMM } from './cpamm/pairs'
+import { getPairsWithPrice as getPairsWithPriceCPMM } from './cpmm/pairs'
 import { getPairsWithPrice as getPairsWithPriceCLMM } from './clmm/pairs'
 
 const getParisWithPriceForAllTypes = ({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin })=>{
   return Promise.all([
-    getPairsWithPriceAMM({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }),
-    getPairsWithPriceCPAMM({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }),
+    getPairsWithPriceCPMM({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }),
     getPairsWithPriceCLMM({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }),
-  ]).then((pairsAMM, pairsCPAMM, pairsCLMNN)=>{
+  ]).then((pairsCPMM, pairsCLMNN)=>{
     return [
-      (pairsAMM || []).filter(Boolean).flat(),
-      (pairsCPAMM || []).filter(Boolean).flat(),
+      (pairsCPMM || []).filter(Boolean).flat(),
       (pairsCLMNN || []).filter(Boolean).flat()
     ].flat()
   })

@@ -1,7 +1,7 @@
 {
   "name": "@depay/web3-exchanges-evm",
   "moduleName": "Web3Exchanges",
-  "version": "13.15.2",
+  "version": "13.16.0",
   "description": "JavaScript library simplifying decentralized web3 exchange routing for multiple blockchains and exchanges.",
   "main": "dist/umd/index.evm.js",
   "module": "dist/esm/index.evm.js",
@@ -24,7 +24,7 @@
   "homepage": "https://depay.com",
   "private": false,
   "peerDependencies": {
-    "@depay/web3-blockchains": "^9.6.1",
+    "@depay/web3-blockchains": "^9.7.8",
     "@depay/web3-client-evm": "^10.19.0",
     "@depay/web3-tokens-evm": "^10.4.4",
     "decimal.js": "^10.4.3",

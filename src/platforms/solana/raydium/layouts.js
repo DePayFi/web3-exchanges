@@ -1,93 +1,7 @@
 import { blob, bool, struct, u8, u16, i32, u32, u64, i128, u128, publicKey, seq } from '@depay/solana-web3.js'
 
-// OpenBook Market
-const MARKET_LAYOUT = struct([
-  blob(5),
-  blob(8), // accountFlagsLayout('accountFlags'),
-  publicKey('ownAddress'),
-  u64('vaultSignerNonce'),
-  publicKey('baseMint'),
-  publicKey('quoteMint'),
-  publicKey('baseVault'),
-  u64('baseDepositsTotal'),
-  u64('baseFeesAccrued'),
-  publicKey('quoteVault'),
-  u64('quoteDepositsTotal'),
-  u64('quoteFeesAccrued'),
-  u64('quoteDustThreshold'),
-  publicKey('requestQueue'),
-  publicKey('eventQueue'),
-  publicKey('bids'),
-  publicKey('asks'),
-  u64('baseLotSize'),
-  u64('quoteLotSize'),
-  u64('feeRateBps'),
-  u64('referrerRebatesAccrued'),
-  blob(7),
-])
-
-// AMM 675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8
-const AMM_LAYOUT = struct([
-  u64('status'),
-  u64('nonce'),
-  u64('maxOrder'),
-  u64('depth'),
-  u64('baseDecimal'),
-  u64('quoteDecimal'),
-  u64('state'),
-  u64('resetFlag'),
-  u64('minSize'),
-  u64('volMaxCutRatio'),
-  u64('amountWaveRatio'),
-  u64('baseLotSize'),
-  u64('quoteLotSize'),
-  u64('minPriceMultiplier'),
-  u64('maxPriceMultiplier'),
-  u64('systemDecimalValue'),
-  u64('minSeparateNumerator'),
-  u64('minSeparateDenominator'),
-  u64('tradeFeeNumerator'),
-  u64('tradeFeeDenominator'),
-  u64('pnlNumerator'),
-  u64('pnlDenominator'),
-  u64('swapFeeNumerator'),
-  u64('swapFeeDenominator'),
-  u64('baseNeedTakePnl'),
-  u64('quoteNeedTakePnl'),
-  u64('quoteTotalPnl'),
-  u64('baseTotalPnl'),
-  u64('poolOpenTime'),
-  u64('punishPcAmount'),
-  u64('punishCoinAmount'),
-  u64('orderbookToInitTime'),
-  u128('swapBaseInAmount'),
-  u128('swapQuoteOutAmount'),
-  u64('swapBase2QuoteFee'),
-  u128('swapQuoteInAmount'),
-  u128('swapBaseOutAmount'),
-  u64('swapQuote2BaseFee'),
-  // amm vault
-  publicKey('baseVault'),
-  publicKey('quoteVault'),
-  // mint
-  publicKey('baseMint'),
-  publicKey('quoteMint'),
-  publicKey('lpMint'),
-  // market
-  publicKey('openOrders'),
-  publicKey('marketId'),
-  publicKey('marketProgramId'),
-  publicKey('targetOrders'),
-  publicKey('withdrawQueue'),
-  publicKey('lpVault'),
-  publicKey('owner'),
-  // true circulating supply without lock up
-  u64('lpReserve'),
-  seq(u64(), 3, 'padding'),
-])
-
-// CP_AMM CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C
-const CPAMM_LAYOUT = struct([
+// CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C
+const CPMM_LAYOUT = struct([
   blob(8),
   publicKey("configId"),
   publicKey("poolCreator"),
@@ -113,8 +27,22 @@ const CPAMM_LAYOUT = struct([
   seq(u64(), 32),
 ])
 
-// CLMM 
+const CPMM_CONFIG_LAYOUT = struct([
+  blob(8),
+  u8("bump"),
+  bool("disableCreatePool"),
+  u16("index"),
+  u64("tradeFeeRate"),
+  u64("protocolFeeRate"),
+  u64("fundFeeRate"),
+  u64("createPoolFee"),
 
+  publicKey("protocolOwner"),
+  publicKey("fundOwner"),
+  seq(u64(), 16),
+])
+
+// CLMM 
 const RewardInfo = struct([
   u8("rewardState"),
   u64("openTime"),
@@ -169,8 +97,7 @@ const CLMM_LAYOUT = struct([
 ]);
 
 export {
-  AMM_LAYOUT,
-  CPAMM_LAYOUT,
+  CPMM_LAYOUT,
   CLMM_LAYOUT,
-  MARKET_LAYOUT,
+  CPMM_CONFIG_LAYOUT,
 }

@@ -1,17 +1,15 @@
 import { findPath, pathExists } from './path'
 import { getAmounts } from './amounts'
 import { getTransaction } from './transaction'
-import { AMM_LAYOUT, CPAMM_LAYOUT, CLMM_LAYOUT, MARKET_LAYOUT } from './layouts'
+import { CPMM_LAYOUT, CLMM_LAYOUT } from './layouts'
 
 export default {
   findPath,
   pathExists,
   getAmounts,
   getTransaction,
-  AMM_LAYOUT,
-  CPAMM_LAYOUT,
+  CPMM_LAYOUT,
   CLMM_LAYOUT,
-  MARKET_LAYOUT,
 }
 
 // // AMM
@@ -27,14 +25,14 @@ export default {
 // console.log(accounts)
 
 
-// // CPAMM
-// let accounts = await Web3Client.request(`solana://${Web3Exchanges.raydium.solana.router_cpamm.address}/getProgramAccounts`, {
+// // CPMM
+// let accounts = await Web3Client.request(`solana://${Web3Exchanges.raydium.solana.router_cpmm.address}/getProgramAccounts`, {
 //   params: { filters: [
-//     { dataSize: Web3Exchanges.raydium.solana.router_cpamm.api.span },
+//     { dataSize: Web3Exchanges.raydium.solana.router_cpmm.api.span },
 //     { memcmp: { offset: 168, bytes: "So11111111111111111111111111111111111111112" }},
 //     { memcmp: { offset: 200, bytes: "2zMMhcVQEXDtdE6vsFS7S7D5oUodfJHE8vd1gnBouauv" }},
 //   ]},
-//   api:  Web3Exchanges.raydium.solana.router_cpamm.api,
+//   api:  Web3Exchanges.raydium.solana.router_cpmm.api,
 // })
 // console.log(accounts)
 
