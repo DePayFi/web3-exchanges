@@ -174,7 +174,7 @@ export class CurveCalculator {
 
     const denominator = reserveOutAmount.sub(amountRealOut);
     const amountInWithoutFee = BNDivCeil(reserveInAmount.mul(amountRealOut), denominator);
-    const amountIn = BNDivCeil(amountInWithoutFee.mul(new BN(1_000_000)), new BN(1_000_000).sub(tradeFeeRate));
+    const amountIn = BNDivCeil(amountInWithoutFee.mul(new BN(1000000)), new BN(1000000).sub(tradeFeeRate));
     const fee = amountIn.sub(amountInWithoutFee);
     const executionPrice = new Decimal(amountRealOut.toString())
       .div(10 ** reserveOutDecimals)
