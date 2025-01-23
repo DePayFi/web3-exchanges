@@ -1,6 +1,6 @@
 import Token from '@depay/web3-tokens';
 import { request, getProvider } from '@depay/web3-client';
-import { ethers as ethers$1 } from 'ethers';
+import { ethers } from 'ethers';
 import Blockchains from '@depay/web3-blockchains';
 import { BN, struct, publicKey, u128, u64 as u64$1, seq, u8, u16, i32, bool, i128, PublicKey, Buffer, Keypair, SystemProgram, TransactionInstruction, blob, u32, Transaction } from '@depay/solana-web3.js';
 import Decimal from 'decimal.js';
@@ -198,7 +198,7 @@ const calculateAmountsWithSlippage = async ({
 
 const fixAddress = (address)=>{
   if(address.match('0x')) {
-    return ethers$1.utils.getAddress(address)
+    return ethers.utils.getAddress(address)
   } else {
     return address
   }
@@ -467,9 +467,9 @@ const getExchangePath$5 = ({ blockchain, exchange, path }) => {
 
 const minReserveRequirements = ({ reserves, min, token, token0, token1, decimals }) => {
   if(token0.toLowerCase() == token.toLowerCase()) {
-    return reserves[0].gte(ethers$1.utils.parseUnits(min.toString(), decimals))
+    return reserves[0].gte(ethers.utils.parseUnits(min.toString(), decimals))
   } else if (token1.toLowerCase() == token.toLowerCase()) {
-    return reserves[1].gte(ethers$1.utils.parseUnits(min.toString(), decimals))
+    return reserves[1].gte(ethers.utils.parseUnits(min.toString(), decimals))
   } else {
     return false
   }
@@ -1975,11 +1975,11 @@ let getPairsWithPrice$3 = async({ tokenIn, tokenOut, amountIn, amountInMax, amou
 };
 
 let getHighestPrice$1 = (pairs)=>{
-  return pairs.reduce((bestPricePair, currentPair)=> ethers$1.BigNumber.from(currentPair.price).gt(ethers$1.BigNumber.from(bestPricePair.price)) ? currentPair : bestPricePair)
+  return pairs.reduce((bestPricePair, currentPair)=> ethers.BigNumber.from(currentPair.price).gt(ethers.BigNumber.from(bestPricePair.price)) ? currentPair : bestPricePair)
 };
 
 let getLowestPrice$1 = (pairs)=>{
-  return pairs.reduce((bestPricePair, currentPair)=> ethers$1.BigNumber.from(currentPair.price).lt(ethers$1.BigNumber.from(bestPricePair.price)) ? currentPair : bestPricePair)
+  return pairs.reduce((bestPricePair, currentPair)=> ethers.BigNumber.from(currentPair.price).lt(ethers.BigNumber.from(bestPricePair.price)) ? currentPair : bestPricePair)
 };
 
 let getBestPair$1 = async({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }) => {
@@ -2082,16 +2082,16 @@ let findPath$5 = async ({ tokenIn, tokenOut, amountIn, amountOut, amountInMax, a
 
 let getAmountsOut$1 = async ({ path, amountIn, amountInMax }) => {
 
-  let amounts = [ethers$1.BigNumber.from(amountIn || amountInMax)];
+  let amounts = [ethers.BigNumber.from(amountIn || amountInMax)];
 
   let bestPair = await getBestPair$1({ tokenIn: path[0], tokenOut: path[1], amountIn, amountInMax });
   if(!bestPair){ return }
-  amounts.push(ethers$1.BigNumber.from(bestPair.price));
+  amounts.push(ethers.BigNumber.from(bestPair.price));
   
   if (path.length === 3) {
     let bestPair = await getBestPair$1({ tokenIn: path[1], tokenOut: path[2], amountIn: amountIn ? amounts[1] : undefined, amountInMax: amountInMax ? amounts[1] : undefined });
     if(!bestPair){ return }
-    amounts.push(ethers$1.BigNumber.from(bestPair.price));
+    amounts.push(ethers.BigNumber.from(bestPair.price));
   }
 
   if(amounts.length != path.length) { return }
@@ -2102,16 +2102,16 @@ let getAmountsOut$1 = async ({ path, amountIn, amountInMax }) => {
 let getAmountsIn$1 = async({ path, amountOut, amountOutMin }) => {
 
   path = path.slice().reverse();
-  let amounts = [ethers$1.BigNumber.from(amountOut || amountOutMin)];
+  let amounts = [ethers.BigNumber.from(amountOut || amountOutMin)];
 
   let bestPair = await getBestPair$1({ tokenIn: path[1], tokenOut: path[0], amountOut, amountOutMin });
   if(!bestPair){ return }
-  amounts.push(ethers$1.BigNumber.from(bestPair.price));
+  amounts.push(ethers.BigNumber.from(bestPair.price));
   
   if (path.length === 3) {
     let bestPair = await getBestPair$1({ tokenIn: path[2], tokenOut: path[1], amountOut: amountOut ? amounts[1] : undefined, amountOutMin: amountOutMin ? amounts[1] : undefined });
     if(!bestPair){ return }
-    amounts.push(ethers$1.BigNumber.from(bestPair.price));
+    amounts.push(ethers.BigNumber.from(bestPair.price));
   }
   
   if(amounts.length != path.length) { return }
@@ -3005,11 +3005,11 @@ const getPairsWithPrice = async({ tokenIn, tokenOut, amountIn, amountInMax, amou
 };
 
 let getHighestPrice = (pairs)=>{
-  return pairs.reduce((bestPricePair, currentPair)=> ethers$1.BigNumber.from(currentPair.price).gt(ethers$1.BigNumber.from(bestPricePair.price)) ? currentPair : bestPricePair)
+  return pairs.reduce((bestPricePair, currentPair)=> ethers.BigNumber.from(currentPair.price).gt(ethers.BigNumber.from(bestPricePair.price)) ? currentPair : bestPricePair)
 };
 
 let getLowestPrice = (pairs)=>{
-  return pairs.reduce((bestPricePair, currentPair)=> ethers$1.BigNumber.from(currentPair.price).lt(ethers$1.BigNumber.from(bestPricePair.price)) ? currentPair : bestPricePair)
+  return pairs.reduce((bestPricePair, currentPair)=> ethers.BigNumber.from(currentPair.price).lt(ethers.BigNumber.from(bestPricePair.price)) ? currentPair : bestPricePair)
 };
 
 let getBestPair = async({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }) => {
@@ -3113,16 +3113,16 @@ let findPath$4 = async ({ tokenIn, tokenOut, amountIn, amountOut, amountInMax, a
 
 let getAmountsOut = async ({ path, amountIn, amountInMax }) => {
 
-  let amounts = [ethers$1.BigNumber.from(amountIn || amountInMax)];
+  let amounts = [ethers.BigNumber.from(amountIn || amountInMax)];
 
   let bestPair = await getBestPair({ tokenIn: path[0], tokenOut: path[1], amountIn, amountInMax });
   if(!bestPair){ return }
-  amounts.push(ethers$1.BigNumber.from(bestPair.price));
+  amounts.push(ethers.BigNumber.from(bestPair.price));
   
   if (path.length === 3) {
     let bestPair = await getBestPair({ tokenIn: path[1], tokenOut: path[2], amountIn: amountIn ? amounts[1] : undefined, amountInMax: amountInMax ? amounts[1] : undefined });
     if(!bestPair){ return }
-    amounts.push(ethers$1.BigNumber.from(bestPair.price));
+    amounts.push(ethers.BigNumber.from(bestPair.price));
   }
 
   if(amounts.length != path.length) { return }
@@ -3133,16 +3133,16 @@ let getAmountsOut = async ({ path, amountIn, amountInMax }) => {
 let getAmountsIn = async({ path, amountOut, amountOutMin }) => {
 
   path = path.slice().reverse();
-  let amounts = [ethers$1.BigNumber.from(amountOut || amountOutMin)];
+  let amounts = [ethers.BigNumber.from(amountOut || amountOutMin)];
 
   let bestPair = await getBestPair({ tokenIn: path[1], tokenOut: path[0], amountOut, amountOutMin });
   if(!bestPair){ return }
-  amounts.push(ethers$1.BigNumber.from(bestPair.price));
+  amounts.push(ethers.BigNumber.from(bestPair.price));
   
   if (path.length === 3) {
     let bestPair = await getBestPair({ tokenIn: path[2], tokenOut: path[1], amountOut: amountOut ? amounts[1] : undefined, amountOutMin: amountOutMin ? amounts[1] : undefined });
     if(!bestPair){ return }
-    amounts.push(ethers$1.BigNumber.from(bestPair.price));
+    amounts.push(ethers.BigNumber.from(bestPair.price));
   }
   
   if(amounts.length != path.length) { return }
@@ -3631,7 +3631,7 @@ const getInputAmount$1 = async ({ exchange, pool, outputAmount })=>{
     api: exchange[pool.blockchain].quoter.api,
     method: 'quoteExactOutput',
     params: {
-      path: ethers$1.utils.solidityPack(["address","uint24","address"],[pool.path[1], pool.fee, pool.path[0]]),
+      path: ethers.utils.solidityPack(["address","uint24","address"],[pool.path[1], pool.fee, pool.path[0]]),
       amountOut: outputAmount
     },
     cache: 5
@@ -3648,7 +3648,7 @@ const getOutputAmount$1 = async ({ exchange, pool, inputAmount })=>{
     api: exchange[pool.blockchain].quoter.api,
     method: 'quoteExactInput',
     params: {
-      path: ethers$1.utils.solidityPack(["address","uint24","address"],[pool.path[0], pool.fee, pool.path[1]]),
+      path: ethers.utils.solidityPack(["address","uint24","address"],[pool.path[0], pool.fee, pool.path[1]]),
       amountIn: inputAmount
     },
     cache: 5
@@ -3812,11 +3812,11 @@ let getAmountIn$2 = async ({ blockchain, exchange, path, pools, amountOut, block
     
     let path;
     if(pools.length == 2) {
-      path = ethers$1.utils.solidityPack(["address","uint24","address","uint24","address"],[
+      path = ethers.utils.solidityPack(["address","uint24","address","uint24","address"],[
         pools[1].path[1], pools[1].fee, pools[0].path[1], pools[0].fee, pools[0].path[0]
       ]);
     } else if(pools.length == 1) { 
-      path = ethers$1.utils.solidityPack(["address","uint24","address"],[
+      path = ethers.utils.solidityPack(["address","uint24","address"],[
         pools[0].path[1], pools[0].fee, pools[0].path[0]
       ]);
     }
@@ -3954,7 +3954,7 @@ let getTransaction$3 = async({
     transaction.method = 'multicall';
 
     // multicall calls itself
-    const routerInterface = new ethers$1.utils.Interface(exchange[blockchain].smartRouter.api);
+    const routerInterface = new ethers.utils.Interface(exchange[blockchain].smartRouter.api);
     transaction.params = { data: [] };
 
     if (exchangePath.length === 2) { // single swap
@@ -3988,7 +3988,7 @@ let getTransaction$3 = async({
       }
     } else { // multi swap
 
-      const packedPath = ethers$1.utils.solidityPack(
+      const packedPath = ethers.utils.solidityPack(
         ["address","uint24","address","uint24","address"],
         [pools[0].path[0], pools[0].fee, pools[0].path[1], pools[1].fee, pools[1].path[1]]
       );
@@ -4066,7 +4066,7 @@ let getTransaction$3 = async({
       }
     } else { // multi swap
 
-      const packedPath = ethers$1.utils.solidityPack(
+      const packedPath = ethers.utils.solidityPack(
         ["address","uint24","address","uint24","address"],
         [pools[0].path[0], pools[0].fee, pools[0].path[1], pools[1].fee, pools[1].path[1]]
       );
@@ -4779,7 +4779,7 @@ const getInputAmount = async ({ exchange, pool, outputAmount })=>{
     api: exchange[pool.blockchain].quoter.api,
     method: 'quoteExactOutput',
     params: {
-      path: ethers$1.utils.solidityPack(["address","uint24","address"],[pool.path[1], pool.fee, pool.path[0]]),
+      path: ethers.utils.solidityPack(["address","uint24","address"],[pool.path[1], pool.fee, pool.path[0]]),
       amountOut: outputAmount
     },
     cache: 5
@@ -4796,7 +4796,7 @@ const getOutputAmount = async ({ exchange, pool, inputAmount })=>{
     api: exchange[pool.blockchain].quoter.api,
     method: 'quoteExactInput',
     params: {
-      path: ethers$1.utils.solidityPack(["address","uint24","address"],[pool.path[0], pool.fee, pool.path[1]]),
+      path: ethers.utils.solidityPack(["address","uint24","address"],[pool.path[0], pool.fee, pool.path[1]]),
       amountIn: inputAmount
     },
     cache: 5
@@ -4840,17 +4840,17 @@ const getBestPool = async ({ blockchain, exchange, path, amountIn, amountOut, bl
         let amount;
         if(amountIn) {
           amount = await getOutputAmount({ exchange, pool, inputAmount: amountIn });
-          const amountScaled = await getOutputAmount({ exchange, pool, inputAmount: ethers$1.BigNumber.from(amountIn).mul(ethers$1.BigNumber.from(10)).toString() });
-          const amountScaledDown = amountScaled.div(ethers$1.BigNumber.from(10));
+          const amountScaled = await getOutputAmount({ exchange, pool, inputAmount: ethers.BigNumber.from(amountIn).mul(ethers.BigNumber.from(10)).toString() });
+          const amountScaledDown = amountScaled.div(ethers.BigNumber.from(10));
           const difference = amountScaledDown.sub(amount).abs();
-          const enoughLiquidity = !difference.gt(amount.mul(ethers$1.BigNumber.from(5)).div(ethers$1.BigNumber.from(100))); // up to 5% diff allowed
+          const enoughLiquidity = !difference.gt(amount.mul(ethers.BigNumber.from(5)).div(ethers.BigNumber.from(100))); // up to 5% diff allowed
           if(!enoughLiquidity) { return }
         } else {
           amount = await getInputAmount({ exchange, pool, outputAmount: amountOut });
-          const amountScaled = await getInputAmount({ exchange, pool, outputAmount: ethers$1.BigNumber.from(amountOut).mul(ethers$1.BigNumber.from(10)).toString() });
-          const amountScaledDown = amountScaled.div(ethers$1.BigNumber.from(10));
+          const amountScaled = await getInputAmount({ exchange, pool, outputAmount: ethers.BigNumber.from(amountOut).mul(ethers.BigNumber.from(10)).toString() });
+          const amountScaledDown = amountScaled.div(ethers.BigNumber.from(10));
           const difference = amountScaledDown.sub(amount).abs();
-          const enoughLiquidity = !difference.gt(amount.mul(ethers$1.BigNumber.from(5)).div(ethers$1.BigNumber.from(100))); // up to 5% diff allowed
+          const enoughLiquidity = !difference.gt(amount.mul(ethers.BigNumber.from(5)).div(ethers.BigNumber.from(100))); // up to 5% diff allowed
           if(!enoughLiquidity) { return }
         }
 
@@ -4970,11 +4970,11 @@ let getAmountIn = async ({ blockchain, exchange, path, pools, amountOut, block }
     
     let path;
     if(pools.length == 2) {
-      path = ethers$1.utils.solidityPack(["address","uint24","address","uint24","address"],[
+      path = ethers.utils.solidityPack(["address","uint24","address","uint24","address"],[
         pools[1].path[1], pools[1].fee, pools[0].path[1], pools[0].fee, pools[0].path[0]
       ]);
     } else if(pools.length == 1) { 
-      path = ethers$1.utils.solidityPack(["address","uint24","address"],[
+      path = ethers.utils.solidityPack(["address","uint24","address"],[
         pools[0].path[1], pools[0].fee, pools[0].path[0]
       ]);
     }
@@ -5072,9 +5072,9 @@ let getPrep = async({
 
 let packPath = (pools)=>{
   if(pools.length == 1) {
-    return ethers$1.utils.solidityPack(["address","uint24","address"], [pools[0].path[0], pools[0].fee, pools[0].path[1]])
+    return ethers.utils.solidityPack(["address","uint24","address"], [pools[0].path[0], pools[0].fee, pools[0].path[1]])
   } else if (pools.length == 2) {
-    return ethers$1.utils.solidityPack(["address","uint24","address","uint24","address"], [pools[0].path[0], pools[0].fee, pools[0].path[1], pools[1].fee, pools[1].path[1]])
+    return ethers.utils.solidityPack(["address","uint24","address","uint24","address"], [pools[0].path[0], pools[0].fee, pools[0].path[1], pools[1].fee, pools[1].path[1]])
   } else {
     throw 'more than 2 pools not supported!'
   }
@@ -5082,9 +5082,9 @@ let packPath = (pools)=>{
 
 let packPathReverse = (pools)=>{
   if(pools.length == 1) {
-    return ethers$1.utils.solidityPack(["address","uint24","address"], [pools[0].path[1], pools[0].fee, pools[0].path[0]])
+    return ethers.utils.solidityPack(["address","uint24","address"], [pools[0].path[1], pools[0].fee, pools[0].path[0]])
   } else if (pools.length == 2) {
-    return ethers$1.utils.solidityPack(["address","uint24","address","uint24","address"], [pools[1].path[1], pools[1].fee, pools[1].path[0], pools[0].fee, pools[0].path[0]])
+    return ethers.utils.solidityPack(["address","uint24","address","uint24","address"], [pools[1].path[1], pools[1].fee, pools[1].path[0], pools[0].fee, pools[0].path[0]])
   } else {
     throw 'more than 2 pools not supported!'
   }
@@ -5108,7 +5108,7 @@ let getTransaction$1 = async({
 }) => {
 
   let value = "0";
-  const contract = new ethers$1.Contract(exchange[blockchain].router.address, exchange[blockchain].router.api);
+  const contract = new ethers.Contract(exchange[blockchain].router.address, exchange[blockchain].router.api);
   const exactInput = !!(amountOutMinInput || amountInInput);
   const wrapETH = path[0] === Blockchains[blockchain].currency.address;
   const unwrapETH = path[path.length-1] === Blockchains[blockchain].currency.address;

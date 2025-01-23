@@ -15,6 +15,7 @@ import { BN } from '@depay/solana-web3.js'
 import Blockchains from '@depay/web3-blockchains'
 import { CPMM_LAYOUT, CPMM_CONFIG_LAYOUT } from '../layouts'
 import { CurveCalculator } from './price'
+import { ethers } from 'ethers'
 
 const getConfig = (address)=>{
   return request(`solana://${address}/getAccountInfo`, {

@@ -2,7 +2,7 @@
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('@depay/web3-tokens-solana'), require('@depay/web3-client-solana'), require('ethers'), require('@depay/web3-blockchains'), require('@depay/solana-web3.js'), require('decimal.js')) :
   typeof define === 'function' && define.amd ? define(['@depay/web3-tokens-solana', '@depay/web3-client-solana', 'ethers', '@depay/web3-blockchains', '@depay/solana-web3.js', 'decimal.js'], factory) :
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.Web3Exchanges = factory(global.Web3Tokens, global.Web3Client, global.ethers, global.Web3Blockchains, global.SolanaWeb3js, global.Decimal));
-}(this, (function (Token, web3ClientSolana, ethers$1, Blockchains, solanaWeb3_js, Decimal) { 'use strict';
+}(this, (function (Token, web3ClientSolana, ethers, Blockchains, solanaWeb3_js, Decimal) { 'use strict';
 
   function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
@@ -203,7 +203,7 @@
 
   const fixAddress = (address)=>{
     if(address.match('0x')) {
-      return ethers$1.ethers.utils.getAddress(address)
+      return ethers.ethers.utils.getAddress(address)
     } else {
       return address
     }
@@ -1623,11 +1623,11 @@
   };
 
   let getHighestPrice$1 = (pairs)=>{
-    return pairs.reduce((bestPricePair, currentPair)=> ethers$1.ethers.BigNumber.from(currentPair.price).gt(ethers$1.ethers.BigNumber.from(bestPricePair.price)) ? currentPair : bestPricePair)
+    return pairs.reduce((bestPricePair, currentPair)=> ethers.ethers.BigNumber.from(currentPair.price).gt(ethers.ethers.BigNumber.from(bestPricePair.price)) ? currentPair : bestPricePair)
   };
 
   let getLowestPrice$1 = (pairs)=>{
-    return pairs.reduce((bestPricePair, currentPair)=> ethers$1.ethers.BigNumber.from(currentPair.price).lt(ethers$1.ethers.BigNumber.from(bestPricePair.price)) ? currentPair : bestPricePair)
+    return pairs.reduce((bestPricePair, currentPair)=> ethers.ethers.BigNumber.from(currentPair.price).lt(ethers.ethers.BigNumber.from(bestPricePair.price)) ? currentPair : bestPricePair)
   };
 
   let getBestPair$1 = async({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }) => {
@@ -1730,16 +1730,16 @@
 
   let getAmountsOut$1 = async ({ path, amountIn, amountInMax }) => {
 
-    let amounts = [ethers$1.ethers.BigNumber.from(amountIn || amountInMax)];
+    let amounts = [ethers.ethers.BigNumber.from(amountIn || amountInMax)];
 
     let bestPair = await getBestPair$1({ tokenIn: path[0], tokenOut: path[1], amountIn, amountInMax });
     if(!bestPair){ return }
-    amounts.push(ethers$1.ethers.BigNumber.from(bestPair.price));
+    amounts.push(ethers.ethers.BigNumber.from(bestPair.price));
     
     if (path.length === 3) {
       let bestPair = await getBestPair$1({ tokenIn: path[1], tokenOut: path[2], amountIn: amountIn ? amounts[1] : undefined, amountInMax: amountInMax ? amounts[1] : undefined });
       if(!bestPair){ return }
-      amounts.push(ethers$1.ethers.BigNumber.from(bestPair.price));
+      amounts.push(ethers.ethers.BigNumber.from(bestPair.price));
     }
 
     if(amounts.length != path.length) { return }
@@ -1750,16 +1750,16 @@
   let getAmountsIn$1 = async({ path, amountOut, amountOutMin }) => {
 
     path = path.slice().reverse();
-    let amounts = [ethers$1.ethers.BigNumber.from(amountOut || amountOutMin)];
+    let amounts = [ethers.ethers.BigNumber.from(amountOut || amountOutMin)];
 
     let bestPair = await getBestPair$1({ tokenIn: path[1], tokenOut: path[0], amountOut, amountOutMin });
     if(!bestPair){ return }
-    amounts.push(ethers$1.ethers.BigNumber.from(bestPair.price));
+    amounts.push(ethers.ethers.BigNumber.from(bestPair.price));
     
     if (path.length === 3) {
       let bestPair = await getBestPair$1({ tokenIn: path[2], tokenOut: path[1], amountOut: amountOut ? amounts[1] : undefined, amountOutMin: amountOutMin ? amounts[1] : undefined });
       if(!bestPair){ return }
-      amounts.push(ethers$1.ethers.BigNumber.from(bestPair.price));
+      amounts.push(ethers.ethers.BigNumber.from(bestPair.price));
     }
     
     if(amounts.length != path.length) { return }
@@ -2543,10 +2543,10 @@
       // BASE == A
 
       const baseVaultAmountData = await web3ClientSolana.request(`solana://${account.data.vaultA.toString()}/getTokenAccountBalance`, { cache: 3 });
-      const baseReserve = ethers.BigNumber.from(baseVaultAmountData.value.amount).sub(
-        ethers.BigNumber.from(account.data.protocolFeesMintA.toString())
+      const baseReserve = ethers.ethers.BigNumber.from(baseVaultAmountData.value.amount).sub(
+        ethers.ethers.BigNumber.from(account.data.protocolFeesMintA.toString())
       ).sub(
-        ethers.BigNumber.from(account.data.fundFeesMintA.toString())
+        ethers.ethers.BigNumber.from(account.data.fundFeesMintA.toString())
       );
 
       if( // min liquidity SOL
@@ -2565,10 +2565,10 @@
       // QUOTE == B
 
       const quoteVaultAmountData = await web3ClientSolana.request(`solana://${account.data.vaultB.toString()}/getTokenAccountBalance`, { cache: 3 });
-      const quoteReserve = ethers.BigNumber.from(quoteVaultAmountData.value.amount).sub(
-        ethers.BigNumber.from(account.data.protocolFeesMintB.toString())
+      const quoteReserve = ethers.ethers.BigNumber.from(quoteVaultAmountData.value.amount).sub(
+        ethers.ethers.BigNumber.from(account.data.protocolFeesMintB.toString())
       ).sub(
-        ethers.BigNumber.from(account.data.fundFeesMintB.toString())
+        ethers.ethers.BigNumber.from(account.data.fundFeesMintB.toString())
       );
 
       if( // min liquidity SOL
@@ -2653,11 +2653,11 @@
   };
 
   let getHighestPrice = (pairs)=>{
-    return pairs.reduce((bestPricePair, currentPair)=> ethers$1.ethers.BigNumber.from(currentPair.price).gt(ethers$1.ethers.BigNumber.from(bestPricePair.price)) ? currentPair : bestPricePair)
+    return pairs.reduce((bestPricePair, currentPair)=> ethers.ethers.BigNumber.from(currentPair.price).gt(ethers.ethers.BigNumber.from(bestPricePair.price)) ? currentPair : bestPricePair)
   };
 
   let getLowestPrice = (pairs)=>{
-    return pairs.reduce((bestPricePair, currentPair)=> ethers$1.ethers.BigNumber.from(currentPair.price).lt(ethers$1.ethers.BigNumber.from(bestPricePair.price)) ? currentPair : bestPricePair)
+    return pairs.reduce((bestPricePair, currentPair)=> ethers.ethers.BigNumber.from(currentPair.price).lt(ethers.ethers.BigNumber.from(bestPricePair.price)) ? currentPair : bestPricePair)
   };
 
   let getBestPair = async({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }) => {
@@ -2761,16 +2761,16 @@
 
   let getAmountsOut = async ({ path, amountIn, amountInMax }) => {
 
-    let amounts = [ethers$1.ethers.BigNumber.from(amountIn || amountInMax)];
+    let amounts = [ethers.ethers.BigNumber.from(amountIn || amountInMax)];
 
     let bestPair = await getBestPair({ tokenIn: path[0], tokenOut: path[1], amountIn, amountInMax });
     if(!bestPair){ return }
-    amounts.push(ethers$1.ethers.BigNumber.from(bestPair.price));
+    amounts.push(ethers.ethers.BigNumber.from(bestPair.price));
     
     if (path.length === 3) {
       let bestPair = await getBestPair({ tokenIn: path[1], tokenOut: path[2], amountIn: amountIn ? amounts[1] : undefined, amountInMax: amountInMax ? amounts[1] : undefined });
       if(!bestPair){ return }
-      amounts.push(ethers$1.ethers.BigNumber.from(bestPair.price));
+      amounts.push(ethers.ethers.BigNumber.from(bestPair.price));
     }
 
     if(amounts.length != path.length) { return }
@@ -2781,16 +2781,16 @@
   let getAmountsIn = async({ path, amountOut, amountOutMin }) => {
 
     path = path.slice().reverse();
-    let amounts = [ethers$1.ethers.BigNumber.from(amountOut || amountOutMin)];
+    let amounts = [ethers.ethers.BigNumber.from(amountOut || amountOutMin)];
 
     let bestPair = await getBestPair({ tokenIn: path[1], tokenOut: path[0], amountOut, amountOutMin });
     if(!bestPair){ return }
-    amounts.push(ethers$1.ethers.BigNumber.from(bestPair.price));
+    amounts.push(ethers.ethers.BigNumber.from(bestPair.price));
     
     if (path.length === 3) {
       let bestPair = await getBestPair({ tokenIn: path[2], tokenOut: path[1], amountOut: amountOut ? amounts[1] : undefined, amountOutMin: amountOutMin ? amounts[1] : undefined });
       if(!bestPair){ return }
-      amounts.push(ethers$1.ethers.BigNumber.from(bestPair.price));
+      amounts.push(ethers.ethers.BigNumber.from(bestPair.price));
     }
     
     if(amounts.length != path.length) { return }
