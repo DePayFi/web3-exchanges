@@ -139,31 +139,31 @@ const getTransaction = async({
       const dataLayout = struct([u64("amountIn"), u64("amounOutMin")]);
 
       const keys = [
-        // payer
+        // 0 payer
         { pubkey: new PublicKey(account), isSigner: true, isWritable: false },
-        // authority
+        // 1 authority
         { pubkey: await getPdaPoolAuthority(CP_PROGRAM_ID), isSigner: false, isWritable: false },
-        // configId
+        // 2 configId
         { pubkey: pool.data.configId, isSigner: false, isWritable: false },
-        // poolId
+        // 3 poolId
         { pubkey: poolId, isSigner: false, isWritable: true },
-        // userInputAccount
+        // 4 userInputAccount
         { pubkey: tokenAccountIn, isSigner: false, isWritable: true },
-        // userOutputAccount
+        // 5 userOutputAccount
         { pubkey: tokenAccountOut, isSigner: false, isWritable: true },
-        // inputVault
+        // 6 inputVault
         { pubkey: inputVault, isSigner: false, isWritable: true },
-        // outputVault
+        // 7 outputVault
         { pubkey: outputVault, isSigner: false, isWritable: true },
-        // inputTokenProgram
+        // 8 inputTokenProgram
         { pubkey: new PublicKey(Token.solana.TOKEN_PROGRAM), isSigner: false, isWritable: false },
-        // outputTokenProgram
+        // 9 outputTokenProgram
         { pubkey: new PublicKey(Token.solana.TOKEN_PROGRAM), isSigner: false, isWritable: false },
-        // inputMint
+        // 10 inputMint
         { pubkey: inputMint, isSigner: false, isWritable: false },
-        // outputMint
+        // 11 outputMint
         { pubkey: outputMint, isSigner: false, isWritable: false },
-        // observationId
+        // 12 observationId
         { pubkey: await getPdaObservationId(CP_PROGRAM_ID, poolId), isSigner: false, isWritable: true },
       ]
 
@@ -242,7 +242,7 @@ const getTransaction = async({
     )
   }
 
-  await debug(instructions, provider)
+  // await debug(instructions, provider)
 
   transaction.instructions = instructions
   return transaction

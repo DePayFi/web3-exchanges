@@ -2973,31 +2973,31 @@
         const dataLayout = solanaWeb3_js.struct([solanaWeb3_js.u64("amountIn"), solanaWeb3_js.u64("amounOutMin")]);
 
         const keys = [
-          // payer
+          // 0 payer
           { pubkey: new solanaWeb3_js.PublicKey(account), isSigner: true, isWritable: false },
-          // authority
+          // 1 authority
           { pubkey: await getPdaPoolAuthority(CP_PROGRAM_ID), isSigner: false, isWritable: false },
-          // configId
+          // 2 configId
           { pubkey: pool.data.configId, isSigner: false, isWritable: false },
-          // poolId
+          // 3 poolId
           { pubkey: poolId, isSigner: false, isWritable: true },
-          // userInputAccount
+          // 4 userInputAccount
           { pubkey: tokenAccountIn, isSigner: false, isWritable: true },
-          // userOutputAccount
+          // 5 userOutputAccount
           { pubkey: tokenAccountOut, isSigner: false, isWritable: true },
-          // inputVault
+          // 6 inputVault
           { pubkey: inputVault, isSigner: false, isWritable: true },
-          // outputVault
+          // 7 outputVault
           { pubkey: outputVault, isSigner: false, isWritable: true },
-          // inputTokenProgram
+          // 8 inputTokenProgram
           { pubkey: new solanaWeb3_js.PublicKey(Token__default['default'].solana.TOKEN_PROGRAM), isSigner: false, isWritable: false },
-          // outputTokenProgram
+          // 9 outputTokenProgram
           { pubkey: new solanaWeb3_js.PublicKey(Token__default['default'].solana.TOKEN_PROGRAM), isSigner: false, isWritable: false },
-          // inputMint
+          // 10 inputMint
           { pubkey: inputMint, isSigner: false, isWritable: false },
-          // outputMint
+          // 11 outputMint
           { pubkey: outputMint, isSigner: false, isWritable: false },
-          // observationId
+          // 12 observationId
           { pubkey: await getPdaObservationId(CP_PROGRAM_ID, poolId), isSigner: false, isWritable: true },
         ];
 
@@ -3074,42 +3074,10 @@
       );
     }
 
-    await debug(instructions, provider);
+    // await debug(instructions, provider)
 
     transaction.instructions = instructions;
     return transaction
-  };
-
-  const debug = async(instructions, provider)=>{
-    console.log('instructions.length', instructions.length);
-    let data;
-    instructions.forEach((instruction)=>{
-      console.log('INSTRUCTION.programId', instruction.programId.toString());
-      console.log('INSTRUCTION.keys', instruction.keys);
-      try {
-        const LAYOUT = solanaWeb3_js.struct([
-          solanaWeb3_js.u64("anchorDiscriminator"),
-          solanaWeb3_js.u64("amount"),
-          solanaWeb3_js.u64("otherAmountThreshold"),
-          solanaWeb3_js.u128("sqrtPriceLimit"),
-          solanaWeb3_js.bool("amountSpecifiedIsInput"),
-          solanaWeb3_js.bool("aToB"),
-        ]);
-        data = LAYOUT.decode(instruction.data);
-      } catch (e3) {}
-    });
-    if(data) {
-      console.log('INSTRUCTION.data', data);
-      console.log('amount', data.amount.toString());
-      console.log('otherAmountThreshold', data.otherAmountThreshold.toString());
-      console.log('sqrtPriceLimit', data.sqrtPriceLimit.toString());
-    }
-    let simulation = new solanaWeb3_js.Transaction({ feePayer: new solanaWeb3_js.PublicKey('2UgCJaHU5y8NC4uWQcZYeV9a5RyYLF7iKYCybCsdFFD1') });
-    instructions.forEach((instruction)=>simulation.add(instruction));
-    let result;
-    console.log('SIMULATE');
-    try{ result = await provider.simulateTransaction(simulation); } catch(e) { console.log('error', e); }
-    console.log('SIMULATION RESULT', result);
   };
 
   var Raydium = {
