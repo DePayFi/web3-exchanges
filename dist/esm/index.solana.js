@@ -2,7 +2,7 @@ import Token from '@depay/web3-tokens-solana';
 import { request, getProvider } from '@depay/web3-client-solana';
 import { ethers } from 'ethers';
 import Blockchains from '@depay/web3-blockchains';
-import { BN, struct, publicKey, u128, u64 as u64$1, seq, u8, u16, i32, bool, i128, PublicKey, Buffer, Keypair, SystemProgram, TransactionInstruction, blob, u32, Transaction } from '@depay/solana-web3.js';
+import { BN, struct, publicKey, u128, u64 as u64$1, seq, u8, u16, i32, bool, i128, PublicKey, Buffer, Keypair, SystemProgram, TransactionInstruction, blob, u32 } from '@depay/solana-web3.js';
 import Decimal$1 from 'decimal.js';
 
 function _optionalChain$4(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }class Route {
@@ -4406,6 +4406,8 @@ const blockchain = Blockchains.solana;
 
 const CP_PROGRAM_ID = new PublicKey('CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C');
 const CL_PROGRAM_ID = new PublicKey('CAMMCzo5YL8w4VFF8KVHrK22GGUsp5VTaW7grrKgrWqK');
+
+const swapBaseInputInstruction = [143, 190, 90, 218, 196, 30, 51, 222];
 const swapBaseOutputInstruction = [55, 217, 98, 86, 163, 74, 180, 173];
 
 const anchorDataBuf = {
@@ -4467,7 +4469,52 @@ const getCPMMInstruction = async({
   const outputVault = tokenIn == pool.mintA ? pool.data.vaultB : pool.data.vaultA;
   const poolId = new PublicKey(pool.publicKey);
 
-  if(amountInInput || amountOutMinInput) ; else { // fixed amountOut, variable amountIn (amountInMax)
+  if(amountInInput || amountOutMinInput) { // fixed amountIn, variable amountOut (amountOutMin)
+
+    const dataLayout = struct([u64$1("amountIn"), u64$1("amounOutMin")]);
+
+      const keys = [
+        // 0 payer
+        { pubkey: new PublicKey(account), isSigner: true, isWritable: false },
+        // 1 authority
+        { pubkey: await getPdaPoolAuthority(CP_PROGRAM_ID), isSigner: false, isWritable: false },
+        // 2 configId
+        { pubkey: pool.data.configId, isSigner: false, isWritable: false },
+        // 3 poolId
+        { pubkey: poolId, isSigner: false, isWritable: true },
+        // 4 userInputAccount
+        { pubkey: tokenAccountIn, isSigner: false, isWritable: true },
+        // 5 userOutputAccount
+        { pubkey: tokenAccountOut, isSigner: false, isWritable: true },
+        // 6 inputVault
+        { pubkey: inputVault, isSigner: false, isWritable: true },
+        // 7 outputVault
+        { pubkey: outputVault, isSigner: false, isWritable: true },
+        // 8 inputTokenProgram
+        { pubkey: new PublicKey(Token.solana.TOKEN_PROGRAM), isSigner: false, isWritable: false },
+        // 9 outputTokenProgram
+        { pubkey: new PublicKey(Token.solana.TOKEN_PROGRAM), isSigner: false, isWritable: false },
+        // 10 inputMint
+        { pubkey: inputMint, isSigner: false, isWritable: false },
+        // 11 outputMint
+        { pubkey: outputMint, isSigner: false, isWritable: false },
+        // 12 observationId
+        { pubkey: await getPdaObservationId(CP_PROGRAM_ID, poolId), isSigner: false, isWritable: true },
+      ];
+
+      const data = Buffer.alloc(dataLayout.span);
+      dataLayout.encode({ 
+        amountIn: new BN((amountIn || amountInMax).toString()),
+        amounOutMin: new BN((amountOut || amountOutMin).toString())
+      }, data);
+
+      return new TransactionInstruction({
+        programId: CP_PROGRAM_ID,
+        keys,
+        data: Buffer.from([...swapBaseInputInstruction, ...data]),
+      })
+
+  } else { // fixed amountOut, variable amountIn (amountInMax)
 
     const dataLayout = struct([u64$1("amountInMax"), u64$1("amountOut")]);
 
@@ -4727,42 +4774,10 @@ const getTransaction = async({
     );
   }
 
-  await debug(instructions, provider);
+  // await debug(instructions, provider)
 
   transaction.instructions = instructions;
   return transaction
-};
-
-const debug = async(instructions, provider)=>{
-  console.log('instructions.length', instructions.length);
-  let data;
-  instructions.forEach((instruction)=>{
-    console.log('INSTRUCTION.programId', instruction.programId.toString());
-    console.log('INSTRUCTION.keys', instruction.keys);
-    try {
-      const LAYOUT = struct([
-        u64$1("anchorDiscriminator"),
-        u64$1("amount"),
-        u64$1("otherAmountThreshold"),
-        u128("sqrtPriceLimit"),
-        bool("amountSpecifiedIsInput"),
-        bool("aToB"),
-      ]);
-      data = LAYOUT.decode(instruction.data);
-    } catch (e3) {}
-  });
-  if(data) {
-    console.log('INSTRUCTION.data', data);
-    console.log('amount', data.amount.toString());
-    console.log('otherAmountThreshold', data.otherAmountThreshold.toString());
-    console.log('sqrtPriceLimit', data.sqrtPriceLimit.toString());
-  }
-  let simulation = new Transaction({ feePayer: new PublicKey('2UgCJaHU5y8NC4uWQcZYeV9a5RyYLF7iKYCybCsdFFD1') });
-  instructions.forEach((instruction)=>simulation.add(instruction));
-  let result;
-  console.log('SIMULATE');
-  try{ result = await provider.simulateTransaction(simulation); } catch(e) { console.log('error', e); }
-  console.log('SIMULATION RESULT', result);
 };
 
 var Raydium = {
