@@ -88,50 +88,6 @@ const getCPMMInstruction = async({
 
   if(amountInInput || amountOutMinInput) { // fixed amountIn, variable amountOut (amountOutMin)
 
-    const dataLayout = struct([u64("amountIn"), u64("amounOutMin")]);
-
-    const keys = [
-      // 0 payer
-      { pubkey: new PublicKey(account), isSigner: true, isWritable: false },
-      // 1 authority
-      { pubkey: await getPdaPoolAuthority(CP_PROGRAM_ID), isSigner: false, isWritable: false },
-      // 2 configId
-      { pubkey: pool.data.configId, isSigner: false, isWritable: false },
-      // 3 poolId
-      { pubkey: poolId, isSigner: false, isWritable: true },
-      // 4 userInputAccount
-      { pubkey: tokenAccountIn, isSigner: false, isWritable: true },
-      // 5 userOutputAccount
-      { pubkey: tokenAccountOut, isSigner: false, isWritable: true },
-      // 6 inputVault
-      { pubkey: inputVault, isSigner: false, isWritable: true },
-      // 7 outputVault
-      { pubkey: outputVault, isSigner: false, isWritable: true },
-      // 8 inputTokenProgram
-      { pubkey: new PublicKey(Token.solana.TOKEN_PROGRAM), isSigner: false, isWritable: false },
-      // 9 outputTokenProgram
-      { pubkey: new PublicKey(Token.solana.TOKEN_PROGRAM), isSigner: false, isWritable: false },
-      // 10 inputMint
-      { pubkey: inputMint, isSigner: false, isWritable: false },
-      // 11 outputMint
-      { pubkey: outputMint, isSigner: false, isWritable: false },
-      // 12 observationId
-      { pubkey: await getPdaObservationId(CP_PROGRAM_ID, poolId), isSigner: false, isWritable: true },
-    ]
-
-    const data = Buffer.alloc(dataLayout.span)
-    dataLayout.encode({ 
-      amountIn: new BN((amountIn || amountInMax).toString()),
-      amounOutMin: new BN((amountOut || amountOutMin).toString())
-    }, data)
-
-    instructions.push(
-      new TransactionInstruction({
-        programId: CP_PROGRAM_ID,
-        keys,
-        data: Buffer.from([...swapBaseInputInstruction, ...data]),
-      })
-    )
 
   } else { // fixed amountOut, variable amountIn (amountInMax)
 

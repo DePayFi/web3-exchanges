@@ -4411,8 +4411,6 @@
 
   const CP_PROGRAM_ID = new solanaWeb3_js.PublicKey('CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C');
   const CL_PROGRAM_ID = new solanaWeb3_js.PublicKey('CAMMCzo5YL8w4VFF8KVHrK22GGUsp5VTaW7grrKgrWqK');
-
-  const swapBaseInputInstruction = [143, 190, 90, 218, 196, 30, 51, 222];
   const swapBaseOutputInstruction = [55, 217, 98, 86, 163, 74, 180, 173];
 
   const anchorDataBuf = {
@@ -4474,54 +4472,7 @@
     const outputVault = tokenIn == pool.mintA ? pool.data.vaultB : pool.data.vaultA;
     const poolId = new solanaWeb3_js.PublicKey(pool.publicKey);
 
-    if(amountInInput || amountOutMinInput) { // fixed amountIn, variable amountOut (amountOutMin)
-
-      const dataLayout = solanaWeb3_js.struct([solanaWeb3_js.u64("amountIn"), solanaWeb3_js.u64("amounOutMin")]);
-
-      const keys = [
-        // 0 payer
-        { pubkey: new solanaWeb3_js.PublicKey(account), isSigner: true, isWritable: false },
-        // 1 authority
-        { pubkey: await getPdaPoolAuthority(CP_PROGRAM_ID), isSigner: false, isWritable: false },
-        // 2 configId
-        { pubkey: pool.data.configId, isSigner: false, isWritable: false },
-        // 3 poolId
-        { pubkey: poolId, isSigner: false, isWritable: true },
-        // 4 userInputAccount
-        { pubkey: tokenAccountIn, isSigner: false, isWritable: true },
-        // 5 userOutputAccount
-        { pubkey: tokenAccountOut, isSigner: false, isWritable: true },
-        // 6 inputVault
-        { pubkey: inputVault, isSigner: false, isWritable: true },
-        // 7 outputVault
-        { pubkey: outputVault, isSigner: false, isWritable: true },
-        // 8 inputTokenProgram
-        { pubkey: new solanaWeb3_js.PublicKey(Token__default['default'].solana.TOKEN_PROGRAM), isSigner: false, isWritable: false },
-        // 9 outputTokenProgram
-        { pubkey: new solanaWeb3_js.PublicKey(Token__default['default'].solana.TOKEN_PROGRAM), isSigner: false, isWritable: false },
-        // 10 inputMint
-        { pubkey: inputMint, isSigner: false, isWritable: false },
-        // 11 outputMint
-        { pubkey: outputMint, isSigner: false, isWritable: false },
-        // 12 observationId
-        { pubkey: await getPdaObservationId(CP_PROGRAM_ID, poolId), isSigner: false, isWritable: true },
-      ];
-
-      const data = solanaWeb3_js.Buffer.alloc(dataLayout.span);
-      dataLayout.encode({ 
-        amountIn: new solanaWeb3_js.BN((amountIn || amountInMax).toString()),
-        amounOutMin: new solanaWeb3_js.BN((amountOut || amountOutMin).toString())
-      }, data);
-
-      instructions.push(
-        new solanaWeb3_js.TransactionInstruction({
-          programId: CP_PROGRAM_ID,
-          keys,
-          data: solanaWeb3_js.Buffer.from([...swapBaseInputInstruction, ...data]),
-        })
-      );
-
-    } else { // fixed amountOut, variable amountIn (amountInMax)
+    if(amountInInput || amountOutMinInput) ; else { // fixed amountOut, variable amountIn (amountInMax)
 
       const dataLayout = solanaWeb3_js.struct([solanaWeb3_js.u64("amountInMax"), solanaWeb3_js.u64("amountOut")]);
 
