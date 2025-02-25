@@ -125,7 +125,10 @@ const getPairsWithPrice = async({ tokenIn, tokenOut, amountIn, amountInMax, amou
 
     }
 
+    if(price === 0) { return }
+
     return {
+      type: 'cpmm',
       publicKey: account.pubkey.toString(),
       mintA: account.data.mintA.toString(),
       mintB: account.data.mintB.toString(),

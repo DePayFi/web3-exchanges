@@ -96,8 +96,52 @@ const CLMM_LAYOUT = struct([
   seq(u64(), 15 * 4 - 3, "padding"),
 ]);
 
+const CLMM_CONFIG_LAYOUT = struct([
+  blob(8),
+  u8("bump"),
+  u16("index"),
+  publicKey(""),
+  u32("protocolFeeRate"),
+  u32("tradeFeeRate"),
+  u16("tickSpacing"),
+  seq(u64(), 8, ""),
+]);
+
+export const TICK_ARRAY_SIZE = 60;
+
+const TickLayout = struct([
+  i32("tick"),
+  i128("liquidityNet"),
+  u128("liquidityGross"),
+  u128("feeGrowthOutsideX64A"),
+  u128("feeGrowthOutsideX64B"),
+  seq(u128(), 3, "rewardGrowthsOutsideX64"),
+  seq(u32(), 13, ""),
+]);
+
+const TICK_ARRAY_LAYOUT = struct([
+  blob(8),
+  publicKey("poolId"),
+  i32("startTickIndex"),
+  seq(TickLayout, TICK_ARRAY_SIZE, "ticks"),
+  u8("initializedTickCount"),
+  seq(u8(), 115, ""),
+]);
+
+const EXTENSION_TICKARRAY_BITMAP_SIZE = 14;
+
+const TICK_ARRAY_BITMAP_EXTENSION_LAYOUT = struct([
+  blob(8),
+  publicKey("poolId"),
+  seq(seq(u64(), 8), EXTENSION_TICKARRAY_BITMAP_SIZE, "positiveTickArrayBitmap"),
+  seq(seq(u64(), 8), EXTENSION_TICKARRAY_BITMAP_SIZE, "negativeTickArrayBitmap"),
+]);
+
 export {
   CPMM_LAYOUT,
-  CLMM_LAYOUT,
   CPMM_CONFIG_LAYOUT,
+  CLMM_LAYOUT,
+  CLMM_CONFIG_LAYOUT,
+  TICK_ARRAY_LAYOUT,
+  TICK_ARRAY_BITMAP_EXTENSION_LAYOUT,
 }
