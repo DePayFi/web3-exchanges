@@ -57,7 +57,7 @@ const getPdaObservationId = async(programId, poolId)=> {
   let [publicKey, nonce] = await PublicKey.findProgramAddress(
     [
       Buffer.from("observation", "utf8"),
-      poolId.toBuffer()
+      Buffer.from(poolId.toBuffer())
     ],
     programId
   )

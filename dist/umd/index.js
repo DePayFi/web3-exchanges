@@ -4051,7 +4051,7 @@
   };
 
   const getPdaTickArrayAddress = (programId, poolId, startIndex) => {
-    const [publicKey, nonce] = solanaWeb3_js.PublicKey.findProgramAddressSync([TICK_ARRAY_SEED, poolId.toBuffer(), i32ToBytes(startIndex)], programId);
+    const [publicKey, nonce] = solanaWeb3_js.PublicKey.findProgramAddressSync([TICK_ARRAY_SEED, solanaWeb3_js.Buffer.from(poolId.toBuffer()), i32ToBytes(startIndex)], programId);
     return publicKey
   };
 
@@ -4274,7 +4274,7 @@
   };
 
   const getPdaExBitmapAddress = async(programId, poolId) => {
-    const [publicKey, nonce] = await solanaWeb3_js.PublicKey.findProgramAddress([POOL_TICK_ARRAY_BITMAP_SEED, poolId.toBuffer()], programId);
+    const [publicKey, nonce] = await solanaWeb3_js.PublicKey.findProgramAddress([POOL_TICK_ARRAY_BITMAP_SEED, solanaWeb3_js.Buffer.from(poolId.toBuffer())], programId);
     return publicKey.toString()
   };
 
@@ -4802,7 +4802,7 @@
     let [publicKey, nonce] = await solanaWeb3_js.PublicKey.findProgramAddress(
       [
         solanaWeb3_js.Buffer.from("observation", "utf8"),
-        poolId.toBuffer()
+        solanaWeb3_js.Buffer.from(poolId.toBuffer())
       ],
       programId
     );

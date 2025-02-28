@@ -4046,7 +4046,7 @@ const i32ToBytes = (num) => {
 };
 
 const getPdaTickArrayAddress = (programId, poolId, startIndex) => {
-  const [publicKey, nonce] = PublicKey.findProgramAddressSync([TICK_ARRAY_SEED, poolId.toBuffer(), i32ToBytes(startIndex)], programId);
+  const [publicKey, nonce] = PublicKey.findProgramAddressSync([TICK_ARRAY_SEED, Buffer.from(poolId.toBuffer()), i32ToBytes(startIndex)], programId);
   return publicKey
 };
 
@@ -4269,7 +4269,7 @@ const getFirstInitializedTickArray = async(
 };
 
 const getPdaExBitmapAddress = async(programId, poolId) => {
-  const [publicKey, nonce] = await PublicKey.findProgramAddress([POOL_TICK_ARRAY_BITMAP_SEED, poolId.toBuffer()], programId);
+  const [publicKey, nonce] = await PublicKey.findProgramAddress([POOL_TICK_ARRAY_BITMAP_SEED, Buffer.from(poolId.toBuffer())], programId);
   return publicKey.toString()
 };
 
@@ -4797,7 +4797,7 @@ const getPdaObservationId = async(programId, poolId)=> {
   let [publicKey, nonce] = await PublicKey.findProgramAddress(
     [
       Buffer.from("observation", "utf8"),
-      poolId.toBuffer()
+      Buffer.from(poolId.toBuffer())
     ],
     programId
   );
