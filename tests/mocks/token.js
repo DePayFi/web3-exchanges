@@ -15,7 +15,7 @@ function mockDecimals({ provider, blockchain, address, value }) {
         return: value
       }
     })
-  } else if(supported.solana.includes(blockchain)){
+  } else if(supported.svm.includes(blockchain)){
     return mock({
       blockchain,
       provider,

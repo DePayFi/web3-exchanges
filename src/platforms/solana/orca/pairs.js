@@ -1,10 +1,10 @@
 /*#if _EVM
 
-/*#elif _SOLANA
+/*#elif _SVM
 
 
-import { request } from '@depay/web3-client-solana'
-import Token from '@depay/web3-tokens-solana'
+import { request } from '@depay/web3-client-svm'
+import Token from '@depay/web3-tokens-svm'
 
 //#else */
 

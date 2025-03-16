@@ -1,6 +1,6 @@
 /*#if _EVM
 
-/*#elif _SOLANA
+/*#elif _SVM
 
 //#else */
 

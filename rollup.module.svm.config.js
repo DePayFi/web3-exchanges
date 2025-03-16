@@ -1,7 +1,7 @@
 import commonjs from '@rollup/plugin-commonjs'
 import globals from './rollup.globals'
 import jscc from 'rollup-plugin-jscc'
-import pkg from './package.solana.json'
+import pkg from './package.svm.json'
 import replace from '@rollup/plugin-replace'
 import resolve from '@rollup/plugin-node-resolve'
 import sucrase from '@rollup/plugin-sucrase'
@@ -13,13 +13,13 @@ export default {
     {
       format: 'es',
       globals: globals,
-      file: 'dist/esm/index.solana.js'
+      file: 'dist/esm/index.svm.js'
     },
     {
       format: 'umd',
       name: pkg.moduleName,
       globals: globals,
-      file: 'dist/umd/index.solana.js'
+      file: 'dist/umd/index.svm.js'
     },
   ],
   external: [

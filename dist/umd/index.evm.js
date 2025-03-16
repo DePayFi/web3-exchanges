@@ -47,7 +47,7 @@
 
   let supported = ['ethereum', 'bsc', 'polygon', 'fantom', 'arbitrum', 'avalanche', 'gnosis', 'optimism', 'base', 'worldchain'];
   supported.evm = ['ethereum', 'bsc', 'polygon', 'fantom', 'arbitrum', 'avalanche', 'gnosis', 'optimism', 'base', 'worldchain'];
-  supported.solana = [];
+  supported.svm = [];
 
   const DEFAULT_SLIPPAGE = '0.5'; // percent
 
@@ -163,7 +163,7 @@
     if(amountOutMinInput || amountOutInput) {
       if(supported.evm.includes(exchange.blockchain || blockchain)) {
         amountIn = amountInMax = await calculateAmountInWithSlippage({ exchange, blockchain, pools, exchangePath, amountIn, amountOut: (amountOutMinInput || amountOut) });
-      } else if(supported.solana.includes(exchange.blockchain || blockchain)){
+      } else if(supported.svm.includes(exchange.blockchain || blockchain)){
         let amountsWithSlippage = [];
         await Promise.all(exchangePath.map((step, index)=>{
           if(index != 0) {
@@ -177,7 +177,7 @@
         amountIn = amountInMax = amounts[0];
       }
     } else if(amountInMaxInput || amountInInput) {
-      if(supported.solana.includes(exchange.blockchain || blockchain)){
+      if(supported.svm.includes(exchange.blockchain || blockchain)){
         let amountsWithSlippage = [];
         await Promise.all(exchangePath.map((step, index)=>{
           if(index !== 0 && index < exchangePath.length-1) {

@@ -3,7 +3,7 @@
 import Token from '@depay/web3-tokens-evm'
 import { request } from '@depay/web3-client-evm'
 
-/*#elif _SOLANA
+/*#elif _SVM
 
 //#else */
 

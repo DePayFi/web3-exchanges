@@ -1,4 +1,4 @@
-name: Publish SOLANA
+name: Publish SVM
 
 on:
   release:
@@ -12,10 +12,10 @@ jobs:
       # Setup .npmrc file to publish to npm
       - uses: actions/setup-node@v2
         with:
-          node-version: '16.x'
+          node-version: '18.x'
           registry-url: 'https://registry.npmjs.org'
 
-      - run: mv package.solana.json package.json
+      - run: mv package.svm.json package.json
           
       - run: yarn install
 

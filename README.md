@@ -125,16 +125,16 @@ Gnosis:
 
 In case you want to use and package only specific platforms, use the platform-specific package:
 
-### EVM platform specific packaging
+### EVM (Ethereum Virtual Machine) platform specific packaging
 
 ```javascript
 import Exchanges from '@depay/web3-exchanges-evm'
 ```
 
-### Solana platform specific packaging
+### SVM (Solana Virtual Machine) platform specific packaging
 
 ```javascript
-import Exchanges from '@depay/web3-exchanges-solana'
+import Exchanges from '@depay/web3-exchanges-svm'
 ```
 
 ## Data Structures

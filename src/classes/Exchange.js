@@ -2,9 +2,9 @@
 
 import Token from '@depay/web3-tokens-evm'
 
-/*#elif _SOLANA
+/*#elif _SVM
 
-import Token from '@depay/web3-tokens-solana'
+import Token from '@depay/web3-tokens-svm'
 
 //#else */
 

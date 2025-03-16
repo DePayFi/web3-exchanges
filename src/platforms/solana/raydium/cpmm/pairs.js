@@ -1,8 +1,8 @@
 /*#if _EVM
 
-/*#elif _SOLANA
+/*#elif _SVM
 
-import { request } from '@depay/web3-client-solana'
+import { request } from '@depay/web3-client-svm'
 import { BN } from '@depay/solana-web3.js'
 
 //#else */

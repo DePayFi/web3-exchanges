@@ -108,7 +108,7 @@ exchanges.worldchain = [
 exchanges.worldchain.forEach((exchange)=>{ exchanges.worldchain[exchange.name] = exchange })
 
 
-/*#elif _SOLANA
+/*#elif _SVM
 
 import orca from './exchanges/orca'
 import raydium from './exchanges/raydium'
