@@ -1,4 +1,4 @@
-import Exchanges from 'dist/esm/index.solana'
+import Exchanges from 'dist/esm/index.svm'
 
 describe('Exchanges', () => {
   
