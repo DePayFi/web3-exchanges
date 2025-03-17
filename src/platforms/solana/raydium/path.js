@@ -31,18 +31,18 @@ let getExchangePath = ({ path }) => {
   return exchangePath
 }
 
-let pathExists = async ({ path, amountIn, amountInMax, amountOut, amountOutMin }) => {
+let pathExists = async ({ exchange, path, amountIn, amountInMax, amountOut, amountOutMin }) => {
   if(path.length == 1) { return false }
   path = getExchangePath({ path })
   let pairs = []
-  if((await getPairsWithPrice({ tokenIn: path[0], tokenOut: path[1], amountIn, amountInMax, amountOut, amountOutMin })).length > 0) {
+  if((await getPairsWithPrice({ exchange, tokenIn: path[0], tokenOut: path[1], amountIn, amountInMax, amountOut, amountOutMin })).length > 0) {
     return true
   } else {
     return false
   }
 }
 
-let findPath = async ({ tokenIn, tokenOut, amountIn, amountOut, amountInMax, amountOutMin }) => {
+let findPath = async ({ exchange, tokenIn, tokenOut, amountIn, amountOut, amountInMax, amountOutMin }) => {
   if(
     [tokenIn, tokenOut].includes(blockchain.currency.address) &&
     [tokenIn, tokenOut].includes(blockchain.wrapped.address)
@@ -50,7 +50,7 @@ let findPath = async ({ tokenIn, tokenOut, amountIn, amountOut, amountInMax, amo
 
   let path, stablesIn, stablesOut, stable
 
-  if (await pathExists({ path: [tokenIn, tokenOut], amountIn, amountInMax, amountOut, amountOutMin })) {
+  if (await pathExists({ exchange, path: [tokenIn, tokenOut], amountIn, amountInMax, amountOut, amountOutMin })) {
     // direct path
     path = [tokenIn, tokenOut]
   } else if (

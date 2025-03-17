@@ -10,22 +10,17 @@ import { ethers } from 'ethers'
 import { getPairsWithPrice as getPairsWithPriceCPMM } from './cpmm/pairs'
 import { getPairsWithPrice as getPairsWithPriceCLMM } from './clmm/pairs'
 
-const getParisWithPriceForAllTypes = ({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin })=>{
-  return Promise.all([
-    getPairsWithPriceCPMM({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }),
-    getPairsWithPriceCLMM({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }),
-  ]).then((pairsCPMM, pairsCLMNN)=>{
-    return [
-      (pairsCPMM || []).filter(Boolean).flat(),
-      (pairsCLMNN || []).filter(Boolean).flat()
-    ].flat()
-  })
-}
-
-const getPairsWithPrice = async({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin })=>{
+const getPairsWithPrice = async({ exchange, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin })=>{
   try {
-    return await getParisWithPriceForAllTypes({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin })
-  } catch {
+    if(exchange?.name == 'raydium_cp') {
+      return getPairsWithPriceCPMM({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin })
+    } else if (exchange?.name == 'raydium_cl') {
+      return getPairsWithPriceCLMM({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin })
+    } else {
+      return []
+    }
+  } catch(e) {
+    console.log('ERROR', e)
     return []
   }
 }
@@ -38,8 +33,8 @@ let getLowestPrice = (pairs)=>{
   return pairs.reduce((bestPricePair, currentPair)=> ethers.BigNumber.from(currentPair.price).lt(ethers.BigNumber.from(bestPricePair.price)) ? currentPair : bestPricePair)
 }
 
-let getBestPair = async({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }) => {
-  const pairs = await getPairsWithPrice({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin })
+let getBestPair = async({ exchange, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }) => {
+  const pairs = await getPairsWithPrice({ exchange, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin })
 
   if(!pairs || pairs.length === 0) { return }
 

@@ -111,11 +111,13 @@ exchanges.worldchain.forEach((exchange)=>{ exchanges.worldchain[exchange.name] =
 /*#elif _SVM
 
 import orca from './exchanges/orca'
-import raydium from './exchanges/raydium'
+import raydium_cp from './exchanges/raydium_cp'
+import raydium_cl from './exchanges/raydium_cl'
 
 const exchanges = [
   orca(),
-  raydium(),
+  raydium_cp(),
+  raydium_cl(),
 ]
 exchanges.forEach((exchange)=>{
   exchanges[exchange.name] = exchange
@@ -123,7 +125,8 @@ exchanges.forEach((exchange)=>{
 
 exchanges.solana = [
   orca('solana'),
-  raydium('solana'),
+  raydium_cp('solana'),
+  raydium_cl('solana'),
 ]
 exchanges.solana.forEach((exchange)=>{ exchanges.solana[exchange.name] = exchange })
 
@@ -131,7 +134,8 @@ exchanges.solana.forEach((exchange)=>{ exchanges.solana[exchange.name] = exchang
 
 import honeyswap from './exchanges/honeyswap'
 import orca from './exchanges/orca'
-import raydium from './exchanges/raydium'
+import raydium_cp from './exchanges/raydium_cp'
+import raydium_cl from './exchanges/raydium_cl'
 import pancakeswap from './exchanges/pancakeswap'
 import pancakeswap_v3 from './exchanges/pancakeswap_v3'
 import quickswap from './exchanges/quickswap'
@@ -151,7 +155,8 @@ import wxdai from './exchanges/wxdai'
 
 const exchanges = [
   orca(),
-  raydium(),
+  raydium_cp(),
+  raydium_cl(),
   uniswap_v3(),
   pancakeswap_v3(),
   uniswap_v2(),
@@ -198,7 +203,8 @@ exchanges.polygon.forEach((exchange)=>{ exchanges.polygon[exchange.name] = excha
 
 exchanges.solana = [
   orca('solana'),
-  raydium('solana'),
+  raydium_cp('solana'),
+  raydium_cl('solana'),
 ]
 exchanges.solana.forEach((exchange)=>{ exchanges.solana[exchange.name] = exchange })
 

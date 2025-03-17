@@ -95,12 +95,14 @@ Polygon:
 
 Solana:
 - [Orca](https://orca.so)
+- [Raydium](https://raydium.io/), only CP (Constant Product) and CL (Concentrated Liquidity) pools
 
 Optimism:
 - [Uniswap v3](https://uniswap.org)
 - [WETH](https://optimistic.etherscan.io/address/0x4200000000000000000000000000000000000006)
 
 Base:
+- [Uniswap v2](https://uniswap.org)
 - [Uniswap v3](https://uniswap.org)
 - [WETH](https://optimistic.etherscan.io/address/0x4200000000000000000000000000000000000006)
 

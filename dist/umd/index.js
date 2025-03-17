@@ -10,7 +10,7 @@
   var Blockchains__default = /*#__PURE__*/_interopDefaultLegacy(Blockchains);
   var Decimal__default = /*#__PURE__*/_interopDefaultLegacy(Decimal$1);
 
-  function _optionalChain$8(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }class Route {
+  function _optionalChain$9(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }class Route {
     constructor({
       blockchain,
       tokenIn,
@@ -36,10 +36,10 @@
       this.decimalsOut = decimalsOut;
       this.path = path;
       this.pools = pools;
-      this.amountIn = _optionalChain$8([amountIn, 'optionalAccess', _ => _.toString, 'call', _2 => _2()]);
-      this.amountOutMin = _optionalChain$8([amountOutMin, 'optionalAccess', _3 => _3.toString, 'call', _4 => _4()]);
-      this.amountOut = _optionalChain$8([amountOut, 'optionalAccess', _5 => _5.toString, 'call', _6 => _6()]);
-      this.amountInMax = _optionalChain$8([amountInMax, 'optionalAccess', _7 => _7.toString, 'call', _8 => _8()]);
+      this.amountIn = _optionalChain$9([amountIn, 'optionalAccess', _ => _.toString, 'call', _2 => _2()]);
+      this.amountOutMin = _optionalChain$9([amountOutMin, 'optionalAccess', _3 => _3.toString, 'call', _4 => _4()]);
+      this.amountOut = _optionalChain$9([amountOut, 'optionalAccess', _5 => _5.toString, 'call', _6 => _6()]);
+      this.amountInMax = _optionalChain$9([amountInMax, 'optionalAccess', _7 => _7.toString, 'call', _8 => _8()]);
       this.exchange = exchange;
       this.getPrep = getPrep;
       this.getTransaction = getTransaction;
@@ -440,7 +440,7 @@
     }
   }
 
-  function _optionalChain$7(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
+  function _optionalChain$8(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
 
   // Replaces 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE with the wrapped token and implies wrapping.
   //
@@ -559,9 +559,9 @@
 
     // Add WRAPPED to route path if things start or end with NATIVE
     // because that actually reflects how things are routed in reality:
-    if(_optionalChain$7([path, 'optionalAccess', _ => _.length]) && path[0] == Blockchains__default['default'][blockchain].currency.address) {
+    if(_optionalChain$8([path, 'optionalAccess', _ => _.length]) && path[0] == Blockchains__default['default'][blockchain].currency.address) {
       path.splice(1, 0, Blockchains__default['default'][blockchain].wrapped.address);
-    } else if(_optionalChain$7([path, 'optionalAccess', _2 => _2.length]) && path[path.length-1] == Blockchains__default['default'][blockchain].currency.address) {
+    } else if(_optionalChain$8([path, 'optionalAccess', _2 => _2.length]) && path[path.length-1] == Blockchains__default['default'][blockchain].currency.address) {
       path.splice(path.length-1, 0, Blockchains__default['default'][blockchain].wrapped.address);
     }
 
@@ -756,7 +756,7 @@
     PAIR: PAIR$1,
   };
 
-  const exchange$i = {
+  const exchange$j = {
     
     name: 'honeyswap',
     label: 'Honeyswap',
@@ -786,13 +786,13 @@
     
     return new Exchange(
 
-      Object.assign(exchange$i, {
+      Object.assign(exchange$j, {
         scope,
-        findPath: (args)=>UniswapV2.findPath({ ...args, exchange: exchange$i }),
-        pathExists: (args)=>UniswapV2.pathExists({ ...args, exchange: exchange$i }),
-        getAmounts: (args)=>UniswapV2.getAmounts({ ...args, exchange: exchange$i }),
-        getPrep: (args)=>UniswapV2.getPrep({ ...args, exchange: exchange$i }),
-        getTransaction: (args)=>UniswapV2.getTransaction({ ...args, exchange: exchange$i }),
+        findPath: (args)=>UniswapV2.findPath({ ...args, exchange: exchange$j }),
+        pathExists: (args)=>UniswapV2.pathExists({ ...args, exchange: exchange$j }),
+        getAmounts: (args)=>UniswapV2.getAmounts({ ...args, exchange: exchange$j }),
+        getPrep: (args)=>UniswapV2.getPrep({ ...args, exchange: exchange$j }),
+        getTransaction: (args)=>UniswapV2.getTransaction({ ...args, exchange: exchange$j }),
       })
     )
   };
@@ -2002,7 +2002,7 @@
     return bestPair
   };
 
-  function _optionalChain$6(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
+  function _optionalChain$7(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
   const blockchain$3 = Blockchains__default['default'].solana;
 
   // Replaces 11111111111111111111111111111111 with the wrapped token and implies wrapping.
@@ -2077,9 +2077,9 @@
 
     // Add blockchain.wrapped.address to route path if things start or end with blockchain.currency.address
     // because that actually reflects how things are routed in reality:
-    if(_optionalChain$6([path, 'optionalAccess', _ => _.length]) && path[0] == blockchain$3.currency.address) {
+    if(_optionalChain$7([path, 'optionalAccess', _ => _.length]) && path[0] == blockchain$3.currency.address) {
       path.splice(1, 0, blockchain$3.wrapped.address);
-    } else if(_optionalChain$6([path, 'optionalAccess', _2 => _2.length]) && path[path.length-1] == blockchain$3.currency.address) {
+    } else if(_optionalChain$7([path, 'optionalAccess', _2 => _2.length]) && path[path.length-1] == blockchain$3.currency.address) {
       path.splice(path.length-1, 0, blockchain$3.wrapped.address);
     }
     return { path, exchangePath: getExchangePath$4({ path }) }
@@ -2553,7 +2553,7 @@
     WHIRLPOOL_LAYOUT,
   };
 
-  const exchange$h = {
+  const exchange$i = {
     
     name: 'orca',
     label: 'Orca',
@@ -2576,14 +2576,14 @@
     
     return new Exchange(
 
-      Object.assign(exchange$h, {
+      Object.assign(exchange$i, {
         scope,
 
-        findPath: (args)=>Orca.findPath({ ...args, exchange: exchange$h }),
-        pathExists: (args)=>Orca.pathExists({ ...args, exchange: exchange$h }),
-        getAmounts: (args)=>Orca.getAmounts({ ...args, exchange: exchange$h }),
+        findPath: (args)=>Orca.findPath({ ...args, exchange: exchange$i }),
+        pathExists: (args)=>Orca.pathExists({ ...args, exchange: exchange$i }),
+        getAmounts: (args)=>Orca.getAmounts({ ...args, exchange: exchange$i }),
         getPrep: (args)=>{},
-        getTransaction: (args)=>Orca.getTransaction({ ...args, exchange: exchange$h }),
+        getTransaction: (args)=>Orca.getTransaction({ ...args, exchange: exchange$i }),
       })
     )
   };
@@ -3058,7 +3058,7 @@
   const TOKEN_2022_PROGRAM_ID = new solanaWeb3_js.PublicKey('TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb');
   const MEMO_PROGRAM_ID = new solanaWeb3_js.PublicKey('MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr');
 
-  function _optionalChain$5(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
+  function _optionalChain$6(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
 
   class LiquidityMath {
     
@@ -3238,19 +3238,19 @@
       const amounts = LiquidityMath.getAmountsFromLiquidity(sqrtPriceX64, sqrtPriceX64A, sqrtPriceX64B, liquidity, add);
 
       const [amountA, amountB] = [
-        getTransferAmountFeeV2(amounts.amountA, _optionalChain$5([poolInfo, 'access', _ => _.mintA, 'access', _2 => _2.extensions, 'optionalAccess', _3 => _3.feeConfig]), epochInfo, amountAddFee),
-        getTransferAmountFeeV2(amounts.amountB, _optionalChain$5([poolInfo, 'access', _4 => _4.mintB, 'access', _5 => _5.extensions, 'optionalAccess', _6 => _6.feeConfig]), epochInfo, amountAddFee),
+        getTransferAmountFeeV2(amounts.amountA, _optionalChain$6([poolInfo, 'access', _ => _.mintA, 'access', _2 => _2.extensions, 'optionalAccess', _3 => _3.feeConfig]), epochInfo, amountAddFee),
+        getTransferAmountFeeV2(amounts.amountB, _optionalChain$6([poolInfo, 'access', _4 => _4.mintB, 'access', _5 => _5.extensions, 'optionalAccess', _6 => _6.feeConfig]), epochInfo, amountAddFee),
       ];
       const [amountSlippageA, amountSlippageB] = [
         getTransferAmountFeeV2(
           new solanaWeb3_js.BN(new Decimal(amounts.amountA.toString()).mul(coefficientRe).toFixed(0)),
-          _optionalChain$5([poolInfo, 'access', _7 => _7.mintA, 'access', _8 => _8.extensions, 'optionalAccess', _9 => _9.feeConfig]),
+          _optionalChain$6([poolInfo, 'access', _7 => _7.mintA, 'access', _8 => _8.extensions, 'optionalAccess', _9 => _9.feeConfig]),
           epochInfo,
           amountAddFee,
         ),
         getTransferAmountFeeV2(
           new solanaWeb3_js.BN(new Decimal(amounts.amountB.toString()).mul(coefficientRe).toFixed(0)),
-          _optionalChain$5([poolInfo, 'access', _10 => _10.mintB, 'access', _11 => _11.extensions, 'optionalAccess', _12 => _12.feeConfig]),
+          _optionalChain$6([poolInfo, 'access', _10 => _10.mintB, 'access', _11 => _11.extensions, 'optionalAccess', _12 => _12.feeConfig]),
           epochInfo,
           amountAddFee,
         ),
@@ -3486,7 +3486,7 @@
     }
   }
 
-  function _optionalChain$4(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
+  function _optionalChain$5(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
 
   const nextInitializedTickArray = (tickIndex, tickSpacing, zeroForOne, tickArrayBitmap, exBitmapInfo) => {
     const currentOffset = Math.floor(tickIndex / tickCount(tickSpacing));
@@ -3573,7 +3573,7 @@
         let _nextInitTick = tickState ? tickState : null;
         let tickArrayAddress = null;
 
-        if (!_optionalChain$4([_nextInitTick, 'optionalAccess', _ => _.liquidityGross, 'access', _2 => _2.gtn, 'call', _3 => _3(0)])) {
+        if (!_optionalChain$5([_nextInitTick, 'optionalAccess', _ => _.liquidityGross, 'access', _2 => _2.gtn, 'call', _3 => _3(0)])) {
           const nextInitTickArrayIndex = nextInitializedTickArrayStartIndex(
             {
               tickCurrent: state.tick,
@@ -4545,22 +4545,19 @@
 
   };
 
-  const getParisWithPriceForAllTypes = ({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin })=>{
-    return Promise.all([
-      getPairsWithPrice$2({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }),
-      getPairsWithPrice$1({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }),
-    ]).then((pairsCPMM, pairsCLMNN)=>{
-      return [
-        (pairsCPMM || []).filter(Boolean).flat(),
-        (pairsCLMNN || []).filter(Boolean).flat()
-      ].flat()
-    })
-  };
+  function _optionalChain$4(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
 
-  const getPairsWithPrice = async({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin })=>{
+  const getPairsWithPrice = async({ exchange, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin })=>{
     try {
-      return await getParisWithPriceForAllTypes({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin })
-    } catch (e) {
+      if(_optionalChain$4([exchange, 'optionalAccess', _ => _.name]) == 'raydium_cp') {
+        return getPairsWithPrice$2({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin })
+      } else if (_optionalChain$4([exchange, 'optionalAccess', _2 => _2.name]) == 'raydium_cl') {
+        return getPairsWithPrice$1({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin })
+      } else {
+        return []
+      }
+    } catch(e) {
+      console.log('ERROR', e);
       return []
     }
   };
@@ -4573,8 +4570,8 @@
     return pairs.reduce((bestPricePair, currentPair)=> ethers.ethers.BigNumber.from(currentPair.price).lt(ethers.ethers.BigNumber.from(bestPricePair.price)) ? currentPair : bestPricePair)
   };
 
-  let getBestPair = async({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }) => {
-    const pairs = await getPairsWithPrice({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin });
+  let getBestPair = async({ exchange, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }) => {
+    const pairs = await getPairsWithPrice({ exchange, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin });
 
     if(!pairs || pairs.length === 0) { return }
 
@@ -4620,17 +4617,17 @@
     return exchangePath
   };
 
-  let pathExists$4 = async ({ path, amountIn, amountInMax, amountOut, amountOutMin }) => {
+  let pathExists$4 = async ({ exchange, path, amountIn, amountInMax, amountOut, amountOutMin }) => {
     if(path.length == 1) { return false }
     path = getExchangePath$3({ path });
-    if((await getPairsWithPrice({ tokenIn: path[0], tokenOut: path[1], amountIn, amountInMax, amountOut, amountOutMin })).length > 0) {
+    if((await getPairsWithPrice({ exchange, tokenIn: path[0], tokenOut: path[1], amountIn, amountInMax, amountOut, amountOutMin })).length > 0) {
       return true
     } else {
       return false
     }
   };
 
-  let findPath$4 = async ({ tokenIn, tokenOut, amountIn, amountOut, amountInMax, amountOutMin }) => {
+  let findPath$4 = async ({ exchange, tokenIn, tokenOut, amountIn, amountOut, amountInMax, amountOutMin }) => {
     if(
       [tokenIn, tokenOut].includes(blockchain$1.currency.address) &&
       [tokenIn, tokenOut].includes(blockchain$1.wrapped.address)
@@ -4638,7 +4635,7 @@
 
     let path, stablesIn, stablesOut, stable;
 
-    if (await pathExists$4({ path: [tokenIn, tokenOut], amountIn, amountInMax, amountOut, amountOutMin })) {
+    if (await pathExists$4({ exchange, path: [tokenIn, tokenOut], amountIn, amountInMax, amountOut, amountOutMin })) {
       // direct path
       path = [tokenIn, tokenOut];
     } else if (
@@ -4672,16 +4669,16 @@
     return { path, exchangePath: getExchangePath$3({ path }) }
   };
 
-  let getAmountsOut = async ({ path, amountIn, amountInMax }) => {
+  let getAmountsOut = async ({ exchange, path, amountIn, amountInMax }) => {
 
     let amounts = [ethers.ethers.BigNumber.from(amountIn || amountInMax)];
 
-    let bestPair = await getBestPair({ tokenIn: path[0], tokenOut: path[1], amountIn, amountInMax });
+    let bestPair = await getBestPair({ exchange, tokenIn: path[0], tokenOut: path[1], amountIn, amountInMax });
     if(!bestPair){ return }
     amounts.push(ethers.ethers.BigNumber.from(bestPair.price));
     
     if (path.length === 3) {
-      let bestPair = await getBestPair({ tokenIn: path[1], tokenOut: path[2], amountIn: amountIn ? amounts[1] : undefined, amountInMax: amountInMax ? amounts[1] : undefined });
+      let bestPair = await getBestPair({ exchange, tokenIn: path[1], tokenOut: path[2], amountIn: amountIn ? amounts[1] : undefined, amountInMax: amountInMax ? amounts[1] : undefined });
       if(!bestPair){ return }
       amounts.push(ethers.ethers.BigNumber.from(bestPair.price));
     }
@@ -4691,17 +4688,17 @@
     return amounts
   };
 
-  let getAmountsIn = async({ path, amountOut, amountOutMin }) => {
+  let getAmountsIn = async({ exchange, path, amountOut, amountOutMin }) => {
 
     path = path.slice().reverse();
     let amounts = [ethers.ethers.BigNumber.from(amountOut || amountOutMin)];
 
-    let bestPair = await getBestPair({ tokenIn: path[1], tokenOut: path[0], amountOut, amountOutMin });
+    let bestPair = await getBestPair({ exchange, tokenIn: path[1], tokenOut: path[0], amountOut, amountOutMin });
     if(!bestPair){ return }
     amounts.push(ethers.ethers.BigNumber.from(bestPair.price));
     
     if (path.length === 3) {
-      let bestPair = await getBestPair({ tokenIn: path[2], tokenOut: path[1], amountOut: amountOut ? amounts[1] : undefined, amountOutMin: amountOutMin ? amounts[1] : undefined });
+      let bestPair = await getBestPair({ exchange, tokenIn: path[2], tokenOut: path[1], amountOut: amountOut ? amounts[1] : undefined, amountOutMin: amountOutMin ? amounts[1] : undefined });
       if(!bestPair){ return }
       amounts.push(ethers.ethers.BigNumber.from(bestPair.price));
     }
@@ -4718,12 +4715,13 @@
     amountOut,
     amountIn,
     amountInMax,
-    amountOutMin
+    amountOutMin,
+    exchange
   }) => {
     path = getExchangePath$3({ path });
     let amounts;
     if (amountOut) {
-      amounts = await getAmountsIn({ path, amountOut, tokenIn, tokenOut });
+      amounts = await getAmountsIn({ exchange, path, amountOut, tokenIn, tokenOut });
       amountIn = amounts ? amounts[0] : undefined;
       if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
         return {}
@@ -4731,7 +4729,7 @@
         amountInMax = amountIn;
       }
     } else if (amountIn) {
-      amounts = await getAmountsOut({ path, amountIn, tokenIn, tokenOut });
+      amounts = await getAmountsOut({ exchange, path, amountIn, tokenIn, tokenOut });
       amountOut = amounts ? amounts[amounts.length-1] : undefined;
       if (amountOut == undefined || amountOutMin && amountOut.lt(amountOutMin)) {
         return {}
@@ -4739,7 +4737,7 @@
         amountOutMin = amountOut;
       }
     } else if(amountOutMin) {
-      amounts = await getAmountsIn({ path, amountOutMin, tokenIn, tokenOut });
+      amounts = await getAmountsIn({ exchange, path, amountOutMin, tokenIn, tokenOut });
       amountIn = amounts ? amounts[0] : undefined;
       if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
         return {}
@@ -4747,7 +4745,7 @@
         amountInMax = amountIn;
       }
     } else if(amountInMax) {
-      amounts = await getAmountsOut({ path, amountInMax, tokenIn, tokenOut });
+      amounts = await getAmountsOut({ exchange, path, amountInMax, tokenIn, tokenOut });
       amountOut = amounts ? amounts[amounts.length-1] : undefined;
       if (amountOut == undefined ||amountOutMin && amountOut.lt(amountOutMin)) {
         return {}
@@ -5028,7 +5026,8 @@
     amountOutInput,
     amountInMaxInput,
     amountOutMinInput,
-    account
+    account,
+    exchange,
   })=>{
     let transaction = { blockchain: 'solana' };
     let instructions = [];
@@ -5041,14 +5040,14 @@
       
     let pairs;
     if(exchangePath.length == 2) {
-      pairs = [await getBestPair({ tokenIn, tokenOut, amountIn: (amountInInput || amountInMaxInput), amountOut: (amountOutInput || amountOutMinInput) })];
+      pairs = [await getBestPair({ exchange, tokenIn, tokenOut, amountIn: (amountInInput || amountInMaxInput), amountOut: (amountOutInput || amountOutMinInput) })];
     } else {
       if(amountInInput || amountInMaxInput) {
-        pairs = [await getBestPair({ tokenIn, tokenOut: tokenMiddle, amountIn: (amountInInput || amountInMaxInput) })];
-        pairs.push(await getBestPair({ tokenIn: tokenMiddle, tokenOut, amountIn: pairs[0].price }));
+        pairs = [await getBestPair({ exchange, tokenIn, tokenOut: tokenMiddle, amountIn: (amountInInput || amountInMaxInput) })];
+        pairs.push(await getBestPair({ exchange, tokenIn: tokenMiddle, tokenOut, amountIn: pairs[0].price }));
       } else { // originally amountOut
-        pairs = [await getBestPair({ tokenIn: tokenMiddle, tokenOut, amountOut: (amountOutInput || amountOutMinInput) })];
-        pairs.unshift(await getBestPair({ tokenIn, tokenOut: tokenMiddle, amountOut: pairs[0].price }));
+        pairs = [await getBestPair({ exchange, tokenIn: tokenMiddle, tokenOut, amountOut: (amountOutInput || amountOutMinInput) })];
+        pairs.unshift(await getBestPair({ exchange, tokenIn, tokenOut: tokenMiddle, amountOut: pairs[0].price }));
       }
     }
 
@@ -5142,7 +5141,10 @@
     return transaction
   };
 
+  const LOGO = 'data:image/svg+xml;base64,PHN2ZyBmaWxsPSJub25lIiBoZWlnaHQ9IjMzIiB2aWV3Qm94PSIwIDAgMjkgMzMiIHdpZHRoPSIyOSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGxpbmVhckdyYWRpZW50IGlkPSJhIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjI4LjMxNjgiIHgyPSItMS43MzMzNiIgeTE9IjguMTkxNjIiIHkyPSIyMC4yMDg2Ij48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNjMjAwZmIiLz48c3RvcCBvZmZzZXQ9Ii40ODk2NTgiIHN0b3AtY29sb3I9IiMzNzcyZmYiLz48c3RvcCBvZmZzZXQ9Ii40ODk3NTgiIHN0b3AtY29sb3I9IiMzNzczZmUiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiM1YWM0YmUiLz48L2xpbmVhckdyYWRpZW50PjxnIGZpbGw9InVybCgjYSkiPjxwYXRoIGQ9Im0yNi44NjI1IDEyLjI4MXYxMS40MTA0bC0xMi42OTE2IDcuMzI2MS0xMi42OTg1OS03LjMyNjF2LTE0LjY1OTM3bDEyLjY5ODU5LTcuMzMzMjIgOS43NTQxIDUuNjM0NDEgMS40NzIzLS44NDk0MS0xMS4yMjY0LTYuNDgzODEtMTQuMTcwOSA4LjE4MjYydjE2LjM1ODE4bDE0LjE3MDkgOC4xODI2IDE0LjE3MS04LjE4MjZ2LTEzLjEwOTJ6Ii8+PHBhdGggZD0ibTEwLjYxNzYgMjMuNjk4NWgtMi4xMjM1M3YtNy4xMjA5aDcuMDc4NDNjLjY2OTctLjAwNzQgMS4zMDk1LS4yNzgyIDEuNzgxMS0uNzUzOC40NzE2LS40NzU1LjczNy0xLjExNzYuNzM4OC0xLjc4NzQuMDAzOC0uMzMxMS0uMDYwMS0uNjU5Ni0uMTg3OS0uOTY1MS0uMTI3OS0uMzA1Ni0uMzE2OC0uNTgxNy0uNTU1NC0uODExNS0uMjMwOC0uMjM3Mi0uNTA3MS0uNDI1My0uODEyNC0uNTUzLS4zMDUzLS4xMjc4LS42MzMzLS4xOTI1LS45NjQyLS4xOTAzaC03LjA3ODQzdi0yLjE2NTk1aDcuMDg1NDNjMS4yNDA1LjAwNzQzIDIuNDI4MS41MDM1MSAzLjMwNTMgMS4zODA2NS44NzcxLjg3NzIgMS4zNzMyIDIuMDY0OCAxLjM4MDYgMy4zMDUyLjAwNzYuOTQ5Ni0uMjgxOSAxLjg3NzctLjgyODEgMi42NTQ0LS41MDI3Ljc0MzItMS4yMTExIDEuMzIzNy0yLjAzODYgMS42NzA1LS44MTk0LjI1OTktMS42NzQ1LjM4ODktMi41MzQxLjM4MjNoLTQuMjQ3eiIvPjxwYXRoIGQ9Im0yMC4yMTU5IDIzLjUyMTVoLTIuNDc3NWwtMS45MTExLTMuMzMzOWMuNzU2MS0uMDQ2MyAxLjUwMTktLjE5ODggMi4yMTU1LS40NTN6Ii8+PHBhdGggZD0ibTI1LjM4MzEgOS45MDk3NSAxLjQ2NTIuODE0MDUgMS40NjUzLS44MTQwNXYtMS43MjAwNWwtMS40NjUzLS44NDk0MS0xLjQ2NTIuODQ5NDF6Ii8+PC9nPjwvc3ZnPg==';
+
   var Raydium = {
+    LOGO,
     findPath: findPath$4,
     pathExists: pathExists$4,
     getAmounts: getAmounts$4,
@@ -5151,12 +5153,12 @@
     CLMM_LAYOUT,
   };
 
-  const exchange$g = {
+  const exchange$h = {
     
-    name: 'raydium',
+    name: 'raydium_cp',
     label: 'Raydium',
-    logo: 'data:image/svg+xml;base64,PHN2ZyBmaWxsPSJub25lIiBoZWlnaHQ9IjMzIiB2aWV3Qm94PSIwIDAgMjkgMzMiIHdpZHRoPSIyOSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGxpbmVhckdyYWRpZW50IGlkPSJhIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjI4LjMxNjgiIHgyPSItMS43MzMzNiIgeTE9IjguMTkxNjIiIHkyPSIyMC4yMDg2Ij48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNjMjAwZmIiLz48c3RvcCBvZmZzZXQ9Ii40ODk2NTgiIHN0b3AtY29sb3I9IiMzNzcyZmYiLz48c3RvcCBvZmZzZXQ9Ii40ODk3NTgiIHN0b3AtY29sb3I9IiMzNzczZmUiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiM1YWM0YmUiLz48L2xpbmVhckdyYWRpZW50PjxnIGZpbGw9InVybCgjYSkiPjxwYXRoIGQ9Im0yNi44NjI1IDEyLjI4MXYxMS40MTA0bC0xMi42OTE2IDcuMzI2MS0xMi42OTg1OS03LjMyNjF2LTE0LjY1OTM3bDEyLjY5ODU5LTcuMzMzMjIgOS43NTQxIDUuNjM0NDEgMS40NzIzLS44NDk0MS0xMS4yMjY0LTYuNDgzODEtMTQuMTcwOSA4LjE4MjYydjE2LjM1ODE4bDE0LjE3MDkgOC4xODI2IDE0LjE3MS04LjE4MjZ2LTEzLjEwOTJ6Ii8+PHBhdGggZD0ibTEwLjYxNzYgMjMuNjk4NWgtMi4xMjM1M3YtNy4xMjA5aDcuMDc4NDNjLjY2OTctLjAwNzQgMS4zMDk1LS4yNzgyIDEuNzgxMS0uNzUzOC40NzE2LS40NzU1LjczNy0xLjExNzYuNzM4OC0xLjc4NzQuMDAzOC0uMzMxMS0uMDYwMS0uNjU5Ni0uMTg3OS0uOTY1MS0uMTI3OS0uMzA1Ni0uMzE2OC0uNTgxNy0uNTU1NC0uODExNS0uMjMwOC0uMjM3Mi0uNTA3MS0uNDI1My0uODEyNC0uNTUzLS4zMDUzLS4xMjc4LS42MzMzLS4xOTI1LS45NjQyLS4xOTAzaC03LjA3ODQzdi0yLjE2NTk1aDcuMDg1NDNjMS4yNDA1LjAwNzQzIDIuNDI4MS41MDM1MSAzLjMwNTMgMS4zODA2NS44NzcxLjg3NzIgMS4zNzMyIDIuMDY0OCAxLjM4MDYgMy4zMDUyLjAwNzYuOTQ5Ni0uMjgxOSAxLjg3NzctLjgyODEgMi42NTQ0LS41MDI3Ljc0MzItMS4yMTExIDEuMzIzNy0yLjAzODYgMS42NzA1LS44MTk0LjI1OTktMS42NzQ1LjM4ODktMi41MzQxLjM4MjNoLTQuMjQ3eiIvPjxwYXRoIGQ9Im0yMC4yMTU5IDIzLjUyMTVoLTIuNDc3NWwtMS45MTExLTMuMzMzOWMuNzU2MS0uMDQ2MyAxLjUwMTktLjE5ODggMi4yMTU1LS40NTN6Ii8+PHBhdGggZD0ibTI1LjM4MzEgOS45MDk3NSAxLjQ2NTIuODE0MDUgMS40NjUzLS44MTQwNXYtMS43MjAwNWwtMS40NjUzLS44NDk0MS0xLjQ2NTIuODQ5NDF6Ii8+PC9nPjwvc3ZnPg==',
-    protocol: 'raydium',
+    logo: Raydium.LOGO,
+    protocol: 'raydium_cp',
     
     slippage: true,
 
@@ -5164,19 +5166,50 @@
 
     solana: {
       
-      router_cpmm: {
+      router: {
         address: 'CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C',
         api: Raydium.CPMM_LAYOUT
       },
+    }
+  };
 
-      router_clmm: {
+  var raydium_cp = (scope)=>{
+    
+    return new Exchange(
+
+      Object.assign(exchange$h, {
+        scope,
+
+        findPath: (args)=>Raydium.findPath({ ...args, exchange: exchange$h }),
+        pathExists: (args)=>Raydium.pathExists({ ...args, exchange: exchange$h }),
+        getAmounts: (args)=>Raydium.getAmounts({ ...args, exchange: exchange$h }),
+        getPrep: (args)=>{},
+        getTransaction: (args)=>Raydium.getTransaction({ ...args, exchange: exchange$h }),
+      })
+    )
+  };
+
+  const exchange$g = {
+    
+    name: 'raydium_cl',
+    label: 'Raydium',
+    logo: Raydium.LOGO,
+    protocol: 'raydium_cl',
+    
+    slippage: true,
+
+    blockchains: ['solana'],
+
+    solana: {
+      
+      router: {
         address: 'CAMMCzo5YL8w4VFF8KVHrK22GGUsp5VTaW7grrKgrWqK',
         api: Raydium.CLMM_LAYOUT
       },
     }
   };
 
-  var raydium = (scope)=>{
+  var raydium_cl = (scope)=>{
     
     return new Exchange(
 
@@ -7431,7 +7464,8 @@
 
   const exchanges = [
     orca(),
-    raydium(),
+    raydium_cp(),
+    raydium_cl(),
     uniswap_v3(),
     pancakeswap_v3(),
     uniswap_v2(),
@@ -7478,7 +7512,8 @@
 
   exchanges.solana = [
     orca('solana'),
-    raydium('solana'),
+    raydium_cp('solana'),
+    raydium_cl('solana'),
   ];
   exchanges.solana.forEach((exchange)=>{ exchanges.solana[exchange.name] = exchange; });
 

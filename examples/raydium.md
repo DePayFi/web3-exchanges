@@ -3,7 +3,7 @@
 ### 1 Pool
 
 ```javascript
-let route = await Web3Exchanges.raydium.route({
+let route = await Web3Exchanges.raydium_cp.route({
   blockchain: 'solana',
   tokenIn: '9wvorGtBJ8gyLorFTmwXWcymPoGVUBn6MRzHwFpCdCeC',
   tokenOut: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
@@ -23,7 +23,7 @@ wallet.sendTransaction(transaction)
 ### 1 Pool amountOutMin
 
 ```javascript
-let route = await Web3Exchanges.raydium.route({
+let route = await Web3Exchanges.raydium_cl.route({
   blockchain: 'solana',
   tokenIn: '11111111111111111111111111111111',
   tokenOut: 'BNso1VUJnh4zcfpZa6986Ea66P6TCp59hvtNJ8b1X85',
