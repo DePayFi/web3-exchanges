@@ -415,11 +415,11 @@ let route = await Web3Exchanges.orca.route({
   blockchain: 'solana',
   tokenIn: 'DePay1miDBPWXs6PVQrdC5Vch2jemgEPaiyXLNLLa2NF', // DEPAY
   tokenOut: '11111111111111111111111111111111', // SOL
-  amountIn: 1
+  amountOutMin: 1
 })
 
 let wallets = await Web3Wallets.getWallets()
-let wallet = wallets[0]
+let wallet = wallets[1]
 let account = await wallet.account()
 let transaction = await route.getTransaction({ account })
 

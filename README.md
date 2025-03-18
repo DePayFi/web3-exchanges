@@ -210,6 +210,7 @@ A single `Route` has the following structure:
   decimalsOut: Integer (e.g. 18)
   path: Array (e.g. ['0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb', '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2', '0xdAC17F958D2ee523a2206206994597C13D831ec7'])
   pools: Object ([{ pool }])
+  amounts: [BigNumber] (e.g. ['1000000000000000000', '2300000000000000000', '9900000000000000000'])
   amountIn: BigNumber (e.g. '1000000000000000000')
   amountOutMin: BigNumber (e.g. '32000000000000000000')
   amountOut: BigNumber (e.g. '32000000000000000000')

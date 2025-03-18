@@ -2204,6 +2204,7 @@ function _optionalChain$9(ops) { let lastAccessLHS = undefined; let value = ops[
     decimalsOut,
     path,
     pools,
+    amounts,
     amountIn,
     amountInMax,
     amountOut,
@@ -2221,6 +2222,7 @@ function _optionalChain$9(ops) { let lastAccessLHS = undefined; let value = ops[
     this.decimalsOut = decimalsOut;
     this.path = path;
     this.pools = pools;
+    this.amounts = amounts;
     this.amountIn = _optionalChain$9([amountIn, 'optionalAccess', _ => _.toString, 'call', _2 => _2()]);
     this.amountOutMin = _optionalChain$9([amountOutMin, 'optionalAccess', _3 => _3.toString, 'call', _4 => _4()]);
     this.amountOut = _optionalChain$9([amountOut, 'optionalAccess', _5 => _5.toString, 'call', _6 => _6()]);
@@ -2531,6 +2533,7 @@ const route$1 = ({
         decimalsOut,
         path,
         pools,
+        amounts,
         amountIn,
         amountInMax,
         amountOut,

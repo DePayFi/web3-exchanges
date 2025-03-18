@@ -7,6 +7,7 @@ class Route {
     decimalsOut,
     path,
     pools,
+    amounts,
     amountIn,
     amountInMax,
     amountOut,
@@ -24,6 +25,7 @@ class Route {
     this.decimalsOut = decimalsOut
     this.path = path
     this.pools = pools
+    this.amounts = amounts
     this.amountIn = amountIn?.toString()
     this.amountOutMin = amountOutMin?.toString()
     this.amountOut = amountOut?.toString()

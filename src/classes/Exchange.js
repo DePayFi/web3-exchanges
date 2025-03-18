@@ -80,6 +80,7 @@ const route = ({
         decimalsOut,
         path,
         pools,
+        amounts,
         amountIn,
         amountInMax,
         amountOut,
