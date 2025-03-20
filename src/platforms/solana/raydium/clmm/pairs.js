@@ -8,7 +8,7 @@ import { Buffer, BN, PublicKey } from '@depay/solana-web3.js'
 //#else */
 
 import { request } from '@depay/web3-client'
-import { Buffer, BN, PublicKey } from '@depay/solana-web3.js'
+import { Buffer, BN, PublicKey, bs58 } from '@depay/solana-web3.js'
 
 //#endif
 
@@ -342,6 +342,7 @@ const getPairs = (base, quote)=>{
       { dataSize: CLMM_LAYOUT.span },
       { memcmp: { offset: 73, bytes: base }},
       { memcmp: { offset: 105, bytes: quote }},
+      { memcmp: { offset: 389, bytes: bs58.encode(Buffer.from([0])) }}, // status 0 for active pool: https://github.com/raydium-io/raydium-clmm/blob/master/programs/amm/src/states/pool.rs#L109
     ]},
     api: CLMM_LAYOUT,
     cache: 86400, // 24h,
@@ -967,109 +968,113 @@ const getPairsWithPrice = async({ tokenIn, tokenOut, amountIn, amountInMax, amou
 
   const pairs = await Promise.all(poolInfos.map(async(poolInfo)=>{
 
-    let price = 0
+    try {
 
-    let _return
+      let price = 0
 
-    let allNeededAccounts = []
+      let _return
 
-    if(amountIn || amountInMax) { // compute amountOut
+      let allNeededAccounts = []
 
-      const zeroForOne = tokenIn.toString() === poolInfo.mintA.toString()
-      
-      const {
-        isExist,
-        startIndex: firstTickArrayStartIndex,
-        nextAccountMeta,
-      } = await getFirstInitializedTickArray(poolInfo, zeroForOne)
-      if (!isExist || firstTickArrayStartIndex === undefined || !nextAccountMeta) throw new Error("Invalid tick array")
+      if(amountIn || amountInMax) { // compute amountOut
 
-      const inputAmount = new BN((amountIn || amountInMax).toString())
+        const zeroForOne = tokenIn.toString() === poolInfo.mintA.toString()
+        
+        const {
+          isExist,
+          startIndex: firstTickArrayStartIndex,
+          nextAccountMeta,
+        } = await getFirstInitializedTickArray(poolInfo, zeroForOne)
+        if (!isExist || firstTickArrayStartIndex === undefined || !nextAccountMeta) throw new Error("Invalid tick array")
 
-      const {
-        amountCalculated: outputAmount,
-        accounts: remainingAccounts,
-        sqrtPriceX64: executionPrice,
-        feeAmount,
-      } = SwapMath.swapCompute(
-        poolInfo.programId,
-        poolInfo.id,
-        tickArrayCache[poolInfo.id],
-        poolInfo.tickArrayBitmap,
-        poolInfo.exBitmapInfo,
-        zeroForOne,
-        poolInfo.ammConfig.tradeFeeRate,
-        poolInfo.liquidity,
-        poolInfo.tickCurrent,
-        poolInfo.tickSpacing,
-        poolInfo.sqrtPriceX64,
-        inputAmount,
-        firstTickArrayStartIndex,
-        undefined,
-      );
+        const inputAmount = new BN((amountIn || amountInMax).toString())
 
-      _return = {
-        type: 'clmm',
-        price: outputAmount.abs().toString(),
-        data: { ...poolInfo },
-      }
+        const {
+          amountCalculated: outputAmount,
+          accounts: remainingAccounts,
+          sqrtPriceX64: executionPrice,
+          feeAmount,
+        } = SwapMath.swapCompute(
+          poolInfo.programId,
+          poolInfo.id,
+          tickArrayCache[poolInfo.id],
+          poolInfo.tickArrayBitmap,
+          poolInfo.exBitmapInfo,
+          zeroForOne,
+          poolInfo.ammConfig.tradeFeeRate,
+          poolInfo.liquidity,
+          poolInfo.tickCurrent,
+          poolInfo.tickSpacing,
+          poolInfo.sqrtPriceX64,
+          inputAmount,
+          firstTickArrayStartIndex,
+          undefined,
+        );
 
-    } else { // compute amountIn
-
-      const zeroForOne = tokenOut.toString() === poolInfo.mintB.toString()
-      
-      const {
-        isExist,
-        startIndex: firstTickArrayStartIndex,
-        nextAccountMeta,
-      } = await getFirstInitializedTickArray(poolInfo, zeroForOne)
-      if (!isExist || firstTickArrayStartIndex === undefined || !nextAccountMeta) throw new Error("Invalid tick array")
-
-      try {
-        const preTick = preInitializedTickArrayStartIndex(poolInfo, zeroForOne);
-        if (preTick.isExist) {
-          const address = getPdaTickArrayAddress(poolInfo.programId, poolInfo.id, preTick.nextStartIndex)
-          allNeededAccounts.push(new PublicKey(address))
+        _return = {
+          type: 'clmm',
+          price: outputAmount.abs().toString(),
+          data: { ...poolInfo },
         }
-      } catch (e) {
-        console.log('ERROR', e)
-        /* empty */
+
+      } else { // compute amountIn
+
+        const zeroForOne = tokenOut.toString() === poolInfo.mintB.toString()
+        
+        const {
+          isExist,
+          startIndex: firstTickArrayStartIndex,
+          nextAccountMeta,
+        } = await getFirstInitializedTickArray(poolInfo, zeroForOne)
+        if (!isExist || firstTickArrayStartIndex === undefined || !nextAccountMeta) throw new Error("Invalid tick array")
+
+        try {
+          const preTick = preInitializedTickArrayStartIndex(poolInfo, zeroForOne);
+          if (preTick.isExist) {
+            const address = getPdaTickArrayAddress(poolInfo.programId, poolInfo.id, preTick.nextStartIndex)
+            allNeededAccounts.push(new PublicKey(address))
+          }
+        } catch (e) {
+          console.log('ERROR', e)
+          /* empty */
+        }
+
+        allNeededAccounts.push(nextAccountMeta);
+        
+        const outputAmount = new BN((amountOut || amountOutMin).toString())
+
+        const {
+          amountCalculated: inputAmount,
+          accounts: remainingAccounts,
+        } = SwapMath.swapCompute(
+          poolInfo.programId,
+          poolInfo.id,
+          tickArrayCache[poolInfo.id],
+          poolInfo.tickArrayBitmap,
+          poolInfo.exBitmapInfo,
+          zeroForOne,
+          poolInfo.ammConfig.tradeFeeRate,
+          poolInfo.liquidity,
+          poolInfo.tickCurrent,
+          poolInfo.tickSpacing,
+          poolInfo.sqrtPriceX64,
+          outputAmount.mul(NEGATIVE_ONE),
+          firstTickArrayStartIndex,
+          undefined,
+        );
+        allNeededAccounts.push(...remainingAccounts);
+        _return = {
+          type: 'clmm',
+          price: inputAmount.abs().toString(),
+          data: { ...poolInfo, allNeededAccounts },
+        }
       }
 
-      allNeededAccounts.push(nextAccountMeta);
-      
-      const outputAmount = new BN((amountOut || amountOutMin).toString())
+      if(!_return || _return.price === 0) { return }
 
-      const {
-        amountCalculated: inputAmount,
-        accounts: remainingAccounts,
-      } = SwapMath.swapCompute(
-        poolInfo.programId,
-        poolInfo.id,
-        tickArrayCache[poolInfo.id],
-        poolInfo.tickArrayBitmap,
-        poolInfo.exBitmapInfo,
-        zeroForOne,
-        poolInfo.ammConfig.tradeFeeRate,
-        poolInfo.liquidity,
-        poolInfo.tickCurrent,
-        poolInfo.tickSpacing,
-        poolInfo.sqrtPriceX64,
-        outputAmount.mul(NEGATIVE_ONE),
-        firstTickArrayStartIndex,
-        undefined,
-      );
-      allNeededAccounts.push(...remainingAccounts);
-      _return = {
-        type: 'clmm',
-        price: inputAmount.abs().toString(),
-        data: { ...poolInfo, allNeededAccounts },
-      }
-    }
-
-    if(!_return || _return.price === 0) { return }
-
-    return _return
+      return _return
+    
+    } catch (e) { console.log(e) }
   
   }))
 

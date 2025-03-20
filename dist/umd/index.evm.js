@@ -170,12 +170,18 @@
         await Promise.all(exchangePath.map((step, index)=>{
           if(index != 0) {
             let amountWithSlippage = calculateAmountInWithSlippage({ exchange, pools, exchangePath: [exchangePath[index-1], exchangePath[index]], amountIn: amounts[index-1], amountOut: amounts[index] });
-            amountWithSlippage.then((amount)=>amountsWithSlippage.push(amount));
+            amountWithSlippage.then((amount)=>{
+              amountsWithSlippage.push(amount);
+            });
             return amountWithSlippage
           }
         }));
         amountsWithSlippage.push(amounts[amounts.length-1]);
         amounts = amountsWithSlippage;
+        if(amounts.length > 2) { // lower middle amount to avoid first hop slippage issues on output amount (total hops remain within default slippage)
+          let defaultSlippage = getDefaultSlippage({ exchange, blockchain, pools, exchangePath, amountIn, amountOut });
+          amounts[1] = amounts[1].sub(amounts[1].mul(parseFloat(defaultSlippage)*100/2).div(10000));
+        }
         amountIn = amountInMax = amounts[0];
       }
     } else if(amountInMaxInput || amountInInput) {
@@ -332,7 +338,7 @@
             amountIn, amountInMax, amountOut, amountOutMin,
             amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput,
           }));
-        } catch (e2) { return resolve() }
+        } catch(e) { console.log(e); return resolve() }
       }
 
       const decimalsIn = await new Token__default['default']({ blockchain, address: tokenIn }).decimals();

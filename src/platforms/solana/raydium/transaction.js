@@ -198,7 +198,6 @@ const getCLMMInstruction = async({
   const inputMint = tokenIn == pool.data.mintA.toString() ? pool.data.mintA : pool.data.mintB
   const outputMint = tokenIn == pool.data.mintA.toString() ? pool.data.mintB : pool.data.mintA
   const poolId = pool.data.id
-  const baseIn = inputMint.toString() === pool.data.mintA
   const exTickArrayBitmapAddress = new PublicKey(await getPdaExBitmapAddress(new PublicKey(CL_PROGRAM_ID), poolId))
 
   if(amountInInput || amountOutMinInput) { // fixed amountIn, variable amountOut (amountOutMin)
@@ -255,10 +254,10 @@ const getCLMMInstruction = async({
     const data = Buffer.alloc(dataLayout.span);
     dataLayout.encode(
       {
-        amount: new BN(amountOut.toString()),
-        otherAmountThreshold: new BN(amountIn.toString()),
+        amount: new BN(amountIn.toString()),
+        otherAmountThreshold: new BN(amountOut.toString()),
         sqrtPriceLimitX64: new BN('0'),
-        isBaseInput: baseIn,
+        isBaseInput: true, // exact input
       },
       data,
     );
@@ -438,46 +437,133 @@ const getTransaction = async({
   if(!endsUnwrapped) {
     await createTokenAccountIfNotExisting({ instructions, owner: account, token: tokenOut, account: tokenAccountOut })
   }
-  const pool = pairs[0]
 
-  if(pool.type === 'clmm') {
-    instructions.push(
-      await getCLMMInstruction({
-        account,
-        tokenIn,
-        tokenOut,
-        tokenAccountIn,
-        tokenAccountOut,
-        amountIn,
-        amountInMax,
-        amountOut,
-        amountOutMin,
-        amountInInput,
-        amountInMaxInput,
-        amountOutInput,
-        amountOutMinInput,
-        pool,
-      })
-    )
-  } else {
-    instructions.push(
-      await getCPMMInstruction({
-        account,
-        tokenIn,
-        tokenOut,
-        tokenAccountIn,
-        tokenAccountOut,
-        amountIn,
-        amountInMax,
-        amountOut,
-        amountOutMin,
-        amountInInput,
-        amountInMaxInput,
-        amountOutInput,
-        amountOutMinInput,
-        pool,
-      })
-    )
+  if(pairs.length == 1) { // single hop swap
+
+    if(pairs[0].type === 'clmm') {
+      instructions.push(
+        await getCLMMInstruction({
+          account,
+          tokenIn,
+          tokenOut,
+          tokenAccountIn,
+          tokenAccountOut,
+          amountIn,
+          amountInMax,
+          amountOut,
+          amountOutMin,
+          amountInInput,
+          amountInMaxInput,
+          amountOutInput,
+          amountOutMinInput,
+          pool: pairs[0],
+        })
+      )
+    } else {
+      instructions.push(
+        await getCPMMInstruction({
+          account,
+          tokenIn,
+          tokenOut,
+          tokenAccountIn,
+          tokenAccountOut,
+          amountIn,
+          amountInMax,
+          amountOut,
+          amountOutMin,
+          amountInInput,
+          amountInMaxInput,
+          amountOutInput,
+          amountOutMinInput,
+          pool: pairs[0],
+        })
+      )
+    }
+
+  } else if(pairs.length == 2) { // two hop swap
+
+    const tokenMiddleAccount = new PublicKey(await Token.solana.findProgramAddress({ owner: account, token: tokenMiddle }))
+    await createTokenAccountIfNotExisting({ instructions, owner: account, token: tokenMiddle, account: tokenMiddleAccount })
+
+    if(pairs[0].type === 'clmm') {
+      instructions.push(
+        await getCLMMInstruction({
+          account,
+          tokenIn,
+          tokenOut: tokenMiddle,
+          tokenAccountIn,
+          tokenAccountOut: tokenMiddleAccount,
+          amountIn: amounts[0],
+          amountInMax: amounts[0],
+          amountOut: amounts[1],
+          amountOutMin: amounts[1],
+          amountInInput: undefined,
+          amountInMaxInput: undefined,
+          amountOutInput: undefined,
+          amountOutMinInput: amounts[1],
+          pool: pairs[0],
+        })
+      )
+    } else {
+      instructions.push(
+        await getCPMMInstruction({
+          account,
+          tokenIn,
+          tokenOut: tokenMiddle,
+          tokenAccountIn,
+          tokenAccountOut: tokenMiddleAccount,
+          amountIn: amounts[0],
+          amountInMax: amounts[0],
+          amountOut: amounts[1],
+          amountOutMin: amounts[1],
+          amountInInput: undefined,
+          amountInMaxInput: undefined,
+          amountOutInput: undefined,
+          amountOutMinInput: amounts[1],
+          pool: pairs[0],
+        })
+      )
+    }
+
+    if(pairs[1].type === 'clmm') {
+      instructions.push(
+        await getCLMMInstruction({
+          account,
+          tokenIn: tokenMiddle,
+          tokenOut,
+          tokenAccountIn: tokenMiddleAccount,
+          tokenAccountOut,
+          amountIn: amounts[1],
+          amountInMax: amounts[1],
+          amountOut: amounts[2],
+          amountOutMin: amounts[2],
+          amountInInput: undefined,
+          amountInMaxInput: undefined,
+          amountOutInput: undefined,
+          amountOutMinInput: amounts[2],
+          pool: pairs[1],
+        })
+      )
+    } else {
+      instructions.push(
+        await getCPMMInstruction({
+          account,
+          tokenIn: tokenMiddle,
+          tokenOut,
+          tokenAccountIn: tokenMiddleAccount,
+          tokenAccountOut,
+          amountIn: amounts[1],
+          amountInMax: amounts[1],
+          amountOut: amounts[2],
+          amountOutMin: amounts[2],
+          amountInInput: undefined,
+          amountInMaxInput: undefined,
+          amountOutInput: undefined,
+          amountOutMinInput: amounts[2],
+          pool: pairs[1],
+        })
+      )
+    }
   }
   
   if(startsWrapped || endsUnwrapped) {
@@ -489,7 +575,7 @@ const getTransaction = async({
     )
   }
 
-  // await debug(instructions, provider)
+  await debug(instructions, provider)
 
   transaction.instructions = instructions
   return transaction

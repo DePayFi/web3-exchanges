@@ -65,7 +65,7 @@ const route = ({
           amountIn, amountInMax, amountOut, amountOutMin,
           amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput,
         }));
-      } catch { return resolve() }
+      } catch(e) { console.log(e); return resolve() }
     }
 
     const decimalsIn = await new Token({ blockchain, address: tokenIn }).decimals()

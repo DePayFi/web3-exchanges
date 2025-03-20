@@ -55,3 +55,21 @@ let transaction = await route.getTransaction({ account })
 
 wallet.sendTransaction(transaction)
 ```
+
+### 2 Pools
+
+```javascript
+let route = await Web3Exchanges.raydium_cl.route({
+  blockchain: 'solana',
+  tokenIn: Web3Blockchains.solana.currency.address,
+  tokenOut: 'BLUv63M5ib2U62EeYhjHgC5dBe5cbW87TbeCQEqjpoDe',
+  amountOutMin: 0.05
+})
+
+let wallets = await Web3Wallets.getWallets()
+let wallet = wallets[1]
+let account = await wallet.account()
+let transaction = await route.getTransaction({ account })
+
+wallet.sendTransaction(transaction)
+```

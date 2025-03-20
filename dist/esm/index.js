@@ -2,7 +2,7 @@ import Token from '@depay/web3-tokens';
 import { request, getProvider } from '@depay/web3-client';
 import { ethers } from 'ethers';
 import Blockchains from '@depay/web3-blockchains';
-import { BN, struct, publicKey, u128, u64 as u64$1, seq, u8, u16, i32, bool, i128, PublicKey, Buffer, Keypair, SystemProgram, TransactionInstruction, blob, u32 } from '@depay/solana-web3.js';
+import { BN, struct, publicKey, u128, u64 as u64$1, seq, u8, u16, i32, bool, i128, PublicKey, Buffer, Keypair, SystemProgram, TransactionInstruction, blob, u32, bs58, Transaction } from '@depay/solana-web3.js';
 import Decimal$1 from 'decimal.js';
 
 function _optionalChain$9(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }class Route {
@@ -166,12 +166,18 @@ const calculateAmountsWithSlippage = async ({
       await Promise.all(exchangePath.map((step, index)=>{
         if(index != 0) {
           let amountWithSlippage = calculateAmountInWithSlippage({ exchange, pools, exchangePath: [exchangePath[index-1], exchangePath[index]], amountIn: amounts[index-1], amountOut: amounts[index] });
-          amountWithSlippage.then((amount)=>amountsWithSlippage.push(amount));
+          amountWithSlippage.then((amount)=>{
+            amountsWithSlippage.push(amount);
+          });
           return amountWithSlippage
         }
       }));
       amountsWithSlippage.push(amounts[amounts.length-1]);
       amounts = amountsWithSlippage;
+      if(amounts.length > 2) { // lower middle amount to avoid first hop slippage issues on output amount (total hops remain within default slippage)
+        let defaultSlippage = getDefaultSlippage({ exchange, blockchain, pools, exchangePath, amountIn, amountOut });
+        amounts[1] = amounts[1].sub(amounts[1].mul(parseFloat(defaultSlippage)*100/2).div(10000));
+      }
       amountIn = amountInMax = amounts[0];
     }
   } else if(amountInMaxInput || amountInInput) {
@@ -328,7 +334,7 @@ const route$1 = ({
           amountIn, amountInMax, amountOut, amountOutMin,
           amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput,
         }));
-      } catch (e2) { return resolve() }
+      } catch(e) { console.log(e); return resolve() }
     }
 
     const decimalsIn = await new Token({ blockchain, address: tokenIn }).decimals();
@@ -3810,6 +3816,7 @@ const getPairs = (base, quote)=>{
       { dataSize: CLMM_LAYOUT.span },
       { memcmp: { offset: 73, bytes: base }},
       { memcmp: { offset: 105, bytes: quote }},
+      { memcmp: { offset: 389, bytes: bs58.encode(Buffer.from([0])) }}, // status 0 for active pool: https://github.com/raydium-io/raydium-clmm/blob/master/programs/amm/src/states/pool.rs#L109
     ]},
     api: CLMM_LAYOUT,
     cache: 86400, // 24h,
@@ -4435,107 +4442,113 @@ const getPairsWithPrice$1 = async({ tokenIn, tokenOut, amountIn, amountInMax, am
 
   const pairs = await Promise.all(poolInfos.map(async(poolInfo)=>{
 
-    let _return;
+    try {
 
-    let allNeededAccounts = [];
+      let price = 0;
 
-    if(amountIn || amountInMax) { // compute amountOut
+      let _return;
 
-      const zeroForOne = tokenIn.toString() === poolInfo.mintA.toString();
-      
-      const {
-        isExist,
-        startIndex: firstTickArrayStartIndex,
-        nextAccountMeta,
-      } = await getFirstInitializedTickArray(poolInfo, zeroForOne);
-      if (!isExist || firstTickArrayStartIndex === undefined || !nextAccountMeta) throw new Error("Invalid tick array")
+      let allNeededAccounts = [];
 
-      const inputAmount = new BN((amountIn || amountInMax).toString());
+      if(amountIn || amountInMax) { // compute amountOut
 
-      const {
-        amountCalculated: outputAmount,
-        accounts: remainingAccounts,
-        sqrtPriceX64: executionPrice,
-        feeAmount,
-      } = SwapMath.swapCompute(
-        poolInfo.programId,
-        poolInfo.id,
-        tickArrayCache[poolInfo.id],
-        poolInfo.tickArrayBitmap,
-        poolInfo.exBitmapInfo,
-        zeroForOne,
-        poolInfo.ammConfig.tradeFeeRate,
-        poolInfo.liquidity,
-        poolInfo.tickCurrent,
-        poolInfo.tickSpacing,
-        poolInfo.sqrtPriceX64,
-        inputAmount,
-        firstTickArrayStartIndex,
-        undefined,
-      );
+        const zeroForOne = tokenIn.toString() === poolInfo.mintA.toString();
+        
+        const {
+          isExist,
+          startIndex: firstTickArrayStartIndex,
+          nextAccountMeta,
+        } = await getFirstInitializedTickArray(poolInfo, zeroForOne);
+        if (!isExist || firstTickArrayStartIndex === undefined || !nextAccountMeta) throw new Error("Invalid tick array")
 
-      _return = {
-        type: 'clmm',
-        price: outputAmount.abs().toString(),
-        data: { ...poolInfo },
-      };
+        const inputAmount = new BN((amountIn || amountInMax).toString());
 
-    } else { // compute amountIn
+        const {
+          amountCalculated: outputAmount,
+          accounts: remainingAccounts,
+          sqrtPriceX64: executionPrice,
+          feeAmount,
+        } = SwapMath.swapCompute(
+          poolInfo.programId,
+          poolInfo.id,
+          tickArrayCache[poolInfo.id],
+          poolInfo.tickArrayBitmap,
+          poolInfo.exBitmapInfo,
+          zeroForOne,
+          poolInfo.ammConfig.tradeFeeRate,
+          poolInfo.liquidity,
+          poolInfo.tickCurrent,
+          poolInfo.tickSpacing,
+          poolInfo.sqrtPriceX64,
+          inputAmount,
+          firstTickArrayStartIndex,
+          undefined,
+        );
 
-      const zeroForOne = tokenOut.toString() === poolInfo.mintB.toString();
-      
-      const {
-        isExist,
-        startIndex: firstTickArrayStartIndex,
-        nextAccountMeta,
-      } = await getFirstInitializedTickArray(poolInfo, zeroForOne);
-      if (!isExist || firstTickArrayStartIndex === undefined || !nextAccountMeta) throw new Error("Invalid tick array")
+        _return = {
+          type: 'clmm',
+          price: outputAmount.abs().toString(),
+          data: { ...poolInfo },
+        };
 
-      try {
-        const preTick = preInitializedTickArrayStartIndex(poolInfo, zeroForOne);
-        if (preTick.isExist) {
-          const address = getPdaTickArrayAddress(poolInfo.programId, poolInfo.id, preTick.nextStartIndex);
-          allNeededAccounts.push(new PublicKey(address));
+      } else { // compute amountIn
+
+        const zeroForOne = tokenOut.toString() === poolInfo.mintB.toString();
+        
+        const {
+          isExist,
+          startIndex: firstTickArrayStartIndex,
+          nextAccountMeta,
+        } = await getFirstInitializedTickArray(poolInfo, zeroForOne);
+        if (!isExist || firstTickArrayStartIndex === undefined || !nextAccountMeta) throw new Error("Invalid tick array")
+
+        try {
+          const preTick = preInitializedTickArrayStartIndex(poolInfo, zeroForOne);
+          if (preTick.isExist) {
+            const address = getPdaTickArrayAddress(poolInfo.programId, poolInfo.id, preTick.nextStartIndex);
+            allNeededAccounts.push(new PublicKey(address));
+          }
+        } catch (e) {
+          console.log('ERROR', e);
+          /* empty */
         }
-      } catch (e) {
-        console.log('ERROR', e);
-        /* empty */
+
+        allNeededAccounts.push(nextAccountMeta);
+        
+        const outputAmount = new BN((amountOut || amountOutMin).toString());
+
+        const {
+          amountCalculated: inputAmount,
+          accounts: remainingAccounts,
+        } = SwapMath.swapCompute(
+          poolInfo.programId,
+          poolInfo.id,
+          tickArrayCache[poolInfo.id],
+          poolInfo.tickArrayBitmap,
+          poolInfo.exBitmapInfo,
+          zeroForOne,
+          poolInfo.ammConfig.tradeFeeRate,
+          poolInfo.liquidity,
+          poolInfo.tickCurrent,
+          poolInfo.tickSpacing,
+          poolInfo.sqrtPriceX64,
+          outputAmount.mul(NEGATIVE_ONE),
+          firstTickArrayStartIndex,
+          undefined,
+        );
+        allNeededAccounts.push(...remainingAccounts);
+        _return = {
+          type: 'clmm',
+          price: inputAmount.abs().toString(),
+          data: { ...poolInfo, allNeededAccounts },
+        };
       }
 
-      allNeededAccounts.push(nextAccountMeta);
-      
-      const outputAmount = new BN((amountOut || amountOutMin).toString());
+      if(!_return || _return.price === 0) { return }
 
-      const {
-        amountCalculated: inputAmount,
-        accounts: remainingAccounts,
-      } = SwapMath.swapCompute(
-        poolInfo.programId,
-        poolInfo.id,
-        tickArrayCache[poolInfo.id],
-        poolInfo.tickArrayBitmap,
-        poolInfo.exBitmapInfo,
-        zeroForOne,
-        poolInfo.ammConfig.tradeFeeRate,
-        poolInfo.liquidity,
-        poolInfo.tickCurrent,
-        poolInfo.tickSpacing,
-        poolInfo.sqrtPriceX64,
-        outputAmount.mul(NEGATIVE_ONE),
-        firstTickArrayStartIndex,
-        undefined,
-      );
-      allNeededAccounts.push(...remainingAccounts);
-      _return = {
-        type: 'clmm',
-        price: inputAmount.abs().toString(),
-        data: { ...poolInfo, allNeededAccounts },
-      };
-    }
-
-    if(!_return || _return.price === 0) { return }
-
-    return _return
+      return _return
+    
+    } catch (e) { console.log(e); }
   
   }));
 
@@ -4618,7 +4631,8 @@ let getExchangePath$3 = ({ path }) => {
 let pathExists$4 = async ({ exchange, path, amountIn, amountInMax, amountOut, amountOutMin }) => {
   if(path.length == 1) { return false }
   path = getExchangePath$3({ path });
-  if((await getPairsWithPrice({ exchange, tokenIn: path[0], tokenOut: path[1], amountIn, amountInMax, amountOut, amountOutMin })).length > 0) {
+  let pairs = (await getPairsWithPrice({ exchange, tokenIn: path[0], tokenOut: path[1], amountIn, amountInMax, amountOut, amountOutMin }));
+  if(pairs.length > 0) {
     return true
   } else {
     return false
@@ -4639,18 +4653,18 @@ let findPath$4 = async ({ exchange, tokenIn, tokenOut, amountIn, amountOut, amou
   } else if (
     tokenIn != blockchain$1.wrapped.address &&
     tokenIn != blockchain$1.currency.address &&
-    await pathExists$4({ path: [tokenIn, blockchain$1.wrapped.address], amountIn, amountInMax, amountOut, amountOutMin }) &&
+    await pathExists$4({ exchange, path: [tokenIn, blockchain$1.wrapped.address], amountIn, amountInMax, amountOut, amountOutMin }) &&
     tokenOut != blockchain$1.wrapped.address &&
     tokenOut != blockchain$1.currency.address &&
-    await pathExists$4({ path: [tokenOut, blockchain$1.wrapped.address], amountIn: (amountOut||amountOutMin), amountInMax: (amountOut||amountOutMin), amountOut: (amountIn||amountInMax), amountOutMin: (amountIn||amountInMax) })
+    await pathExists$4({ exchange, path: [tokenOut, blockchain$1.wrapped.address], amountIn: (amountOut||amountOutMin), amountInMax: (amountOut||amountOutMin), amountOut: (amountIn||amountInMax), amountOutMin: (amountIn||amountInMax) })
   ) {
     // path via blockchain.wrapped.address
     path = [tokenIn, blockchain$1.wrapped.address, tokenOut];
   } else if (
     !blockchain$1.stables.usd.includes(tokenIn) &&
-    (stablesIn = (await Promise.all(blockchain$1.stables.usd.map(async(stable)=>await pathExists$4({ path: [tokenIn, stable], amountIn, amountInMax, amountOut, amountOutMin }) ? stable : undefined))).filter(Boolean)) &&
+    (stablesIn = (await Promise.all(blockchain$1.stables.usd.map(async(stable)=>await pathExists$4({ exchange, path: [tokenIn, stable], amountIn, amountInMax, amountOut, amountOutMin }) ? stable : undefined))).filter(Boolean)) &&
     !blockchain$1.stables.usd.includes(tokenOut) &&
-    (stablesOut = (await Promise.all(blockchain$1.stables.usd.map(async(stable)=>await pathExists$4({ path: [tokenOut, stable], amountIn: (amountOut||amountOutMin), amountInMax: (amountOut||amountOutMin), amountOut: (amountIn||amountInMax), amountOutMin: (amountIn||amountInMax) })  ? stable : undefined))).filter(Boolean)) &&
+    (stablesOut = (await Promise.all(blockchain$1.stables.usd.map(async(stable)=>await pathExists$4({ exchange, path: [tokenOut, stable], amountIn: (amountOut||amountOutMin), amountInMax: (amountOut||amountOutMin), amountOut: (amountIn||amountInMax), amountOutMin: (amountIn||amountInMax) })  ? stable : undefined))).filter(Boolean)) &&
     (stable = stablesIn.filter((stable)=> stablesOut.includes(stable))[0])
   ) {
     // path via TOKEN_IN <> STABLE <> TOKEN_OUT
@@ -4939,7 +4953,6 @@ const getCLMMInstruction = async({
   const inputMint = tokenIn == pool.data.mintA.toString() ? pool.data.mintA : pool.data.mintB;
   const outputMint = tokenIn == pool.data.mintA.toString() ? pool.data.mintB : pool.data.mintA;
   const poolId = pool.data.id;
-  const baseIn = inputMint.toString() === pool.data.mintA;
   const exTickArrayBitmapAddress = new PublicKey(await getPdaExBitmapAddress(new PublicKey(CL_PROGRAM_ID), poolId));
 
   if(amountInInput || amountOutMinInput) { // fixed amountIn, variable amountOut (amountOutMin)
@@ -4996,10 +5009,10 @@ const getCLMMInstruction = async({
     const data = Buffer.alloc(dataLayout.span);
     dataLayout.encode(
       {
-        amount: new BN(amountOut.toString()),
-        otherAmountThreshold: new BN(amountIn.toString()),
+        amount: new BN(amountIn.toString()),
+        otherAmountThreshold: new BN(amountOut.toString()),
         sqrtPriceLimitX64: new BN('0'),
-        isBaseInput: baseIn,
+        isBaseInput: true, // exact input
       },
       data,
     );
@@ -5082,46 +5095,133 @@ const getTransaction$4 = async({
   if(!endsUnwrapped) {
     await createTokenAccountIfNotExisting({ instructions, owner: account, token: tokenOut, account: tokenAccountOut });
   }
-  const pool = pairs[0];
 
-  if(pool.type === 'clmm') {
-    instructions.push(
-      await getCLMMInstruction({
-        account,
-        tokenIn,
-        tokenOut,
-        tokenAccountIn,
-        tokenAccountOut,
-        amountIn,
-        amountInMax,
-        amountOut,
-        amountOutMin,
-        amountInInput,
-        amountInMaxInput,
-        amountOutInput,
-        amountOutMinInput,
-        pool,
-      })
-    );
-  } else {
-    instructions.push(
-      await getCPMMInstruction({
-        account,
-        tokenIn,
-        tokenOut,
-        tokenAccountIn,
-        tokenAccountOut,
-        amountIn,
-        amountInMax,
-        amountOut,
-        amountOutMin,
-        amountInInput,
-        amountInMaxInput,
-        amountOutInput,
-        amountOutMinInput,
-        pool,
-      })
-    );
+  if(pairs.length == 1) { // single hop swap
+
+    if(pairs[0].type === 'clmm') {
+      instructions.push(
+        await getCLMMInstruction({
+          account,
+          tokenIn,
+          tokenOut,
+          tokenAccountIn,
+          tokenAccountOut,
+          amountIn,
+          amountInMax,
+          amountOut,
+          amountOutMin,
+          amountInInput,
+          amountInMaxInput,
+          amountOutInput,
+          amountOutMinInput,
+          pool: pairs[0],
+        })
+      );
+    } else {
+      instructions.push(
+        await getCPMMInstruction({
+          account,
+          tokenIn,
+          tokenOut,
+          tokenAccountIn,
+          tokenAccountOut,
+          amountIn,
+          amountInMax,
+          amountOut,
+          amountOutMin,
+          amountInInput,
+          amountInMaxInput,
+          amountOutInput,
+          amountOutMinInput,
+          pool: pairs[0],
+        })
+      );
+    }
+
+  } else if(pairs.length == 2) { // two hop swap
+
+    const tokenMiddleAccount = new PublicKey(await Token.solana.findProgramAddress({ owner: account, token: tokenMiddle }));
+    await createTokenAccountIfNotExisting({ instructions, owner: account, token: tokenMiddle, account: tokenMiddleAccount });
+
+    if(pairs[0].type === 'clmm') {
+      instructions.push(
+        await getCLMMInstruction({
+          account,
+          tokenIn,
+          tokenOut: tokenMiddle,
+          tokenAccountIn,
+          tokenAccountOut: tokenMiddleAccount,
+          amountIn: amounts[0],
+          amountInMax: amounts[0],
+          amountOut: amounts[1],
+          amountOutMin: amounts[1],
+          amountInInput: undefined,
+          amountInMaxInput: undefined,
+          amountOutInput: undefined,
+          amountOutMinInput: amounts[1],
+          pool: pairs[0],
+        })
+      );
+    } else {
+      instructions.push(
+        await getCPMMInstruction({
+          account,
+          tokenIn,
+          tokenOut: tokenMiddle,
+          tokenAccountIn,
+          tokenAccountOut: tokenMiddleAccount,
+          amountIn: amounts[0],
+          amountInMax: amounts[0],
+          amountOut: amounts[1],
+          amountOutMin: amounts[1],
+          amountInInput: undefined,
+          amountInMaxInput: undefined,
+          amountOutInput: undefined,
+          amountOutMinInput: amounts[1],
+          pool: pairs[0],
+        })
+      );
+    }
+
+    if(pairs[1].type === 'clmm') {
+      instructions.push(
+        await getCLMMInstruction({
+          account,
+          tokenIn: tokenMiddle,
+          tokenOut,
+          tokenAccountIn: tokenMiddleAccount,
+          tokenAccountOut,
+          amountIn: amounts[1],
+          amountInMax: amounts[1],
+          amountOut: amounts[2],
+          amountOutMin: amounts[2],
+          amountInInput: undefined,
+          amountInMaxInput: undefined,
+          amountOutInput: undefined,
+          amountOutMinInput: amounts[2],
+          pool: pairs[1],
+        })
+      );
+    } else {
+      instructions.push(
+        await getCPMMInstruction({
+          account,
+          tokenIn: tokenMiddle,
+          tokenOut,
+          tokenAccountIn: tokenMiddleAccount,
+          tokenAccountOut,
+          amountIn: amounts[1],
+          amountInMax: amounts[1],
+          amountOut: amounts[2],
+          amountOutMin: amounts[2],
+          amountInInput: undefined,
+          amountInMaxInput: undefined,
+          amountOutInput: undefined,
+          amountOutMinInput: amounts[2],
+          pool: pairs[1],
+        })
+      );
+    }
   }
   
   if(startsWrapped || endsUnwrapped) {
@@ -5133,10 +5233,42 @@ const getTransaction$4 = async({
     );
   }
 
-  // await debug(instructions, provider)
+  await debug(instructions, provider);
 
   transaction.instructions = instructions;
   return transaction
+};
+
+const debug = async(instructions, provider)=>{
+  console.log('instructions.length', instructions.length);
+  let data;
+  instructions.forEach((instruction)=>{
+    console.log('INSTRUCTION.programId', instruction.programId.toString());
+    console.log('INSTRUCTION.keys', instruction.keys);
+    try {
+      const LAYOUT = struct([
+        u64$1("anchorDiscriminator"),
+        u64$1("amount"),
+        u64$1("otherAmountThreshold"),
+        u128("sqrtPriceLimit"),
+        bool("amountSpecifiedIsInput"),
+        bool("aToB"),
+      ]);
+      data = LAYOUT.decode(instruction.data);
+    } catch (e3) {}
+  });
+  if(data) {
+    console.log('INSTRUCTION.data', data);
+    console.log('amount', data.amount.toString());
+    console.log('otherAmountThreshold', data.otherAmountThreshold.toString());
+    console.log('sqrtPriceLimit', data.sqrtPriceLimit.toString());
+  }
+  let simulation = new Transaction({ feePayer: new PublicKey('2UgCJaHU5y8NC4uWQcZYeV9a5RyYLF7iKYCybCsdFFD1') });
+  instructions.forEach((instruction)=>simulation.add(instruction));
+  let result;
+  console.log('SIMULATE');
+  try{ result = await provider.simulateTransaction(simulation); } catch(e) { console.log('error', e); }
+  console.log('SIMULATION RESULT', result);
 };
 
 const LOGO = 'data:image/svg+xml;base64,PHN2ZyBmaWxsPSJub25lIiBoZWlnaHQ9IjMzIiB2aWV3Qm94PSIwIDAgMjkgMzMiIHdpZHRoPSIyOSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGxpbmVhckdyYWRpZW50IGlkPSJhIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjI4LjMxNjgiIHgyPSItMS43MzMzNiIgeTE9IjguMTkxNjIiIHkyPSIyMC4yMDg2Ij48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNjMjAwZmIiLz48c3RvcCBvZmZzZXQ9Ii40ODk2NTgiIHN0b3AtY29sb3I9IiMzNzcyZmYiLz48c3RvcCBvZmZzZXQ9Ii40ODk3NTgiIHN0b3AtY29sb3I9IiMzNzczZmUiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiM1YWM0YmUiLz48L2xpbmVhckdyYWRpZW50PjxnIGZpbGw9InVybCgjYSkiPjxwYXRoIGQ9Im0yNi44NjI1IDEyLjI4MXYxMS40MTA0bC0xMi42OTE2IDcuMzI2MS0xMi42OTg1OS03LjMyNjF2LTE0LjY1OTM3bDEyLjY5ODU5LTcuMzMzMjIgOS43NTQxIDUuNjM0NDEgMS40NzIzLS44NDk0MS0xMS4yMjY0LTYuNDgzODEtMTQuMTcwOSA4LjE4MjYydjE2LjM1ODE4bDE0LjE3MDkgOC4xODI2IDE0LjE3MS04LjE4MjZ2LTEzLjEwOTJ6Ii8+PHBhdGggZD0ibTEwLjYxNzYgMjMuNjk4NWgtMi4xMjM1M3YtNy4xMjA5aDcuMDc4NDNjLjY2OTctLjAwNzQgMS4zMDk1LS4yNzgyIDEuNzgxMS0uNzUzOC40NzE2LS40NzU1LjczNy0xLjExNzYuNzM4OC0xLjc4NzQuMDAzOC0uMzMxMS0uMDYwMS0uNjU5Ni0uMTg3OS0uOTY1MS0uMTI3OS0uMzA1Ni0uMzE2OC0uNTgxNy0uNTU1NC0uODExNS0uMjMwOC0uMjM3Mi0uNTA3MS0uNDI1My0uODEyNC0uNTUzLS4zMDUzLS4xMjc4LS42MzMzLS4xOTI1LS45NjQyLS4xOTAzaC03LjA3ODQzdi0yLjE2NTk1aDcuMDg1NDNjMS4yNDA1LjAwNzQzIDIuNDI4MS41MDM1MSAzLjMwNTMgMS4zODA2NS44NzcxLjg3NzIgMS4zNzMyIDIuMDY0OCAxLjM4MDYgMy4zMDUyLjAwNzYuOTQ5Ni0uMjgxOSAxLjg3NzctLjgyODEgMi42NTQ0LS41MDI3Ljc0MzItMS4yMTExIDEuMzIzNy0yLjAzODYgMS42NzA1LS44MTk0LjI1OTktMS42NzQ1LjM4ODktMi41MzQxLjM4MjNoLTQuMjQ3eiIvPjxwYXRoIGQ9Im0yMC4yMTU5IDIzLjUyMTVoLTIuNDc3NWwtMS45MTExLTMuMzMzOWMuNzU2MS0uMDQ2MyAxLjUwMTktLjE5ODggMi4yMTU1LS40NTN6Ii8+PHBhdGggZD0ibTI1LjM4MzEgOS45MDk3NSAxLjQ2NTIuODE0MDUgMS40NjUzLS44MTQwNXYtMS43MjAwNWwtMS40NjUzLS44NDk0MS0xLjQ2NTIuODQ5NDF6Ii8+PC9nPjwvc3ZnPg==';
