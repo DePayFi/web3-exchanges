@@ -575,7 +575,7 @@ const getTransaction = async({
     )
   }
 
-  await debug(instructions, provider)
+  // await debug(instructions, provider)
 
   transaction.instructions = instructions
   return transaction
