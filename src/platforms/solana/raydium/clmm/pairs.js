@@ -1085,4 +1085,5 @@ const getPairsWithPrice = async({ tokenIn, tokenOut, amountIn, amountInMax, amou
 export {
   getPairsWithPrice,
   getPdaExBitmapAddress,
+  SwapMath,
 }
