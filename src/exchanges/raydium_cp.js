@@ -1,5 +1,6 @@
 import Exchange from '../classes/Exchange'
 import Raydium from '../platforms/solana/raydium'
+import { CurveCalculator } from '../platforms/solana/raydium/cpmm/price'
 
 const exchange = {
   
@@ -33,6 +34,7 @@ export default (scope)=>{
       getAmounts: (args)=>Raydium.getAmounts({ ...args, exchange }),
       getPrep: (args)=>{},
       getTransaction: (args)=>Raydium.getTransaction({ ...args, exchange }),
+      CurveCalculator,
     })
   )
 }

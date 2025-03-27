@@ -4778,6 +4778,7 @@ var orca = (scope)=>{
       getAmounts: (args)=>Orca.getAmounts({ ...args, exchange: exchange$i }),
       getPrep: (args)=>{},
       getTransaction: (args)=>Orca.getTransaction({ ...args, exchange: exchange$i }),
+      getPrice,
     })
   )
 };
@@ -7473,6 +7474,7 @@ var raydium_cp = (scope)=>{
       getAmounts: (args)=>Raydium.getAmounts({ ...args, exchange: exchange$h }),
       getPrep: (args)=>{},
       getTransaction: (args)=>Raydium.getTransaction({ ...args, exchange: exchange$h }),
+      CurveCalculator,
     })
   )
 };
@@ -7509,6 +7511,7 @@ var raydium_cl = (scope)=>{
       getAmounts: (args)=>Raydium.getAmounts({ ...args, exchange: exchange$g }),
       getPrep: (args)=>{},
       getTransaction: (args)=>Raydium.getTransaction({ ...args, exchange: exchange$g }),
+      SwapMath,
     })
   )
 };
