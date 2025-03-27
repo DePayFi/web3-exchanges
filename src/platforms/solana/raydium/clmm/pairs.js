@@ -1086,4 +1086,6 @@ export {
   getPairsWithPrice,
   getPdaExBitmapAddress,
   SwapMath,
+  getFirstInitializedTickArray,
+  fetchPoolTickArrays,
 }
