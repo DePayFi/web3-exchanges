@@ -5338,6 +5338,9 @@ var raydium_cl = (scope)=>{
       getPrep: (args)=>{},
       getTransaction: (args)=>Raydium.getTransaction({ ...args, exchange: exchange$g }),
       SwapMath,
+      getPdaExBitmapAddress,
+      getFirstInitializedTickArray,
+      fetchPoolTickArrays,
       LAYOUTS,
     })
   )
