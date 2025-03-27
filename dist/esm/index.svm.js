@@ -5772,7 +5772,7 @@ class SwapMath {
       !state.amountSpecifiedRemaining.eq(ZERO) &&
       !state.sqrtPriceX64.eq(sqrtPriceLimitX64)
     ) {
-      if (loopCount > 100) {
+      if (loopCount > 1000) {
         throw Error('liquidity limit')
       }
       const step = {};
