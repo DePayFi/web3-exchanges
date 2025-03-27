@@ -1,6 +1,7 @@
 import Exchange from '../classes/Exchange'
 import Raydium from '../platforms/solana/raydium'
 import { SwapMath } from '../platforms/solana/raydium/clmm/pairs'
+import LAYOUTS from '../platforms/solana/raydium/layouts'
 
 const exchange = {
   
@@ -35,6 +36,7 @@ export default (scope)=>{
       getPrep: (args)=>{},
       getTransaction: (args)=>Raydium.getTransaction({ ...args, exchange }),
       SwapMath,
+      LAYOUTS,
     })
   )
 }

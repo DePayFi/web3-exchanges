@@ -51,3 +51,8 @@ export {
   TICK_ARRAY_LAYOUT,
   WHIRLPOOL_LAYOUT,
 }
+
+export default {
+  TICK_ARRAY_LAYOUT,
+  WHIRLPOOL_LAYOUT,
+}

@@ -1,6 +1,7 @@
 import Exchange from '../classes/Exchange'
 import Orca from '../platforms/solana/orca'
 import { getPrice } from '../platforms/solana/orca/price'
+import LAYOUTS from '../platforms/solana/orca/layouts'
 
 const exchange = {
   
@@ -34,6 +35,7 @@ export default (scope)=>{
       getPrep: (args)=>{},
       getTransaction: (args)=>Orca.getTransaction({ ...args, exchange }),
       getPrice,
+      LAYOUTS,
     })
   )
 }

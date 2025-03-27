@@ -3816,6 +3816,11 @@
     solanaWeb3_js.publicKey("whirlpool"),
   ]);
 
+  var LAYOUTS$1 = {
+    TICK_ARRAY_LAYOUT: TICK_ARRAY_LAYOUT$1,
+    WHIRLPOOL_LAYOUT,
+  };
+
   const MAX_SWAP_TICK_ARRAYS = 3;
   const MAX_TICK_INDEX = 443636; // i32
   const MIN_TICK_INDEX = -443636; // i32
@@ -4785,6 +4790,7 @@
         getPrep: (args)=>{},
         getTransaction: (args)=>Orca.getTransaction({ ...args, exchange: exchange$i }),
         getPrice,
+        LAYOUTS: LAYOUTS$1,
       })
     )
   };
@@ -4925,6 +4931,15 @@
     solanaWeb3_js.seq(solanaWeb3_js.seq(solanaWeb3_js.u64(), 8), EXTENSION_TICKARRAY_BITMAP_SIZE, "positiveTickArrayBitmap"),
     solanaWeb3_js.seq(solanaWeb3_js.seq(solanaWeb3_js.u64(), 8), EXTENSION_TICKARRAY_BITMAP_SIZE, "negativeTickArrayBitmap"),
   ]);
+
+  var LAYOUTS = {
+    CPMM_LAYOUT,
+    CPMM_CONFIG_LAYOUT,
+    CLMM_LAYOUT,
+    CLMM_CONFIG_LAYOUT,
+    TICK_ARRAY_LAYOUT,
+    TICK_ARRAY_BITMAP_EXTENSION_LAYOUT,
+  };
 
   function BNDivCeil(bn1, bn2) {
     const { div, mod } = bn1.divmod(bn2);
@@ -7481,6 +7496,7 @@
         getPrep: (args)=>{},
         getTransaction: (args)=>Raydium.getTransaction({ ...args, exchange: exchange$h }),
         CurveCalculator,
+        LAYOUTS,
       })
     )
   };
@@ -7518,6 +7534,7 @@
         getPrep: (args)=>{},
         getTransaction: (args)=>Raydium.getTransaction({ ...args, exchange: exchange$g }),
         SwapMath,
+        LAYOUTS,
       })
     )
   };
