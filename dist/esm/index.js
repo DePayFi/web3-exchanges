@@ -4357,7 +4357,7 @@ const fetchPoolTickArrays = async(poolKeys) =>{
       itemPoolInfo.exBitmapInfo,
       itemPoolInfo.tickSpacing,
       currentTickArrayStartIndex,
-      10,
+      25,
     );
     for (const itemIndex of startIndexArray) {
       const tickArrayAddress = getPdaTickArrayAddress(
