@@ -345,7 +345,7 @@ const getPairs = (base, quote)=>{
       { memcmp: { offset: 389, bytes: bs58.encode(Buffer.from([0])) }}, // status 0 for active pool: https://github.com/raydium-io/raydium-clmm/blob/master/programs/amm/src/states/pool.rs#L109
     ]},
     api: CLMM_LAYOUT,
-    cache: 86400, // 24h,
+    cache: 21600000, // 6 hours in ms
     cacheKey: ['raydium/clmm/', base.toString(), quote.toString()].join('/')
   })
 }
@@ -886,6 +886,8 @@ const fetchPoolTickArrays = async(poolKeys) =>{
     async(tickArray) => {
       const tickData = await request(`solana://${tickArray.pubkey.toString()}`, {
         api: TICK_ARRAY_LAYOUT,
+        cache: 5000, // 5 seconds in ms
+        cacheKey: ['raydium', 'cl', 'tickarray', tickArray.pubkey.toString()].join('-')
       })
       if (tickArrayCache[tickData.poolId.toString()] === undefined) tickArrayCache[tickData.poolId.toString()] = {};
 
@@ -941,6 +943,8 @@ const getPairsWithPrice = async({ tokenIn, tokenOut, amountIn, amountInMax, amou
     async(address) => {
       exBitData[address] = await request(`solana://${address}`, {
         api: TICK_ARRAY_BITMAP_EXTENSION_LAYOUT,
+        cache: 5000, // 5 seconds in ms
+        cacheKey: ['raydium', 'cl', 'tickarraybitmapextension', address].join('-')
       })
     }
   ))
@@ -948,6 +952,8 @@ const getPairsWithPrice = async({ tokenIn, tokenOut, amountIn, amountInMax, amou
   const poolInfos = await Promise.all(accounts.map(async(account)=>{
     const ammConfig = await request(`solana://${account.data.ammConfig.toString()}`, {
       api: CLMM_CONFIG_LAYOUT,
+      cache: 5000, // 5 seconds in ms
+      cacheKey: ['raydium', 'cl', 'ammConfig', account.data.ammConfig.toString()].join('-')
     })
     return {
       ...account.data,

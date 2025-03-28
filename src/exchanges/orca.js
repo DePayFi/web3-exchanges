@@ -1,7 +1,7 @@
 import Exchange from '../classes/Exchange'
-import Orca from '../platforms/solana/orca'
-import { getPrice } from '../platforms/solana/orca/price'
-import LAYOUTS from '../platforms/solana/orca/layouts'
+import Orca from '../platforms/svm/orca'
+import { getPrice } from '../platforms/svm/orca/price'
+import LAYOUTS from '../platforms/svm/orca/layouts'
 
 const exchange = {
   

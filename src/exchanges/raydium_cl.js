@@ -1,7 +1,7 @@
 import Exchange from '../classes/Exchange'
-import Raydium from '../platforms/solana/raydium'
-import { SwapMath, getPdaExBitmapAddress, getFirstInitializedTickArray, fetchPoolTickArrays } from '../platforms/solana/raydium/clmm/pairs'
-import LAYOUTS from '../platforms/solana/raydium/layouts'
+import Raydium from '../platforms/svm/raydium'
+import { SwapMath, getPdaExBitmapAddress, getFirstInitializedTickArray, fetchPoolTickArrays } from '../platforms/svm/raydium/clmm/pairs'
+import LAYOUTS from '../platforms/svm/raydium/layouts'
 
 const exchange = {
   

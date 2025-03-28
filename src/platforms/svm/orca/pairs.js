@@ -29,7 +29,7 @@ let getAccounts = async (base, quote) => {
       { memcmp: { offset: 181, bytes: quote }} // tokenMintB
     ]},
     api: WHIRLPOOL_LAYOUT,
-    cache: 86400, // 24h,
+    cache: 21600000, // 6 hours in ms
     cacheKey: ['whirlpool', base.toString(), quote.toString()].join('-')
   })
   return accounts

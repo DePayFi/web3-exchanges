@@ -70,7 +70,13 @@ const getTickArrays = async ({
 
       let data
       try {
-        data = await request({ blockchain: 'solana' , address: address.toString(), api: TICK_ARRAY_LAYOUT });
+        data = await request({
+          blockchain: 'solana' ,
+          address: address.toString(),
+          api: TICK_ARRAY_LAYOUT,
+          cache: 5000, // 5 seconds in ms
+          cacheKey: ['whirlpool', 'tick', address.toString()].join('-')
+        });
       } catch {}
 
       return { address, data }

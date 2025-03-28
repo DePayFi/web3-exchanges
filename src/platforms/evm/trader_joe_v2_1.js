@@ -54,7 +54,7 @@ const getBestPool = async ({ exchange, blockchain, path, amountIn, amountOut, bl
       address: exchange[blockchain].quoter.address,
       method: 'findBestPathFromAmountIn',
       api: exchange[blockchain].quoter.api,
-      cache: 5,
+      cache: 5000, // 5 seconds in ms
       block,
       params: {
         route: path,
@@ -69,7 +69,7 @@ const getBestPool = async ({ exchange, blockchain, path, amountIn, amountOut, bl
       address: exchange[blockchain].quoter.address,
       method: 'findBestPathFromAmountOut',
       api: exchange[blockchain].quoter.api,
-      cache: 5,
+      cache: 5000, // 5 seconds in ms
       block,
       params: {
         route: path,
@@ -178,7 +178,7 @@ let getAmountOut = async({ exchange, blockchain, path, pools, amountIn }) => {
     address: exchange[blockchain].quoter.address,
     method: 'findBestPathFromAmountIn',
     api: exchange[blockchain].quoter.api,
-    cache: 5,
+    cache: 5000, // 5 seconds in ms
     params: {
       route: getExchangePath({ blockchain, path }),
       amountIn,
@@ -195,7 +195,7 @@ let getAmountIn = async ({ exchange, blockchain, path, pools, amountOut, block }
     address: exchange[blockchain].quoter.address,
     method: 'findBestPathFromAmountOut',
     api: exchange[blockchain].quoter.api,
-    cache: 5,
+    cache: 5000, // 5 seconds in ms
     block,
     params: {
       route: getExchangePath({ blockchain, path }),

@@ -58,7 +58,7 @@ const getInputAmount = async ({ exchange, pool, outputAmount })=>{
       path: ethers.utils.solidityPack(["address","uint24","address"],[pool.path[1], pool.fee, pool.path[0]]),
       amountOut: outputAmount
     },
-    cache: 5
+    cache: 5000 // 5 seconds in ms
   })
 
   return data.amountIn
@@ -75,7 +75,7 @@ const getOutputAmount = async ({ exchange, pool, inputAmount })=>{
       path: ethers.utils.solidityPack(["address","uint24","address"],[pool.path[0], pool.fee, pool.path[1]]),
       amountIn: inputAmount
     },
-    cache: 5
+    cache: 5000 // 5 seconds in ms
   })
 
   return data.amountOut
@@ -93,7 +93,7 @@ const getBestPool = async ({ blockchain, exchange, path, amountIn, amountOut, bl
         address: exchange[blockchain].factory.address,
         method: 'getPool',
         api: exchange[blockchain].factory.api,
-        cache: 3600,
+        cache: 3600000, // 1 hour in ms
         params: [path[0], path[1], fee],
       }).then((address)=>{
         return {

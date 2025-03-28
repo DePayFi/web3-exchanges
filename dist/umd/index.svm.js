@@ -2689,7 +2689,7 @@
         address: exchange[blockchain].factory.address,
         method: 'getPair',
         api: exchange[blockchain].factory.api,
-        cache: 3600000,
+        cache: 3600000, // 1 hour in ms
         params: getExchangePath$5({ blockchain, exchange, path }),
       });
       if(!pair || pair == Blockchains__default['default'][blockchain].zero) { return false }
@@ -3878,7 +3878,13 @@
 
         let data;
         try {
-          data = await request({ blockchain: 'solana' , address: address.toString(), api: TICK_ARRAY_LAYOUT$1 });
+          data = await request({
+            blockchain: 'solana' ,
+            address: address.toString(),
+            api: TICK_ARRAY_LAYOUT$1,
+            cache: 5000, // 5 seconds in ms
+            cacheKey: ['whirlpool', 'tick', address.toString()].join('-')
+          });
         } catch (e2) {}
 
         return { address, data }
@@ -4095,6 +4101,8 @@
         blockchain: 'solana',
         address: account.pubkey.toString(),
         api: WHIRLPOOL_LAYOUT,
+        cache: 5000, // 5 seconds in ms
+        cacheKey: ['whirlpool', 'fresh', tokenIn.toString(), tokenOut.toString()].join('-')
       });
 
       const aToB = (freshWhirlpoolData.tokenMintA.toString() === tokenIn);
@@ -4150,7 +4158,7 @@
         { memcmp: { offset: 181, bytes: quote }} // tokenMintB
       ]},
       api: WHIRLPOOL_LAYOUT,
-      cache: 86400, // 24h,
+      cache: 21600000, // 6 hours in ms
       cacheKey: ['whirlpool', base.toString(), quote.toString()].join('-')
     });
     return accounts
@@ -5123,7 +5131,7 @@
   const getConfig = (address)=>{
     return request(`solana://${address}/getAccountInfo`, {
       api: CPMM_CONFIG_LAYOUT,
-      cache: 86400, // 24h,
+      cache: 21600000, // 6 hours in ms
       cacheKey: ['raydium/cpmm/config/', address.toString()].join('/')
     })
   };
@@ -5136,7 +5144,7 @@
         { memcmp: { offset: 200, bytes: quote }},
       ]},
       api: CPMM_LAYOUT,
-      cache: 86400, // 24h,
+      cache: 21600000, // 6 hours in ms
       cacheKey: ['raydium/cpmm/', base.toString(), quote.toString()].join('/')
     })
   };
@@ -5155,7 +5163,10 @@
 
       // BASE == A
 
-      const baseVaultAmountData = await request(`solana://${account.data.vaultA.toString()}/getTokenAccountBalance`);
+      const baseVaultAmountData = await request(`solana://${account.data.vaultA.toString()}/getTokenAccountBalance`, {
+        cache: 5000, // 5 seconds in ms
+        cacheKey: ['raydium', 'cp', 'baseVaultAmount', account.data.vaultA.toString()].join('-')
+      });
       const baseReserve = ethers.ethers.BigNumber.from(baseVaultAmountData.value.amount).sub(
         ethers.ethers.BigNumber.from(account.data.protocolFeesMintA.toString())
       ).sub(
@@ -5177,7 +5188,10 @@
 
       // QUOTE == B
 
-      const quoteVaultAmountData = await request(`solana://${account.data.vaultB.toString()}/getTokenAccountBalance`);
+      const quoteVaultAmountData = await request(`solana://${account.data.vaultB.toString()}/getTokenAccountBalance`, {
+        cache: 5000, // 5 seconds in ms
+        cacheKey: ['raydium', 'cp', 'quoteVaultAmount', account.data.vaultB.toString()].join('-')
+      });
       const quoteReserve = ethers.ethers.BigNumber.from(quoteVaultAmountData.value.amount).sub(
         ethers.ethers.BigNumber.from(account.data.protocolFeesMintB.toString())
       ).sub(
@@ -6030,7 +6044,7 @@
         { memcmp: { offset: 389, bytes: solanaWeb3_js.bs58.encode(solanaWeb3_js.Buffer.from([0])) }}, // status 0 for active pool: https://github.com/raydium-io/raydium-clmm/blob/master/programs/amm/src/states/pool.rs#L109
       ]},
       api: CLMM_LAYOUT,
-      cache: 86400, // 24h,
+      cache: 21600000, // 6 hours in ms
       cacheKey: ['raydium/clmm/', base.toString(), quote.toString()].join('/')
     })
   };
@@ -6571,6 +6585,8 @@
       async(tickArray) => {
         const tickData = await request(`solana://${tickArray.pubkey.toString()}`, {
           api: TICK_ARRAY_LAYOUT,
+          cache: 5000, // 5 seconds in ms
+          cacheKey: ['raydium', 'cl', 'tickarray', tickArray.pubkey.toString()].join('-')
         });
         if (tickArrayCache[tickData.poolId.toString()] === undefined) tickArrayCache[tickData.poolId.toString()] = {};
 
@@ -6626,6 +6642,8 @@
       async(address) => {
         exBitData[address] = await request(`solana://${address}`, {
           api: TICK_ARRAY_BITMAP_EXTENSION_LAYOUT,
+          cache: 5000, // 5 seconds in ms
+          cacheKey: ['raydium', 'cl', 'tickarraybitmapextension', address].join('-')
         });
       }
     ));
@@ -6633,6 +6651,8 @@
     const poolInfos = await Promise.all(accounts.map(async(account)=>{
       const ammConfig = await request(`solana://${account.data.ammConfig.toString()}`, {
         api: CLMM_CONFIG_LAYOUT,
+        cache: 5000, // 5 seconds in ms
+        cacheKey: ['raydium', 'cl', 'ammConfig', account.data.ammConfig.toString()].join('-')
       });
       return {
         ...account.data,
@@ -7619,7 +7639,7 @@
         path: ethers.ethers.utils.solidityPack(["address","uint24","address"],[pool.path[1], pool.fee, pool.path[0]]),
         amountOut: outputAmount
       },
-      cache: 5
+      cache: 5000 // 5 seconds in ms
     });
 
     return data.amountIn
@@ -7636,7 +7656,7 @@
         path: ethers.ethers.utils.solidityPack(["address","uint24","address"],[pool.path[0], pool.fee, pool.path[1]]),
         amountIn: inputAmount
       },
-      cache: 5
+      cache: 5000 // 5 seconds in ms
     });
 
     return data.amountOut
@@ -7654,7 +7674,7 @@
           address: exchange[blockchain].factory.address,
           method: 'getPool',
           api: exchange[blockchain].factory.api,
-          cache: 3600,
+          cache: 3600000, // 1 hour in ms
           params: [path[0], path[1], fee],
         }).then((address)=>{
           return {
@@ -8279,7 +8299,7 @@
         address: exchange[blockchain].quoter.address,
         method: 'findBestPathFromAmountIn',
         api: exchange[blockchain].quoter.api,
-        cache: 5,
+        cache: 5000, // 5 seconds in ms
         block,
         params: {
           route: path,
@@ -8294,7 +8314,7 @@
         address: exchange[blockchain].quoter.address,
         method: 'findBestPathFromAmountOut',
         api: exchange[blockchain].quoter.api,
-        cache: 5,
+        cache: 5000, // 5 seconds in ms
         block,
         params: {
           route: path,
@@ -8403,7 +8423,7 @@
       address: exchange[blockchain].quoter.address,
       method: 'findBestPathFromAmountIn',
       api: exchange[blockchain].quoter.api,
-      cache: 5,
+      cache: 5000, // 5 seconds in ms
       params: {
         route: getExchangePath$1({ blockchain, path }),
         amountIn,
@@ -8420,7 +8440,7 @@
       address: exchange[blockchain].quoter.address,
       method: 'findBestPathFromAmountOut',
       api: exchange[blockchain].quoter.api,
-      cache: 5,
+      cache: 5000, // 5 seconds in ms
       block,
       params: {
         route: getExchangePath$1({ blockchain, path }),
@@ -8767,7 +8787,7 @@
         path: ethers.ethers.utils.solidityPack(["address","uint24","address"],[pool.path[1], pool.fee, pool.path[0]]),
         amountOut: outputAmount
       },
-      cache: 5
+      cache: 5000 // 5 seconds in ms
     });
 
     return data.amountIn
@@ -8784,7 +8804,7 @@
         path: ethers.ethers.utils.solidityPack(["address","uint24","address"],[pool.path[0], pool.fee, pool.path[1]]),
         amountIn: inputAmount
       },
-      cache: 5
+      cache: 5000 // 5 seconds in ms
     });
 
     return data.amountOut
@@ -8802,7 +8822,7 @@
           address: exchange[blockchain].factory.address,
           method: 'getPool',
           api: exchange[blockchain].factory.api,
-          cache: 3600,
+          cache: 3600000, // 1 hour in ms
           params: [path[0], path[1], fee],
         }).then((address)=>{
           return {

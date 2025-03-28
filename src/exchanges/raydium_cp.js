@@ -1,7 +1,7 @@
 import Exchange from '../classes/Exchange'
-import Raydium from '../platforms/solana/raydium'
-import { CurveCalculator } from '../platforms/solana/raydium/cpmm/price'
-import LAYOUTS from '../platforms/solana/raydium/layouts'
+import Raydium from '../platforms/svm/raydium'
+import { CurveCalculator } from '../platforms/svm/raydium/cpmm/price'
+import LAYOUTS from '../platforms/svm/raydium/layouts'
 
 const exchange = {
   

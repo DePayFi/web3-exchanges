@@ -20,7 +20,7 @@ import { ethers } from 'ethers'
 const getConfig = (address)=>{
   return request(`solana://${address}/getAccountInfo`, {
     api: CPMM_CONFIG_LAYOUT,
-    cache: 86400, // 24h,
+    cache: 21600000, // 6 hours in ms
     cacheKey: ['raydium/cpmm/config/', address.toString()].join('/')
   })
 }
@@ -33,7 +33,7 @@ const getPairs = (base, quote)=>{
       { memcmp: { offset: 200, bytes: quote }},
     ]},
     api: CPMM_LAYOUT,
-    cache: 86400, // 24h,
+    cache: 21600000, // 6 hours in ms
     cacheKey: ['raydium/cpmm/', base.toString(), quote.toString()].join('/')
   })
 }
@@ -52,7 +52,10 @@ const getPairsWithPrice = async({ tokenIn, tokenOut, amountIn, amountInMax, amou
 
     // BASE == A
 
-    const baseVaultAmountData = await request(`solana://${account.data.vaultA.toString()}/getTokenAccountBalance`)
+    const baseVaultAmountData = await request(`solana://${account.data.vaultA.toString()}/getTokenAccountBalance`, {
+      cache: 5000, // 5 seconds in ms
+      cacheKey: ['raydium', 'cp', 'baseVaultAmount', account.data.vaultA.toString()].join('-')
+    })
     const baseReserve = ethers.BigNumber.from(baseVaultAmountData.value.amount).sub(
       ethers.BigNumber.from(account.data.protocolFeesMintA.toString())
     ).sub(
@@ -74,7 +77,10 @@ const getPairsWithPrice = async({ tokenIn, tokenOut, amountIn, amountInMax, amou
 
     // QUOTE == B
 
-    const quoteVaultAmountData = await request(`solana://${account.data.vaultB.toString()}/getTokenAccountBalance`)
+    const quoteVaultAmountData = await request(`solana://${account.data.vaultB.toString()}/getTokenAccountBalance`, {
+      cache: 5000, // 5 seconds in ms
+      cacheKey: ['raydium', 'cp', 'quoteVaultAmount', account.data.vaultB.toString()].join('-')
+    })
     const quoteReserve = ethers.BigNumber.from(quoteVaultAmountData.value.amount).sub(
       ethers.BigNumber.from(account.data.protocolFeesMintB.toString())
     ).sub(

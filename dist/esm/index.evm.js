@@ -491,7 +491,7 @@ const pathExists$4 = async ({ blockchain, exchange, path }) => {
       address: exchange[blockchain].factory.address,
       method: 'getPair',
       api: exchange[blockchain].factory.api,
-      cache: 3600000,
+      cache: 3600000, // 1 hour in ms
       params: getExchangePath$3({ blockchain, exchange, path }),
     });
     if(!pair || pair == Blockchains[blockchain].zero) { return false }
@@ -883,7 +883,7 @@ const getInputAmount$1 = async ({ exchange, pool, outputAmount })=>{
       path: ethers.utils.solidityPack(["address","uint24","address"],[pool.path[1], pool.fee, pool.path[0]]),
       amountOut: outputAmount
     },
-    cache: 5
+    cache: 5000 // 5 seconds in ms
   });
 
   return data.amountIn
@@ -900,7 +900,7 @@ const getOutputAmount$1 = async ({ exchange, pool, inputAmount })=>{
       path: ethers.utils.solidityPack(["address","uint24","address"],[pool.path[0], pool.fee, pool.path[1]]),
       amountIn: inputAmount
     },
-    cache: 5
+    cache: 5000 // 5 seconds in ms
   });
 
   return data.amountOut
@@ -918,7 +918,7 @@ const getBestPool$2 = async ({ blockchain, exchange, path, amountIn, amountOut, 
         address: exchange[blockchain].factory.address,
         method: 'getPool',
         api: exchange[blockchain].factory.api,
-        cache: 3600,
+        cache: 3600000, // 1 hour in ms
         params: [path[0], path[1], fee],
       }).then((address)=>{
         return {
@@ -1543,7 +1543,7 @@ const getBestPool$1 = async ({ exchange, blockchain, path, amountIn, amountOut, 
       address: exchange[blockchain].quoter.address,
       method: 'findBestPathFromAmountIn',
       api: exchange[blockchain].quoter.api,
-      cache: 5,
+      cache: 5000, // 5 seconds in ms
       block,
       params: {
         route: path,
@@ -1558,7 +1558,7 @@ const getBestPool$1 = async ({ exchange, blockchain, path, amountIn, amountOut, 
       address: exchange[blockchain].quoter.address,
       method: 'findBestPathFromAmountOut',
       api: exchange[blockchain].quoter.api,
-      cache: 5,
+      cache: 5000, // 5 seconds in ms
       block,
       params: {
         route: path,
@@ -1667,7 +1667,7 @@ let getAmountOut$1 = async({ exchange, blockchain, path, pools, amountIn }) => {
     address: exchange[blockchain].quoter.address,
     method: 'findBestPathFromAmountIn',
     api: exchange[blockchain].quoter.api,
-    cache: 5,
+    cache: 5000, // 5 seconds in ms
     params: {
       route: getExchangePath$1({ blockchain, path }),
       amountIn,
@@ -1684,7 +1684,7 @@ let getAmountIn$1 = async ({ exchange, blockchain, path, pools, amountOut, block
     address: exchange[blockchain].quoter.address,
     method: 'findBestPathFromAmountOut',
     api: exchange[blockchain].quoter.api,
-    cache: 5,
+    cache: 5000, // 5 seconds in ms
     block,
     params: {
       route: getExchangePath$1({ blockchain, path }),
@@ -2031,7 +2031,7 @@ const getInputAmount = async ({ exchange, pool, outputAmount })=>{
       path: ethers.utils.solidityPack(["address","uint24","address"],[pool.path[1], pool.fee, pool.path[0]]),
       amountOut: outputAmount
     },
-    cache: 5
+    cache: 5000 // 5 seconds in ms
   });
 
   return data.amountIn
@@ -2048,7 +2048,7 @@ const getOutputAmount = async ({ exchange, pool, inputAmount })=>{
       path: ethers.utils.solidityPack(["address","uint24","address"],[pool.path[0], pool.fee, pool.path[1]]),
       amountIn: inputAmount
     },
-    cache: 5
+    cache: 5000 // 5 seconds in ms
   });
 
   return data.amountOut
@@ -2066,7 +2066,7 @@ const getBestPool = async ({ blockchain, exchange, path, amountIn, amountOut, bl
         address: exchange[blockchain].factory.address,
         method: 'getPool',
         api: exchange[blockchain].factory.api,
-        cache: 3600,
+        cache: 3600000, // 1 hour in ms
         params: [path[0], path[1], fee],
       }).then((address)=>{
         return {

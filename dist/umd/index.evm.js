@@ -497,7 +497,7 @@
         address: exchange[blockchain].factory.address,
         method: 'getPair',
         api: exchange[blockchain].factory.api,
-        cache: 3600000,
+        cache: 3600000, // 1 hour in ms
         params: getExchangePath$3({ blockchain, exchange, path }),
       });
       if(!pair || pair == Blockchains__default['default'][blockchain].zero) { return false }
@@ -889,7 +889,7 @@
         path: ethers.ethers.utils.solidityPack(["address","uint24","address"],[pool.path[1], pool.fee, pool.path[0]]),
         amountOut: outputAmount
       },
-      cache: 5
+      cache: 5000 // 5 seconds in ms
     });
 
     return data.amountIn
@@ -906,7 +906,7 @@
         path: ethers.ethers.utils.solidityPack(["address","uint24","address"],[pool.path[0], pool.fee, pool.path[1]]),
         amountIn: inputAmount
       },
-      cache: 5
+      cache: 5000 // 5 seconds in ms
     });
 
     return data.amountOut
@@ -924,7 +924,7 @@
           address: exchange[blockchain].factory.address,
           method: 'getPool',
           api: exchange[blockchain].factory.api,
-          cache: 3600,
+          cache: 3600000, // 1 hour in ms
           params: [path[0], path[1], fee],
         }).then((address)=>{
           return {
@@ -1549,7 +1549,7 @@
         address: exchange[blockchain].quoter.address,
         method: 'findBestPathFromAmountIn',
         api: exchange[blockchain].quoter.api,
-        cache: 5,
+        cache: 5000, // 5 seconds in ms
         block,
         params: {
           route: path,
@@ -1564,7 +1564,7 @@
         address: exchange[blockchain].quoter.address,
         method: 'findBestPathFromAmountOut',
         api: exchange[blockchain].quoter.api,
-        cache: 5,
+        cache: 5000, // 5 seconds in ms
         block,
         params: {
           route: path,
@@ -1673,7 +1673,7 @@
       address: exchange[blockchain].quoter.address,
       method: 'findBestPathFromAmountIn',
       api: exchange[blockchain].quoter.api,
-      cache: 5,
+      cache: 5000, // 5 seconds in ms
       params: {
         route: getExchangePath$1({ blockchain, path }),
         amountIn,
@@ -1690,7 +1690,7 @@
       address: exchange[blockchain].quoter.address,
       method: 'findBestPathFromAmountOut',
       api: exchange[blockchain].quoter.api,
-      cache: 5,
+      cache: 5000, // 5 seconds in ms
       block,
       params: {
         route: getExchangePath$1({ blockchain, path }),
@@ -2037,7 +2037,7 @@
         path: ethers.ethers.utils.solidityPack(["address","uint24","address"],[pool.path[1], pool.fee, pool.path[0]]),
         amountOut: outputAmount
       },
-      cache: 5
+      cache: 5000 // 5 seconds in ms
     });
 
     return data.amountIn
@@ -2054,7 +2054,7 @@
         path: ethers.ethers.utils.solidityPack(["address","uint24","address"],[pool.path[0], pool.fee, pool.path[1]]),
         amountIn: inputAmount
       },
-      cache: 5
+      cache: 5000 // 5 seconds in ms
     });
 
     return data.amountOut
@@ -2072,7 +2072,7 @@
           address: exchange[blockchain].factory.address,
           method: 'getPool',
           api: exchange[blockchain].factory.api,
-          cache: 3600,
+          cache: 3600000, // 1 hour in ms
           params: [path[0], path[1], fee],
         }).then((address)=>{
           return {

@@ -62,7 +62,7 @@ const pathExists = async ({ blockchain, exchange, path }) => {
       address: exchange[blockchain].factory.address,
       method: 'getPair',
       api: exchange[blockchain].factory.api,
-      cache: 3600000,
+      cache: 3600000, // 1 hour in ms
       params: getExchangePath({ blockchain, exchange, path }),
     })
     if(!pair || pair == Blockchains[blockchain].zero) { return false }
