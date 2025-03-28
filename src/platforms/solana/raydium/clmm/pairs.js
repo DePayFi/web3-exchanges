@@ -868,7 +868,7 @@ const fetchPoolTickArrays = async(poolKeys) =>{
       itemPoolInfo.exBitmapInfo,
       itemPoolInfo.tickSpacing,
       currentTickArrayStartIndex,
-      7,
+      10,
     );
     for (const itemIndex of startIndexArray) {
       const tickArrayAddress = getPdaTickArrayAddress(
@@ -886,8 +886,6 @@ const fetchPoolTickArrays = async(poolKeys) =>{
     async(tickArray) => {
       const tickData = await request(`solana://${tickArray.pubkey.toString()}`, {
         api: TICK_ARRAY_LAYOUT,
-        cache: 10, // 10s,
-        cacheKey: ['raydium/clmm/ticks/', tickArray.pubkey.toString()].join('/')
       })
       if (tickArrayCache[tickData.poolId.toString()] === undefined) tickArrayCache[tickData.poolId.toString()] = {};
 
@@ -943,8 +941,6 @@ const getPairsWithPrice = async({ tokenIn, tokenOut, amountIn, amountInMax, amou
     async(address) => {
       exBitData[address] = await request(`solana://${address}`, {
         api: TICK_ARRAY_BITMAP_EXTENSION_LAYOUT,
-        cache: 10, // 10s,
-        cacheKey: ['raydium/clmm/exbitdata/', address.toString()].join('/')
       })
     }
   ))
@@ -952,8 +948,6 @@ const getPairsWithPrice = async({ tokenIn, tokenOut, amountIn, amountInMax, amou
   const poolInfos = await Promise.all(accounts.map(async(account)=>{
     const ammConfig = await request(`solana://${account.data.ammConfig.toString()}`, {
       api: CLMM_CONFIG_LAYOUT,
-      cache: 10, // 10s,
-      cacheKey: ['raydium/clmm/configs/', account.data.ammConfig.toString()].join('/')
     })
     return {
       ...account.data,

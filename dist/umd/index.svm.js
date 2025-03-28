@@ -3878,7 +3878,7 @@
 
         let data;
         try {
-          data = await request({ blockchain: 'solana' , address: address.toString(), api: TICK_ARRAY_LAYOUT$1, cache: 10 });
+          data = await request({ blockchain: 'solana' , address: address.toString(), api: TICK_ARRAY_LAYOUT$1 });
         } catch (e2) {}
 
         return { address, data }
@@ -4095,7 +4095,6 @@
         blockchain: 'solana',
         address: account.pubkey.toString(),
         api: WHIRLPOOL_LAYOUT,
-        cache: 10,
       });
 
       const aToB = (freshWhirlpoolData.tokenMintA.toString() === tokenIn);
@@ -5156,7 +5155,7 @@
 
       // BASE == A
 
-      const baseVaultAmountData = await request(`solana://${account.data.vaultA.toString()}/getTokenAccountBalance`, { cache: 3 });
+      const baseVaultAmountData = await request(`solana://${account.data.vaultA.toString()}/getTokenAccountBalance`);
       const baseReserve = ethers.ethers.BigNumber.from(baseVaultAmountData.value.amount).sub(
         ethers.ethers.BigNumber.from(account.data.protocolFeesMintA.toString())
       ).sub(
@@ -5178,7 +5177,7 @@
 
       // QUOTE == B
 
-      const quoteVaultAmountData = await request(`solana://${account.data.vaultB.toString()}/getTokenAccountBalance`, { cache: 3 });
+      const quoteVaultAmountData = await request(`solana://${account.data.vaultB.toString()}/getTokenAccountBalance`);
       const quoteReserve = ethers.ethers.BigNumber.from(quoteVaultAmountData.value.amount).sub(
         ethers.ethers.BigNumber.from(account.data.protocolFeesMintB.toString())
       ).sub(
@@ -6554,7 +6553,7 @@
         itemPoolInfo.exBitmapInfo,
         itemPoolInfo.tickSpacing,
         currentTickArrayStartIndex,
-        7,
+        10,
       );
       for (const itemIndex of startIndexArray) {
         const tickArrayAddress = getPdaTickArrayAddress(
@@ -6572,8 +6571,6 @@
       async(tickArray) => {
         const tickData = await request(`solana://${tickArray.pubkey.toString()}`, {
           api: TICK_ARRAY_LAYOUT,
-          cache: 10, // 10s,
-          cacheKey: ['raydium/clmm/ticks/', tickArray.pubkey.toString()].join('/')
         });
         if (tickArrayCache[tickData.poolId.toString()] === undefined) tickArrayCache[tickData.poolId.toString()] = {};
 
@@ -6629,8 +6626,6 @@
       async(address) => {
         exBitData[address] = await request(`solana://${address}`, {
           api: TICK_ARRAY_BITMAP_EXTENSION_LAYOUT,
-          cache: 10, // 10s,
-          cacheKey: ['raydium/clmm/exbitdata/', address.toString()].join('/')
         });
       }
     ));
@@ -6638,8 +6633,6 @@
     const poolInfos = await Promise.all(accounts.map(async(account)=>{
       const ammConfig = await request(`solana://${account.data.ammConfig.toString()}`, {
         api: CLMM_CONFIG_LAYOUT,
-        cache: 10, // 10s,
-        cacheKey: ['raydium/clmm/configs/', account.data.ammConfig.toString()].join('/')
       });
       return {
         ...account.data,

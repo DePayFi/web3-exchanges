@@ -1682,7 +1682,7 @@ const getTickArrays = async ({
 
       let data;
       try {
-        data = await request({ blockchain: 'solana' , address: address.toString(), api: TICK_ARRAY_LAYOUT$1, cache: 10 });
+        data = await request({ blockchain: 'solana' , address: address.toString(), api: TICK_ARRAY_LAYOUT$1 });
       } catch (e2) {}
 
       return { address, data }
@@ -1899,7 +1899,6 @@ const getPrice = async ({
       blockchain: 'solana',
       address: account.pubkey.toString(),
       api: WHIRLPOOL_LAYOUT,
-      cache: 10,
     });
 
     const aToB = (freshWhirlpoolData.tokenMintA.toString() === tokenIn);
@@ -2960,7 +2959,7 @@ const getPairsWithPrice$2 = async({ tokenIn, tokenOut, amountIn, amountInMax, am
 
     // BASE == A
 
-    const baseVaultAmountData = await request(`solana://${account.data.vaultA.toString()}/getTokenAccountBalance`, { cache: 3 });
+    const baseVaultAmountData = await request(`solana://${account.data.vaultA.toString()}/getTokenAccountBalance`);
     const baseReserve = ethers.BigNumber.from(baseVaultAmountData.value.amount).sub(
       ethers.BigNumber.from(account.data.protocolFeesMintA.toString())
     ).sub(
@@ -2982,7 +2981,7 @@ const getPairsWithPrice$2 = async({ tokenIn, tokenOut, amountIn, amountInMax, am
 
     // QUOTE == B
 
-    const quoteVaultAmountData = await request(`solana://${account.data.vaultB.toString()}/getTokenAccountBalance`, { cache: 3 });
+    const quoteVaultAmountData = await request(`solana://${account.data.vaultB.toString()}/getTokenAccountBalance`);
     const quoteReserve = ethers.BigNumber.from(quoteVaultAmountData.value.amount).sub(
       ethers.BigNumber.from(account.data.protocolFeesMintB.toString())
     ).sub(
@@ -4358,7 +4357,7 @@ const fetchPoolTickArrays = async(poolKeys) =>{
       itemPoolInfo.exBitmapInfo,
       itemPoolInfo.tickSpacing,
       currentTickArrayStartIndex,
-      7,
+      10,
     );
     for (const itemIndex of startIndexArray) {
       const tickArrayAddress = getPdaTickArrayAddress(
@@ -4376,8 +4375,6 @@ const fetchPoolTickArrays = async(poolKeys) =>{
     async(tickArray) => {
       const tickData = await request(`solana://${tickArray.pubkey.toString()}`, {
         api: TICK_ARRAY_LAYOUT,
-        cache: 10, // 10s,
-        cacheKey: ['raydium/clmm/ticks/', tickArray.pubkey.toString()].join('/')
       });
       if (tickArrayCache[tickData.poolId.toString()] === undefined) tickArrayCache[tickData.poolId.toString()] = {};
 
@@ -4433,8 +4430,6 @@ const getPairsWithPrice$1 = async({ tokenIn, tokenOut, amountIn, amountInMax, am
     async(address) => {
       exBitData[address] = await request(`solana://${address}`, {
         api: TICK_ARRAY_BITMAP_EXTENSION_LAYOUT,
-        cache: 10, // 10s,
-        cacheKey: ['raydium/clmm/exbitdata/', address.toString()].join('/')
       });
     }
   ));
@@ -4442,8 +4437,6 @@ const getPairsWithPrice$1 = async({ tokenIn, tokenOut, amountIn, amountInMax, am
   const poolInfos = await Promise.all(accounts.map(async(account)=>{
     const ammConfig = await request(`solana://${account.data.ammConfig.toString()}`, {
       api: CLMM_CONFIG_LAYOUT,
-      cache: 10, // 10s,
-      cacheKey: ['raydium/clmm/configs/', account.data.ammConfig.toString()].join('/')
     });
     return {
       ...account.data,

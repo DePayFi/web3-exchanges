@@ -52,7 +52,7 @@ const getPairsWithPrice = async({ tokenIn, tokenOut, amountIn, amountInMax, amou
 
     // BASE == A
 
-    const baseVaultAmountData = await request(`solana://${account.data.vaultA.toString()}/getTokenAccountBalance`, { cache: 3 })
+    const baseVaultAmountData = await request(`solana://${account.data.vaultA.toString()}/getTokenAccountBalance`)
     const baseReserve = ethers.BigNumber.from(baseVaultAmountData.value.amount).sub(
       ethers.BigNumber.from(account.data.protocolFeesMintA.toString())
     ).sub(
@@ -74,7 +74,7 @@ const getPairsWithPrice = async({ tokenIn, tokenOut, amountIn, amountInMax, amou
 
     // QUOTE == B
 
-    const quoteVaultAmountData = await request(`solana://${account.data.vaultB.toString()}/getTokenAccountBalance`, { cache: 3 })
+    const quoteVaultAmountData = await request(`solana://${account.data.vaultB.toString()}/getTokenAccountBalance`)
     const quoteReserve = ethers.BigNumber.from(quoteVaultAmountData.value.amount).sub(
       ethers.BigNumber.from(account.data.protocolFeesMintB.toString())
     ).sub(

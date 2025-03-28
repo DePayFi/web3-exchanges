@@ -33,7 +33,6 @@ const getPrice = async ({
       blockchain: 'solana',
       address: account.pubkey.toString(),
       api: WHIRLPOOL_LAYOUT,
-      cache: 10,
     })
 
     const aToB = (freshWhirlpoolData.tokenMintA.toString() === tokenIn)
