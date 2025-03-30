@@ -4798,6 +4798,10 @@
         getTransaction: (args)=>Orca.getTransaction({ ...args, exchange: exchange$i }),
         getPrice,
         compute,
+        getTickArrays,
+        TickArraySequence,
+        MIN_SQRT_PRICE,
+        MAX_SQRT_PRICE,
         LAYOUTS: LAYOUTS$1,
       })
     )

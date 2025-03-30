@@ -81,5 +81,9 @@ const getPrice = async ({
 
 export {
   getPrice,
-  compute
+  compute,
+  getTickArrays,
+  TickArraySequence,
+  MIN_SQRT_PRICE,
+  MAX_SQRT_PRICE,
 }
