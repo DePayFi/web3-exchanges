@@ -1,6 +1,6 @@
 import Exchange from '../classes/Exchange'
 import Orca from '../platforms/svm/orca'
-import { getPrice } from '../platforms/svm/orca/price'
+import { getPrice, compute } from '../platforms/svm/orca/price'
 import LAYOUTS from '../platforms/svm/orca/layouts'
 
 const exchange = {
@@ -35,6 +35,7 @@ export default (scope)=>{
       getPrep: (args)=>{},
       getTransaction: (args)=>Orca.getTransaction({ ...args, exchange }),
       getPrice,
+      compute,
       LAYOUTS,
     })
   )

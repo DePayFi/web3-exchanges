@@ -5,9 +5,9 @@
 ```javascript
 let route = await Web3Exchanges.raydium_cp.route({
   blockchain: 'solana',
-  tokenIn: '9wvorGtBJ8gyLorFTmwXWcymPoGVUBn6MRzHwFpCdCeC',
-  tokenOut: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
-  amountInMax: 0.01
+  tokenOut: '9wvorGtBJ8gyLorFTmwXWcymPoGVUBn6MRzHwFpCdCeC',
+  tokenIn: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
+  amountOutMin: 0.01
 })
 
 let wallets = await Web3Wallets.getWallets()

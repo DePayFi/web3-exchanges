@@ -80,5 +80,6 @@ const getPrice = async ({
 }
 
 export {
-  getPrice
+  getPrice,
+  compute
 }

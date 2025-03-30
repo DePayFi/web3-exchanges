@@ -4791,6 +4791,7 @@ var orca = (scope)=>{
       getPrep: (args)=>{},
       getTransaction: (args)=>Orca.getTransaction({ ...args, exchange: exchange$i }),
       getPrice,
+      compute,
       LAYOUTS: LAYOUTS$1,
     })
   )
