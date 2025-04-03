@@ -6723,7 +6723,7 @@
 
         } else { // compute amountIn
 
-          const zeroForOne = tokenOut.toString() === poolInfo.mintB.toString();
+          const zeroForOne = tokenOut.toString() === poolInfo.mintA.toString();
           
           const {
             isExist,
