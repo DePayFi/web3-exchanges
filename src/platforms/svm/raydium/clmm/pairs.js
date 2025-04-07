@@ -923,37 +923,54 @@ const preInitializedTickArrayStartIndex = (poolInfo, zeroForOne) => {
   return result.length > 0 ? { isExist: true, nextStartIndex: result[0] } : { isExist: false, nextStartIndex: 0 };
 }
 
-const getPairsWithPrice = async({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin })=>{
+const getPairsWithPrice = async({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin, pairsDatum })=>{
 
-  let accounts = await getPairs(tokenIn, tokenOut)
-
-  if(accounts.length == 0) {
-    accounts = await getPairs(tokenOut, tokenIn)
-  }
-
-  accounts = accounts.filter((account)=>account.data.liquidity.gte(new BN('1000')))
-
+  let accounts
   const exBitData = {}
 
-  let addresses = await Promise.all(accounts.map(
-    (account) => getPdaExBitmapAddress(new PublicKey(PROGRAM_ID), account.pubkey)
-  ))
+  if(pairsDatum) {
 
-  await Promise.all(addresses.map(
-    async(address) => {
-      exBitData[address] = await request(`solana://${address}`, {
-        api: TICK_ARRAY_BITMAP_EXTENSION_LAYOUT,
-        cache: 5000, // 5 seconds in ms
-        cacheKey: ['raydium', 'cl', 'tickarraybitmapextension', address].join('-')
-      })
+    let exBitDataForAddress
+
+    [accounts, exBitDataForAddress] = await Promise.all([
+      await request(`solana://${pairsDatum.id}`, { api: CLMM_LAYOUT, cache: 5000 }).then((data)=>{
+        return [{
+          pubkey: new PublicKey(pairsDatum.id),
+          data
+        }]
+      }),
+      await request(`solana://${pairsDatum.exBitmapAddress}`, { api: TICK_ARRAY_BITMAP_EXTENSION_LAYOUT, cache: 5000 }),
+    ])
+
+    exBitData[pairsDatum.exBitmapAddress] = exBitDataForAddress
+
+  } else {
+    accounts = await getPairs(tokenIn, tokenOut)
+
+    if(accounts.length == 0) {
+      accounts = await getPairs(tokenOut, tokenIn)
     }
-  ))
+
+    accounts = accounts.filter((account)=>account.data.liquidity.gte(new BN('1000')))
+    
+    let addresses = await Promise.all(accounts.map(
+      (account) => getPdaExBitmapAddress(new PublicKey(PROGRAM_ID), account.pubkey)
+    ))
+
+    await Promise.all(addresses.map(
+      async(address) => {
+        exBitData[address] = await request(`solana://${address}`, {
+          api: TICK_ARRAY_BITMAP_EXTENSION_LAYOUT,
+          cache: 5000, // 5 seconds in ms
+        })
+      }
+    ))
+  }
 
   const poolInfos = await Promise.all(accounts.map(async(account)=>{
     const ammConfig = await request(`solana://${account.data.ammConfig.toString()}`, {
       api: CLMM_CONFIG_LAYOUT,
-      cache: 5000, // 5 seconds in ms
-      cacheKey: ['raydium', 'cl', 'ammConfig', account.data.ammConfig.toString()].join('-')
+      cache: 5000
     })
     return {
       ...account.data,
@@ -1058,7 +1075,7 @@ const getPairsWithPrice = async({ tokenIn, tokenOut, amountIn, amountInMax, amou
           poolInfo.tickCurrent,
           poolInfo.tickSpacing,
           poolInfo.sqrtPriceX64,
-          outputAmount.mul(NEGATIVE_ONE),
+          outputAmount,
           firstTickArrayStartIndex,
           undefined,
         );

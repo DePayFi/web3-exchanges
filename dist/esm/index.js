@@ -300,6 +300,7 @@ const route$1 = ({
   getPrep,
   getTransaction,
   slippage,
+  pairsData,
 }) => {
 
   tokenIn = fixAddress(tokenIn);
@@ -309,13 +310,13 @@ const route$1 = ({
   if([amountIn, amountOut, amountInMax, amountOutMin].filter(Boolean).length < 1) { throw('You need to pass exactly one: amountIn, amountOut, amountInMax or amountOutMin') }
 
   return new Promise(async (resolve)=> {
-    let { path, exchangePath, pools } = await findPath({ blockchain, tokenIn, tokenOut, amountIn, amountOut, amountInMax, amountOutMin });
+    let { path, exchangePath, pools } = await findPath({ blockchain, tokenIn, tokenOut, amountIn, amountOut, amountInMax, amountOutMin, pairsData });
     if (path === undefined || path.length == 0) { return resolve() }
     let [amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput] = [amountIn, amountOut, amountInMax, amountOutMin];
 
     let amounts; // includes intermediary amounts for longer routes
     try {
-      ;({ amountIn, amountInMax, amountOut, amountOutMin, amounts } = await getAmounts({ exchange, blockchain, path, pools, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }));
+      ;({ amountIn, amountInMax, amountOut, amountOutMin, amounts, pools } = await getAmounts({ exchange, blockchain, path, pools, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin, pairsData }));
     } catch(e) {
       console.log(e);
       return resolve()
@@ -400,6 +401,7 @@ class Exchange {
     amountInMax,
     amountOutMin,
     slippage,
+    pairsData,
   }) {
     if(tokenIn === tokenOut){ return Promise.resolve() }
 
@@ -440,6 +442,7 @@ class Exchange {
       getPrep: this.getPrep,
       getTransaction: this.getTransaction,
       slippage,
+      pairsData,
     })
   }
 }
@@ -1897,17 +1900,23 @@ const getPrice = async ({
   amountInMax,
   amountOut,
   amountOutMin,
+  pairsDatum
 })=>{
 
   try {
     
-    const freshWhirlpoolData = await request({
-      blockchain: 'solana',
-      address: account.pubkey.toString(),
-      api: WHIRLPOOL_LAYOUT,
-      cache: 5000, // 5 seconds in ms
-      cacheKey: ['whirlpool', 'fresh', tokenIn.toString(), tokenOut.toString()].join('-')
-    });
+    let freshWhirlpoolData;
+    if(pairsDatum) {
+      freshWhirlpoolData = account;
+    } else {
+      freshWhirlpoolData = await request({
+        blockchain: 'solana',
+        address: account.pubkey.toString(),
+        api: WHIRLPOOL_LAYOUT,
+        cache: 5000, // 5 seconds in ms
+        cacheKey: ['whirlpool', 'fresh', tokenIn.toString(), tokenOut.toString()].join('-')
+      });
+    }
 
     const aToB = (freshWhirlpoolData.tokenMintA.toString() === tokenIn);
 
@@ -1941,7 +1950,7 @@ const getPrice = async ({
       sqrtPriceLimit,
     }
 
-  } catch (e) {
+  } catch(e) {
     return {
       price: undefined,
       tickArrays: undefined,
@@ -1968,13 +1977,23 @@ let getAccounts = async (base, quote) => {
   return accounts
 };
 
-let getPairsWithPrice$3 = async({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }) => {
+let getPairsWithPrice$3 = async({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin, pairsDatum }) => {
   try {
-    let accounts = await getAccounts(tokenIn, tokenOut);
-    if(accounts.length === 0) { accounts = await getAccounts(tokenOut, tokenIn); }
-    accounts = accounts.filter((account)=>account.data.liquidity.gt(1));
+    let accounts;
+    if(pairsData) {
+      accounts = [
+        {...
+          await request(`solana://${pairsDatum.id}/getAccountInfo`, { api: WHIRLPOOL_LAYOUT, cache: 5000 }),
+          pubkey: new PublicKey(pairsDatum.id)
+        }
+      ];
+    } else {
+      accounts = await getAccounts(tokenIn, tokenOut);
+      if(accounts.length === 0) { accounts = await getAccounts(tokenOut, tokenIn); }
+      accounts = accounts.filter((account)=>account.data.liquidity.gt(1));
+    }
     accounts = (await Promise.all(accounts.map(async(account)=>{
-      const { price, tickArrays, sqrtPriceLimit, aToB } = await getPrice({ account, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin });
+      const { price, tickArrays, sqrtPriceLimit, aToB } = await getPrice({ account, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin, pairsDatum });
       if(price === undefined) { return false }
 
       return { // return a copy, do not mutate accounts
@@ -1984,13 +2003,13 @@ let getPairsWithPrice$3 = async({ tokenIn, tokenOut, amountIn, amountInMax, amou
         sqrtPriceLimit: sqrtPriceLimit,
         aToB: aToB,
         data: {
-          tokenVaultA: account.data.tokenVaultA, 
-          tokenVaultB: account.data.tokenVaultB
+          tokenVaultA: account.tokenVaultA || account.data.tokenVaultA, 
+          tokenVaultB: account.tokenVaultB || account.data.tokenVaultB
         }
       }
     }))).filter(Boolean);
     return accounts
-  } catch (e) {
+  } catch(e) {
     return []
   }
 };
@@ -2003,8 +2022,8 @@ let getLowestPrice$1 = (pairs)=>{
   return pairs.reduce((bestPricePair, currentPair)=> ethers.BigNumber.from(currentPair.price).lt(ethers.BigNumber.from(bestPricePair.price)) ? currentPair : bestPricePair)
 };
 
-let getBestPair$1 = async({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }) => {
-  const pairs = await getPairsWithPrice$3({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin });
+let getBestPair$1 = async({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin, pairsDatum }) => {
+  const pairs = await getPairsWithPrice$3({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin, pairsDatum });
 
   if(!pairs || pairs.length === 0) { return }
 
@@ -2019,6 +2038,8 @@ let getBestPair$1 = async({ tokenIn, tokenOut, amountIn, amountInMax, amountOut,
 };
 
 function _optionalChain$7(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
+
+
 const blockchain$3 = Blockchains.solana;
 
 // Replaces 11111111111111111111111111111111 with the wrapped token and implies wrapping.
@@ -2059,7 +2080,26 @@ let pathExists$5 = async ({ path, amountIn, amountInMax, amountOut, amountOutMin
   }
 };
 
-let findPath$5 = async ({ tokenIn, tokenOut, amountIn, amountOut, amountInMax, amountOutMin }) => {
+let findPath$5 = async ({ tokenIn, tokenOut, amountIn, amountOut, amountInMax, amountOutMin, pairsData }) => {
+  
+  if(pairsData) {
+    let path;
+    if(pairsData.length == 1) {
+      path = [tokenIn, tokenOut];
+    } else if(pairsData.length == 2) {
+      const tokenMiddle = [pairsData[0].mintA, pairsData[0].mintB].includes(pairsData[1].mintA) ? pairsData[1].mintA : pairsData[1].mintB;
+      path = [tokenIn, tokenMiddle, tokenOut];
+    }
+    if(path) {
+      return { path , exchangePath: getExchangePath$4({ path }), pools: await Promise.all(pairsData.map(async(pairsDatum)=>{
+        return {...
+          await request(`solana://${pairsDatum.id}/getAccountInfo`, { api: WHIRLPOOL_LAYOUT, cache: 5000 }),
+          pubkey: new PublicKey(pairsDatum.id)
+        }
+      })) }
+    }
+  }
+
   if(
     [tokenIn, tokenOut].includes(blockchain$3.currency.address) &&
     [tokenIn, tokenOut].includes(blockchain$3.wrapped.address)
@@ -2101,43 +2141,49 @@ let findPath$5 = async ({ tokenIn, tokenOut, amountIn, amountOut, amountInMax, a
   return { path, exchangePath: getExchangePath$4({ path }) }
 };
 
-let getAmountsOut$1 = async ({ path, amountIn, amountInMax }) => {
+let getAmountsOut$1 = async ({ path, amountIn, amountInMax, pairsData }) => {
 
+  let pools = [];
   let amounts = [ethers.BigNumber.from(amountIn || amountInMax)];
 
-  let bestPair = await getBestPair$1({ tokenIn: path[0], tokenOut: path[1], amountIn, amountInMax });
-  if(!bestPair){ return }
+  let bestPair = await getBestPair$1({ tokenIn: path[0], tokenOut: path[1], amountIn, amountInMax, pairsDatum: pairsData[0] });
+  if(!bestPair){ return({ amounts: undefined, pools: undefined }) }
   amounts.push(ethers.BigNumber.from(bestPair.price));
+  pools.push(bestPair);
   
   if (path.length === 3) {
-    let bestPair = await getBestPair$1({ tokenIn: path[1], tokenOut: path[2], amountIn: amountIn ? amounts[1] : undefined, amountInMax: amountInMax ? amounts[1] : undefined });
-    if(!bestPair){ return }
+    let bestPair = await getBestPair$1({ tokenIn: path[1], tokenOut: path[2], amountIn: amountIn ? amounts[1] : undefined, amountInMax: amountInMax ? amounts[1] : undefined, pairsDatum: pairsData[1] });
+    if(!bestPair){ return({ amounts: undefined, pools: undefined }) }
     amounts.push(ethers.BigNumber.from(bestPair.price));
+    pools.push(bestPair);
   }
 
-  if(amounts.length != path.length) { return }
+  if(amounts.length != path.length) { return({ amounts: undefined, pools: undefined }) }
 
-  return amounts
+  return { amounts, pools }
 };
 
-let getAmountsIn$1 = async({ path, amountOut, amountOutMin }) => {
+let getAmountsIn$1 = async({ path, amountOut, amountOutMin, pairsData }) => {
 
   path = path.slice().reverse();
+  let pools = [];
   let amounts = [ethers.BigNumber.from(amountOut || amountOutMin)];
 
-  let bestPair = await getBestPair$1({ tokenIn: path[1], tokenOut: path[0], amountOut, amountOutMin });
-  if(!bestPair){ return }
+  let bestPair = await getBestPair$1({ tokenIn: path[1], tokenOut: path[0], amountOut, amountOutMin, pairsDatum: pairsData[0] });
+  if(!bestPair){ return({ amounts: undefined, pools: undefined }) }
   amounts.push(ethers.BigNumber.from(bestPair.price));
+  pools.push(bestPair);
   
   if (path.length === 3) {
-    let bestPair = await getBestPair$1({ tokenIn: path[2], tokenOut: path[1], amountOut: amountOut ? amounts[1] : undefined, amountOutMin: amountOutMin ? amounts[1] : undefined });
-    if(!bestPair){ return }
+    let bestPair = await getBestPair$1({ tokenIn: path[2], tokenOut: path[1], amountOut: amountOut ? amounts[1] : undefined, amountOutMin: amountOutMin ? amounts[1] : undefined, pairsDatum: pairsData[1] });
+    if(!bestPair){ return({ amounts: undefined, pools: undefined }) }
     amounts.push(ethers.BigNumber.from(bestPair.price));
+    pools.push(bestPair);
   }
   
-  if(amounts.length != path.length) { return }
+  if(amounts.length != path.length) { return({ amounts: undefined, pools: undefined }) }
 
-  return amounts.slice().reverse()
+  return { amounts: amounts.slice().reverse(), pools: pools.slice().reverse() }
 };
 
 let getAmounts$5 = async ({
@@ -2147,12 +2193,14 @@ let getAmounts$5 = async ({
   amountOut,
   amountIn,
   amountInMax,
-  amountOutMin
+  amountOutMin,
+  pairsData
 }) => {
   path = getExchangePath$4({ path });
   let amounts;
+  let pools;
   if (amountOut) {
-    amounts = await getAmountsIn$1({ path, amountOut, tokenIn, tokenOut });
+({ amounts, pools } = await getAmountsIn$1({ path, amountOut, tokenIn, tokenOut, pairsData }));
     amountIn = amounts ? amounts[0] : undefined;
     if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
       return {}
@@ -2160,7 +2208,7 @@ let getAmounts$5 = async ({
       amountInMax = amountIn;
     }
   } else if (amountIn) {
-    amounts = await getAmountsOut$1({ path, amountIn, tokenIn, tokenOut });
+({ amounts, pools } = await getAmountsOut$1({ path, amountIn, tokenIn, tokenOut, pairsData }));
     amountOut = amounts ? amounts[amounts.length-1] : undefined;
     if (amountOut == undefined || amountOutMin && amountOut.lt(amountOutMin)) {
       return {}
@@ -2168,7 +2216,7 @@ let getAmounts$5 = async ({
       amountOutMin = amountOut;
     }
   } else if(amountOutMin) {
-    amounts = await getAmountsIn$1({ path, amountOutMin, tokenIn, tokenOut });
+({ amounts, pools } = await getAmountsIn$1({ path, amountOutMin, tokenIn, tokenOut, pairsData }));
     amountIn = amounts ? amounts[0] : undefined;
     if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
       return {}
@@ -2176,7 +2224,7 @@ let getAmounts$5 = async ({
       amountInMax = amountIn;
     }
   } else if(amountInMax) {
-    amounts = await getAmountsOut$1({ path, amountInMax, tokenIn, tokenOut });
+({ amounts, pools } = await getAmountsOut$1({ path, amountInMax, tokenIn, tokenOut, pairsData }));
     amountOut = amounts ? amounts[amounts.length-1] : undefined;
     if (amountOut == undefined ||amountOutMin && amountOut.lt(amountOutMin)) {
       return {}
@@ -2189,7 +2237,8 @@ let getAmounts$5 = async ({
     amountIn: (amountIn || amountInMax),
     amountInMax: (amountInMax || amountIn),
     amountOutMin: (amountOutMin || amountOut),
-    amounts
+    amounts,
+    pools,
   }
 };
 
@@ -2419,7 +2468,8 @@ const getTransaction$5 = async ({
   amountOutInput,
   amountInMaxInput,
   amountOutMinInput,
-  account
+  account,
+  pools
 }) => {
   let transaction = { blockchain: 'solana' };
   let instructions = [];
@@ -2431,7 +2481,9 @@ const getTransaction$5 = async ({
   const tokenOut = exchangePath[exchangePath.length-1];
 
   let pairs;
-  if(exchangePath.length == 2) {
+  if(pools) {
+    pairs = pools;
+  } else if(exchangePath.length == 2) {
     pairs = [await getBestPair$1({ tokenIn, tokenOut, amountIn: (amountInInput || amountInMaxInput), amountOut: (amountOutInput || amountOutMinInput) })];
   } else {
     if(amountInInput || amountInMaxInput) {
@@ -4431,37 +4483,54 @@ const preInitializedTickArrayStartIndex = (poolInfo, zeroForOne) => {
   return result.length > 0 ? { isExist: true, nextStartIndex: result[0] } : { isExist: false, nextStartIndex: 0 };
 };
 
-const getPairsWithPrice$1 = async({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin })=>{
+const getPairsWithPrice$1 = async({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin, pairsDatum })=>{
 
-  let accounts = await getPairs(tokenIn, tokenOut);
-
-  if(accounts.length == 0) {
-    accounts = await getPairs(tokenOut, tokenIn);
-  }
-
-  accounts = accounts.filter((account)=>account.data.liquidity.gte(new BN('1000')));
-
+  let accounts;
   const exBitData = {};
 
-  let addresses = await Promise.all(accounts.map(
-    (account) => getPdaExBitmapAddress(new PublicKey(PROGRAM_ID), account.pubkey)
-  ));
+  if(pairsDatum) {
 
-  await Promise.all(addresses.map(
-    async(address) => {
-      exBitData[address] = await request(`solana://${address}`, {
-        api: TICK_ARRAY_BITMAP_EXTENSION_LAYOUT,
-        cache: 5000, // 5 seconds in ms
-        cacheKey: ['raydium', 'cl', 'tickarraybitmapextension', address].join('-')
-      });
+    let exBitDataForAddress;
+
+    [accounts, exBitDataForAddress] = await Promise.all([
+      await request(`solana://${pairsDatum.id}`, { api: CLMM_LAYOUT, cache: 5000 }).then((data)=>{
+        return [{
+          pubkey: new PublicKey(pairsDatum.id),
+          data
+        }]
+      }),
+      await request(`solana://${pairsDatum.exBitmapAddress}`, { api: TICK_ARRAY_BITMAP_EXTENSION_LAYOUT, cache: 5000 }),
+    ]);
+
+    exBitData[pairsDatum.exBitmapAddress] = exBitDataForAddress;
+
+  } else {
+    accounts = await getPairs(tokenIn, tokenOut);
+
+    if(accounts.length == 0) {
+      accounts = await getPairs(tokenOut, tokenIn);
     }
-  ));
+
+    accounts = accounts.filter((account)=>account.data.liquidity.gte(new BN('1000')));
+    
+    let addresses = await Promise.all(accounts.map(
+      (account) => getPdaExBitmapAddress(new PublicKey(PROGRAM_ID), account.pubkey)
+    ));
+
+    await Promise.all(addresses.map(
+      async(address) => {
+        exBitData[address] = await request(`solana://${address}`, {
+          api: TICK_ARRAY_BITMAP_EXTENSION_LAYOUT,
+          cache: 5000, // 5 seconds in ms
+        });
+      }
+    ));
+  }
 
   const poolInfos = await Promise.all(accounts.map(async(account)=>{
     const ammConfig = await request(`solana://${account.data.ammConfig.toString()}`, {
       api: CLMM_CONFIG_LAYOUT,
-      cache: 5000, // 5 seconds in ms
-      cacheKey: ['raydium', 'cl', 'ammConfig', account.data.ammConfig.toString()].join('-')
+      cache: 5000
     });
     return {
       ...account.data,
@@ -4566,7 +4635,7 @@ const getPairsWithPrice$1 = async({ tokenIn, tokenOut, amountIn, amountInMax, am
           poolInfo.tickCurrent,
           poolInfo.tickSpacing,
           poolInfo.sqrtPriceX64,
-          outputAmount.mul(NEGATIVE_ONE),
+          outputAmount,
           firstTickArrayStartIndex,
           undefined,
         );
@@ -4592,12 +4661,12 @@ const getPairsWithPrice$1 = async({ tokenIn, tokenOut, amountIn, amountInMax, am
 
 function _optionalChain$4(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
 
-const getPairsWithPrice = async({ exchange, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin })=>{
+const getPairsWithPrice = async({ exchange, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin, pairsDatum })=>{
   try {
     if(_optionalChain$4([exchange, 'optionalAccess', _ => _.name]) == 'raydium_cp') {
-      return getPairsWithPrice$2({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin })
+      return getPairsWithPrice$2({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin, pairsDatum })
     } else if (_optionalChain$4([exchange, 'optionalAccess', _2 => _2.name]) == 'raydium_cl') {
-      return getPairsWithPrice$1({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin })
+      return getPairsWithPrice$1({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin, pairsDatum })
     } else {
       return []
     }
@@ -4615,8 +4684,8 @@ let getLowestPrice = (pairs)=>{
   return pairs.reduce((bestPricePair, currentPair)=> ethers.BigNumber.from(currentPair.price).lt(ethers.BigNumber.from(bestPricePair.price)) ? currentPair : bestPricePair)
 };
 
-let getBestPair = async({ exchange, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }) => {
-  const pairs = await getPairsWithPrice({ exchange, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin });
+let getBestPair = async({ exchange, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin, pairsDatum }) => {
+  const pairs = await getPairsWithPrice({ exchange, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin, pairsDatum });
 
   if(!pairs || pairs.length === 0) { return }
 
@@ -4673,7 +4742,21 @@ let pathExists$4 = async ({ exchange, path, amountIn, amountInMax, amountOut, am
   }
 };
 
-let findPath$4 = async ({ exchange, tokenIn, tokenOut, amountIn, amountOut, amountInMax, amountOutMin }) => {
+let findPath$4 = async ({ exchange, tokenIn, tokenOut, amountIn, amountOut, amountInMax, amountOutMin, pairsData }) => {
+  
+  if(pairsData) {
+    let path;
+    if(pairsData.length == 1) {
+      path = [tokenIn, tokenOut];
+    } else if(pairsData.length == 2) {
+      const tokenMiddle = [pairsData[0].mintA, pairsData[0].mintB].includes(pairsData[1].mintA) ? pairsData[1].mintA : pairsData[1].mintB;
+      path = [tokenIn, tokenMiddle, tokenOut];
+    }
+    if(path) {
+      return { path , exchangePath: getExchangePath$3({ path }) }
+    }
+  }
+
   if(
     [tokenIn, tokenOut].includes(blockchain$1.currency.address) &&
     [tokenIn, tokenOut].includes(blockchain$1.wrapped.address)
@@ -4715,43 +4798,49 @@ let findPath$4 = async ({ exchange, tokenIn, tokenOut, amountIn, amountOut, amou
   return { path, exchangePath: getExchangePath$3({ path }) }
 };
 
-let getAmountsOut = async ({ exchange, path, amountIn, amountInMax }) => {
+let getAmountsOut = async ({ exchange, path, amountIn, amountInMax, pairsData }) => {
 
+  let pools = [];
   let amounts = [ethers.BigNumber.from(amountIn || amountInMax)];
 
-  let bestPair = await getBestPair({ exchange, tokenIn: path[0], tokenOut: path[1], amountIn, amountInMax });
-  if(!bestPair){ return }
+  let bestPair = await getBestPair({ exchange, tokenIn: path[0], tokenOut: path[1], amountIn, amountInMax, pairsDatum: pairsData[0] });
+  if(!bestPair){ return({ amounts: undefined, pools: undefined }) }
   amounts.push(ethers.BigNumber.from(bestPair.price));
+  pools.push(bestPair);
   
   if (path.length === 3) {
-    let bestPair = await getBestPair({ exchange, tokenIn: path[1], tokenOut: path[2], amountIn: amountIn ? amounts[1] : undefined, amountInMax: amountInMax ? amounts[1] : undefined });
-    if(!bestPair){ return }
+    let bestPair = await getBestPair({ exchange, tokenIn: path[1], tokenOut: path[2], amountIn: amountIn ? amounts[1] : undefined, amountInMax: amountInMax ? amounts[1] : undefined, pairsDatum: pairsData[1] });
+    if(!bestPair){ return({ amounts: undefined, pools: undefined }) }
     amounts.push(ethers.BigNumber.from(bestPair.price));
+    pools.push(bestPair);
   }
 
-  if(amounts.length != path.length) { return }
+  if(amounts.length != path.length) { return({ amounts: undefined, pools: undefined }) }
 
-  return amounts
+  return { amounts, pools }
 };
 
-let getAmountsIn = async({ exchange, path, amountOut, amountOutMin }) => {
+let getAmountsIn = async({ exchange, path, amountOut, amountOutMin, pairsData }) => {
 
   path = path.slice().reverse();
+  let pools = [];
   let amounts = [ethers.BigNumber.from(amountOut || amountOutMin)];
 
-  let bestPair = await getBestPair({ exchange, tokenIn: path[1], tokenOut: path[0], amountOut, amountOutMin });
-  if(!bestPair){ return }
+  let bestPair = await getBestPair({ exchange, tokenIn: path[1], tokenOut: path[0], amountOut, amountOutMin, pairsDatum: pairsData[0] });
+  if(!bestPair){ return({ amounts: undefined, pools: undefined }) }
   amounts.push(ethers.BigNumber.from(bestPair.price));
+  pools.push(bestPair);
   
   if (path.length === 3) {
-    let bestPair = await getBestPair({ exchange, tokenIn: path[2], tokenOut: path[1], amountOut: amountOut ? amounts[1] : undefined, amountOutMin: amountOutMin ? amounts[1] : undefined });
-    if(!bestPair){ return }
+    let bestPair = await getBestPair({ exchange, tokenIn: path[2], tokenOut: path[1], amountOut: amountOut ? amounts[1] : undefined, amountOutMin: amountOutMin ? amounts[1] : undefined, pairsDatum: pairsData[1] });
+    if(!bestPair){ return({ amounts: undefined, pools: undefined }) }
     amounts.push(ethers.BigNumber.from(bestPair.price));
+    pools.push(bestPair);
   }
   
-  if(amounts.length != path.length) { return }
+  if(amounts.length != path.length) { return({ amounts: undefined, pools: undefined }) }
 
-  return amounts.slice().reverse()
+  return { amounts: amounts.slice().reverse(), pools: pools.slice().reverse() }
 };
 
 let getAmounts$4 = async ({
@@ -4762,12 +4851,14 @@ let getAmounts$4 = async ({
   amountIn,
   amountInMax,
   amountOutMin,
-  exchange
+  exchange,
+  pairsData
 }) => {
   path = getExchangePath$3({ path });
   let amounts;
+  let pools;
   if (amountOut) {
-    amounts = await getAmountsIn({ exchange, path, amountOut, tokenIn, tokenOut });
+({ amounts, pools } = await getAmountsIn({ exchange, path, amountOut, tokenIn, tokenOut, pairsData }));
     amountIn = amounts ? amounts[0] : undefined;
     if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
       return {}
@@ -4775,7 +4866,7 @@ let getAmounts$4 = async ({
       amountInMax = amountIn;
     }
   } else if (amountIn) {
-    amounts = await getAmountsOut({ exchange, path, amountIn, tokenIn, tokenOut });
+({ amounts, pools } = await getAmountsOut({ exchange, path, amountIn, tokenIn, tokenOut, pairsData }));
     amountOut = amounts ? amounts[amounts.length-1] : undefined;
     if (amountOut == undefined || amountOutMin && amountOut.lt(amountOutMin)) {
       return {}
@@ -4783,7 +4874,7 @@ let getAmounts$4 = async ({
       amountOutMin = amountOut;
     }
   } else if(amountOutMin) {
-    amounts = await getAmountsIn({ exchange, path, amountOutMin, tokenIn, tokenOut });
+({ amounts, pools } = await getAmountsIn({ exchange, path, amountOutMin, tokenIn, tokenOut, pairsData }));
     amountIn = amounts ? amounts[0] : undefined;
     if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
       return {}
@@ -4791,7 +4882,7 @@ let getAmounts$4 = async ({
       amountInMax = amountIn;
     }
   } else if(amountInMax) {
-    amounts = await getAmountsOut({ exchange, path, amountInMax, tokenIn, tokenOut });
+({ amounts, pools } = await getAmountsOut({ exchange, path, amountInMax, tokenIn, tokenOut, pairsData }));
     amountOut = amounts ? amounts[amounts.length-1] : undefined;
     if (amountOut == undefined ||amountOutMin && amountOut.lt(amountOutMin)) {
       return {}
@@ -4804,7 +4895,8 @@ let getAmounts$4 = async ({
     amountIn: (amountIn || amountInMax),
     amountInMax: (amountInMax || amountIn),
     amountOutMin: (amountOutMin || amountOut),
-    amounts
+    amounts,
+    pools,
   }
 };
 
@@ -5073,6 +5165,7 @@ const getTransaction$4 = async({
   amountOutMinInput,
   account,
   exchange,
+  pools
 })=>{
   let transaction = { blockchain: 'solana' };
   let instructions = [];
@@ -5084,7 +5177,9 @@ const getTransaction$4 = async({
   const tokenOut = exchangePath[exchangePath.length-1];
     
   let pairs;
-  if(exchangePath.length == 2) {
+  if(pools) {
+    pairs = pools;
+  } else if(exchangePath.length == 2) {
     pairs = [await getBestPair({ exchange, tokenIn, tokenOut, amountIn: (amountInInput || amountInMaxInput), amountOut: (amountOutInput || amountOutMinInput) })];
   } else {
     if(amountInInput || amountInMaxInput) {
@@ -5690,7 +5785,7 @@ let getAmounts$3 = async ({
       amountOutMin = amountOut;
     }
   }
-  return { amountOut, amountIn, amountInMax, amountOutMin }
+  return { amountOut, amountIn, amountInMax, amountOutMin, pools }
 };
 
 let getPrep$2 = async({
@@ -6303,7 +6398,7 @@ let getAmounts$2 = async ({
       amountOutMin = amountOut;
     }
   }
-  return { amountOut, amountIn, amountInMax, amountOutMin }
+  return { amountOut, amountIn, amountInMax, amountOutMin, pools }
 };
 
 let getPrep$1 = async({
@@ -6848,7 +6943,7 @@ let getAmounts$1 = async ({
       amountOutMin = amountOut;
     }
   }
-  return { amountOut, amountIn, amountInMax, amountOutMin }
+  return { amountOut, amountIn, amountInMax, amountOutMin, pools }
 };
 
 let getPrep = async({

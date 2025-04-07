@@ -1,5 +1,18 @@
+/*#if _EVM
+
+/*#elif _SVM
+
+import { request } from '@depay/web3-client-svm'
+
+//#else */
+
 import Blockchains from '@depay/web3-blockchains'
 import { getPairsWithPrice } from './pairs'
+import { PublicKey } from '@depay/solana-web3.js'
+import { request } from '@depay/web3-client'
+import { WHIRLPOOL_LAYOUT } from './layouts'
+
+//#endif
 
 const blockchain = Blockchains.solana
 
@@ -42,7 +55,26 @@ let pathExists = async ({ path, amountIn, amountInMax, amountOut, amountOutMin }
   }
 }
 
-let findPath = async ({ tokenIn, tokenOut, amountIn, amountOut, amountInMax, amountOutMin }) => {
+let findPath = async ({ tokenIn, tokenOut, amountIn, amountOut, amountInMax, amountOutMin, pairsData }) => {
+  
+  if(pairsData) {
+    let path
+    if(pairsData.length == 1) {
+      path = [tokenIn, tokenOut]
+    } else if(pairsData.length == 2) {
+      const tokenMiddle = [pairsData[0].mintA, pairsData[0].mintB].includes(pairsData[1].mintA) ? pairsData[1].mintA : pairsData[1].mintB
+      path = [tokenIn, tokenMiddle, tokenOut]
+    }
+    if(path) {
+      return { path , exchangePath: getExchangePath({ path }), pools: await Promise.all(pairsData.map(async(pairsDatum)=>{
+        return {...
+          await request(`solana://${pairsDatum.id}/getAccountInfo`, { api: WHIRLPOOL_LAYOUT, cache: 5000 }),
+          pubkey: new PublicKey(pairsDatum.id)
+        }
+      })) }
+    }
+  }
+
   if(
     [tokenIn, tokenOut].includes(blockchain.currency.address) &&
     [tokenIn, tokenOut].includes(blockchain.wrapped.address)

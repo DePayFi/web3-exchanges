@@ -297,7 +297,7 @@ let getAmounts = async ({
       amountOutMin = amountOut
     }
   }
-  return { amountOut, amountIn, amountInMax, amountOutMin }
+  return { amountOut, amountIn, amountInMax, amountOutMin, pools }
 }
 
 let getPrep = async({

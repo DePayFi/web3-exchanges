@@ -1,3 +1,39 @@
+## TOKEN<>TOKEN (1 Pool) with pairsData
+
+```javascript
+let pairsData = [
+    {
+    "id": "C1MgLojNLWBKADvu9BHdtgzz1oZX4dZ5zGdGcgvvW8Wz",
+    "exchange": "orca",
+    "mintA": "JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN",
+    "mintB": "So11111111111111111111111111111111111111112",
+    "vaultA": "HVJuVW2dRbZ2fynWEY2JK6Ak2YTfVpji73sHZMCqiXSb",
+    "vaultB": "8MFbZEaXp8Ky8ufhZRgphgMgKVwsjhDhZtNqmEPcxvQK",
+    "feeRate": 500,
+    "tickSpacing": 8,
+    "whirlpoolBump": [254],
+    "protocolFeeRate": 1300,
+    "tickSpacingSeed": [8, 0],
+    "whirlpoolsConfig": "2LecshUwdy9xi7meFgHtFJQNSKk4KdTrcpvaB56dP2NQ"
+    }
+]
+
+let route = await Web3Exchanges.orca.route({
+  blockchain: 'solana',
+  tokenIn: '11111111111111111111111111111111',
+  tokenOut: 'JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN',
+  amountOutMin: 0.1,
+  pairsData
+})
+
+let wallets = await Web3Wallets.getWallets()
+let wallet = wallets[1]
+let account = await wallet.account()
+let transaction = await route.getTransaction({ account })
+
+wallet.sendTransaction(transaction)
+```
+
 ## TOKEN<>TOKEN (1 Pool)
 
 ```javascript

@@ -25,17 +25,23 @@ const getPrice = async ({
   amountInMax,
   amountOut,
   amountOutMin,
+  pairsDatum
 })=>{
 
   try {
     
-    const freshWhirlpoolData = await request({
-      blockchain: 'solana',
-      address: account.pubkey.toString(),
-      api: WHIRLPOOL_LAYOUT,
-      cache: 5000, // 5 seconds in ms
-      cacheKey: ['whirlpool', 'fresh', tokenIn.toString(), tokenOut.toString()].join('-')
-    })
+    let freshWhirlpoolData
+    if(pairsDatum) {
+      freshWhirlpoolData = account
+    } else {
+      freshWhirlpoolData = await request({
+        blockchain: 'solana',
+        address: account.pubkey.toString(),
+        api: WHIRLPOOL_LAYOUT,
+        cache: 5000, // 5 seconds in ms
+        cacheKey: ['whirlpool', 'fresh', tokenIn.toString(), tokenOut.toString()].join('-')
+      })
+    }
 
     const aToB = (freshWhirlpoolData.tokenMintA.toString() === tokenIn)
 
@@ -69,7 +75,7 @@ const getPrice = async ({
       sqrtPriceLimit,
     }
 
-  } catch {
+  } catch(e) {
     return {
       price: undefined,
       tickArrays: undefined,

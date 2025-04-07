@@ -10,12 +10,12 @@ import { ethers } from 'ethers'
 import { getPairsWithPrice as getPairsWithPriceCPMM } from './cpmm/pairs'
 import { getPairsWithPrice as getPairsWithPriceCLMM } from './clmm/pairs'
 
-const getPairsWithPrice = async({ exchange, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin })=>{
+const getPairsWithPrice = async({ exchange, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin, pairsDatum })=>{
   try {
     if(exchange?.name == 'raydium_cp') {
-      return getPairsWithPriceCPMM({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin })
+      return getPairsWithPriceCPMM({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin, pairsDatum })
     } else if (exchange?.name == 'raydium_cl') {
-      return getPairsWithPriceCLMM({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin })
+      return getPairsWithPriceCLMM({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin, pairsDatum })
     } else {
       return []
     }
@@ -33,8 +33,8 @@ let getLowestPrice = (pairs)=>{
   return pairs.reduce((bestPricePair, currentPair)=> ethers.BigNumber.from(currentPair.price).lt(ethers.BigNumber.from(bestPricePair.price)) ? currentPair : bestPricePair)
 }
 
-let getBestPair = async({ exchange, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }) => {
-  const pairs = await getPairsWithPrice({ exchange, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin })
+let getBestPair = async({ exchange, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin, pairsDatum }) => {
+  const pairs = await getPairsWithPrice({ exchange, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin, pairsDatum })
 
   if(!pairs || pairs.length === 0) { return }
 

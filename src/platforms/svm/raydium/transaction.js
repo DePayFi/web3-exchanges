@@ -381,6 +381,7 @@ const getTransaction = async({
   amountOutMinInput,
   account,
   exchange,
+  pools
 })=>{
   let transaction = { blockchain: 'solana' }
   let instructions = []
@@ -391,8 +392,10 @@ const getTransaction = async({
   const tokenMiddle = exchangePath.length == 3 ? exchangePath[1] : undefined
   const tokenOut = exchangePath[exchangePath.length-1]
     
-  let pairs, amountMiddle
-  if(exchangePath.length == 2) {
+  let pairs
+  if(pools) {
+    pairs = pools
+  } else if(exchangePath.length == 2) {
     pairs = [await getBestPair({ exchange, tokenIn, tokenOut, amountIn: (amountInInput || amountInMaxInput), amountOut: (amountOutInput || amountOutMinInput) })]
   } else {
     if(amountInInput || amountInMaxInput) {

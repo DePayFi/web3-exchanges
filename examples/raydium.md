@@ -20,6 +20,25 @@ wallet.sendTransaction(transaction)
 
 ## CLMM (concentrated liquidity)
 
+### with pairsData
+
+```javascript
+let route = await Web3Exchanges.raydium_cl.route({
+  blockchain: 'solana',
+  tokenIn: '11111111111111111111111111111111',
+  tokenOut: 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB',
+  amountOutMin: 1,
+  pairsData: [{"id": "3nMFwZXwY1s1M5s8vYAHqd4wGs4iSxXE4LRoUMMYqEgF", "bump": 251, "mintA": "So11111111111111111111111111111111111111112", "mintB": "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB", "config": {"bump": 249, "tickSpacing": 1, "tradeFeeRate": 100, "protocolFeeRate": 120000}, "vaultA": "AbcuyoPeYnddzFoFQudsiFka8qd6tTwvLgxwtpTKTpKC", "vaultB": "2n6fxuD6PA5NYgEnXXYMh2iWD1JBJ1LGf76kFJAayZmX", "exchange": "raydium_cl", "ammConfig": "9iFER3bpjf1PTTCQCfTRu17EJgvsxo9pVyA9QWwEuX4x", "tickSpacing": 1, "mintDecimalsA": 9, "mintDecimalsB": 6, "observationId": "Cqb16WaM7dDDP8koxYASDJLWgan4STDB1R3LiSH8r3GR", "exBitmapAddress": "2ncinnTcJxbZ1nUHavBVJ3Ap3R4CE7p2LJ6Jtpd1vLzd"}]
+})
+
+let wallets = await Web3Wallets.getWallets()
+let wallet = wallets[1]
+let account = await wallet.account()
+let transaction = await route.getTransaction({ account })
+
+wallet.sendTransaction(transaction)
+```
+
 ### 1 Pool amountOutMin
 
 ```javascript

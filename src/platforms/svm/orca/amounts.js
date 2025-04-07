@@ -2,43 +2,49 @@ import { ethers } from 'ethers'
 import { getExchangePath } from './path'
 import { getBestPair } from './pairs'
 
-let getAmountsOut = async ({ path, amountIn, amountInMax }) => {
+let getAmountsOut = async ({ path, amountIn, amountInMax, pairsData }) => {
 
+  let pools = []
   let amounts = [ethers.BigNumber.from(amountIn || amountInMax)]
 
-  let bestPair = await getBestPair({ tokenIn: path[0], tokenOut: path[1], amountIn, amountInMax })
-  if(!bestPair){ return }
+  let bestPair = await getBestPair({ tokenIn: path[0], tokenOut: path[1], amountIn, amountInMax, pairsDatum: pairsData[0] })
+  if(!bestPair){ return({ amounts: undefined, pools: undefined }) }
   amounts.push(ethers.BigNumber.from(bestPair.price))
+  pools.push(bestPair)
   
   if (path.length === 3) {
-    let bestPair = await getBestPair({ tokenIn: path[1], tokenOut: path[2], amountIn: amountIn ? amounts[1] : undefined, amountInMax: amountInMax ? amounts[1] : undefined })
-    if(!bestPair){ return }
+    let bestPair = await getBestPair({ tokenIn: path[1], tokenOut: path[2], amountIn: amountIn ? amounts[1] : undefined, amountInMax: amountInMax ? amounts[1] : undefined, pairsDatum: pairsData[1] })
+    if(!bestPair){ return({ amounts: undefined, pools: undefined }) }
     amounts.push(ethers.BigNumber.from(bestPair.price))
+    pools.push(bestPair)
   }
 
-  if(amounts.length != path.length) { return }
+  if(amounts.length != path.length) { return({ amounts: undefined, pools: undefined }) }
 
-  return amounts
+  return { amounts, pools }
 }
 
-let getAmountsIn = async({ path, amountOut, amountOutMin }) => {
+let getAmountsIn = async({ path, amountOut, amountOutMin, pairsData }) => {
 
   path = path.slice().reverse()
+  let pools = []
   let amounts = [ethers.BigNumber.from(amountOut || amountOutMin)]
 
-  let bestPair = await getBestPair({ tokenIn: path[1], tokenOut: path[0], amountOut, amountOutMin })
-  if(!bestPair){ return }
+  let bestPair = await getBestPair({ tokenIn: path[1], tokenOut: path[0], amountOut, amountOutMin, pairsDatum: pairsData[0] })
+  if(!bestPair){ return({ amounts: undefined, pools: undefined }) }
   amounts.push(ethers.BigNumber.from(bestPair.price))
+  pools.push(bestPair)
   
   if (path.length === 3) {
-    let bestPair = await getBestPair({ tokenIn: path[2], tokenOut: path[1], amountOut: amountOut ? amounts[1] : undefined, amountOutMin: amountOutMin ? amounts[1] : undefined })
-    if(!bestPair){ return }
+    let bestPair = await getBestPair({ tokenIn: path[2], tokenOut: path[1], amountOut: amountOut ? amounts[1] : undefined, amountOutMin: amountOutMin ? amounts[1] : undefined, pairsDatum: pairsData[1] })
+    if(!bestPair){ return({ amounts: undefined, pools: undefined }) }
     amounts.push(ethers.BigNumber.from(bestPair.price))
+    pools.push(bestPair)
   }
   
-  if(amounts.length != path.length) { return }
+  if(amounts.length != path.length) { return({ amounts: undefined, pools: undefined }) }
 
-  return amounts.slice().reverse()
+  return { amounts: amounts.slice().reverse(), pools: pools.slice().reverse() }
 }
 
 let getAmounts = async ({
@@ -48,12 +54,14 @@ let getAmounts = async ({
   amountOut,
   amountIn,
   amountInMax,
-  amountOutMin
+  amountOutMin,
+  pairsData
 }) => {
   path = getExchangePath({ path })
   let amounts
+  let pools
   if (amountOut) {
-    amounts = await getAmountsIn({ path, amountOut, tokenIn, tokenOut })
+    ;({ amounts, pools } = await getAmountsIn({ path, amountOut, tokenIn, tokenOut, pairsData }));
     amountIn = amounts ? amounts[0] : undefined
     if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
       return {}
@@ -61,7 +69,7 @@ let getAmounts = async ({
       amountInMax = amountIn
     }
   } else if (amountIn) {
-    amounts = await getAmountsOut({ path, amountIn, tokenIn, tokenOut })
+    ;({ amounts, pools } = await getAmountsOut({ path, amountIn, tokenIn, tokenOut, pairsData }));
     amountOut = amounts ? amounts[amounts.length-1] : undefined
     if (amountOut == undefined || amountOutMin && amountOut.lt(amountOutMin)) {
       return {}
@@ -69,7 +77,7 @@ let getAmounts = async ({
       amountOutMin = amountOut
     }
   } else if(amountOutMin) {
-    amounts = await getAmountsIn({ path, amountOutMin, tokenIn, tokenOut })
+    ;({ amounts, pools } = await getAmountsIn({ path, amountOutMin, tokenIn, tokenOut, pairsData }));
     amountIn = amounts ? amounts[0] : undefined
     if (amountIn == undefined || amountInMax && amountIn.gt(amountInMax)) {
       return {}
@@ -77,7 +85,7 @@ let getAmounts = async ({
       amountInMax = amountIn
     }
   } else if(amountInMax) {
-    amounts = await getAmountsOut({ path, amountInMax, tokenIn, tokenOut })
+    ;({ amounts, pools } = await getAmountsOut({ path, amountInMax, tokenIn, tokenOut, pairsData }));
     amountOut = amounts ? amounts[amounts.length-1] : undefined
     if (amountOut == undefined ||amountOutMin && amountOut.lt(amountOutMin)) {
       return {}
@@ -90,7 +98,8 @@ let getAmounts = async ({
     amountIn: (amountIn || amountInMax),
     amountInMax: (amountInMax || amountIn),
     amountOutMin: (amountOutMin || amountOut),
-    amounts
+    amounts,
+    pools,
   }
 }
 

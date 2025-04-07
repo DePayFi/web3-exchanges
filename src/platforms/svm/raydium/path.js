@@ -42,7 +42,21 @@ let pathExists = async ({ exchange, path, amountIn, amountInMax, amountOut, amou
   }
 }
 
-let findPath = async ({ exchange, tokenIn, tokenOut, amountIn, amountOut, amountInMax, amountOutMin }) => {
+let findPath = async ({ exchange, tokenIn, tokenOut, amountIn, amountOut, amountInMax, amountOutMin, pairsData }) => {
+  
+  if(pairsData) {
+    let path
+    if(pairsData.length == 1) {
+      path = [tokenIn, tokenOut]
+    } else if(pairsData.length == 2) {
+      const tokenMiddle = [pairsData[0].mintA, pairsData[0].mintB].includes(pairsData[1].mintA) ? pairsData[1].mintA : pairsData[1].mintB
+      path = [tokenIn, tokenMiddle, tokenOut]
+    }
+    if(path) {
+      return { path , exchangePath: getExchangePath({ path }) }
+    }
+  }
+
   if(
     [tokenIn, tokenOut].includes(blockchain.currency.address) &&
     [tokenIn, tokenOut].includes(blockchain.wrapped.address)

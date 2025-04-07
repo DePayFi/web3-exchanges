@@ -298,6 +298,7 @@ const route$1 = ({
   getPrep,
   getTransaction,
   slippage,
+  pairsData,
 }) => {
 
   tokenIn = fixAddress(tokenIn);
@@ -307,13 +308,13 @@ const route$1 = ({
   if([amountIn, amountOut, amountInMax, amountOutMin].filter(Boolean).length < 1) { throw('You need to pass exactly one: amountIn, amountOut, amountInMax or amountOutMin') }
 
   return new Promise(async (resolve)=> {
-    let { path, exchangePath, pools } = await findPath({ blockchain, tokenIn, tokenOut, amountIn, amountOut, amountInMax, amountOutMin });
+    let { path, exchangePath, pools } = await findPath({ blockchain, tokenIn, tokenOut, amountIn, amountOut, amountInMax, amountOutMin, pairsData });
     if (path === undefined || path.length == 0) { return resolve() }
     let [amountInInput, amountOutInput, amountInMaxInput, amountOutMinInput] = [amountIn, amountOut, amountInMax, amountOutMin];
 
     let amounts; // includes intermediary amounts for longer routes
     try {
-      ;({ amountIn, amountInMax, amountOut, amountOutMin, amounts } = await getAmounts({ exchange, blockchain, path, pools, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin }));
+      ;({ amountIn, amountInMax, amountOut, amountOutMin, amounts, pools } = await getAmounts({ exchange, blockchain, path, pools, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin, pairsData }));
     } catch(e) {
       console.log(e);
       return resolve()
@@ -398,6 +399,7 @@ class Exchange {
     amountInMax,
     amountOutMin,
     slippage,
+    pairsData,
   }) {
     if(tokenIn === tokenOut){ return Promise.resolve() }
 
@@ -438,6 +440,7 @@ class Exchange {
       getPrep: this.getPrep,
       getTransaction: this.getTransaction,
       slippage,
+      pairsData,
     })
   }
 }
@@ -1125,7 +1128,7 @@ let getAmounts$3 = async ({
       amountOutMin = amountOut;
     }
   }
-  return { amountOut, amountIn, amountInMax, amountOutMin }
+  return { amountOut, amountIn, amountInMax, amountOutMin, pools }
 };
 
 let getPrep$2 = async({
@@ -1738,7 +1741,7 @@ let getAmounts$2 = async ({
       amountOutMin = amountOut;
     }
   }
-  return { amountOut, amountIn, amountInMax, amountOutMin }
+  return { amountOut, amountIn, amountInMax, amountOutMin, pools }
 };
 
 let getPrep$1 = async({
@@ -2283,7 +2286,7 @@ let getAmounts$1 = async ({
       amountOutMin = amountOut;
     }
   }
-  return { amountOut, amountIn, amountInMax, amountOutMin }
+  return { amountOut, amountIn, amountInMax, amountOutMin, pools }
 };
 
 let getPrep = async({
