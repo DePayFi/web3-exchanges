@@ -16,6 +16,7 @@ import Blockchains from '@depay/web3-blockchains'
 import { CPMM_LAYOUT, CPMM_CONFIG_LAYOUT } from '../layouts'
 import { CurveCalculator } from './price'
 import { ethers } from 'ethers'
+import { PublicKey } from '@depay/solana-web3.js'
 
 const getConfig = (address)=>{
   return request(`solana://${address}/getAccountInfo`, {
@@ -38,12 +39,26 @@ const getPairs = (base, quote)=>{
   })
 }
 
-const getPairsWithPrice = async({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin })=>{
+const getPairsWithPrice = async({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin, pairsDatum })=>{
 
-  let accounts = await getPairs(tokenIn, tokenOut)
+  let accounts
 
-  if(accounts.length == 0) {
-    accounts = await getPairs(tokenOut, tokenIn)
+  if(pairsDatum) {
+
+    accounts = await request(`solana://${pairsDatum.id}`, { api: CPMM_LAYOUT, cache: 5000 }).then((data)=>{
+      return [{
+        pubkey: new PublicKey(pairsDatum.id),
+        data
+      }]
+    })
+
+  } else {
+
+    accounts = await getPairs(tokenIn, tokenOut)
+
+    if(accounts.length == 0) {
+      accounts = await getPairs(tokenOut, tokenIn)
+    }
   }
 
   const pairs = await Promise.all(accounts.map(async(account)=>{

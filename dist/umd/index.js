@@ -3015,12 +3015,26 @@
     })
   };
 
-  const getPairsWithPrice$2 = async({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin })=>{
+  const getPairsWithPrice$2 = async({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin, pairsDatum })=>{
 
-    let accounts = await getPairs$1(tokenIn, tokenOut);
+    let accounts;
 
-    if(accounts.length == 0) {
-      accounts = await getPairs$1(tokenOut, tokenIn);
+    if(pairsDatum) {
+
+      accounts = await web3Client.request(`solana://${pairsDatum.id}`, { api: CPMM_LAYOUT, cache: 5000 }).then((data)=>{
+        return [{
+          pubkey: new solanaWeb3_js.PublicKey(pairsDatum.id),
+          data
+        }]
+      });
+
+    } else {
+
+      accounts = await getPairs$1(tokenIn, tokenOut);
+
+      if(accounts.length == 0) {
+        accounts = await getPairs$1(tokenOut, tokenIn);
+      }
     }
 
     const pairs = await Promise.all(accounts.map(async(account)=>{

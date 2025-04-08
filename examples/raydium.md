@@ -2,12 +2,15 @@
 
 ### 1 Pool
 
+### with pairsData
+
 ```javascript
 let route = await Web3Exchanges.raydium_cp.route({
   blockchain: 'solana',
-  tokenOut: '9wvorGtBJ8gyLorFTmwXWcymPoGVUBn6MRzHwFpCdCeC',
-  tokenIn: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
-  amountOutMin: 0.01
+  tokenIn: '11111111111111111111111111111111',
+  tokenOut: '7kN5FQMD8ja4bzysEgc5FXmryKd6gCgjiWnhksjHCFb3',
+  amountOutMin: 5,
+  pairsData: [{"id": "9SxEcmwzHtSZu2jJSpSxuyxweYECvvtykoP3qtEprkvj", "bump": 253, "mintA": "So11111111111111111111111111111111111111112", "mintB": "7kN5FQMD8ja4bzysEgc5FXmryKd6gCgjiWnhksjHCFb3", "config": {"bump": 255, "fundFeeRate": "40000", "tradeFeeRate": "2500", "protocolFeeRate": "120000"}, "vaultA": "8KkXrm5Ssq5XUNarhpfzByZG7vK9jSDkvZ2oLnKMBLCq", "vaultB": "4WB5roWeJaFqrwXtcES1g7quAbtHKvj2Y2adTDmW1Get", "configId": "D4FPEruKEHrG5TenZ2mpDGEfu1iUvTiqBxvpU8HLBvC2", "exchange": "raydium_cp", "observationId": "fRG1B8TsfPjuhXdnJ22DexzcDDTsSddsaCNXuLVuegS"}]
 })
 
 let wallets = await Web3Wallets.getWallets()
