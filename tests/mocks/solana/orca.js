@@ -1,10 +1,10 @@
 import Blockchains from '@depay/web3-blockchains'
 import exchange from 'src/exchanges/orca'
 import { ACCOUNT_LAYOUT, Buffer, PublicKey, BN } from '@depay/solana-web3.js'
-import { getTickArrayAddresses } from 'src/platforms/solana/orca/price/ticks'
+import { getTickArrayAddresses } from 'src/platforms/svm/orca/price/ticks'
 import { mock } from '@depay/web3-mock'
 import { request } from '@depay/web3-client'
-import { TICK_ARRAY_LAYOUT } from 'src/platforms/solana/orca/layouts'
+import { TICK_ARRAY_LAYOUT } from 'src/platforms/svm/orca/layouts'
 import Token from '@depay/web3-tokens'
 
 let blockchain = 'solana'
