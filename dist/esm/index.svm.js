@@ -4170,7 +4170,7 @@ let getAccounts = async (base, quote) => {
 let getPairsWithPrice$3 = async({ tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin, pairsDatum }) => {
   try {
     let accounts;
-    if(pairsData) {
+    if(pairsDatum) {
       accounts = [
         {...
           await request(`solana://${pairsDatum.id}/getAccountInfo`, { api: WHIRLPOOL_LAYOUT, cache: 5000 }),

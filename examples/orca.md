@@ -1,3 +1,56 @@
+## With pairs data
+```javascript
+
+let route = await Web3Exchanges.orca.route({
+    "blockchain": "solana",
+    "tokenIn": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+    "tokenOut": "9BB6NFEcjBCtnNLFko2FqVQBq8HHM13kCyYcdQbgpump",
+    "amountOutMin": "100000",
+    "fromAddress": "2UgCJaHU5y8NC4uWQcZYeV9a5RyYLF7iKYCybCsdFFD1",
+    "toAddress": "3YrWvZAwNiBcMi6PigTRNHRuiTJ8jatwxgRYEx784oHW",
+    "pairsData": [
+        {
+            "id": "Czfq3xZZDmsdGdUyrNLtRhGc47cXcZtLG4crryfu44zE",
+            "mintA": "So11111111111111111111111111111111111111112",
+            "mintB": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+            "vaultA": "EUuUbDcafPrmVTD5M6qoJAoyyNbihBhugADAxRMn5he9",
+            "vaultB": "2WLWEuKDgkDUccTpbwYp1GToYktiSB1cXvreHUwiSUVP",
+            "feeRate": 400,
+            "exchange": "orca",
+            "tickSpacing": 4,
+            "whirlpoolBump": [
+                255
+            ],
+            "protocolFeeRate": 1300,
+            "tickSpacingSeed": [
+                4,
+                0
+            ],
+            "whirlpoolsConfig": "2LecshUwdy9xi7meFgHtFJQNSKk4KdTrcpvaB56dP2NQ"
+        },
+        {
+            "id": "C9U2Ksk6KKWvLEeo5yUQ7Xu46X7NzeBJtd9PBfuXaUSM",
+            "mintA": "So11111111111111111111111111111111111111112",
+            "mintB": "9BB6NFEcjBCtnNLFko2FqVQBq8HHM13kCyYcdQbgpump",
+            "vaultA": "2z2dj8yyRmXP8bwP8LqmxeZGVtuAGv4g2wgzp2Rz1QmJ",
+            "vaultB": "5ex8weR6VjuwTrE4aP7juXcGWPTiD9PJeMZiwZZderqc",
+            "feeRate": 1600,
+            "exchange": "orca",
+            "tickSpacing": 16,
+            "whirlpoolBump": [
+                254
+            ],
+            "protocolFeeRate": 1300,
+            "tickSpacingSeed": [
+                16,
+                0
+            ],
+            "whirlpoolsConfig": "2LecshUwdy9xi7meFgHtFJQNSKk4KdTrcpvaB56dP2NQ"
+        }
+    ]
+})
+```
+
 ## TOKEN<>TOKEN (1 Pool) with pairsData
 
 ```javascript
