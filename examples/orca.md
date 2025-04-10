@@ -1,5 +1,61 @@
 ## With pairs data
 ```javascript
+let route = await Web3Exchanges.orca.route({
+    "blockchain": "solana",
+    "tokenIn": "orcaEKTdK7LKz57vaAYr9QeNsVEPfiu6QeMU1kektZE",
+    "tokenOut": "DePay1miDBPWXs6PVQrdC5Vch2jemgEPaiyXLNLLa2NF",
+    "amountOutMin": "1000000",
+    "fromAddress": "2UgCJaHU5y8NC4uWQcZYeV9a5RyYLF7iKYCybCsdFFD1",
+    "toAddress": "3YrWvZAwNiBcMi6PigTRNHRuiTJ8jatwxgRYEx784oHW",
+    "pairsData": [
+        {
+            "id": "5Z66YYYaTmmx1R4mATAGLSc8aV4Vfy5tNdJQzk1GP9RF",
+            "mintA": "orcaEKTdK7LKz57vaAYr9QeNsVEPfiu6QeMU1kektZE",
+            "mintB": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+            "vaultA": "AGsWEmKndNhRbSFWtrcDVrsxfoM71j8pVmvGuEwJX8a1",
+            "vaultB": "2kSYyDFRQpWaouveza4JbyGKBVtd3im8E6wQnPYiwgH9",
+            "feeRate": 3000,
+            "exchange": "orca",
+            "tickSpacing": 64,
+            "whirlpoolBump": [
+                253
+            ],
+            "protocolFeeRate": 1300,
+            "tickSpacingSeed": [
+                64,
+                0
+            ],
+            "whirlpoolsConfig": "2LecshUwdy9xi7meFgHtFJQNSKk4KdTrcpvaB56dP2NQ"
+        },
+        {
+            "id": "3Mvm76VD8AM1pi1Sbyp7h74qGL2ahUGnoDwE75XWnSHr",
+            "mintA": "DePay1miDBPWXs6PVQrdC5Vch2jemgEPaiyXLNLLa2NF",
+            "mintB": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+            "vaultA": "ABcY14dbxVNCkfYX8V7BtNNuaWooNSEqD4v5zi2BpAkA",
+            "vaultB": "GHCxzUhepLXCVKhAasmB8BLR48k2vuMczaWn1yi9JY5F",
+            "feeRate": 3000,
+            "exchange": "orca",
+            "tickSpacing": 64,
+            "whirlpoolBump": [
+                254
+            ],
+            "protocolFeeRate": 1300,
+            "tickSpacingSeed": [
+                64,
+                0
+            ],
+            "whirlpoolsConfig": "2LecshUwdy9xi7meFgHtFJQNSKk4KdTrcpvaB56dP2NQ"
+        }
+    ]
+})
+
+let wallets = await Web3Wallets.getWallets()
+let wallet = wallets[1]
+let account = await wallet.account()
+let transaction = await route.getTransaction({ account })
+```
+
+```javascript
 
 let route = await Web3Exchanges.orca.route({
     "blockchain": "solana",

@@ -128,7 +128,7 @@ const getTwoHopSwapInstructionData = ({
   sqrtPriceLimitTwo,
 })=> {
   let LAYOUT, data
-  
+
   LAYOUT = struct([
     u64("anchorDiscriminator"),
     u64("amount"),
@@ -308,16 +308,17 @@ const getTransaction = async ({
     if(!endsUnwrapped) {
       await createTokenAccountIfNotExisting({ instructions, owner: account, token: tokenOut, account: tokenAccountOut })
     }
+    let aToB = tokenIn.toLowerCase() == pairs[0].tokenMintA.toString().toLowerCase()
     instructions.push(
       new TransactionInstruction({
         programId: new PublicKey('whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc'),
         keys: await getSwapInstructionKeys({
           account,
           pool: pairs[0].pubkey,
-          tokenAccountA: pairs[0].aToB ? tokenAccountIn : tokenAccountOut,
-          tokenVaultA: pairs[0].data.tokenVaultA,
-          tokenAccountB: pairs[0].aToB ? tokenAccountOut : tokenAccountIn,
-          tokenVaultB: pairs[0].data.tokenVaultB,
+          tokenAccountA: aToB ? tokenAccountIn : tokenAccountOut,
+          tokenVaultA: pairs[0].tokenVaultA,
+          tokenAccountB: aToB ? tokenAccountOut : tokenAccountIn,
+          tokenVaultB: pairs[0].tokenVaultB,
           tickArrays: pairs[0].tickArrays,
         }),
         data: getSwapInstructionData({
@@ -325,7 +326,7 @@ const getTransaction = async ({
           otherAmountThreshold,
           sqrtPriceLimit: pairs[0].sqrtPriceLimit,
           amountSpecifiedIsInput,
-          aToB: pairs[0].aToB
+          aToB
         }),
       })
     )
@@ -342,6 +343,14 @@ const getTransaction = async ({
     if(!endsUnwrapped) {
       await createTokenAccountIfNotExisting({ instructions, owner: account, token: tokenOut, account: tokenAccountOut })
     }
+    console.log('pairs[0].tokenMintA.toString()', pairs[0].tokenMintA.toString())
+    console.log('tokenIn.toLowerCase()', tokenIn.toLowerCase())
+    let aToBOne = tokenIn.toLowerCase() == pairs[0].tokenMintA.toString().toLowerCase()
+    console.log('aToBOne', aToBOne)
+    console.log('pairs[1].tokenMintB.toString()', pairs[1].tokenMintB.toString())
+    console.log('tokenOut.toLowerCase()', tokenOut.toLowerCase())
+    let aToBTwo = tokenOut.toLowerCase() == pairs[1].tokenMintB.toString().toLowerCase()
+    console.log('aToBTwo', aToBTwo)
     instructions.push(
       new TransactionInstruction({
         programId: new PublicKey('whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc'),
@@ -349,23 +358,23 @@ const getTransaction = async ({
           account,
           poolOne: pairs[0].pubkey,
           tickArraysOne: pairs[0].tickArrays,
-          tokenAccountOneA: pairs[0].aToB ? tokenAccountIn : tokenAccountMiddle,
-          tokenVaultOneA: pairs[0].data.tokenVaultA,
-          tokenAccountOneB: pairs[0].aToB ? tokenAccountMiddle : tokenAccountIn,
-          tokenVaultOneB: pairs[0].data.tokenVaultB,
+          tokenAccountOneA: aToBOne ? tokenAccountIn : tokenAccountMiddle,
+          tokenVaultOneA: pairs[0].tokenVaultA,
+          tokenAccountOneB: aToBOne ? tokenAccountMiddle : tokenAccountIn,
+          tokenVaultOneB: pairs[0].tokenVaultB,
           poolTwo: pairs[1].pubkey,
           tickArraysTwo: pairs[1].tickArrays,
-          tokenAccountTwoA: pairs[1].aToB ? tokenAccountMiddle : tokenAccountOut,
-          tokenVaultTwoA: pairs[1].data.tokenVaultA,
-          tokenAccountTwoB: pairs[1].aToB ? tokenAccountOut : tokenAccountMiddle,
-          tokenVaultTwoB: pairs[1].data.tokenVaultB,
+          tokenAccountTwoA: aToBTwo ? tokenAccountMiddle : tokenAccountOut,
+          tokenVaultTwoA: pairs[1].tokenVaultA,
+          tokenAccountTwoB: aToBTwo ? tokenAccountOut : tokenAccountMiddle,
+          tokenVaultTwoB: pairs[1].tokenVaultB,
         }),
         data: getTwoHopSwapInstructionData({
           amount,
           otherAmountThreshold,
           amountSpecifiedIsInput,
-          aToBOne: pairs[0].aToB,
-          aToBTwo: pairs[1].aToB,
+          aToBOne,
+          aToBTwo,
           sqrtPriceLimitOne: pairs[0].sqrtPriceLimit,
           sqrtPriceLimitTwo: pairs[1].sqrtPriceLimit,
         }),

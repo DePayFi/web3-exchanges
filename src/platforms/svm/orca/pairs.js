@@ -42,7 +42,7 @@ let getPairsWithPrice = async({ tokenIn, tokenOut, amountIn, amountInMax, amount
       accounts = [
         {...
           await request(`solana://${pairsDatum.id}/getAccountInfo`, { api: WHIRLPOOL_LAYOUT, cache: 5000 }),
-          pubkey: new PublicKey(pairsDatum.id)
+          pubkey: new PublicKey(pairsDatum.id),
         }
       ]
     } else {
@@ -51,7 +51,7 @@ let getPairsWithPrice = async({ tokenIn, tokenOut, amountIn, amountInMax, amount
       accounts = accounts.filter((account)=>account.data.liquidity.gt(1))
     }
     accounts = (await Promise.all(accounts.map(async(account)=>{
-      const { price, tickArrays, sqrtPriceLimit, aToB } = await getPrice({ account, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin, pairsDatum })
+      const { price, tickArrays, sqrtPriceLimit } = await getPrice({ account, tokenIn, tokenOut, amountIn, amountInMax, amountOut, amountOutMin, pairsDatum })
       if(price === undefined) { return false }
 
       return { // return a copy, do not mutate accounts
@@ -59,11 +59,10 @@ let getPairsWithPrice = async({ tokenIn, tokenOut, amountIn, amountInMax, amount
         price: price,
         tickArrays: tickArrays,
         sqrtPriceLimit: sqrtPriceLimit,
-        aToB: aToB,
-        data: {
-          tokenVaultA: account.tokenVaultA || account.data.tokenVaultA, 
-          tokenVaultB: account.tokenVaultB || account.data.tokenVaultB
-        }
+        tokenVaultA: account.tokenVaultA || account.data.tokenVaultA, 
+        tokenVaultB: account.tokenVaultB || account.data.tokenVaultB,
+        tokenMintA: account.tokenMintA || account.data.tokenMintA, 
+        tokenMintB: account.tokenMintB || account.data.tokenMintB,
       }
     }))).filter(Boolean)
     return accounts

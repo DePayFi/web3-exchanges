@@ -7,13 +7,13 @@ let getAmountsOut = async ({ path, amountIn, amountInMax, pairsData }) => {
   let pools = []
   let amounts = [ethers.BigNumber.from(amountIn || amountInMax)]
 
-  let bestPair = await getBestPair({ tokenIn: path[0], tokenOut: path[1], amountIn, amountInMax, pairsDatum: pairsData[0] })
+  let bestPair = await getBestPair({ tokenIn: path[0], tokenOut: path[1], amountIn, amountInMax, pairsDatum: pairsData && pairsData[0] })
   if(!bestPair){ return({ amounts: undefined, pools: undefined }) }
   amounts.push(ethers.BigNumber.from(bestPair.price))
   pools.push(bestPair)
   
   if (path.length === 3) {
-    let bestPair = await getBestPair({ tokenIn: path[1], tokenOut: path[2], amountIn: amountIn ? amounts[1] : undefined, amountInMax: amountInMax ? amounts[1] : undefined, pairsDatum: pairsData[1] })
+    let bestPair = await getBestPair({ tokenIn: path[1], tokenOut: path[2], amountIn: amountIn ? amounts[1] : undefined, amountInMax: amountInMax ? amounts[1] : undefined, pairsDatum: pairsData && pairsData[1] })
     if(!bestPair){ return({ amounts: undefined, pools: undefined }) }
     amounts.push(ethers.BigNumber.from(bestPair.price))
     pools.push(bestPair)
@@ -30,13 +30,13 @@ let getAmountsIn = async({ path, amountOut, amountOutMin, pairsData }) => {
   let pools = []
   let amounts = [ethers.BigNumber.from(amountOut || amountOutMin)]
 
-  let bestPair = await getBestPair({ tokenIn: path[1], tokenOut: path[0], amountOut, amountOutMin, pairsDatum: pairsData[0] })
+  let bestPair = await getBestPair({ tokenIn: path[1], tokenOut: path[0], amountOut, amountOutMin, pairsDatum: pairsData && pairsData[1] })
   if(!bestPair){ return({ amounts: undefined, pools: undefined }) }
   amounts.push(ethers.BigNumber.from(bestPair.price))
   pools.push(bestPair)
   
   if (path.length === 3) {
-    let bestPair = await getBestPair({ tokenIn: path[2], tokenOut: path[1], amountOut: amountOut ? amounts[1] : undefined, amountOutMin: amountOutMin ? amounts[1] : undefined, pairsDatum: pairsData[1] })
+    let bestPair = await getBestPair({ tokenIn: path[2], tokenOut: path[1], amountOut: amountOut ? amounts[1] : undefined, amountOutMin: amountOutMin ? amounts[1] : undefined, pairsDatum: pairsData && pairsData[0] })
     if(!bestPair){ return({ amounts: undefined, pools: undefined }) }
     amounts.push(ethers.BigNumber.from(bestPair.price))
     pools.push(bestPair)

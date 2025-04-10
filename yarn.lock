@@ -1234,20 +1234,20 @@
   resolved "https://registry.yarnpkg.com/@depay/web3-blockchains/-/web3-blockchains-9.7.9.tgz#3b1024684adfef9fcab7596ffd12a5a8cc4548fc"
   integrity sha512-nYv04ClJn6aOUrusApIyBtIk3/wHxY2OnQC5mFQ7giJqr0/ZE3FbdDmKHPYYkysedNQdERq/lR+p+AFWVzfEQQ==
 
-"@depay/web3-client-evm@^11.0.1":
-  version "11.0.1"
-  resolved "https://registry.yarnpkg.com/@depay/web3-client-evm/-/web3-client-evm-11.0.1.tgz#1fbcb6c707b8f9f738af899777b0a6289c3bb424"
-  integrity sha512-YrdLtBpla1HOjOeok+NYefLG/MChNkO6WBXvXsN1d42mUr7OUq2NyJYcDWSERCphr8M14677MMGbULNU9PSP+A==
+"@depay/web3-client-evm@^11.0.2":
+  version "11.0.5"
+  resolved "https://registry.yarnpkg.com/@depay/web3-client-evm/-/web3-client-evm-11.0.5.tgz#7f906c77da144192b94b7c52c63ff9cb118ffd08"
+  integrity sha512-4sc3z0cji5JoPH33047vIwDAceZ/eLp/A9OvMJ8ejQKl7cuacnZFSiLydc7+TbBJWZ83I1q5RBHQutpTxRpoBA==
 
-"@depay/web3-client-svm@^11.0.1":
-  version "11.0.1"
-  resolved "https://registry.yarnpkg.com/@depay/web3-client-svm/-/web3-client-svm-11.0.1.tgz#3f602ca55cdb886ef4e461ff6e3a4c648841de8e"
-  integrity sha512-6GwHe1Wh5uJF6yh9AV7pEbhF4cqWn/k6QlToxZjIqfoUvvkiU9ATUKUuR/cJ7xbU9HSekvlwzdZQvWq6H0mgpQ==
+"@depay/web3-client-svm@^11.0.2":
+  version "11.0.5"
+  resolved "https://registry.yarnpkg.com/@depay/web3-client-svm/-/web3-client-svm-11.0.5.tgz#c7b65bd461f3611676e3e244f0da91da1522a0b8"
+  integrity sha512-b8A4raA4B2dyNP2HPbH55GxgQ4AsCoR0iePE7z4d//h80EuUDgX7TuMROluyUiEomB4yfDt4cYTegmn6oH5LPw==
 
-"@depay/web3-client@^11.0.1":
-  version "11.0.1"
-  resolved "https://registry.yarnpkg.com/@depay/web3-client/-/web3-client-11.0.1.tgz#fdb7f2eca85f52bd7c8a5814c2a7d48461d5808a"
-  integrity sha512-moynGSJuZ+T44wOjIIbPWQVDs7TxKgJowxlGVNi0fWusL+EgCRuia+Tdf3MJRZyIkyHj03MzWahhu8JGgvDqzw==
+"@depay/web3-client@^11.0.2":
+  version "11.0.5"
+  resolved "https://registry.yarnpkg.com/@depay/web3-client/-/web3-client-11.0.5.tgz#9f2662f683d05c9dfdaca9a937507ee7acb15f81"
+  integrity sha512-hMus0A1DVmJoV2jp4wEuCh/krzwjiBNwQSxNghwieI3tBfPxSJCkX5ssBnMJq9vMs7NYnql5bD3pO5G5XAJdiQ==
 
 "@depay/web3-mock@^15.1.1":
   version "15.1.1"
