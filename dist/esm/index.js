@@ -2168,7 +2168,7 @@ let getAmountsIn$1 = async({ path, amountOut, amountOutMin, pairsData }) => {
   let pools = [];
   let amounts = [ethers.BigNumber.from(amountOut || amountOutMin)];
 
-  let bestPair = await getBestPair$1({ tokenIn: path[1], tokenOut: path[0], amountOut, amountOutMin, pairsDatum: pairsData && pairsData[1] });
+  let bestPair = await getBestPair$1({ tokenIn: path[1], tokenOut: path[0], amountOut, amountOutMin, pairsDatum: pairsData && (path.length === 2 ? pairsData[0] : pairsData[1]) });
   if(!bestPair){ return({ amounts: undefined, pools: undefined }) }
   amounts.push(ethers.BigNumber.from(bestPair.price));
   pools.push(bestPair);
@@ -4848,7 +4848,7 @@ let getAmountsIn = async({ exchange, path, amountOut, amountOutMin, pairsData })
   let pools = [];
   let amounts = [ethers.BigNumber.from(amountOut || amountOutMin)];
 
-  let bestPair = await getBestPair({ exchange, tokenIn: path[1], tokenOut: path[0], amountOut, amountOutMin, pairsDatum: pairsData && pairsData[1] });
+  let bestPair = await getBestPair({ exchange, tokenIn: path[1], tokenOut: path[0], amountOut, amountOutMin, pairsDatum: pairsData && (path.length === 2 ? pairsData[0] : pairsData[1]) });
   if(!bestPair){ return({ amounts: undefined, pools: undefined }) }
   amounts.push(ethers.BigNumber.from(bestPair.price));
   pools.push(bestPair);
