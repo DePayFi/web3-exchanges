@@ -27,7 +27,7 @@ const calculateAmountInWithSlippage = async ({ exchange, blockchain, pools, exch
 
   let newAmountInWithDefaultSlippageBN = amountIn.add(amountIn.mul(parseFloat(defaultSlippage)*100).div(10000))
 
-  if(!supported.evm.includes(exchange.blockchain || blockchain)) { 
+  if(!supported.evm.includes(exchange.blockchain || blockchain)) {
     return newAmountInWithDefaultSlippageBN
   }
 
