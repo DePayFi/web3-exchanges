@@ -2262,7 +2262,7 @@ const calculateAmountInWithSlippage = async ({ exchange, blockchain, pools, exch
 
   let newAmountInWithDefaultSlippageBN = amountIn.add(amountIn.mul(parseFloat(defaultSlippage)*100).div(10000));
 
-  if(!supported.evm.includes(exchange.blockchain || blockchain)) { 
+  if(!supported.evm.includes(exchange.blockchain || blockchain)) {
     return newAmountInWithDefaultSlippageBN
   }
 
@@ -2967,8 +2967,8 @@ const PROTOCOL_FEE_RATE_MUL_VALUE = new BN(10000);
 const FEE_RATE_MUL_VALUE = new BN(1000000);
 const ZERO$2 = new BN(0);
 const ONE$1 = new BN(1);
-const TWO = new BN(2);
-const U64_MAX = TWO.pow(new BN(64)).sub(ONE$1);
+const TWO$1 = new BN(2);
+const U64_MAX = TWO$1.pow(new BN(64)).sub(ONE$1);
 
 const fromX64_BN = (num)=>{
   return num.div(new BN(2).pow(new BN(64)))
@@ -3061,7 +3061,7 @@ class BitMath {
   }
 
   static isOverLimit(n0, limit) {
-    const limitBN = TWO.pow(new BN(limit)).sub(ONE$1);
+    const limitBN = TWO$1.pow(new BN(limit)).sub(ONE$1);
     return n0.gt(limitBN);
   }
 
@@ -8836,6 +8836,11 @@ function _optionalChain(ops) { let lastAccessLHS = undefined; let value = ops[0]
 const SENDER_AS_RECIPIENT = '0x0000000000000000000000000000000000000001';
 const ROUTER_AS_RECIPIENT = '0x0000000000000000000000000000000000000002';
 
+const { BigNumber } = ethers;
+const TWO = BigNumber.from(2);
+const FIVE = BigNumber.from(5);
+const HUNDRED = BigNumber.from(100);
+
 // Replaces 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE with the wrapped token and implies wrapping.
 //
 // We keep 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE internally
@@ -8931,20 +8936,27 @@ const getBestPool = async ({ blockchain, exchange, path, amountIn, amountOut, bl
       try {
 
         let amount;
-        if(amountIn) {
+        if (amountIn) {
+          // exact-in: base output and doubled-input output
           amount = await getOutputAmount({ exchange, pool, inputAmount: amountIn });
-          const amountScaled = await getOutputAmount({ exchange, pool, inputAmount: ethers.BigNumber.from(amountIn).mul(ethers.BigNumber.from(10)).toString() });
-          const amountScaledDown = amountScaled.div(ethers.BigNumber.from(10));
-          const difference = amountScaledDown.sub(amount).abs();
-          const enoughLiquidity = !difference.gt(amount.mul(ethers.BigNumber.from(5)).div(ethers.BigNumber.from(100))); // up to 5% diff allowed
-          if(!enoughLiquidity) { return }
+          const doubledIn = BigNumber.from(amountIn).mul(TWO);
+          const amountDoubled = await getOutputAmount({ exchange, pool, inputAmount: doubledIn.toString() });
+
+          // ideal linear vs actual require deviation/ideal ≤ 5%
+          const ideal = amount.mul(TWO);
+          const deviation = ideal.sub(amountDoubled).abs();
+          const enoughLiquidity = deviation.mul(HUNDRED).lte(ideal.mul(FIVE));
+          if (!enoughLiquidity) return
         } else {
+          // exact-out: base input and input for doubled output
           amount = await getInputAmount({ exchange, pool, outputAmount: amountOut });
-          const amountScaled = await getInputAmount({ exchange, pool, outputAmount: ethers.BigNumber.from(amountOut).mul(ethers.BigNumber.from(10)).toString() });
-          const amountScaledDown = amountScaled.div(ethers.BigNumber.from(10));
-          const difference = amountScaledDown.sub(amount).abs();
-          const enoughLiquidity = !difference.gt(amount.mul(ethers.BigNumber.from(5)).div(ethers.BigNumber.from(100))); // up to 5% diff allowed
-          if(!enoughLiquidity) { return }
+          const doubledOut = BigNumber.from(amountOut).mul(TWO);
+          const inputForDouble = await getInputAmount({ exchange, pool, outputAmount: doubledOut.toString() });
+
+          const idealIn = amount.mul(TWO);
+          const deviationIn = idealIn.sub(inputForDouble).abs();
+          const enoughLiquidity = deviationIn.mul(HUNDRED).lte(idealIn.mul(FIVE));
+          if (!enoughLiquidity) return
         }
 
         return { ...pool, amountIn: amountIn || amount, amountOut: amountOut || amount }
