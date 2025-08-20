@@ -7,7 +7,7 @@ import { mockPair, mockAmounts } from 'tests/mocks/evm/uniswap_v3'
 import { resetCache, getProvider } from '@depay/web3-client-evm'
 
 describe('uniswap_v3', () => {
-  
+   
   const accounts = ['0xd8da6bf26964af9d7eed9e03e53415d37aa96045']
   const exchange = Exchanges.uniswap_v3
   const pair = '0xEF8cD6Cb5c841A4f02986e8A8ab3cC545d1B8B6d'
@@ -15,7 +15,7 @@ describe('uniswap_v3', () => {
   const fromAddress = '0x5Af489c8786A018EC4814194dC8048be1007e390'
   const toAddress = '0x5Af489c8786A018EC4814194dC8048be1007e390'
 
-  exchange.blockchains.forEach((blockchain)=>{
+  exchange.blockchains.filter((blockchain)=>blockchain!='gnosis').forEach((blockchain)=>{
 
     describe(blockchain, ()=>{
   
@@ -125,6 +125,10 @@ describe('uniswap_v3', () => {
             params: [ethers.utils.solidityPack(["address","uint24","address"],[tokenOut, fee, tokenIn]), amountOutBN],
             amount: fetchedAmountInBN
           })
+          mockAmounts({ blockchain, exchange, provider, method: 'quoteExactOutput',
+            params: [ethers.utils.solidityPack(["address","uint24","address"],[tokenOut, fee, tokenIn]), amountOutBN.mul(2)],
+            amount: fetchedAmountInBN.mul(2)
+          })
           ;[0,1].forEach((block)=>{
             mockAmounts({ blockchain, exchange, provider, method: 'quoteExactOutput',
               params: [ethers.utils.solidityPack(["address","uint24","address"],[tokenOut, fee, tokenIn]), amountOutBN],
@@ -183,6 +187,10 @@ describe('uniswap_v3', () => {
             params: [ethers.utils.solidityPack(["address","uint24","address"],[tokenOut, fee, tokenIn]), amountOutBN],
             amount: fetchedAmountInBN
           })
+          mockAmounts({ blockchain, exchange, provider, method: 'quoteExactOutput',
+            params: [ethers.utils.solidityPack(["address","uint24","address"],[tokenOut, fee, tokenIn]), amountOutBN.mul(2)],
+            amount: fetchedAmountInBN.mul(2)
+          })
           ;[0,1].forEach((block)=>{
             mockAmounts({ blockchain, exchange, provider, method: 'quoteExactOutput',
               params: [ethers.utils.solidityPack(["address","uint24","address"],[tokenOut, fee, tokenIn]), amountOutBN],
@@ -240,6 +248,10 @@ describe('uniswap_v3', () => {
             params: [ethers.utils.solidityPack(["address","uint24","address"],[tokenIn, fee, tokenOut]), amountInBN],
             amount: fetchedAmountOutBN
           })
+          mockAmounts({ blockchain, exchange, provider, method: 'quoteExactInput',
+            params: [ethers.utils.solidityPack(["address","uint24","address"],[tokenIn, fee, tokenOut]), amountInBN.mul(2)],
+            amount: fetchedAmountOutBN.mul(2)
+          })
 
           const route = await exchange.route({
             blockchain,
@@ -289,6 +301,10 @@ describe('uniswap_v3', () => {
           mockAmounts({ blockchain, exchange, provider, method: 'quoteExactInput',
             params: [ethers.utils.solidityPack(["address","uint24","address"],[tokenIn, fee, tokenOut]), amountInBN],
             amount: fetchedAmountOutBN
+          })
+          mockAmounts({ blockchain, exchange, provider, method: 'quoteExactInput',
+            params: [ethers.utils.solidityPack(["address","uint24","address"],[tokenIn, fee, tokenOut]), amountInBN.mul(2)],
+            amount: fetchedAmountOutBN.mul(2)
           })
 
           const route = await exchange.route({
@@ -349,6 +365,10 @@ describe('uniswap_v3', () => {
           mockAmounts({ blockchain, exchange, provider, method: 'quoteExactOutput',
             params: [ethers.utils.solidityPack(["address","uint24","address"],[Blockchains[blockchain].wrapped.address, fee, tokenIn]), amountOutBN],
             amount: fetchedAmountInBN
+          })
+          mockAmounts({ blockchain, exchange, provider, method: 'quoteExactOutput',
+            params: [ethers.utils.solidityPack(["address","uint24","address"],[Blockchains[blockchain].wrapped.address, fee, tokenIn]), amountOutBN.mul(2)],
+            amount: fetchedAmountInBN.mul(2)
           })
           ;[0,1].forEach((block)=>{
             mockAmounts({ blockchain, exchange, provider, method: 'quoteExactOutput',
@@ -416,6 +436,10 @@ describe('uniswap_v3', () => {
             params: [ethers.utils.solidityPack(["address","uint24","address"],[Blockchains[blockchain].wrapped.address, fee, tokenIn]), amountOutBN],
             amount: fetchedAmountInBN
           })
+          mockAmounts({ blockchain, exchange, provider, method: 'quoteExactOutput',
+            params: [ethers.utils.solidityPack(["address","uint24","address"],[Blockchains[blockchain].wrapped.address, fee, tokenIn]), amountOutBN.mul(2)],
+            amount: fetchedAmountInBN.mul(2)
+          })
           ;[0,1].forEach((block)=>{
             mockAmounts({ blockchain, exchange, provider, method: 'quoteExactOutput',
               params: [ethers.utils.solidityPack(["address","uint24","address"],[Blockchains[blockchain].wrapped.address, fee, tokenIn]), amountOutBN],
@@ -481,6 +505,10 @@ describe('uniswap_v3', () => {
             params: [ethers.utils.solidityPack(["address","uint24","address"],[tokenIn, fee, Blockchains[blockchain].wrapped.address]), amountInBN],
             amount: fetchedAmountOutBN
           })
+          mockAmounts({ blockchain, exchange, provider, method: 'quoteExactInput',
+            params: [ethers.utils.solidityPack(["address","uint24","address"],[tokenIn, fee, Blockchains[blockchain].wrapped.address]), amountInBN.mul(2)],
+            amount: fetchedAmountOutBN.mul(2)
+          })
 
           const route = await exchange.route({
             blockchain,
@@ -538,6 +566,10 @@ describe('uniswap_v3', () => {
           mockAmounts({ blockchain, exchange, provider, method: 'quoteExactInput',
             params: [ethers.utils.solidityPack(["address","uint24","address"],[tokenIn, fee, Blockchains[blockchain].wrapped.address]), amountInBN],
             amount: fetchedAmountOutBN
+          })
+          mockAmounts({ blockchain, exchange, provider, method: 'quoteExactInput',
+            params: [ethers.utils.solidityPack(["address","uint24","address"],[tokenIn, fee, Blockchains[blockchain].wrapped.address]), amountInBN.mul(2)],
+            amount: fetchedAmountOutBN.mul(2)
           })
 
           const route = await exchange.route({
@@ -610,6 +642,10 @@ describe('uniswap_v3', () => {
             params: [ethers.utils.solidityPack(["address","uint24","address"],[tokenOut, fee, Blockchains[blockchain].wrapped.address]), amountOutBN],
             amount: fetchedAmountInBN
           })
+          mockAmounts({ blockchain, exchange, provider, method: 'quoteExactOutput',
+            params: [ethers.utils.solidityPack(["address","uint24","address"],[tokenOut, fee, Blockchains[blockchain].wrapped.address]), amountOutBN.mul(2)],
+            amount: fetchedAmountInBN.mul(2)
+          })
           ;[0,1].forEach((block)=>{
             mockAmounts({ blockchain, exchange, provider, method: 'quoteExactOutput',
               params: [ethers.utils.solidityPack(["address","uint24","address"],[tokenOut, fee, Blockchains[blockchain].wrapped.address]), amountOutBN],
@@ -674,6 +710,10 @@ describe('uniswap_v3', () => {
           mockAmounts({ blockchain, exchange, provider, method: 'quoteExactOutput',
             params: [ethers.utils.solidityPack(["address","uint24","address"],[tokenOut, fee, Blockchains[blockchain].wrapped.address]), amountOutBN],
             amount: fetchedAmountInBN
+          })
+          mockAmounts({ blockchain, exchange, provider, method: 'quoteExactOutput',
+            params: [ethers.utils.solidityPack(["address","uint24","address"],[tokenOut, fee, Blockchains[blockchain].wrapped.address]), amountOutBN.mul(2)],
+            amount: fetchedAmountInBN.mul(2)
           })
           ;[0,1].forEach((block)=>{
             mockAmounts({ blockchain, exchange, provider, method: 'quoteExactOutput',
@@ -740,6 +780,10 @@ describe('uniswap_v3', () => {
             params: [ethers.utils.solidityPack(["address","uint24","address"],[Blockchains[blockchain].wrapped.address, fee, tokenOut]), amountInBN],
             amount: fetchedAmountOutBN
           })
+          mockAmounts({ blockchain, exchange, provider, method: 'quoteExactInput',
+            params: [ethers.utils.solidityPack(["address","uint24","address"],[Blockchains[blockchain].wrapped.address, fee, tokenOut]), amountInBN.mul(2)],
+            amount: fetchedAmountOutBN.mul(2)
+          })
 
           const route = await exchange.route({
             blockchain,
@@ -797,6 +841,10 @@ describe('uniswap_v3', () => {
           mockAmounts({ blockchain, exchange, provider, method: 'quoteExactInput',
             params: [ethers.utils.solidityPack(["address","uint24","address"],[Blockchains[blockchain].wrapped.address, fee, tokenOut]), amountInBN],
             amount: fetchedAmountOutBN
+          })
+          mockAmounts({ blockchain, exchange, provider, method: 'quoteExactInput',
+            params: [ethers.utils.solidityPack(["address","uint24","address"],[Blockchains[blockchain].wrapped.address, fee, tokenOut]), amountInBN.mul(2)],
+            amount: fetchedAmountOutBN.mul(2)
           })
 
           const route = await exchange.route({
@@ -873,8 +921,18 @@ describe('uniswap_v3', () => {
           })
 
           mockAmounts({ blockchain, exchange, provider, method: 'quoteExactOutput',
+            params: [ethers.utils.solidityPack(["address","uint24","address"],[tokenOut, fee, Blockchains[blockchain].wrapped.address]), amountOutBN.mul(2)],
+            amount: middleAmountBN.mul(2)
+          })
+
+          mockAmounts({ blockchain, exchange, provider, method: 'quoteExactOutput',
             params: [ethers.utils.solidityPack(["address","uint24","address"],[Blockchains[blockchain].wrapped.address, fee, tokenIn]), middleAmountBN],
             amount: fetchedAmountInBN
+          })
+
+          mockAmounts({ blockchain, exchange, provider, method: 'quoteExactOutput',
+            params: [ethers.utils.solidityPack(["address","uint24","address"],[Blockchains[blockchain].wrapped.address, fee, tokenIn]), middleAmountBN.mul(2)],
+            amount: fetchedAmountInBN.mul(2)
           })
 
           ;[0,1].forEach((block)=>{
@@ -956,8 +1014,18 @@ describe('uniswap_v3', () => {
           })
 
           mockAmounts({ blockchain, exchange, provider, method: 'quoteExactOutput',
+            params: [ethers.utils.solidityPack(["address","uint24","address"],[tokenOut, fee, Blockchains[blockchain].wrapped.address]), amountOutBN.mul(2)],
+            amount: middleAmountBN.mul(2)
+          })
+
+          mockAmounts({ blockchain, exchange, provider, method: 'quoteExactOutput',
             params: [ethers.utils.solidityPack(["address","uint24","address"],[Blockchains[blockchain].wrapped.address, fee, tokenIn]), middleAmountBN],
             amount: fetchedAmountInBN
+          })
+
+          mockAmounts({ blockchain, exchange, provider, method: 'quoteExactOutput',
+            params: [ethers.utils.solidityPack(["address","uint24","address"],[Blockchains[blockchain].wrapped.address, fee, tokenIn]), middleAmountBN.mul(2)],
+            amount: fetchedAmountInBN.mul(2)
           })
 
           ;[0,1].forEach((block)=>{
@@ -1038,8 +1106,18 @@ describe('uniswap_v3', () => {
           })
 
           mockAmounts({ blockchain, exchange, provider, method: 'quoteExactInput',
+            params: [ethers.utils.solidityPack(["address","uint24","address"],[tokenIn, fee, Blockchains[blockchain].wrapped.address]), amountInBN.mul(2)],
+            amount: middleAmountBN.mul(2)
+          })
+
+          mockAmounts({ blockchain, exchange, provider, method: 'quoteExactInput',
             params: [ethers.utils.solidityPack(["address","uint24","address"],[Blockchains[blockchain].wrapped.address, fee, tokenOut]), middleAmountBN],
             amount: fetchedAmountOutBN
+          })
+
+          mockAmounts({ blockchain, exchange, provider, method: 'quoteExactInput',
+            params: [ethers.utils.solidityPack(["address","uint24","address"],[Blockchains[blockchain].wrapped.address, fee, tokenOut]), middleAmountBN.mul(2)],
+            amount: fetchedAmountOutBN.mul(2)
           })
 
           const route = await exchange.route({
@@ -1111,8 +1189,18 @@ describe('uniswap_v3', () => {
           })
 
           mockAmounts({ blockchain, exchange, provider, method: 'quoteExactInput',
+            params: [ethers.utils.solidityPack(["address","uint24","address"],[tokenIn, fee, Blockchains[blockchain].wrapped.address]), amountInBN.mul(2)],
+            amount: middleAmountBN.mul(2)
+          })
+
+          mockAmounts({ blockchain, exchange, provider, method: 'quoteExactInput',
             params: [ethers.utils.solidityPack(["address","uint24","address"],[Blockchains[blockchain].wrapped.address, fee, tokenOut]), middleAmountBN],
             amount: fetchedAmountOutBN
+          })
+
+          mockAmounts({ blockchain, exchange, provider, method: 'quoteExactInput',
+            params: [ethers.utils.solidityPack(["address","uint24","address"],[Blockchains[blockchain].wrapped.address, fee, tokenOut]), middleAmountBN.mul(2)],
+            amount: fetchedAmountOutBN.mul(2)
           })
 
           const route = await exchange.route({

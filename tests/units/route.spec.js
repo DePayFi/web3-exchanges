@@ -54,6 +54,10 @@ describe('route', ()=> {
         params: [ethers.utils.solidityPack(["address","uint24","address"],[tokenOut, fee, tokenIn]), amountOutBN],
         amount: fetchedAmountIn
       })
+      mockAmountsV3({ blockchain, exchange: Exchanges.uniswap_v3, provider, method: 'quoteExactOutput',
+        params: [ethers.utils.solidityPack(["address","uint24","address"],[tokenOut, fee, tokenIn]), amountOutBN.mul(2)],
+        amount: fetchedAmountIn.mul(2)
+      })
       ;[0,1].forEach((block)=>{
         mockAmountsV3({ blockchain, exchange: Exchanges.uniswap_v3, provider, method: 'quoteExactOutput',
           params: [ethers.utils.solidityPack(["address","uint24","address"],[tokenOut, fee, tokenIn]), amountOutBN],
@@ -65,6 +69,10 @@ describe('route', ()=> {
       mockAmountsV3({ blockchain, exchange: Exchanges.uniswap_v3, provider, method: 'quoteExactInput',
         params: [ethers.utils.solidityPack(["address","uint24","address"],[tokenIn, fee, tokenOut]), amountInBN],
         amount: fetchedAmountOut
+      })
+      mockAmountsV3({ blockchain, exchange: Exchanges.uniswap_v3, provider, method: 'quoteExactInput',
+        params: [ethers.utils.solidityPack(["address","uint24","address"],[tokenIn, fee, tokenOut]), amountInBN.mul(2)],
+        amount: fetchedAmountOut.mul(2)
       })
       ;[0,1].forEach((block)=>{
         mockAmountsV3({ blockchain, exchange: Exchanges.uniswap_v3, provider, method: 'quoteExactInput',
