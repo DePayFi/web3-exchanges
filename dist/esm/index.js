@@ -1561,6 +1561,13 @@ const getPrice = async ({
       });
     }
 
+    let poolMints = [freshWhirlpoolData.tokenMintA.toString(), freshWhirlpoolData.tokenMintB.toString()];
+
+    if(!poolMints.includes(tokenIn) || !poolMints.includes(tokenOut)) {
+      console.log('wrong freshWhirlpoolData!', poolMints, tokenIn, tokenOut);
+      throw('wrong freshWhirlpoolData!', poolMints, tokenIn, tokenOut)
+    }
+
     const aToB = (freshWhirlpoolData.tokenMintA.toString() === tokenIn);
 
     const tickArrays = await getTickArrays({ pool: account.pubkey, freshWhirlpoolData, aToB });
